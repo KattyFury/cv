@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>0xhieu.xyz</title>
+  <link rel="icon" type="image/png" href="PFP.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --white:  #ffffff;
+      --off:    #f7f7f7;
+      --border: #e8e8e8;
+      --muted:  #9a9a9a;
+      --sub:    #555;
+      --text:   #1a1a1a;
+      --accent: #40FFAF;
+      --max:    680px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      background: var(--white);
+      color: var(--text);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── HEADER ───────────────────────────────────── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .header-home {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .header-home:hover { color: var(--accent); opacity: 1; }
+
+    nav {
+      display: flex;
+      gap: 20px;
+      flex-shrink: 0;
+    }
+
+    nav a {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--sub);
+      text-decoration: none;
+      transition: color 0.15s;
+      white-space: nowrap;
+    }
+
+    nav a:hover { color: var(--accent); }
+
+    /* ── LAYOUT ───────────────────────────────────── */
+    main {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    section {
+      padding: 64px 0;
+    }
+
+    section + section {
+      border-top: 1px solid var(--border);
+    }
+
+    h2 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 28px;
+    }
+
+    /* ── HERO ─────────────────────────────────────── */
+    .hero {
+      padding: 64px 0 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+      gap: 20px;
+    }
+
+    .hero-top {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .pfp {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #1a1a1a;
+      flex-shrink: 0;
+    }
+
+    .pfp img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* fallback when no image */
+    .pfp-fallback {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-info { display: flex; flex-direction: column; gap: 3px; }
+
+    .hero-handle {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.15;
+    }
+
+    .hero-name {
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--muted);
+    }
+
+    .hero-title {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--sub);
+    }
+
+    .hero-sub {
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 480px;
+    }
+
+    /* ── SOCIALS ──────────────────────────────────── */
+    .socials {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      gap: 8px;
+    }
+
+    .social-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      font-family: 'Roboto', sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--text);
+      text-decoration: none;
+      background: var(--white);
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .social-btn:hover { border-color: var(--accent); background: var(--off); }
+
+    .social-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    /* ── ABOUT ────────────────────────────────────── */
+    .about-body { display: flex; flex-direction: column; gap: 14px; }
+
+    .about-body p {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--sub);
+      line-height: 1.75;
+    }
+
+    .about-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 0;
+    }
+
+    .about-list li {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--sub);
+      padding-left: 16px;
+      position: relative;
+      line-height: 1.65;
+    }
+
+    .about-list li::before {
+      content: '–';
+      position: absolute;
+      left: 0;
+      color: var(--muted);
+    }
+
+    .about-note {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .about-bg-label {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    /* ── TIMELINE ─────────────────────────────────── */
+    .timeline { display: flex; flex-direction: column; }
+
+    .tl-item {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 0 20px;
+    }
+
+    .tl-year {
+      padding-top: 4px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .tl-body {
+      padding-bottom: 32px;
+      padding-left: 20px;
+      border-left: 1px solid var(--border);
+      position: relative;
+    }
+
+    .tl-item:last-child .tl-body { padding-bottom: 0; }
+
+    /* dot */
+    .tl-body::before {
+      content: '';
+      position: absolute;
+      left: -4px;
+      top: 9px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .tl-role {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .tl-bullets {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      list-style: none;
+    }
+
+    .tl-bullets li {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--sub);
+      padding-left: 14px;
+      position: relative;
+      line-height: 1.6;
+    }
+
+    .tl-bullets li::before {
+      content: '–';
+      position: absolute;
+      left: 0;
+      color: var(--muted);
+    }
+
+    /* ── HIGHLIGHTS ───────────────────────────────── */
+    #highlights-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 480px) {
+      #highlights-grid { grid-template-columns: 1fr; }
+    }
+
+    .hl-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--white);
+    }
+
+    .hl-card img {
+      width: 100%;
+      display: block;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      cursor: zoom-in;
+      transition: opacity 0.15s;
+    }
+
+    .hl-card img:hover { opacity: 0.88; }
+
+    /* ── LIGHTBOX ─────────────────────────────────── */
+    #lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(0,0,0,0.82);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      cursor: zoom-out;
+    }
+
+    #lightbox.open { display: flex; }
+
+    #lightbox img {
+      max-width: 100%;
+      max-height: 90vh;
+      border-radius: 10px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+      object-fit: contain;
+      cursor: default;
+    }
+
+    #lightbox-close {
+      position: fixed;
+      top: 18px;
+      right: 22px;
+      font-size: 28px;
+      color: #fff;
+      background: none;
+      border: none;
+      cursor: pointer;
+      line-height: 1;
+      opacity: 0.7;
+      transition: opacity 0.15s;
+    }
+
+    #lightbox-close:hover { opacity: 1; }
+
+    .hl-caption {
+      padding: 10px 14px 12px;
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--sub);
+      line-height: 1.5;
+    }
+
+    .hl-empty {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 48px 0;
+      font-size: 16px;
+      color: var(--muted);
+    }
+
+    /* ── AVAILABLE FOR ────────────────────────────── */
+    .avail-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .avail-list li {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--sub);
+      padding-left: 16px;
+      position: relative;
+      line-height: 1.6;
+    }
+
+    .avail-list li::before {
+      content: '–';
+      position: absolute;
+      left: 0;
+      color: var(--muted);
+    }
+
+    /* ── FOOTER ───────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 24px;
+      max-width: var(--max);
+      margin: 0 auto;
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      text-align: center;
+    }
+
+    .footer-contact {
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .footer-links { display: flex; gap: 20px; }
+
+    .footer-links a {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--sub);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .footer-links a:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+
+  <!-- ── HEADER ──────────────────────────────────────── -->
+  <header>
+    <div class="header-inner">
+      <a class="header-home" href="https://0xhieu.xyz">0xhieu.xyz</a>
+      <nav>
+        <a href="#about">About</a>
+        <a href="#experience">Experience</a>
+        <a href="#highlights">Highlights</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ── HERO ────────────────────────────────────────── -->
+    <section class="hero">
+      <div class="hero-top">
+        <div class="pfp" id="pfp-wrap">
+          <!-- Shows PFP.png if it exists, otherwise shows "0x" placeholder -->
+          <img src="PFP.png" alt="0xhieu" onerror="this.parentNode.innerHTML='<div class=pfp-fallback>0x</div>'" />
+        </div>
+        <div class="hero-info">
+          <div class="hero-handle">0xhieu &nbsp;–&nbsp; Hieu Nguyen</div>
+          <div class="hero-name">Hanoi, Vietnam</div>
+        </div>
+      </div>
+      <div class="hero-title">Crypto Content Creator, former Researcher</div>
+      <div class="hero-sub">I break down early-stage crypto projects so people can understand and get involved.</div>
+      <div class="socials">
+        <a class="social-btn" href="https://x.com/nguyen0xhieu" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.91-5.622Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          Twitter
+        </a>
+        <a class="social-btn" href="https://t.me/nguyen0xhieu" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+          Telegram
+        </a>
+        <a class="social-btn" href="https://mail.google.com/mail/?view=cm&to=kattyfury1403@gmail.com" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          Email
+        </a>
+      </div>
+    </section>
+
+    <!-- ── ABOUT ────────────────────────────────────────── -->
+    <section id="about">
+      <h2>About</h2>
+      <div class="about-body">
+        <ul class="about-list">
+          <li>Former crypto investment researcher, now building community and audience</li>
+          <li>I keep up with new projects, highlight the ones I find promising, and share how they work and why they matter</li>
+          <li>Design background helps me keep things simple and clear</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ── EXPERIENCE ───────────────────────────────────── -->
+    <section id="experience">
+      <h2>Experience</h2>
+      <div class="timeline">
+
+        <div class="tl-item">
+          <div class="tl-year">2026</div>
+          <div class="tl-body">
+            <div class="tl-role">Community Builder</div>
+            <ul class="tl-bullets">
+              <li>Built a 450+ member Telegram community in Q1/2026: <a href="https://t.me/airdrop_1wallet" target="_blank" rel="noopener" style="color:var(--text);text-underline-offset:3px;">t.me/airdrop_1wallet</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-year">2025</div>
+          <div class="tl-body">
+            <div class="tl-role">Content Creator &amp; Contributor</div>
+            <ul class="tl-bullets">
+              <li>Content Creator: Built a 6,000+ audience on X in 1 year (airdrop niche), top Yapper of $NEWT $RECALL $MIRA $RLS $SENT $ZAMA</li>
+              <li>Contributor: OG contributor across projects like $SOMI $RECALL $RLS $ZAMA – drives attention and onboards users</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-year">2023 – 2024</div>
+          <div class="tl-body">
+            <div class="tl-role">Investment Researcher</div>
+            <ul class="tl-bullets">
+              <li>Analyzed market structure and early-stage projects at <strong>VHG</strong> – supporting spot investment decisions</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-year">2022</div>
+          <div class="tl-body">
+            <div class="tl-role">Crypto Markets</div>
+            <ul class="tl-bullets">
+              <li>Learned from a 10+ year crypto OG, ranked among top futures traders on Binance</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-year">Pre-2022</div>
+          <div class="tl-body">
+            <div class="tl-role">Graphic Designer</div>
+            <ul class="tl-bullets">
+              <li>Designed visual content for <strong>HangFashion</strong> and <strong>Vietnamour</strong></li>
+              <li>Portfolio: <a href="https://www.behance.net/kattyfury" target="_blank" rel="noopener" style="color:var(--text);text-underline-offset:3px;">behance.net/kattyfury</a></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── HIGHLIGHTS ───────────────────────────────────── -->
+    <section id="highlights">
+      <h2>Highlights</h2>
+      <div id="highlights-grid">
+        <!-- loaded from highlights.json -->
+      </div>
+    </section>
+
+    <!-- ── AVAILABLE FOR ────────────────────────────────── -->
+    <section id="available">
+      <h2>Available for</h2>
+      <ul class="avail-list">
+        <li>Ambassador</li>
+        <li>Community Building &amp; Moderation</li>
+        <li>Content Collaborations</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <!-- ── FOOTER ──────────────────────────────────────── -->
+  <footer>
+    <div class="footer-inner">
+      <span class="footer-contact">Contact</span>
+      <div class="footer-links">
+        <a href="https://x.com/nguyen0xhieu" target="_blank" rel="noopener">Twitter</a>
+        <a href="https://t.me/nguyen0xhieu" target="_blank" rel="noopener">Telegram</a>
+        <a href="mailto:kattyfury1403@gmail.com">Email</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Lightbox overlay -->
+  <div id="lightbox">
+    <button id="lightbox-close" aria-label="Close">&#x2715;</button>
+    <img id="lightbox-img" src="" alt="" />
+  </div>
+
+  <script>
+    // ── Lightbox ──────────────────────────────────────
+    const lb     = document.getElementById('lightbox');
+    const lbImg  = document.getElementById('lightbox-img');
+    const lbClose = document.getElementById('lightbox-close');
+
+    function openLightbox(src, alt) {
+      lbImg.src = src;
+      lbImg.alt = alt || '';
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      lb.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    lb.addEventListener('click', closeLightbox);
+    lbImg.addEventListener('click', e => e.stopPropagation());
+    lbClose.addEventListener('click', closeLightbox);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+    // ── Load highlights from highlights.json ──────────
+    // To add a new highlight:
+    //   1. Put the image file inside the "highlights/" folder
+    //   2. Open highlights.json and add an entry:
+    //      { "src": "highlights/your-image.png", "caption": "Your caption here" }
+    //   3. Re-upload the folder to Cloudflare Pages
+    (async () => {
+      const grid = document.getElementById('highlights-grid');
+      try {
+        const res = await fetch('highlights.json');
+        if (!res.ok) throw new Error('not found');
+        const items = await res.json();
+        if (!Array.isArray(items) || items.length === 0) throw new Error('empty');
+
+        items.forEach(({ src, caption }) => {
+          const card = document.createElement('div');
+          card.className = 'hl-card';
+          card.innerHTML = `
+            <img src="${src}" alt="${caption || ''}" loading="lazy" />
+            ${caption ? `<div class="hl-caption">${caption}</div>` : ''}
+          `;
+          // click to zoom
+          card.querySelector('img').addEventListener('click', function() {
+            openLightbox(this.src, this.alt);
+          });
+          grid.appendChild(card);
+        });
+      } catch {
+        grid.innerHTML = '<div class="hl-empty">Highlights coming soon.</div>';
+      }
+    })();
+  </script>
+
+</body>
+</html>
