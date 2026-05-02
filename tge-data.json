@@ -47,5 +47,7 @@
   { "ticker": "BASED",  "tgeDate": "2026-03-30", "fundraising": 11500000,  "vcAlloc": 20.36, "totalSupply": 1000000000,   "priceTGE": 0.12  },
   { "ticker": "OPG",    "tgeDate": "2026-04-21", "fundraising": 9500000,   "vcAlloc": 9.50,  "totalSupply": 1000000000,   "priceTGE": 0.38  },
   { "ticker": "BLEND",  "tgeDate": "2026-04-24", "fundraising": 8000000,   "vcAlloc": 22.50, "totalSupply": 1000000000,   "priceTGE": 0.12  },
-  { "ticker": "PROS",   "tgeDate": "2026-04-28", "fundraising": 52000000,  "vcAlloc": 20.00, "totalSupply": 1000000000,   "priceTGE": 0.92  }
+  { "ticker": "PROS",    "tgeDate": "2026-04-28", "fundraising": 52000000,  "vcAlloc": 20.00, "totalSupply": 1000000000,   "priceTGE": 0.92     },
+  { "ticker": "AIGENSYN","tgeDate": "2026-04-29", "fundraising": 50600000,  "vcAlloc": 29.60, "totalSupply": 10000000000,  "priceTGE": 0.052144 },
+  { "ticker": "MEGA",    "tgeDate": "2026-04-30", "fundraising": 20000000,  "vcAlloc": 14.70, "totalSupply": 10000000000,  "priceTGE": 0.1666   }
 ]
