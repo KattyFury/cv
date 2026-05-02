@@ -19,10 +19,10 @@
       --sub:    #555;
       --text:   #1a1a1a;
       --accent: #40FFAF;
-      --max:    680px;
+      --max:    900px;
     }
 
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; overflow-y: scroll; }
 
     body {
       font-family: 'Roboto', sans-serif;
@@ -46,7 +46,7 @@
     }
 
     .header-inner {
-      max-width: var(--max);
+      max-width: 900px;
       margin: 0 auto;
       padding: 0 24px;
       height: 56px;
@@ -65,40 +65,41 @@
       white-space: nowrap;
       flex-shrink: 0;
     }
-
-    .header-home:hover { color: var(--accent); opacity: 1; }
+    .header-home:hover { color: var(--accent); }
 
     nav {
       display: flex;
       gap: 20px;
       flex-shrink: 0;
+      align-items: center;
     }
 
-    nav a {
+    .nav-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Roboto', sans-serif;
       font-size: 16px;
       font-weight: 400;
       color: var(--sub);
-      text-decoration: none;
+      padding: 0;
       transition: color 0.15s;
       white-space: nowrap;
     }
+    .nav-btn:hover { color: var(--accent); }
+    .nav-btn.active { color: var(--text); font-weight: 500; }
+    .nav-btn:disabled { color: var(--muted); cursor: default; }
+    .nav-btn:disabled:hover { color: var(--muted); }
 
-    nav a:hover { color: var(--accent); }
-
-    /* ── LAYOUT ───────────────────────────────────── */
+    /* ── CV LAYOUT ────────────────────────────────── */
     main {
       max-width: var(--max);
       margin: 0 auto;
       padding: 0 24px;
     }
 
-    section {
-      padding: 64px 0;
-    }
-
-    section + section {
-      border-top: 1px solid var(--border);
-    }
+    section { padding: 64px 0; }
+    section + section { border-top: 1px solid var(--border); }
 
     h2 {
       font-size: 24px;
@@ -115,365 +116,471 @@
       flex-direction: column;
       align-items: flex-start;
       text-align: left;
-      gap: 20px;
+      gap: 16px;
     }
 
-    .hero-top {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 18px;
-    }
+    .hero-top { display: flex; flex-direction: row; align-items: center; gap: 18px; }
 
     .pfp {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      overflow: hidden;
-      background: #1a1a1a;
-      flex-shrink: 0;
+      width: 72px; height: 72px;
+      border-radius: 50%; overflow: hidden;
+      background: #1a1a1a; flex-shrink: 0;
     }
+    .pfp img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-    .pfp img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    /* fallback when no image */
     .pfp-fallback {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 18px; font-weight: 700; letter-spacing: -0.02em;
     }
 
     .hero-info { display: flex; flex-direction: column; gap: 3px; }
 
     .hero-handle {
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: -0.04em;
-      line-height: 1.15;
+      font-size: 22px; font-weight: 700;
+      letter-spacing: -0.04em; line-height: 1.15;
+    }
+    .hero-location { font-size: 15px; font-weight: 400; color: var(--muted); }
+
+    .hero-tagline {
+      font-size: 16px; font-weight: 500;
+      color: var(--text); line-height: 1.5;
     }
 
-    .hero-name {
-      font-size: 15px;
-      font-weight: 400;
-      color: var(--muted);
-    }
-
-    .hero-title {
-      font-size: 16px;
-      font-weight: 400;
-      color: var(--sub);
-    }
-
-    .hero-sub {
-      font-size: 15px;
-      font-weight: 400;
-      color: var(--muted);
-      line-height: 1.6;
-      max-width: 480px;
+    .hero-desc {
+      font-size: 15px; font-weight: 400;
+      color: var(--sub); line-height: 1.65;
+      max-width: 560px;
     }
 
     /* ── SOCIALS ──────────────────────────────────── */
-    .socials {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-start;
-      gap: 8px;
-    }
+    .socials { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 8px; }
 
     .social-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 8px 16px;
-      border-radius: 999px;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 16px; border-radius: 999px;
       border: 1px solid var(--border);
-      font-family: 'Roboto', sans-serif;
-      font-size: 16px;
-      font-weight: 400;
-      color: var(--text);
-      text-decoration: none;
-      background: var(--white);
+      font-family: 'Roboto', sans-serif; font-size: 16px; font-weight: 400;
+      color: var(--text); text-decoration: none; background: var(--white);
       transition: border-color 0.15s, background 0.15s;
     }
-
     .social-btn:hover { border-color: var(--accent); background: var(--off); }
-
     .social-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
-
-    /* ── ABOUT ────────────────────────────────────── */
-    .about-body { display: flex; flex-direction: column; gap: 14px; }
-
-    .about-body p {
-      font-size: 16px;
-      font-weight: 400;
-      color: var(--sub);
-      line-height: 1.75;
-    }
-
-    .about-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      padding: 0;
-    }
-
-    .about-list li {
-      font-size: 16px;
-      font-weight: 400;
-      color: var(--sub);
-      padding-left: 16px;
-      position: relative;
-      line-height: 1.65;
-    }
-
-    .about-list li::before {
-      content: '–';
-      position: absolute;
-      left: 0;
-      color: var(--muted);
-    }
-
-    .about-note {
-      font-size: 16px;
-      font-weight: 500;
-      color: var(--text);
-    }
-
-    .about-bg-label {
-      font-size: 13px;
-      font-weight: 500;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
 
     /* ── TIMELINE ─────────────────────────────────── */
     .timeline { display: flex; flex-direction: column; }
 
-    .tl-item {
-      display: grid;
-      grid-template-columns: 90px 1fr;
-      gap: 0 20px;
-    }
+    .tl-item { display: grid; grid-template-columns: 90px 1fr; gap: 0 20px; }
 
     .tl-year {
-      padding-top: 4px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--muted);
-      text-align: right;
-      white-space: nowrap;
+      padding-top: 4px; font-size: 13px; font-weight: 500;
+      color: var(--muted); text-align: right; white-space: nowrap;
     }
 
     .tl-body {
-      padding-bottom: 32px;
-      padding-left: 20px;
-      border-left: 1px solid var(--border);
-      position: relative;
+      padding-bottom: 32px; padding-left: 20px;
+      border-left: 1px solid var(--border); position: relative;
     }
-
     .tl-item:last-child .tl-body { padding-bottom: 0; }
 
-    /* dot */
     .tl-body::before {
-      content: '';
-      position: absolute;
-      left: -4px;
-      top: 9px;
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--accent);
+      content: ''; position: absolute; left: -4px; top: 9px;
+      width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
     }
 
-    .tl-role {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1.3;
-    }
+    .tl-role { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.3; }
 
-    .tl-bullets {
-      margin-top: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      list-style: none;
-    }
-
+    .tl-bullets { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; list-style: none; }
     .tl-bullets li {
-      font-size: 16px;
-      font-weight: 400;
-      color: var(--sub);
-      padding-left: 14px;
-      position: relative;
-      line-height: 1.6;
+      font-size: 16px; font-weight: 400; color: var(--sub);
+      padding-left: 14px; position: relative; line-height: 1.6;
     }
-
-    .tl-bullets li::before {
-      content: '–';
-      position: absolute;
-      left: 0;
-      color: var(--muted);
-    }
+    .tl-bullets li::before { content: '–'; position: absolute; left: 0; color: var(--muted); }
 
     /* ── HIGHLIGHTS ───────────────────────────────── */
-    #highlights-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
+    #highlights-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
-    @media (max-width: 480px) {
-      #highlights-grid { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 480px) { #highlights-grid { grid-template-columns: 1fr; } }
 
-    .hl-card {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      background: var(--white);
-    }
-
-    .hl-card img {
-      width: 100%;
-      display: block;
-      aspect-ratio: 16/9;
-      object-fit: cover;
-      cursor: zoom-in;
-      transition: opacity 0.15s;
-    }
-
+    .hl-card { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--white); }
+    .hl-card img { width: 100%; display: block; aspect-ratio: 16/9; object-fit: cover; cursor: zoom-in; transition: opacity 0.15s; }
     .hl-card img:hover { opacity: 0.88; }
 
     /* ── LIGHTBOX ─────────────────────────────────── */
     #lightbox {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 999;
-      background: rgba(0,0,0,0.82);
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      cursor: zoom-out;
+      display: none; position: fixed; inset: 0; z-index: 999;
+      background: rgba(0,0,0,0.82); align-items: center;
+      justify-content: center; padding: 24px; cursor: zoom-out;
     }
-
     #lightbox.open { display: flex; }
-
     #lightbox img {
-      max-width: 100%;
-      max-height: 90vh;
-      border-radius: 10px;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
-      object-fit: contain;
-      cursor: default;
+      max-width: 100%; max-height: 90vh; border-radius: 10px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5); object-fit: contain; cursor: default;
     }
-
     #lightbox-close {
-      position: fixed;
-      top: 18px;
-      right: 22px;
-      font-size: 28px;
-      color: #fff;
-      background: none;
-      border: none;
-      cursor: pointer;
-      line-height: 1;
-      opacity: 0.7;
-      transition: opacity 0.15s;
+      position: fixed; top: 18px; right: 22px; font-size: 28px; color: #fff;
+      background: none; border: none; cursor: pointer; line-height: 1;
+      opacity: 0.7; transition: opacity 0.15s;
     }
-
     #lightbox-close:hover { opacity: 1; }
-
-    .hl-caption {
-      padding: 10px 14px 12px;
-      font-size: 16px;
-      font-weight: 400;
-      color: var(--sub);
-      line-height: 1.5;
-    }
-
-    .hl-empty {
-      grid-column: 1/-1;
-      text-align: center;
-      padding: 48px 0;
-      font-size: 16px;
-      color: var(--muted);
-    }
+    .hl-caption { padding: 10px 14px 12px; font-size: 16px; font-weight: 400; color: var(--sub); line-height: 1.5; }
+    .hl-empty { grid-column: 1/-1; text-align: center; padding: 48px 0; font-size: 16px; color: var(--muted); }
 
     /* ── AVAILABLE FOR ────────────────────────────── */
-    .avail-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
+    .avail-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
     .avail-list li {
-      font-size: 16px;
-      font-weight: 400;
-      color: var(--sub);
-      padding-left: 16px;
-      position: relative;
-      line-height: 1.6;
+      font-size: 16px; font-weight: 400; color: var(--sub);
+      padding-left: 16px; position: relative; line-height: 1.6;
     }
-
-    .avail-list li::before {
-      content: '–';
-      position: absolute;
-      left: 0;
-      color: var(--muted);
-    }
+    .avail-list li::before { content: '–'; position: absolute; left: 0; color: var(--muted); }
 
     /* ── FOOTER ───────────────────────────────────── */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 28px 24px;
-      max-width: var(--max);
+    footer { border-top: 1px solid var(--border); padding: 28px 24px; max-width: var(--max); margin: 0 auto; }
+    .footer-inner { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+    .footer-contact { font-size: 14px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { font-size: 16px; font-weight: 400; color: var(--sub); text-decoration: none; transition: color 0.15s; }
+    .footer-links a:hover { color: var(--text); }
+
+    /* ── VALUATION VIEW ───────────────────────────── */
+    #valuation-view { display: none; }
+
+    .val-wrap {
+      max-width: 900px;
       margin: 0 auto;
+      padding: 0 24px 24px;
     }
 
-    .footer-inner {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
+    .val-intro {
       text-align: center;
+      padding: 18px 0 14px;
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.01em;
     }
 
-    .footer-contact {
-      font-size: 14px;
-      font-weight: 500;
-      letter-spacing: 0.06em;
+    /* ── TABLE SECTION ────────────────────────────── */
+    .val-table-section {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .val-panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--off);
+    }
+
+    .val-panel-head-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .val-panel-head span {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
       text-transform: uppercase;
       color: var(--muted);
     }
 
-    .footer-links { display: flex; gap: 20px; }
-
-    .footer-links a {
-      font-size: 16px;
-      font-weight: 400;
-      color: var(--sub);
-      text-decoration: none;
-      transition: color 0.15s;
+    .val-panel-head-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .footer-links a:hover { color: var(--text); }
+    .lock-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: 14px; padding: 3px 6px;
+      border-radius: 6px; color: var(--muted);
+      transition: background 0.15s, color 0.15s;
+      line-height: 1;
+    }
+    .lock-btn:hover { background: var(--border); color: var(--text); }
+
+    .add-btn, .export-btn {
+      display: none;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: white;
+      font-family: 'Roboto', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .add-btn:hover { border-color: var(--accent); }
+    .export-btn { border-color: var(--border); color: var(--sub); }
+    .export-btn:hover { border-color: var(--text); color: var(--text); }
+    .admin-visible { display: inline-flex !important; }
+
+    .val-table-scroll { max-height: calc(100vh - 520px); min-height: 160px; overflow-y: auto; }
+
+    .val-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+
+    .val-table thead th {
+      padding: 9px 14px;
+      text-align: left;
+      font-size: 11px; font-weight: 600;
+      color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+      background: white; position: sticky; top: 0; white-space: nowrap;
+    }
+
+    .val-table tbody tr:hover { background: var(--off); }
+
+    .val-table tbody td {
+      padding: 10px 14px;
+      color: var(--sub);
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle; white-space: nowrap;
+    }
+
+    .val-table tbody tr:last-child td { border-bottom: none; }
+    .td-ticker { font-weight: 600; color: var(--text) !important; }
+    .td-multi  { font-weight: 700; color: var(--text) !important; }
+    .td-source { font-size: 11px; color: var(--muted) !important; }
+
+    .del-btn {
+      display: none;
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); font-size: 14px; padding: 2px 6px;
+      border-radius: 4px; line-height: 1; transition: color 0.15s;
+    }
+    .del-btn:hover { color: #d44; }
+    .admin-visible-cell { display: table-cell !important; }
+
+    .val-empty { padding: 40px 16px; text-align: center; font-size: 14px; color: var(--muted); }
+
+    /* ── ANALYSIS CARDS ───────────────────────────── */
+    .val-analysis {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 640px) {
+      .val-analysis { grid-template-columns: 1fr; }
+    }
+
+    .val-card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+
+    .val-card-label {
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.07em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 8px;
+    }
+    .calc-card-label {
+      font-size: 14px; font-weight: 700;
+      letter-spacing: 0.01em; text-transform: none;
+      color: var(--text); margin-bottom: 12px;
+    }
+
+    .baseline-num {
+      font-size: 26px; font-weight: 700;
+      letter-spacing: -0.04em; color: var(--text); line-height: 1.2;
+    }
+    .baseline-sub { font-size: 13px; color: var(--muted); margin-top: 5px; }
+
+    .market-badge {
+      display: inline-block; padding: 3px 13px;
+      border-radius: 999px; font-size: 14px; font-weight: 600;
+    }
+    .badge-vgood    { background: #e6fdf3; color: #0a7a4e; }
+    .badge-good     { background: #fdf6e6; color: #7a5f0a; }
+    .badge-avg      { background: #fff0e6; color: #7a4010; }
+    .badge-bad      { background: #fde8e8; color: #7a1010; }
+    .badge-terrible { background: #1a1a1a; color: #fff; }
+
+    .market-desc { font-size: 13px; color: var(--sub); margin-top: 10px; line-height: 1.6; }
+
+    /* Calculator */
+    .calc-fields { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+    .calc-field { display: flex; flex-direction: column; gap: 4px; }
+    .calc-field label {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .calc-field input {
+      padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px;
+      font-family: 'Roboto', sans-serif; font-size: 14px; color: var(--text);
+      background: white; outline: none; transition: border-color 0.15s;
+    }
+    .calc-field input:focus { border-color: var(--accent); }
+
+    .calc-btn {
+      width: 100%; padding: 9px; background: var(--accent);
+      color: #1a1a1a; border: none; border-radius: 8px;
+      font-family: 'Roboto', sans-serif; font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: opacity 0.15s;
+    }
+    .calc-btn:hover { opacity: 0.85; }
+
+    /* ── CALC POPUP ──────────────────────────────────── */
+    #calc-popup {
+      display: none;
+      position: fixed;
+      z-index: 300;
+      background: #0d1117;
+      border: 1px solid rgba(64,255,175,0.22);
+      border-radius: 16px;
+      padding: 22px 24px 20px;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(64,255,175,0.08);
+    }
+    #calc-popup-close {
+      position: absolute;
+      top: 12px; right: 14px;
+      background: none; border: none;
+      cursor: pointer;
+      font-size: 20px;
+      color: rgba(255,255,255,0.3);
+      line-height: 1;
+      transition: color 0.15s;
+    }
+    #calc-popup-close:hover { color: var(--accent); }
+    .calc-popup-label {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 10px;
+      opacity: 0.75;
+    }
+    #calc-popup-main {
+      font-size: 20px; font-weight: 700;
+      letter-spacing: -0.02em; color: var(--accent);
+      margin-bottom: 14px;
+      line-height: 1.2;
+    }
+    #calc-popup-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.08);
+      margin-bottom: 12px;
+    }
+    #calc-popup-sub {
+      font-size: 12px; color: rgba(255,255,255,0.45);
+      line-height: 1.85;
+    }
+    #calc-popup-sub .pop-highlight {
+      color: rgba(255,255,255,0.8);
+      font-weight: 500;
+    }
+    #calc-popup-sub .pop-expected {
+      color: var(--accent);
+      font-weight: 600;
+    }
+    #pop-price-wrap { display: none; margin-top: 14px; }
+    #pop-price-divider { height:1px; background:rgba(255,255,255,0.06); margin-bottom:12px; }
+    .pop-price-label {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 8px; opacity: 0.75;
+    }
+    .pop-supply-btns { display: flex; gap: 6px; margin-bottom: 10px; }
+    .supply-btn {
+      flex: 1; background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 8px; color: rgba(255,255,255,0.55);
+      font-size: 12px; font-weight: 600; padding: 5px 0;
+      cursor: pointer; transition: all 0.15s; font-family: inherit;
+    }
+    .supply-btn:hover { border-color: rgba(64,255,175,0.4); color: var(--accent); }
+    .supply-btn.active { background: rgba(64,255,175,0.14); border-color: var(--accent); color: var(--accent); }
+    .supply-btn-input { flex: 1.2; }
+
+    /* Fixed-height content area — prevents popup resize */
+    #pop-price-content { height: 36px; display: flex; align-items: center; }
+    #pop-price-hint-el {
+      font-size: 11px; color: rgba(255,255,255,0.22); line-height: 1.4;
+    }
+    #pop-input-row {
+      display: none; width: 100%;
+      align-items: center; gap: 6px;
+    }
+    #pop-supply {
+      flex: 1; background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px; color: white;
+      font-size: 13px; padding: 5px 10px; outline: none;
+      font-family: inherit;
+    }
+    #pop-supply::placeholder { color: rgba(255,255,255,0.22); }
+    #pop-supply:focus { border-color: rgba(64,255,175,0.45); }
+    #pop-enter-btn {
+      background: var(--accent); border: none; border-radius: 8px;
+      color: #000; font-size: 14px; font-weight: 700;
+      padding: 5px 11px; cursor: pointer; line-height: 1;
+      flex-shrink: 0;
+    }
+    #pop-enter-btn:hover { opacity: 0.85; }
+    #pop-price-out {
+      display: none;
+      font-size: 22px; font-weight: 700;
+      color: var(--accent); letter-spacing: -0.02em;
+    }
+
+    /* ── MODALS ───────────────────────────────────── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,0.45); align-items: center;
+      justify-content: center; padding: 24px;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal-box {
+      background: white; border-radius: 16px; padding: 28px;
+      width: 100%; max-width: 400px;
+      box-shadow: 0 8px 48px rgba(0,0,0,0.18);
+      max-height: 90vh; overflow-y: auto;
+    }
+
+    .modal-title { font-size: 17px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 20px; }
+
+    .modal-fields { display: flex; flex-direction: column; gap: 12px; }
+    .modal-field { display: flex; flex-direction: column; gap: 4px; }
+    .modal-field label {
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted);
+    }
+    .modal-field input {
+      padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px;
+      font-family: 'Roboto', sans-serif; font-size: 14px; color: var(--text);
+      background: white; outline: none; transition: border-color 0.15s;
+    }
+    .modal-field input:focus { border-color: var(--accent); }
+    .modal-hint { font-size: 11px; color: var(--muted); }
+    .modal-error { font-size: 12px; color: #c44; margin-top: 6px; display: none; }
+    .modal-error.show { display: block; }
+
+    .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+    .modal-cancel {
+      padding: 8px 18px; border: 1px solid var(--border); border-radius: 8px;
+      background: white; font-family: 'Roboto', sans-serif; font-size: 14px;
+      font-weight: 500; color: var(--sub); cursor: pointer; transition: background 0.15s;
+    }
+    .modal-cancel:hover { background: var(--off); }
+
+    .modal-confirm {
+      padding: 8px 18px; border: none; border-radius: 8px; background: var(--accent);
+      font-family: 'Roboto', sans-serif; font-size: 14px; font-weight: 600;
+      color: var(--text); cursor: pointer; transition: opacity 0.15s;
+    }
+    .modal-confirm:hover { opacity: 0.85; }
   </style>
 </head>
 <body>
@@ -483,192 +590,845 @@
     <div class="header-inner">
       <a class="header-home" href="https://0xhieu.xyz">0xhieu.xyz</a>
       <nav>
-        <a href="#about">About</a>
-        <a href="#experience">Experience</a>
-        <a href="#highlights">Highlights</a>
+        <button class="nav-btn active" id="nav-cv-btn">CV</button>
+        <button class="nav-btn" id="nav-val-btn">Valuation</button>
+        <button class="nav-btn" disabled>Airdrop</button>
       </nav>
     </div>
   </header>
 
-  <main>
+  <!-- ── CV VIEW ─────────────────────────────────────── -->
+  <div id="cv-view">
+    <main>
 
-    <!-- ── HERO ────────────────────────────────────────── -->
-    <section class="hero">
-      <div class="hero-top">
-        <div class="pfp" id="pfp-wrap">
-          <!-- Shows PFP.png if it exists, otherwise shows "0x" placeholder -->
-          <img src="PFP.png" alt="0xhieu" onerror="this.parentNode.innerHTML='<div class=pfp-fallback>0x</div>'" />
+      <section class="hero" id="about">
+        <div class="hero-top">
+          <div class="pfp">
+            <img src="PFP.png" alt="0xhieu" onerror="this.parentNode.innerHTML='<div class=pfp-fallback>0x</div>'" />
+          </div>
+          <div class="hero-info">
+            <div class="hero-handle">0xhieu &nbsp;–&nbsp; Hieu Nguyen</div>
+            <div class="hero-location">Hanoi, Vietnam</div>
+          </div>
         </div>
-        <div class="hero-info">
-          <div class="hero-handle">0xhieu &nbsp;–&nbsp; Hieu Nguyen</div>
-          <div class="hero-name">Hanoi, Vietnam</div>
+        <div class="hero-tagline">Former crypto researcher, now creating content and building community.</div>
+        <div class="hero-desc">I highlight promising crypto projects, explaining how they work and why they matter. With a design background, I keep everything simple and easy to understand.</div>
+        <div class="socials">
+          <a class="social-btn" href="https://x.com/nguyen0xhieu" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.91-5.622Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            Twitter
+          </a>
+          <a class="social-btn" href="https://t.me/nguyen0xhieu" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+            Telegram
+          </a>
+          <a class="social-btn" href="https://mail.google.com/mail/?view=cm&to=kattyfury1403@gmail.com" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            Email
+          </a>
         </div>
-      </div>
-      <div class="hero-title">Crypto Content Creator, former Researcher</div>
-      <div class="hero-sub">I break down early-stage crypto projects so people can understand and get involved.</div>
-      <div class="socials">
-        <a class="social-btn" href="https://x.com/nguyen0xhieu" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.91-5.622Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-          Twitter
-        </a>
-        <a class="social-btn" href="https://t.me/nguyen0xhieu" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-          Telegram
-        </a>
-        <a class="social-btn" href="https://mail.google.com/mail/?view=cm&to=kattyfury1403@gmail.com" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-          Email
-        </a>
-      </div>
-    </section>
+      </section>
 
-    <!-- ── ABOUT ────────────────────────────────────────── -->
-    <section id="about">
-      <h2>About</h2>
-      <div class="about-body">
-        <ul class="about-list">
-          <li>Former crypto investment researcher, now building community and audience</li>
-          <li>I keep up with new projects, highlight the ones I find promising, and share how they work and why they matter</li>
-          <li>Design background helps me keep things simple and clear</li>
+      <section id="experience">
+        <h2>Experience</h2>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-year">2026</div>
+            <div class="tl-body">
+              <div class="tl-role">Community Builder</div>
+              <ul class="tl-bullets">
+                <li>Built a 450+ member Telegram community in Q1/2026: <a href="https://t.me/airdrop_1wallet" target="_blank" rel="noopener" style="color:var(--text);text-underline-offset:3px;">t.me/airdrop_1wallet</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-year">2025</div>
+            <div class="tl-body">
+              <div class="tl-role">Content Creator &amp; Contributor</div>
+              <ul class="tl-bullets">
+                <li>Content Creator: Built a 6,000+ audience on X in 1 year (airdrop niche), Ambassador of $RECALL, top Yapper of $NEWT $RECALL $MIRA $RLS $SENT $ZAMA</li>
+                <li>Contributor: OG contributor across projects like $SOMI $RECALL $RLS $ZAMA – drives attention and onboards users</li>
+              </ul>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-year">2023 – 2024</div>
+            <div class="tl-body">
+              <div class="tl-role">Investment Researcher</div>
+              <ul class="tl-bullets">
+                <li>Analyzed market structure and early-stage projects at <strong>VHG</strong> – supporting spot investment decisions</li>
+              </ul>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-year">2022</div>
+            <div class="tl-body">
+              <div class="tl-role">Crypto Markets</div>
+              <ul class="tl-bullets">
+                <li>Learned from a 10+ year crypto OG, ranked among top futures traders on Binance</li>
+              </ul>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-year">Pre-2022</div>
+            <div class="tl-body">
+              <div class="tl-role">Graphic Designer</div>
+              <ul class="tl-bullets">
+                <li>Designed visual content for <strong>HangFashion</strong> and <strong>Vietnamour</strong></li>
+                <li>Portfolio: <a href="https://www.behance.net/kattyfury" target="_blank" rel="noopener" style="color:var(--text);text-underline-offset:3px;">behance.net/kattyfury</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="highlights">
+        <h2>Highlights</h2>
+        <div id="highlights-grid"></div>
+      </section>
+
+      <section id="available">
+        <h2>Available for</h2>
+        <ul class="avail-list">
+          <li>Ambassador</li>
+          <li>Community Building &amp; Moderation</li>
+          <li>Content Collaborations</li>
         </ul>
+      </section>
+
+    </main>
+
+    <footer>
+      <div class="footer-inner">
+        <span class="footer-contact">Contact</span>
+        <div class="footer-links">
+          <a href="https://x.com/nguyen0xhieu" target="_blank" rel="noopener">Twitter</a>
+          <a href="https://t.me/nguyen0xhieu" target="_blank" rel="noopener">Telegram</a>
+          <a href="mailto:kattyfury1403@gmail.com">Email</a>
+        </div>
       </div>
-    </section>
+    </footer>
+  </div>
 
-    <!-- ── EXPERIENCE ───────────────────────────────────── -->
-    <section id="experience">
-      <h2>Experience</h2>
-      <div class="timeline">
+  <!-- ── VALUATION VIEW ────────────────────────────── -->
+  <div id="valuation-view">
+    <div class="val-wrap">
+      <div class="val-intro">Tracking altcoins to read market conditions</div>
 
-        <div class="tl-item">
-          <div class="tl-year">2026</div>
-          <div class="tl-body">
-            <div class="tl-role">Community Builder</div>
-            <ul class="tl-bullets">
-              <li>Built a 450+ member Telegram community in Q1/2026: <a href="https://t.me/airdrop_1wallet" target="_blank" rel="noopener" style="color:var(--text);text-underline-offset:3px;">t.me/airdrop_1wallet</a></li>
-            </ul>
+      <!-- TOP: TGE table -->
+      <div class="val-table-section">
+        <div class="val-panel-head">
+          <div class="val-panel-head-left">
+            <span>TGE Database</span>
+          </div>
+          <div class="val-panel-head-right">
+            <button class="export-btn" id="export-btn">↓ Export JSON</button>
+            <button class="add-btn" id="add-btn">+ Add</button>
+            <button class="lock-btn" id="lock-btn" title="Admin login">🔒</button>
           </div>
         </div>
-
-        <div class="tl-item">
-          <div class="tl-year">2025</div>
-          <div class="tl-body">
-            <div class="tl-role">Content Creator &amp; Contributor</div>
-            <ul class="tl-bullets">
-              <li>Content Creator: Built a 6,000+ audience on X in 1 year (airdrop niche), top Yapper of $NEWT $RECALL $MIRA $RLS $SENT $ZAMA</li>
-              <li>Contributor: OG contributor across projects like $SOMI $RECALL $RLS $ZAMA – drives attention and onboards users</li>
-            </ul>
-          </div>
+        <div class="val-table-scroll">
+          <table class="val-table">
+            <thead>
+              <tr>
+                <th>Ticker</th>
+                <th>TGE</th>
+                <th>VC Round FDV</th>
+                <th>Price at TGE</th>
+                <th>Multiple</th>
+                <th style="display:none" id="th-actions"></th>
+              </tr>
+            </thead>
+            <tbody id="tge-tbody"></tbody>
+          </table>
         </div>
-
-        <div class="tl-item">
-          <div class="tl-year">2023 – 2024</div>
-          <div class="tl-body">
-            <div class="tl-role">Investment Researcher</div>
-            <ul class="tl-bullets">
-              <li>Analyzed market structure and early-stage projects at <strong>VHG</strong> – supporting spot investment decisions</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="tl-item">
-          <div class="tl-year">2022</div>
-          <div class="tl-body">
-            <div class="tl-role">Crypto Markets</div>
-            <ul class="tl-bullets">
-              <li>Learned from a 10+ year crypto OG, ranked among top futures traders on Binance</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="tl-item">
-          <div class="tl-year">Pre-2022</div>
-          <div class="tl-body">
-            <div class="tl-role">Graphic Designer</div>
-            <ul class="tl-bullets">
-              <li>Designed visual content for <strong>HangFashion</strong> and <strong>Vietnamour</strong></li>
-              <li>Portfolio: <a href="https://www.behance.net/kattyfury" target="_blank" rel="noopener" style="color:var(--text);text-underline-offset:3px;">behance.net/kattyfury</a></li>
-            </ul>
-          </div>
-        </div>
-
       </div>
-    </section>
 
-    <!-- ── HIGHLIGHTS ───────────────────────────────────── -->
-    <section id="highlights">
-      <h2>Highlights</h2>
-      <div id="highlights-grid">
-        <!-- loaded from highlights.json -->
-      </div>
-    </section>
+      <!-- BOTTOM: Analysis cards — Market condition | Recent TGE multiples | Predict TGE FDV -->
+      <div class="val-analysis">
 
-    <!-- ── AVAILABLE FOR ────────────────────────────────── -->
-    <section id="available">
-      <h2>Available for</h2>
-      <ul class="avail-list">
-        <li>Ambassador</li>
-        <li>Community Building &amp; Moderation</li>
-        <li>Content Collaborations</li>
-      </ul>
-    </section>
+        <!-- 1. Market condition -->
+        <div class="val-card">
+          <div class="val-card-label">Market condition</div>
+          <div id="market-badge-wrap"><span class="market-badge badge-avg">—</span></div>
+          <div class="market-desc" id="market-desc">Need at least 3 entries to evaluate.</div>
+        </div>
 
-  </main>
+        <!-- 2. Recent TGE multiples — median emphasized as prediction -->
+        <div class="val-card">
+          <div class="val-card-label">Recent TGE multiples</div>
+          <div class="baseline-num" id="baseline-median">—</div>
+          <div class="baseline-sub" id="baseline-range">No data yet</div>
+        </div>
 
-  <!-- ── FOOTER ──────────────────────────────────────── -->
-  <footer>
-    <div class="footer-inner">
-      <span class="footer-contact">Contact</span>
-      <div class="footer-links">
-        <a href="https://x.com/nguyen0xhieu" target="_blank" rel="noopener">Twitter</a>
-        <a href="https://t.me/nguyen0xhieu" target="_blank" rel="noopener">Telegram</a>
-        <a href="mailto:kattyfury1403@gmail.com">Email</a>
+        <!-- 3. Predict TGE FDV -->
+        <div class="val-card" id="calc-card">
+          <div class="val-card-label calc-card-label">Predict TGE FDV</div>
+          <div class="calc-fields">
+            <div class="calc-field">
+              <label>Fundraising (M USD)</label>
+              <input type="number" id="calc-raise" step="0.1" />
+            </div>
+            <div class="calc-field">
+              <label>VC Allocation (%)</label>
+              <input type="number" id="calc-alloc" step="0.01" />
+            </div>
+          </div>
+          <button class="calc-btn" id="calc-btn">Calculate</button>
+        </div>
+
       </div>
     </div>
-  </footer>
+  </div>
 
-  <!-- Lightbox overlay -->
+  <!-- ── CALC POPUP ───────────────────────────────────── -->
+  <div id="calc-popup">
+    <button id="calc-popup-close">×</button>
+    <div class="calc-popup-label">Predicted TGE FDV</div>
+    <div id="calc-popup-main"></div>
+    <div id="calc-popup-divider"></div>
+    <div id="calc-popup-sub"></div>
+    <div id="pop-price-wrap">
+      <div id="pop-price-divider"></div>
+      <div class="pop-price-label">Token price</div>
+      <div class="pop-supply-btns">
+        <button class="supply-btn" data-val="1000000000">1B</button>
+        <button class="supply-btn" data-val="10000000000">10B</button>
+        <button class="supply-btn" data-val="100000000000">100B</button>
+        <button class="supply-btn supply-btn-input" id="supply-btn-custom">Input</button>
+      </div>
+      <!-- fixed-height area — only one child visible at a time -->
+      <div id="pop-price-content">
+        <div id="pop-price-hint-el">Enter total supply to calculate token price</div>
+        <div id="pop-input-row">
+          <input type="text" id="pop-supply" placeholder="e.g. 10B · 500M" />
+          <button id="pop-enter-btn">↵</button>
+        </div>
+        <div id="pop-price-out"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ADD MODAL ─────────────────────────────────── -->
+  <div class="modal-overlay" id="add-modal">
+    <div class="modal-box">
+      <div class="modal-title">Add TGE entry</div>
+      <div class="modal-fields">
+        <div class="modal-field">
+          <label>Ticker</label>
+          <input id="m-ticker" type="text" placeholder="e.g. TOKEN" />
+        </div>
+        <div class="modal-field">
+          <label>TGE Date</label>
+          <input id="m-date" type="date" />
+        </div>
+        <div class="modal-field">
+          <label>Fundraising (M USD)</label>
+          <input id="m-raise" type="number" step="0.1" />
+          <div class="modal-hint">Total raised across all rounds, in millions</div>
+        </div>
+        <div class="modal-field">
+          <label>VC Allocation (%)</label>
+          <input id="m-alloc" type="number" step="0.01" />
+          <div class="modal-hint">% of total supply allocated to investors</div>
+        </div>
+        <div class="modal-field">
+          <label>Total Supply</label>
+          <input id="m-supply" type="text" placeholder="e.g. 10B, 500M, 1.5B" />
+          <div class="modal-hint">Supports shorthand: 10B = 10 billion, 500M = 500 million</div>
+        </div>
+        <div class="modal-field">
+          <label>Price at TGE (USD)</label>
+          <input id="m-price" type="number" step="any" placeholder="e.g. 1.23" />
+          <div class="modal-hint">Token price on TGE closing candle</div>
+        </div>
+      </div>
+      <div class="modal-error" id="add-error">Please fill in all fields correctly.</div>
+      <div class="modal-footer">
+        <button class="modal-cancel" id="add-cancel">Cancel</button>
+        <button class="modal-confirm" id="add-save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PASSWORD MODAL ────────────────────────────── -->
+  <div class="modal-overlay" id="pw-modal">
+    <div class="modal-box" style="max-width:320px;">
+      <div class="modal-title">Admin</div>
+      <div class="modal-fields">
+        <div class="modal-field">
+          <label>Password</label>
+          <input id="pw-input" type="password" placeholder="Enter password" />
+          <div class="modal-error" id="pw-error">Wrong password</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-cancel" id="pw-cancel">Cancel</button>
+        <button class="modal-confirm" id="pw-confirm">Login</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox -->
   <div id="lightbox">
     <button id="lightbox-close" aria-label="Close">&#x2715;</button>
     <img id="lightbox-img" src="" alt="" />
   </div>
 
   <script>
+    // ── ADMIN PASSWORD ────────────────────────────────
+    const ADMIN_PASSWORD = '161194';
+
+    // ── View switching ────────────────────────────────
+    const cvView    = document.getElementById('cv-view');
+    const valView   = document.getElementById('valuation-view');
+    const navCvBtn  = document.getElementById('nav-cv-btn');
+    const navValBtn = document.getElementById('nav-val-btn');
+
+    function showCV() {
+      cvView.style.display = '';
+      valView.style.display = 'none';
+      navCvBtn.classList.add('active');
+      navValBtn.classList.remove('active');
+    }
+
+    function showValuation() {
+      cvView.style.display = 'none';
+      valView.style.display = 'block';
+      navValBtn.classList.add('active');
+      navCvBtn.classList.remove('active');
+      renderAll();
+    }
+
+    navValBtn.addEventListener('click', showValuation);
+    navCvBtn.addEventListener('click', showCV);
+
+    // ── Admin mode ────────────────────────────────────
+    let isAdmin = sessionStorage.getItem('val_admin') === '1';
+
+    function applyAdminUI() {
+      const lockBtn   = document.getElementById('lock-btn');
+      const addBtn    = document.getElementById('add-btn');
+      const exportBtn = document.getElementById('export-btn');
+      const thActions = document.getElementById('th-actions');
+
+      if (isAdmin) {
+        lockBtn.textContent = '🔓';
+        addBtn.classList.add('admin-visible');
+        exportBtn.classList.add('admin-visible');
+        thActions.style.display = '';
+        document.querySelectorAll('#tge-tbody td:last-child').forEach(td => td.style.display = '');
+        document.querySelectorAll('.del-btn').forEach(b => b.style.display = 'inline');
+      } else {
+        lockBtn.textContent = '🔒';
+        addBtn.classList.remove('admin-visible');
+        exportBtn.classList.remove('admin-visible');
+        thActions.style.display = 'none';
+        document.querySelectorAll('#tge-tbody td:last-child').forEach(td => td.style.display = 'none');
+        document.querySelectorAll('.del-btn').forEach(b => b.style.display = 'none');
+      }
+    }
+
+    document.getElementById('lock-btn').addEventListener('click', () => {
+      if (isAdmin) {
+        isAdmin = false;
+        sessionStorage.removeItem('val_admin');
+        applyAdminUI();
+      } else {
+        openModal('pw-modal');
+        setTimeout(() => document.getElementById('pw-input').focus(), 50);
+      }
+    });
+
+    document.getElementById('pw-confirm').addEventListener('click', () => {
+      const val = document.getElementById('pw-input').value;
+      if (val === ADMIN_PASSWORD) {
+        isAdmin = true;
+        sessionStorage.setItem('val_admin', '1');
+        document.getElementById('pw-input').value = '';
+        document.getElementById('pw-error').classList.remove('show');
+        closeModal('pw-modal');
+        applyAdminUI();
+      } else {
+        document.getElementById('pw-error').classList.add('show');
+      }
+    });
+
+    document.getElementById('pw-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('pw-confirm').click();
+    });
+
+    document.getElementById('pw-cancel').addEventListener('click', () => {
+      document.getElementById('pw-input').value = '';
+      document.getElementById('pw-error').classList.remove('show');
+      closeModal('pw-modal');
+    });
+
+    // ── Data storage ──────────────────────────────────
+    const LS_KEY      = 'tge_local';
+    const LS_DELETED  = 'tge_deleted'; // blocklist of keys deleted by admin
+
+    function loadLocal()   {
+      try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; }
+      catch { return []; }
+    }
+    function saveLocal(arr) { localStorage.setItem(LS_KEY, JSON.stringify(arr)); }
+
+    function loadDeleted()  {
+      try { return new Set(JSON.parse(localStorage.getItem(LS_DELETED)) || []); }
+      catch { return new Set(); }
+    }
+    function saveDeleted(set) { localStorage.setItem(LS_DELETED, JSON.stringify([...set])); }
+
+    let publicData = [];
+
+    async function fetchPublicData() {
+      try {
+        const res = await fetch('tge-data.json', { cache: 'no-store' });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (Array.isArray(data)) publicData = data;
+      } catch {}
+    }
+
+    function allEntries() {
+      const local   = loadLocal();
+      const deleted = loadDeleted();
+      const seen    = new Set(publicData.map(e => e.ticker + e.tgeDate));
+      const extra   = local.filter(e => !seen.has(e.ticker + e.tgeDate));
+      return [...publicData, ...extra].filter(e => !deleted.has(e.ticker + e.tgeDate));
+    }
+
+    // ── Helpers ───────────────────────────────────────
+    function fmtFDV(n) {
+      if (n >= 1e9) return '$' + (n / 1e9).toFixed(2).replace(/\.?0+$/, '') + 'B';
+      if (n >= 1e6) return '$' + (n / 1e6).toFixed(1).replace(/\.?0+$/, '') + 'M';
+      if (n >= 1e3) return '$' + (n / 1e3).toFixed(0) + 'K';
+      return '$' + n;
+    }
+
+    function fmtDate(s) {
+      if (!s) return '—';
+      const [y, m, d] = s.split('-');
+      return `${d}/${m}/${y.slice(2)}`;
+    }
+
+    function fmtPrice(p) {
+      if (!p || p <= 0) return '—';
+      if (p >= 100)    return '$' + p.toFixed(2);
+      if (p >= 1)      return '$' + p.toFixed(2);
+      if (p >= 0.001)  return '$' + p.toFixed(4);
+      if (p >= 0.00001)return '$' + p.toFixed(6);
+      return '$' + p.toExponential(3);
+    }
+
+    // FDV from entry (supports both old fdvAtTGE and new priceTGE+totalSupply)
+    function entryFDV(e) {
+      if (e.priceTGE != null && e.totalSupply != null) return e.priceTGE * e.totalSupply;
+      return e.fdvAtTGE || 0;
+    }
+
+    function multiple(e) {
+      const fdv = entryFDV(e);
+      const vcFDV = e.fundraising / (e.vcAlloc / 100);
+      return vcFDV > 0 ? fdv / vcFDV : 0;
+    }
+
+    function median(arr) {
+      if (!arr.length) return null;
+      const s = [...arr].sort((a, b) => a - b);
+      const m = Math.floor(s.length / 2);
+      return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+    }
+
+    // Parse supply shorthand: "10B" → 10e9, "500M" → 500e6, "1.5T" → 1.5e12
+    function parseSupply(s) {
+      if (!s) return NaN;
+      const m = String(s).trim().match(/^([\d.]+)\s*([bBmMkKtT]?)$/);
+      if (!m) return NaN;
+      const n = parseFloat(m[1]);
+      const u = m[2].toUpperCase();
+      if (u === 'T') return n * 1e12;
+      if (u === 'B') return n * 1e9;
+      if (u === 'M') return n * 1e6;
+      if (u === 'K') return n * 1e3;
+      return n;
+    }
+
+    // ── Render table ──────────────────────────────────
+    function renderTable() {
+      const entries = allEntries();
+      const tbody = document.getElementById('tge-tbody');
+
+      if (!entries.length) {
+        tbody.innerHTML = '<tr><td colspan="6"><div class="val-empty">No data yet.</div></td></tr>';
+        applyAdminUI();
+        return;
+      }
+
+      const sorted    = [...entries].sort((a, b) => new Date(a.tgeDate) - new Date(b.tgeDate));
+      const local     = loadLocal();
+      const localKeys = new Set(local.map(e => e.ticker + e.tgeDate));
+
+      tbody.innerHTML = sorted.map(e => {
+        const vcFDV  = e.fundraising / (e.vcAlloc / 100);
+        const x      = multiple(e);
+        const price  = e.priceTGE != null ? fmtPrice(e.priceTGE) : '—';
+        const key    = e.ticker + e.tgeDate;
+        return `<tr>
+          <td class="td-ticker">$${e.ticker.toUpperCase()}</td>
+          <td>${fmtDate(e.tgeDate)}</td>
+          <td>${fmtFDV(vcFDV)}</td>
+          <td>${price}</td>
+          <td class="td-multi">×${x.toFixed(2)}</td>
+          <td style="display:none">
+            <button class="del-btn" data-key="${key}" data-local="${localKeys.has(key)}" style="display:none">×</button>
+          </td>
+        </tr>`;
+      }).join('');
+
+      tbody.querySelectorAll('.del-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const key     = btn.dataset.key;
+          const isLocal = btn.dataset.local === 'true';
+          if (isLocal) {
+            // Remove from localStorage additions
+            saveLocal(loadLocal().filter(e => (e.ticker + e.tgeDate) !== key));
+          } else {
+            // Add to blocklist so public entry is hidden
+            const del = loadDeleted();
+            del.add(key);
+            saveDeleted(del);
+          }
+          renderAll();
+        });
+      });
+
+      applyAdminUI();
+    }
+
+    // ── Render analysis ───────────────────────────────
+    function renderAnalysis() {
+      const entries  = allEntries();
+      const allMult  = entries.map(multiple).filter(m => isFinite(m) && m > 0);
+      const sorted   = [...entries].sort((a, b) => new Date(b.tgeDate) - new Date(a.tgeDate));
+      const recent   = sorted.slice(0, Math.min(5, sorted.length)).map(multiple).filter(m => isFinite(m) && m > 0);
+
+      // 1. Market condition (median of ALL entries)
+      const badgeWrap = document.getElementById('market-badge-wrap');
+      const descEl    = document.getElementById('market-desc');
+      if (allMult.length >= 3) {
+        const med = median(allMult);
+        let cls, label, desc;
+        if (med > 20)      { cls = 'badge-vgood';    label = 'Mania';     desc = `Median ×${med.toFixed(2)} — Euphoria. Every launch is flying, market is in full greed mode.`; }
+        else if (med > 10) { cls = 'badge-good';     label = 'Strong';    desc = `Median ×${med.toFixed(2)} — Strong launch regime. Projects TGE well above VC price consistently.`; }
+        else if (med > 5)  { cls = 'badge-avg';      label = 'Average';   desc = `Median ×${med.toFixed(2)} — Historical normal. Reasonable multiples, market is functional.`; }
+        else if (med > 2)  { cls = 'badge-bad';      label = 'Weak';      desc = `Median ×${med.toFixed(2)} — Most of current market. High rejection risk, TGE can easily fail.`; }
+        else               { cls = 'badge-terrible'; label = 'Very Poor'; desc = `Median ×${med.toFixed(2)} — Danger zone. TGE fail risk is high, market rejects new launches.`; }
+        badgeWrap.innerHTML = `<span class="market-badge ${cls}">${label}</span>`;
+        descEl.textContent  = desc;
+      } else {
+        badgeWrap.innerHTML = `<span class="market-badge badge-avg">—</span>`;
+        descEl.textContent  = `Need at least 3 entries to evaluate (currently ${allMult.length}).`;
+      }
+
+      // 2. Recent TGE multiples — median emphasized as prediction base
+      const medianEl  = document.getElementById('baseline-median');
+      const rangeEl   = document.getElementById('baseline-range');
+      if (recent.length >= 2) {
+        const med = median(recent);
+        medianEl.innerHTML = `Median <span style="color:var(--accent)">×${med.toFixed(2)}</span>`;
+        rangeEl.textContent = `Range ×${Math.min(...recent).toFixed(1)} – ×${Math.max(...recent).toFixed(1)} · ${recent.length} recent`;
+      } else if (recent.length === 1) {
+        medianEl.textContent = `×${recent[0].toFixed(2)}`;
+        rangeEl.textContent  = 'Add more data to get a range';
+      } else {
+        medianEl.textContent = '—';
+        rangeEl.textContent  = 'No data yet';
+      }
+    }
+
+    function renderAll() { renderTable(); renderAnalysis(); }
+
+    // ── Add modal ─────────────────────────────────────
+    function openModal(id)  { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    document.getElementById('add-btn').addEventListener('click', () => openModal('add-modal'));
+    document.getElementById('add-cancel').addEventListener('click', () => {
+      document.getElementById('add-error').classList.remove('show');
+      closeModal('add-modal');
+    });
+    document.getElementById('add-modal').addEventListener('click', e => { if (e.target.id === 'add-modal') closeModal('add-modal'); });
+    document.getElementById('pw-modal').addEventListener('click', e => { if (e.target.id === 'pw-modal') closeModal('pw-modal'); });
+
+    document.getElementById('add-save').addEventListener('click', () => {
+      const errEl = document.getElementById('add-error');
+      errEl.classList.remove('show');
+
+      const ticker      = document.getElementById('m-ticker').value.trim().replace(/^\$/, '').toUpperCase();
+      const tgeDate     = document.getElementById('m-date').value;
+      const fundraising = parseFloat(document.getElementById('m-raise').value) * 1e6;
+      const vcAlloc     = parseFloat(document.getElementById('m-alloc').value);
+      const totalSupply = parseSupply(document.getElementById('m-supply').value);
+      const priceTGE    = parseFloat(document.getElementById('m-price').value);
+
+      if (!ticker || !tgeDate || !fundraising || !vcAlloc || !(totalSupply > 0) || !(priceTGE > 0)) {
+        errEl.classList.add('show');
+        return;
+      }
+
+      const arr = loadLocal();
+      arr.push({ ticker, tgeDate, fundraising, vcAlloc, totalSupply, priceTGE });
+      saveLocal(arr);
+
+      ['m-ticker', 'm-date', 'm-raise', 'm-alloc', 'm-supply', 'm-price'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      closeModal('add-modal');
+      renderAll();
+    });
+
+    // ── Export JSON ───────────────────────────────────
+    document.getElementById('export-btn').addEventListener('click', () => {
+      const data = JSON.stringify(allEntries(), null, 2);
+      const blob = new Blob([data], { type: 'application/json' });
+      const a    = document.createElement('a');
+      a.href     = URL.createObjectURL(blob);
+      a.download = 'tge-data.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    // ── Weighted median ───────────────────────────────
+    function weightedMedian(items) {
+      // items: [{ value, weight }]
+      if (!items.length) return null;
+      const sorted = [...items].sort((a, b) => a.value - b.value);
+      const total  = sorted.reduce((s, x) => s + x.weight, 0);
+      let cum = 0;
+      for (const x of sorted) {
+        cum += x.weight;
+        if (cum >= total / 2) return x.value;
+      }
+      return sorted[sorted.length - 1].value;
+    }
+
+    // ── New prediction model ──────────────────────────
+    // Based on: last 5 projects, outlier removal (median×2.5),
+    // weighted median (newest=5), clamp, FDV penalty (k=0.23)
+    function predictFDV(raise, allocPct, entries) {
+      const vcFDV = raise / (allocPct / 100);
+
+      // Sort by date ascending, keep only valid entries
+      const valid = [...entries]
+        .map(e => ({ e, m: multiple(e) }))
+        .filter(({ m }) => isFinite(m) && m > 0 && m < 1000)
+        .sort((a, b) => new Date(a.e.tgeDate) - new Date(b.e.tgeDate));
+
+      if (valid.length < 2) return null;
+
+      // Select recent 5
+      const k      = Math.min(5, valid.length);
+      const recent = valid.slice(-k);
+
+      // Outlier removal: threshold = median(recent) * 2.5
+      const recentMults = recent.map(x => x.m);
+      const med5        = median(recentMults);
+      const thresh      = med5 * 2.5;
+
+      // Assign weights: oldest in window = 1, newest = 5
+      let cleanPairs = recent
+        .map((x, i) => ({ value: x.m, weight: i + 1 }))
+        .filter(p => p.value <= thresh);
+
+      // Expand backward if < 3 clean samples
+      if (cleanPairs.length < 3) {
+        const n       = valid.length;
+        const medAll  = median(valid.map(x => x.m));
+        const thrAll  = medAll * 2.5;
+        const allPairs = valid.map((x, i) => ({
+          value:  x.m,
+          weight: Math.max(1, Math.round(1 + 4 * i / Math.max(1, n - 1)))
+        })).filter(p => p.value <= thrAll);
+
+        cleanPairs = allPairs.length >= 3 ? allPairs
+          : valid.map((x, i) => ({
+              value:  x.m,
+              weight: Math.max(1, Math.round(1 + 4 * i / Math.max(1, n - 1)))
+            })).filter(p => p.value > 0);
+      }
+
+      if (!cleanPairs.length) return null;
+
+      // Weighted median
+      const wMed = weightedMedian(cleanPairs);
+
+      // Clamp to [min(clean), max(clean)]
+      const cleanValues = cleanPairs.map(p => p.value);
+      const minC = Math.min(...cleanValues);
+      const maxC = Math.max(...cleanValues);
+      const clamped = Math.max(minC, Math.min(maxC, wMed));
+
+      // FDV penalty: final = clamped / (1 + 0.23 * log10(vcFDV / 1e8))
+      const penalty  = 1 + 0.23 * Math.log10(vcFDV / 1e8);
+      const safeP    = Math.max(0.1, penalty);
+      const finalMult = clamped / safeP;
+
+      const exp = vcFDV * finalMult;
+      const lo  = vcFDV * minC / safeP;
+      const hi  = vcFDV * maxC / safeP;
+
+      const adjPct  = Math.round((1 / safeP - 1) * 100);
+      const adjSign = adjPct >= 0 ? '+' : '';
+      const note    = `${adjSign}${adjPct}% FDV adj · ${valid.length} data pts`;
+
+      return { exp, lo, hi, note };
+    }
+
+    // ── Price formatter ───────────────────────────────
+    function fmtTokenPrice(p) {
+      if (p >= 1)       return '$' + p.toFixed(2);
+      if (p >= 0.01)    return '$' + p.toFixed(4);
+      if (p >= 0.0001)  return '$' + p.toFixed(6);
+      return '$' + p.toExponential(3);
+    }
+
+    // ── Calculator ────────────────────────────────────
+    const calcPopup = document.getElementById('calc-popup');
+    let _popFDV = { lo: 0, hi: 0, exp: 0 };
+
+    const elHint     = document.getElementById('pop-price-hint-el');
+    const elInputRow = document.getElementById('pop-input-row');
+    const elPriceOut = document.getElementById('pop-price-out');
+    const elSupply   = document.getElementById('pop-supply');
+
+    function setPriceState(state) { // 'hint' | 'input' | 'price'
+      elHint.style.display     = state === 'hint'  ? 'block' : 'none';
+      elInputRow.style.display = state === 'input' ? 'flex'  : 'none';
+      elPriceOut.style.display = state === 'price' ? 'block' : 'none';
+    }
+
+    function resetPriceSection() {
+      elSupply.value = '';
+      elPriceOut.textContent = '';
+      document.querySelectorAll('.supply-btn').forEach(b => b.classList.remove('active'));
+      setPriceState('hint');
+    }
+
+    function showPopupPrice(supply) {
+      if (!supply || supply <= 0 || !_popFDV.exp) return;
+      elPriceOut.textContent = fmtTokenPrice(_popFDV.exp / supply);
+      setPriceState('price');
+    }
+
+    function closeCalcPopup() {
+      calcPopup.style.display = 'none';
+      resetPriceSection();
+    }
+
+    document.getElementById('calc-popup-close').addEventListener('click', closeCalcPopup);
+    document.addEventListener('click', e => {
+      if (calcPopup.style.display === 'block'
+          && !calcPopup.contains(e.target)
+          && e.target.id !== 'calc-btn') {
+        closeCalcPopup();
+      }
+    });
+
+    function confirmSupply() {
+      const s = parseSupply(elSupply.value);
+      if (s > 0) showPopupPrice(s);
+    }
+
+    // Preset & Input buttons
+    document.querySelectorAll('.supply-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.supply-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        if (btn.id === 'supply-btn-custom') {
+          setPriceState('input');
+          elSupply.value = '';
+          elSupply.focus();
+        } else {
+          showPopupPrice(parseFloat(btn.dataset.val));
+        }
+      });
+    });
+
+    document.getElementById('pop-enter-btn').addEventListener('click', confirmSupply);
+    elSupply.addEventListener('keydown', e => { if (e.key === 'Enter') confirmSupply(); });
+
+    document.getElementById('calc-btn').addEventListener('click', () => {
+      const raise = parseFloat(document.getElementById('calc-raise').value) * 1e6;
+      const alloc = parseFloat(document.getElementById('calc-alloc').value);
+      if (!raise || !alloc || alloc <= 0) return;
+
+      const entries   = allEntries();
+      const result    = predictFDV(raise, alloc, entries);
+
+      const mainEl    = document.getElementById('calc-popup-main');
+      const subEl     = document.getElementById('calc-popup-sub');
+      const priceWrap = document.getElementById('pop-price-wrap');
+
+      if (!result) {
+        const vcFDV = raise / (alloc / 100);
+        mainEl.textContent = fmtFDV(vcFDV);
+        subEl.textContent  = 'Not enough data to predict.';
+        priceWrap.style.display = 'none';
+        _popFDV = { lo: vcFDV, hi: vcFDV, exp: vcFDV };
+      } else {
+        const { exp, lo, hi, note } = result;
+        _popFDV = { lo, hi, exp };
+
+        mainEl.textContent = `${fmtFDV(lo)} – ${fmtFDV(hi)}`;
+
+        const [adjPart, dataPart] = note.split(' · ');
+        subEl.innerHTML =
+          `<span class="pop-highlight">${adjPart} · ${dataPart}</span><br>` +
+          `Expected <span class="pop-expected">${fmtFDV(exp)}</span>`;
+
+        priceWrap.style.display = 'block';
+        resetPriceSection();
+      }
+
+      // Position popup exactly over the calc card
+      const card = document.getElementById('calc-card');
+      const rect = card.getBoundingClientRect();
+      calcPopup.style.top       = rect.top + 'px';
+      calcPopup.style.left      = rect.left + 'px';
+      calcPopup.style.width     = rect.width + 'px';
+      calcPopup.style.minHeight = rect.height + 'px';
+      calcPopup.style.display   = 'block';
+    });
+
     // ── Lightbox ──────────────────────────────────────
-    const lb     = document.getElementById('lightbox');
-    const lbImg  = document.getElementById('lightbox-img');
+    const lb      = document.getElementById('lightbox');
+    const lbImg   = document.getElementById('lightbox-img');
     const lbClose = document.getElementById('lightbox-close');
 
     function openLightbox(src, alt) {
-      lbImg.src = src;
-      lbImg.alt = alt || '';
+      lbImg.src = src; lbImg.alt = alt || '';
       lb.classList.add('open');
       document.body.style.overflow = 'hidden';
     }
-
     function closeLightbox() {
       lb.classList.remove('open');
       document.body.style.overflow = '';
     }
-
     lb.addEventListener('click', closeLightbox);
     lbImg.addEventListener('click', e => e.stopPropagation());
     lbClose.addEventListener('click', closeLightbox);
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
-    // ── Load highlights from highlights.json ──────────
-    // To add a new highlight:
-    //   1. Put the image file inside the "highlights/" folder
-    //   2. Open highlights.json and add an entry:
-    //      { "src": "highlights/your-image.png", "caption": "Your caption here" }
-    //   3. Re-upload the folder to Cloudflare Pages
+    // ── Load highlights ───────────────────────────────
     (async () => {
       const grid = document.getElementById('highlights-grid');
       try {
         const res = await fetch('highlights.json');
-        if (!res.ok) throw new Error('not found');
+        if (!res.ok) throw new Error();
         const items = await res.json();
-        if (!Array.isArray(items) || items.length === 0) throw new Error('empty');
-
+        if (!Array.isArray(items) || !items.length) throw new Error();
         items.forEach(({ src, caption }) => {
           const card = document.createElement('div');
           card.className = 'hl-card';
@@ -676,7 +1436,6 @@
             <img src="${src}" alt="${caption || ''}" loading="lazy" />
             ${caption ? `<div class="hl-caption">${caption}</div>` : ''}
           `;
-          // click to zoom
           card.querySelector('img').addEventListener('click', function() {
             openLightbox(this.src, this.alt);
           });
@@ -685,6 +1444,13 @@
       } catch {
         grid.innerHTML = '<div class="hl-empty">Highlights coming soon.</div>';
       }
+    })();
+
+    // ── Init ─────────────────────────────────────────
+    (async () => {
+      await fetchPublicData();
+      renderAll();
+      applyAdminUI();
     })();
   </script>
 
