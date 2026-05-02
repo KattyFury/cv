@@ -506,14 +506,9 @@
     .supply-btn.active { background: rgba(64,255,175,0.14); border-color: var(--accent); color: var(--accent); }
     .supply-btn-input { flex: 1.2; }
 
-    /* Fixed-height content area — prevents popup resize */
-    #pop-price-content { height: 36px; display: flex; align-items: center; }
-    #pop-price-hint-el {
-      font-size: 11px; color: rgba(255,255,255,0.22); line-height: 1.4;
-    }
     #pop-input-row {
       display: none; width: 100%;
-      align-items: center; gap: 6px;
+      align-items: center; gap: 6px; margin-top: 2px;
     }
     #pop-supply {
       flex: 1; background: rgba(255,255,255,0.07);
@@ -533,8 +528,9 @@
     #pop-enter-btn:hover { opacity: 0.85; }
     #pop-price-out {
       display: none;
-      font-size: 22px; font-weight: 700;
-      color: var(--accent); letter-spacing: -0.02em;
+      font-size: 18px; font-weight: 700;
+      color: var(--accent); letter-spacing: -0.01em;
+      margin-top: 8px;
     }
 
     /* ── MODALS ───────────────────────────────────── */
@@ -758,11 +754,13 @@
           <div class="market-desc" id="market-desc">Need at least 3 entries to evaluate.</div>
         </div>
 
-        <!-- 2. Recent TGE multiples — median emphasized as prediction -->
+        <!-- 2. Recent TGE multiples — split Low / High FDV -->
         <div class="val-card">
           <div class="val-card-label">Recent TGE multiples</div>
-          <div class="baseline-num" id="baseline-median">—</div>
-          <div class="baseline-sub" id="baseline-range">No data yet</div>
+          <div class="baseline-sub" style="margin-bottom:3px">Low FDV Median</div>
+          <div class="baseline-num" id="baseline-low">—</div>
+          <div class="baseline-sub" style="margin-bottom:3px;margin-top:10px">High FDV Median</div>
+          <div class="baseline-num" id="baseline-high">—</div>
         </div>
 
         <!-- 3. Predict TGE FDV -->
@@ -794,22 +792,18 @@
     <div id="calc-popup-sub"></div>
     <div id="pop-price-wrap">
       <div id="pop-price-divider"></div>
-      <div class="pop-price-label">Token price</div>
+      <div class="pop-price-label">Enter total supply to calculate token price</div>
       <div class="pop-supply-btns">
         <button class="supply-btn" data-val="1000000000">1B</button>
         <button class="supply-btn" data-val="10000000000">10B</button>
         <button class="supply-btn" data-val="100000000000">100B</button>
         <button class="supply-btn supply-btn-input" id="supply-btn-custom">Input</button>
       </div>
-      <!-- fixed-height area — only one child visible at a time -->
-      <div id="pop-price-content">
-        <div id="pop-price-hint-el">Enter total supply to calculate token price</div>
-        <div id="pop-input-row">
-          <input type="text" id="pop-supply" placeholder="e.g. 10B · 500M" />
-          <button id="pop-enter-btn">↵</button>
-        </div>
-        <div id="pop-price-out"></div>
+      <div id="pop-input-row">
+        <input type="text" id="pop-supply" placeholder="e.g. 10B · 500M" />
+        <button id="pop-enter-btn">↵</button>
       </div>
+      <div id="pop-price-out"></div>
     </div>
   </div>
 
@@ -1123,15 +1117,20 @@
     // ── Render analysis ───────────────────────────────
     function renderAnalysis() {
       const entries  = allEntries();
-      const allMult  = entries.map(multiple).filter(m => isFinite(m) && m > 0);
       const sorted   = [...entries].sort((a, b) => new Date(b.tgeDate) - new Date(a.tgeDate));
-      const recent   = sorted.slice(0, Math.min(5, sorted.length)).map(multiple).filter(m => isFinite(m) && m > 0);
 
-      // 1. Market condition — 3 most recent, outlier removal, median
-      const badgeWrap = document.getElementById('market-badge-wrap');
-      const descEl    = document.getElementById('market-desc');
-      const recent3   = sorted.slice(0, Math.min(3, sorted.length))
-                               .map(e => multiple(e)).filter(m => isFinite(m) && m > 0);
+      // 1. Market condition — 3 most recent non-spike projects, outlier removal, median
+      const badgeWrap  = document.getElementById('market-badge-wrap');
+      const descEl     = document.getElementById('market-desc');
+      const SPIKE_THRESH = 20; // filter out pump-and-dump TGEs (>20x)
+      const recent3 = [];
+      for (const e of sorted) {
+        const m = multiple(e);
+        if (isFinite(m) && m > 0 && m <= SPIKE_THRESH) {
+          recent3.push(m);
+          if (recent3.length >= 3) break;
+        }
+      }
       if (recent3.length >= 3) {
         // Outlier removal: if one value > 2× avg of the other two, drop it
         let clean = recent3;
@@ -1154,20 +1153,21 @@
         descEl.textContent  = 'Need at least 3 entries to evaluate.';
       }
 
-      // 2. Recent TGE multiples — median emphasized as prediction base
-      const medianEl  = document.getElementById('baseline-median');
-      const rangeEl   = document.getElementById('baseline-range');
-      if (recent.length >= 2) {
-        const med = median(recent);
-        medianEl.innerHTML = `Median <span style="color:var(--accent)">×${med.toFixed(2)}</span>`;
-        rangeEl.textContent = `Range ×${Math.min(...recent).toFixed(1)} – ×${Math.max(...recent).toFixed(1)} · ${recent.length} recent`;
-      } else if (recent.length === 1) {
-        medianEl.textContent = `×${recent[0].toFixed(2)}`;
-        rangeEl.textContent  = 'Add more data to get a range';
-      } else {
-        medianEl.textContent = '—';
-        rangeEl.textContent  = 'No data yet';
-      }
+      // 2. Recent TGE multiples — split Low FDV (<$300M entry) vs High FDV (≥$300M entry)
+      const FDV_SPLIT = 300e6;
+      const allSorted = [...entries].sort((a, b) => new Date(b.tgeDate) - new Date(a.tgeDate));
+      const lowFDVMults = allSorted
+        .filter(e => (e.fundraising / (e.vcAlloc / 100)) < FDV_SPLIT)
+        .slice(0, 10).map(multiple).filter(m => isFinite(m) && m > 0);
+      const highFDVMults = allSorted
+        .filter(e => (e.fundraising / (e.vcAlloc / 100)) >= FDV_SPLIT)
+        .slice(0, 10).map(multiple).filter(m => isFinite(m) && m > 0);
+      const lowEl  = document.getElementById('baseline-low');
+      const highEl = document.getElementById('baseline-high');
+      lowEl.innerHTML  = lowFDVMults.length
+        ? `<span style="color:var(--accent)">×${median(lowFDVMults).toFixed(2)}</span>` : '—';
+      highEl.innerHTML = highFDVMults.length
+        ? `<span style="color:var(--accent)">×${median(highFDVMults).toFixed(2)}</span>` : '—';
     }
 
     function renderAll() { renderTable(); renderAnalysis(); }
@@ -1309,74 +1309,90 @@
       return sorted[sorted.length - 1].value;
     }
 
-    // ── New prediction model ──────────────────────────
-    // Based on: last 5 projects, outlier removal (median×2.5),
-    // weighted median (newest=5), clamp, FDV penalty (k=0.23)
+    // ── MODEL D: Regime-Aware Compression ────────────
     function predictFDV(raise, allocPct, entries) {
       const vcFDV = raise / (allocPct / 100);
 
-      // Sort by date ascending, keep only valid entries
+      // Valid entries sorted newest-first
       const valid = [...entries]
         .map(e => ({ e, m: multiple(e) }))
         .filter(({ m }) => isFinite(m) && m > 0 && m < 1000)
-        .sort((a, b) => new Date(a.e.tgeDate) - new Date(b.e.tgeDate));
+        .sort((a, b) => new Date(b.e.tgeDate) - new Date(a.e.tgeDate));
 
       if (valid.length < 2) return null;
 
-      // Select recent 5
-      const k      = Math.min(5, valid.length);
-      const recent = valid.slice(-k);
-
-      // Outlier removal: threshold = median(recent) * 2.5
-      const recentMults = recent.map(x => x.m);
-      const med5        = median(recentMults);
-      const thresh      = med5 * 2.5;
-
-      // Assign weights: oldest in window = 1, newest = 5
-      let cleanPairs = recent
-        .map((x, i) => ({ value: x.m, weight: i + 1 }))
-        .filter(p => p.value <= thresh);
-
-      // Expand backward if < 3 clean samples
-      if (cleanPairs.length < 3) {
-        const n       = valid.length;
-        const medAll  = median(valid.map(x => x.m));
-        const thrAll  = medAll * 2.5;
-        const allPairs = valid.map((x, i) => ({
-          value:  x.m,
-          weight: Math.max(1, Math.round(1 + 4 * i / Math.max(1, n - 1)))
-        })).filter(p => p.value <= thrAll);
-
-        cleanPairs = allPairs.length >= 3 ? allPairs
-          : valid.map((x, i) => ({
-              value:  x.m,
-              weight: Math.max(1, Math.round(1 + 4 * i / Math.max(1, n - 1)))
-            })).filter(p => p.value > 0);
+      // STEP 1 — Detect market regime from last 5 projects
+      const win5 = valid.slice(0, Math.min(5, valid.length)).map(x => x.m);
+      let trimmed = win5;
+      if (win5.length >= 3) {
+        const s5 = [...win5].sort((a, b) => a - b);
+        trimmed = s5.slice(1, s5.length - 1); // remove min and max
       }
+      const signal = median(trimmed) || median(win5);
 
-      if (!cleanPairs.length) return null;
+      let regime;
+      if (signal > 15)     regime = 'Very Strong';
+      else if (signal > 8) regime = 'Strong';
+      else if (signal > 4) regime = 'Neutral';
+      else if (signal > 2) regime = 'Weak';
+      else                 regime = 'Very Weak';
 
-      // Weighted median
-      const wMed = weightedMedian(cleanPairs);
+      // STEP 2 — Regime-based sampling (entries that match this regime)
+      const regimeBounds = {
+        'Very Strong': [15, Infinity],
+        'Strong':      [8, 15],
+        'Neutral':     [4, 8],
+        'Weak':        [2, 4],
+        'Very Weak':   [0, 2],
+      };
+      const [rLo, rHi] = regimeBounds[regime];
+      let sample = valid.filter(x => x.m >= rLo && x.m < rHi).map(x => x.m);
+      if (sample.length < 3) sample = valid.map(x => x.m); // fallback: all
 
-      // Clamp to [min(clean), max(clean)]
-      const cleanValues = cleanPairs.map(p => p.value);
-      const minC = Math.min(...cleanValues);
-      const maxC = Math.max(...cleanValues);
-      const clamped = Math.max(minC, Math.min(maxC, wMed));
+      // STEP 3 — Dynamic outlier cap (regime-specific ceiling)
+      const capMap = { 'Very Strong': 50, 'Strong': 30, 'Neutral': 20, 'Weak': 12, 'Very Weak': 8 };
+      let filtered = sample.filter(m => m <= capMap[regime]);
+      if (!filtered.length) filtered = sample;
 
-      // FDV penalty: final = clamped / (1 + 0.23 * log10(vcFDV / 1e8))
-      const penalty  = 1 + 0.23 * Math.log10(vcFDV / 1e8);
-      const safeP    = Math.max(0.1, penalty);
-      const finalMult = clamped / safeP;
+      // STEP 4 — Distribution filter (median × regime multiplier)
+      const distMap = { 'Very Strong': 3.0, 'Strong': 2.5, 'Neutral': 2.3, 'Weak': 2.0, 'Very Weak': 1.8 };
+      const distThresh = (median(filtered) || 1) * distMap[regime];
+      let clean = filtered.filter(m => m <= distThresh);
+      if (clean.length < 2) clean = filtered;
 
+      // STEP 5 — Weighted median (newest = weight 5, oldest = 1)
+      const cleanWeighted = clean.map((m, i) => ({ value: m, weight: Math.max(1, 5 - i) }));
+      const wMed = weightedMedian(cleanWeighted);
+
+      // STEP 6 — Clamp
+      const minC = Math.min(...clean);
+      const maxC = Math.max(...clean);
+      const base_mult = Math.max(minC, Math.min(maxC, wMed));
+
+      // STEP 7 — Market compression
+      const mktMap = { 'Very Strong': 1.10, 'Strong': 1.00, 'Neutral': 0.85, 'Weak': 0.70, 'Very Weak': 0.55 };
+      const compressed = base_mult * mktMap[regime];
+
+      // STEP 8 — FDV penalty (log-based, regime k)
+      const kMap = { 'Very Strong': 0.18, 'Strong': 0.23, 'Neutral': 0.30, 'Weak': 0.45, 'Very Weak': 0.65 };
+      const approxTGE   = compressed * vcFDV;
+      const base_penalty = 1 + kMap[regime] * Math.log10(Math.max(1, approxTGE / 1e8));
+      const safeP = Math.max(0.1, base_penalty);
+
+      // STEP 9 — Liquidity cliff (extra penalty above $1B TGE FDV)
+      const cliff = approxTGE > 1e9
+        ? 1 + 0.25 * Math.log10(approxTGE / 1e9)
+        : 1;
+      const safeCliff = Math.max(1, cliff);
+
+      // STEP 10 — Final multiple
+      const finalMult = compressed / (safeP * safeCliff);
+
+      // STEP 11 — Outputs
       const exp = vcFDV * finalMult;
-      const lo  = vcFDV * minC / safeP;
-      const hi  = vcFDV * maxC / safeP;
-
-      const adjPct  = Math.round((1 / safeP - 1) * 100);
-      const adjSign = adjPct >= 0 ? '+' : '';
-      const note    = `${adjSign}${adjPct}% FDV adj · ${valid.length} data pts`;
+      const lo  = vcFDV * Math.max(0.05, minC * mktMap[regime] / (safeP * safeCliff));
+      const hi  = vcFDV * (maxC * mktMap[regime] / (safeP * safeCliff));
+      const note = `${regime} regime · ${valid.length} data pts`;
 
       return { exp, lo, hi, note };
     }
@@ -1393,28 +1409,22 @@
     const calcPopup = document.getElementById('calc-popup');
     let _popFDV = { lo: 0, hi: 0, exp: 0 };
 
-    const elHint     = document.getElementById('pop-price-hint-el');
     const elInputRow = document.getElementById('pop-input-row');
     const elPriceOut = document.getElementById('pop-price-out');
     const elSupply   = document.getElementById('pop-supply');
 
-    function setPriceState(state) { // 'hint' | 'input' | 'price'
-      elHint.style.display     = state === 'hint'  ? 'block' : 'none';
-      elInputRow.style.display = state === 'input' ? 'flex'  : 'none';
-      elPriceOut.style.display = state === 'price' ? 'block' : 'none';
-    }
-
     function resetPriceSection() {
       elSupply.value = '';
-      elPriceOut.textContent = '';
+      elPriceOut.style.display = 'none';
+      elInputRow.style.display = 'none';
       document.querySelectorAll('.supply-btn').forEach(b => b.classList.remove('active'));
-      setPriceState('hint');
     }
 
     function showPopupPrice(supply) {
       if (!supply || supply <= 0 || !_popFDV.exp) return;
-      elPriceOut.textContent = fmtTokenPrice(_popFDV.exp / supply);
-      setPriceState('price');
+      elInputRow.style.display = 'none';
+      elPriceOut.textContent   = 'TOKEN PRICE = ' + fmtTokenPrice(_popFDV.exp / supply);
+      elPriceOut.style.display = 'block';
     }
 
     function closeCalcPopup() {
@@ -1442,7 +1452,8 @@
         document.querySelectorAll('.supply-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         if (btn.id === 'supply-btn-custom') {
-          setPriceState('input');
+          elPriceOut.style.display = 'none';
+          elInputRow.style.display = 'flex';
           elSupply.value = '';
           elSupply.focus();
         } else {
