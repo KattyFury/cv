@@ -1142,16 +1142,16 @@
         }
         const med = median(clean);
         let cls, label, desc;
-        if (med > 15)     { cls = 'badge-vgood';    label = 'Rất tốt';    desc = 'uptrend mạnh'; }
-        else if (med > 8) { cls = 'badge-good';     label = 'Tốt';        desc = 'uptrend'; }
-        else if (med > 4) { cls = 'badge-avg';      label = 'Trung bình'; desc = 'thanh khoản tốt'; }
-        else if (med > 2) { cls = 'badge-bad';      label = 'Xấu';        desc = 'thanh khoản yếu'; }
-        else              { cls = 'badge-terrible'; label = 'Rất xấu';    desc = 'cạn kiệt thanh khoản'; }
+        if (med > 15)     { cls = 'badge-vgood';    label = 'Very Good'; desc = 'Strong uptrend'; }
+        else if (med > 8) { cls = 'badge-good';     label = 'Good';      desc = 'Uptrend'; }
+        else if (med > 4) { cls = 'badge-avg';      label = 'Average';   desc = 'Good liquidity'; }
+        else if (med > 2) { cls = 'badge-bad';      label = 'Weak';      desc = 'Weak liquidity'; }
+        else              { cls = 'badge-terrible'; label = 'Very Poor'; desc = 'Liquidity exhausted'; }
         badgeWrap.innerHTML = `<span class="market-badge ${cls}">${label}</span>`;
         descEl.textContent  = desc;
       } else {
         badgeWrap.innerHTML = `<span class="market-badge badge-avg">—</span>`;
-        descEl.textContent  = `Cần ít nhất 3 dự án để đánh giá.`;
+        descEl.textContent  = 'Need at least 3 entries to evaluate.';
       }
 
       // 2. Recent TGE multiples — median emphasized as prediction base
