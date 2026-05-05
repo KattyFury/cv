@@ -403,15 +403,23 @@
     }
     .baseline-sub { font-size: 13px; color: var(--muted); margin-top: 5px; }
 
-    .market-badge {
-      display: inline-block; padding: 3px 13px;
-      border-radius: 999px; font-size: 14px; font-weight: 600;
+    .market-levels {
+      display: flex; gap: 4px; margin-top: 12px;
     }
-    .badge-vgood    { background: #e6fdf3; color: #0a7a4e; }
-    .badge-good     { background: #fdf6e6; color: #7a5f0a; }
-    .badge-avg      { background: #fff0e6; color: #7a4010; }
-    .badge-bad      { background: #fde8e8; color: #7a1010; }
-    .badge-terrible { background: #1a1a1a; color: #fff; }
+    .mkt-lvl {
+      flex: 1; text-align: center; padding: 7px 2px;
+      border-radius: 8px; font-size: 10.5px; font-weight: 500;
+      color: var(--muted); opacity: 0.28;
+      letter-spacing: 0.02em; line-height: 1.2;
+      transition: opacity 0.2s, font-weight 0.2s;
+      white-space: nowrap;
+    }
+    .mkt-lvl.mkt-active { opacity: 1; font-weight: 700; font-size: 11px; }
+    .mkt-lvl[data-lvl="0"].mkt-active { background: #e6fdf3; color: #0a7a4e; }
+    .mkt-lvl[data-lvl="1"].mkt-active { background: #eef9e8; color: #2a7a1a; }
+    .mkt-lvl[data-lvl="2"].mkt-active { background: #fdf6e6; color: #7a5f0a; }
+    .mkt-lvl[data-lvl="3"].mkt-active { background: #fde8e8; color: #7a1010; }
+    .mkt-lvl[data-lvl="4"].mkt-active { background: #1c1c1c; color: #fff; }
 
     .split-box {
       display: flex; align-items: stretch;
@@ -781,7 +789,13 @@
               <div class="split-lbl">Mid-term<br><span id="market-mid-n"></span></div>
             </div>
           </div>
-          <div id="market-badge-wrap" style="margin-top:12px"><span class="market-badge badge-avg">—</span></div>
+          <div class="market-levels" id="market-levels">
+            <div class="mkt-lvl" data-lvl="0">Uptrend</div>
+            <div class="mkt-lvl" data-lvl="1">Good</div>
+            <div class="mkt-lvl" data-lvl="2">Normal</div>
+            <div class="mkt-lvl" data-lvl="3">Weak</div>
+            <div class="mkt-lvl" data-lvl="4">Dead</div>
+          </div>
         </div>
 
         <!-- 2. Recent TGE multiples — split Low / High FDV -->
@@ -1159,7 +1173,6 @@
       const sorted   = [...entries].sort((a, b) => new Date(b.tgeDate) - new Date(a.tgeDate));
 
       // 1. Market condition — short-term (4) + mid-term (8, reduce to 6 if span >60d)
-      const badgeWrap  = document.getElementById('market-badge-wrap');
       const splitBox   = document.getElementById('market-terms');
       const shortValEl = document.getElementById('market-short-val');
       const shortNEl   = document.getElementById('market-short-n');
@@ -1185,21 +1198,19 @@
       const midValues = validM.slice(0, midN).map(x => x.m);
       const midMed    = median(midValues);
 
+      // Set active segment on the 5-level indicator
+      const lvlIdx = shortMed > 15 ? 0 : shortMed > 8 ? 1 : shortMed > 4 ? 2 : shortMed > 2 ? 3 : 4;
+      document.querySelectorAll('#market-levels .mkt-lvl').forEach((el, i) => {
+        el.classList.toggle('mkt-active', i === lvlIdx);
+      });
+
       if (short4.length >= 4) {
-        let cls, label;
-        if      (shortMed > 15) { cls = 'badge-vgood';    label = 'Very Good'; }
-        else if (shortMed > 8)  { cls = 'badge-good';     label = 'Good'; }
-        else if (shortMed > 4)  { cls = 'badge-avg';      label = 'Average'; }
-        else if (shortMed > 2)  { cls = 'badge-bad';      label = 'Weak'; }
-        else                    { cls = 'badge-terrible'; label = 'Very Poor'; }
-        badgeWrap.innerHTML   = `<span class="market-badge ${cls}">${label}</span>`;
         splitBox.style.display = '';
         shortValEl.textContent = `×${shortMed.toFixed(2)}`;
         shortNEl.textContent   = `${short4.length} deals`;
         midValEl.textContent   = midValues.length >= 2 ? `×${midMed.toFixed(2)}` : '—';
         midNEl.textContent     = midValues.length >= 2 ? `${midN} deals` : '';
       } else {
-        badgeWrap.innerHTML    = `<span class="market-badge badge-avg">—</span>`;
         splitBox.style.display = 'none';
       }
 
