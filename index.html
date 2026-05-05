@@ -413,26 +413,26 @@
     .badge-bad      { background: #fde8e8; color: #7a1010; }
     .badge-terrible { background: #1a1a1a; color: #fff; }
 
-    .market-terms {
-      display: flex; align-items: stretch; gap: 0;
+    .split-box {
+      display: flex; align-items: stretch;
       margin-top: 12px; border: 1px solid var(--border);
       border-radius: 10px; overflow: hidden;
     }
-    .market-term-col {
+    .split-col {
       flex: 1; padding: 10px 12px;
       display: flex; flex-direction: column; gap: 3px;
     }
-    .market-term-divider { width: 1px; background: var(--border); flex-shrink: 0; }
-    .market-term-val {
+    .split-divider { width: 1px; background: var(--border); flex-shrink: 0; }
+    .split-val {
       font-size: 20px; font-weight: 700;
       letter-spacing: -0.03em; color: var(--text); line-height: 1;
     }
-    .market-term-lbl {
+    .split-lbl {
       font-size: 11px; font-weight: 500;
       color: var(--muted); text-transform: uppercase;
       letter-spacing: 0.05em; line-height: 1.4;
     }
-    .market-term-lbl span { font-weight: 400; text-transform: none; letter-spacing: 0; }
+    .split-lbl span { font-weight: 400; text-transform: none; letter-spacing: 0; }
 
     /* Calculator */
     .calc-fields { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
@@ -769,28 +769,35 @@
 
         <!-- 1. Market condition -->
         <div class="val-card">
-          <div class="val-card-label">Market condition</div>
+          <div class="val-card-label calc-card-label">Market condition</div>
           <div id="market-badge-wrap"><span class="market-badge badge-avg">—</span></div>
-          <div class="market-terms" id="market-terms" style="display:none">
-            <div class="market-term-col">
-              <div class="market-term-val" id="market-short-val">—</div>
-              <div class="market-term-lbl">Short-term<br><span id="market-short-n"></span></div>
+          <div class="split-box" id="market-terms" style="display:none">
+            <div class="split-col">
+              <div class="split-val" id="market-short-val">—</div>
+              <div class="split-lbl">Short-term<br><span id="market-short-n"></span></div>
             </div>
-            <div class="market-term-divider"></div>
-            <div class="market-term-col">
-              <div class="market-term-val" id="market-mid-val">—</div>
-              <div class="market-term-lbl">Mid-term<br><span id="market-mid-n"></span></div>
+            <div class="split-divider"></div>
+            <div class="split-col">
+              <div class="split-val" id="market-mid-val">—</div>
+              <div class="split-lbl">Mid-term<br><span id="market-mid-n"></span></div>
             </div>
           </div>
         </div>
 
         <!-- 2. Recent TGE multiples — split Low / High FDV -->
         <div class="val-card">
-          <div class="val-card-label">Recent TGE multiples</div>
-          <div class="baseline-sub" style="margin-bottom:3px">Low FDV Median</div>
-          <div class="baseline-num" id="baseline-low">—</div>
-          <div class="baseline-sub" style="margin-bottom:3px;margin-top:10px">High FDV Median</div>
-          <div class="baseline-num" id="baseline-high">—</div>
+          <div class="val-card-label calc-card-label">Recent TGE multiples</div>
+          <div class="split-box">
+            <div class="split-col">
+              <div class="split-val" id="baseline-low">—</div>
+              <div class="split-lbl">Low FDV<br><span>Median</span></div>
+            </div>
+            <div class="split-divider"></div>
+            <div class="split-col">
+              <div class="split-val" id="baseline-high">—</div>
+              <div class="split-lbl">High FDV<br><span>Median</span></div>
+            </div>
+          </div>
         </div>
 
         <!-- 3. Predict TGE FDV -->
@@ -1153,7 +1160,7 @@
 
       // 1. Market condition — short-term (4) + mid-term (8, reduce to 6 if span >60d)
       const badgeWrap  = document.getElementById('market-badge-wrap');
-      const termsWrap  = document.getElementById('market-terms');
+      const splitBox   = document.getElementById('market-terms');
       const shortValEl = document.getElementById('market-short-val');
       const shortNEl   = document.getElementById('market-short-n');
       const midValEl   = document.getElementById('market-mid-val');
@@ -1185,15 +1192,15 @@
         else if (shortMed > 4)  { cls = 'badge-avg';      label = 'Average'; }
         else if (shortMed > 2)  { cls = 'badge-bad';      label = 'Weak'; }
         else                    { cls = 'badge-terrible'; label = 'Very Poor'; }
-        badgeWrap.innerHTML    = `<span class="market-badge ${cls}">${label}</span>`;
-        termsWrap.style.display = '';
+        badgeWrap.innerHTML   = `<span class="market-badge ${cls}">${label}</span>`;
+        splitBox.style.display = '';
         shortValEl.textContent = `×${shortMed.toFixed(2)}`;
         shortNEl.textContent   = `${short4.length} deals`;
         midValEl.textContent   = midValues.length >= 2 ? `×${midMed.toFixed(2)}` : '—';
         midNEl.textContent     = midValues.length >= 2 ? `${midN} deals` : '';
       } else {
-        badgeWrap.innerHTML     = `<span class="market-badge badge-avg">—</span>`;
-        termsWrap.style.display = 'none';
+        badgeWrap.innerHTML    = `<span class="market-badge badge-avg">—</span>`;
+        splitBox.style.display = 'none';
       }
 
       // 2. Recent TGE multiples — split Low FDV (<$300M entry) vs High FDV (≥$300M entry)
@@ -1207,10 +1214,8 @@
         .slice(0, 10).map(multiple).filter(m => isFinite(m) && m > 0);
       const lowEl  = document.getElementById('baseline-low');
       const highEl = document.getElementById('baseline-high');
-      lowEl.innerHTML  = lowFDVMults.length
-        ? `<span style="color:var(--accent)">×${median(lowFDVMults).toFixed(2)}</span>` : '—';
-      highEl.innerHTML = highFDVMults.length
-        ? `<span style="color:var(--accent)">×${median(highFDVMults).toFixed(2)}</span>` : '—';
+      lowEl.textContent  = lowFDVMults.length  ? `×${median(lowFDVMults).toFixed(2)}`  : '—';
+      highEl.textContent = highFDVMults.length ? `×${median(highFDVMults).toFixed(2)}` : '—';
     }
 
     function renderAll() { renderTable(); renderAnalysis(); }
