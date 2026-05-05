@@ -413,7 +413,26 @@
     .badge-bad      { background: #fde8e8; color: #7a1010; }
     .badge-terrible { background: #1a1a1a; color: #fff; }
 
-    .market-term { font-size: 12px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+    .market-terms {
+      display: flex; align-items: stretch; gap: 0;
+      margin-top: 12px; border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden;
+    }
+    .market-term-col {
+      flex: 1; padding: 10px 12px;
+      display: flex; flex-direction: column; gap: 3px;
+    }
+    .market-term-divider { width: 1px; background: var(--border); flex-shrink: 0; }
+    .market-term-val {
+      font-size: 20px; font-weight: 700;
+      letter-spacing: -0.03em; color: var(--text); line-height: 1;
+    }
+    .market-term-lbl {
+      font-size: 11px; font-weight: 500;
+      color: var(--muted); text-transform: uppercase;
+      letter-spacing: 0.05em; line-height: 1.4;
+    }
+    .market-term-lbl span { font-weight: 400; text-transform: none; letter-spacing: 0; }
 
     /* Calculator */
     .calc-fields { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
@@ -752,8 +771,17 @@
         <div class="val-card">
           <div class="val-card-label">Market condition</div>
           <div id="market-badge-wrap"><span class="market-badge badge-avg">—</span></div>
-          <div class="market-term" id="market-short"></div>
-          <div class="market-term" id="market-mid"></div>
+          <div class="market-terms" id="market-terms" style="display:none">
+            <div class="market-term-col">
+              <div class="market-term-val" id="market-short-val">—</div>
+              <div class="market-term-lbl">Short-term<br><span id="market-short-n"></span></div>
+            </div>
+            <div class="market-term-divider"></div>
+            <div class="market-term-col">
+              <div class="market-term-val" id="market-mid-val">—</div>
+              <div class="market-term-lbl">Mid-term<br><span id="market-mid-n"></span></div>
+            </div>
+          </div>
         </div>
 
         <!-- 2. Recent TGE multiples — split Low / High FDV -->
@@ -1124,9 +1152,12 @@
       const sorted   = [...entries].sort((a, b) => new Date(b.tgeDate) - new Date(a.tgeDate));
 
       // 1. Market condition — short-term (4) + mid-term (8, reduce to 6 if span >60d)
-      const badgeWrap = document.getElementById('market-badge-wrap');
-      const shortEl   = document.getElementById('market-short');
-      const midEl     = document.getElementById('market-mid');
+      const badgeWrap  = document.getElementById('market-badge-wrap');
+      const termsWrap  = document.getElementById('market-terms');
+      const shortValEl = document.getElementById('market-short-val');
+      const shortNEl   = document.getElementById('market-short-n');
+      const midValEl   = document.getElementById('market-mid-val');
+      const midNEl     = document.getElementById('market-mid-n');
 
       // Valid multiples sorted newest → oldest
       const validM = sorted
@@ -1154,15 +1185,15 @@
         else if (shortMed > 4)  { cls = 'badge-avg';      label = 'Average'; }
         else if (shortMed > 2)  { cls = 'badge-bad';      label = 'Weak'; }
         else                    { cls = 'badge-terrible'; label = 'Very Poor'; }
-        badgeWrap.innerHTML   = `<span class="market-badge ${cls}">${label}</span>`;
-        shortEl.textContent   = `Ngắn hạn (median ${short4.length} dự án): ×${shortMed.toFixed(2)}`;
-        midEl.textContent     = midValues.length >= 2
-          ? `Trung hạn (median ${midN} dự án): ×${midMed.toFixed(2)}`
-          : '';
+        badgeWrap.innerHTML    = `<span class="market-badge ${cls}">${label}</span>`;
+        termsWrap.style.display = '';
+        shortValEl.textContent = `×${shortMed.toFixed(2)}`;
+        shortNEl.textContent   = `${short4.length} deals`;
+        midValEl.textContent   = midValues.length >= 2 ? `×${midMed.toFixed(2)}` : '—';
+        midNEl.textContent     = midValues.length >= 2 ? `${midN} deals` : '';
       } else {
-        badgeWrap.innerHTML = `<span class="market-badge badge-avg">—</span>`;
-        shortEl.textContent = 'Need at least 4 entries to evaluate.';
-        midEl.textContent   = '';
+        badgeWrap.innerHTML     = `<span class="market-badge badge-avg">—</span>`;
+        termsWrap.style.display = 'none';
       }
 
       // 2. Recent TGE multiples — split Low FDV (<$300M entry) vs High FDV (≥$300M entry)
