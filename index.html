@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -874,6 +875,35 @@
   </div>
 
   <script>
+    // ── SUPABASE ──────────────────────────────────────
+    const _sb = supabase.createClient(
+      'https://qtiwpckulrbjgsomckow.supabase.co',
+      'sb_publishable__NaFgk3owzCHL-MAvRv4Vg_mdcyv5qo'
+    );
+
+    // Map DB row → JS entry
+    function dbToEntry(row) {
+      return {
+        ticker:      row.ticker,
+        tgeDate:     row.tge_date,
+        fundraising: Number(row.fundraising),
+        vcAlloc:     Number(row.vc_alloc),
+        totalSupply: Number(row.total_supply),
+        priceTGE:    Number(row.price_tge),
+      };
+    }
+    // Map JS entry → DB row
+    function entryToDb(e) {
+      return {
+        ticker:       e.ticker,
+        tge_date:     e.tgeDate,
+        fundraising:  e.fundraising,
+        vc_alloc:     e.vcAlloc,
+        total_supply: e.totalSupply,
+        price_tge:    e.priceTGE,
+      };
+    }
+
     // ── ADMIN PASSWORD ────────────────────────────────
     const ADMIN_PASSWORD = '161194';
 
@@ -962,68 +992,18 @@
       closeModal('pw-modal');
     });
 
-    // ── Data storage ──────────────────────────────────
-    const LS_KEY      = 'tge_local';
-    const LS_DELETED  = 'tge_deleted'; // blocklist of keys deleted by admin
-
-    function loadLocal()   {
-      try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; }
-      catch { return []; }
-    }
-    function saveLocal(arr) { localStorage.setItem(LS_KEY, JSON.stringify(arr)); }
-
-    function loadDeleted()  {
-      try { return new Set(JSON.parse(localStorage.getItem(LS_DELETED)) || []); }
-      catch { return new Set(); }
-    }
-    function saveDeleted(set) { localStorage.setItem(LS_DELETED, JSON.stringify([...set])); }
-
-    let publicData = [];
+    // ── Data layer — Supabase ─────────────────────────
+    let publicData = [];  // in-memory cache of tge_entries table
 
     async function fetchPublicData() {
-      try {
-        const res = await fetch('tge-data.json', { cache: 'no-store' });
-        if (!res.ok) return;
-        const data = await res.json();
-        if (Array.isArray(data)) publicData = data;
-      } catch {}
+      const { data, error } = await _sb
+        .from('tge_entries')
+        .select('*')
+        .order('tge_date', { ascending: true });
+      if (!error && data) publicData = data.map(dbToEntry);
     }
 
-    function allEntries() {
-      const local   = loadLocal();
-      const deleted = loadDeleted();
-      // Public entries that haven't been deleted or replaced by an edit
-      const publicActive    = publicData.filter(e => !deleted.has(e.ticker + e.tgeDate));
-      const activePublicKeys = new Set(publicActive.map(e => e.ticker + e.tgeDate));
-      // Local entries: new additions + edited replacements of deleted public entries
-      // (a local entry whose key matches an ACTIVE public entry is a stale duplicate — skip it)
-      const localExtra = local.filter(e => !activePublicKeys.has(e.ticker + e.tgeDate));
-      return [...publicActive, ...localExtra];
-    }
-
-    // ── Auto-save to tge-data.json (local server only) ───
-    // When running via server.js, any admin change is written to disk immediately.
-    // On GitHub Pages the POST fails silently — localStorage acts as fallback.
-    async function saveToDisk() {
-      const FIELDS = ['ticker','tgeDate','fundraising','vcAlloc','totalSupply','priceTGE'];
-      const payload = allEntries()
-        .sort((a, b) => new Date(a.tgeDate) - new Date(b.tgeDate))
-        .map(e => Object.fromEntries(FIELDS.map(k => [k, e[k]])));
-      try {
-        const res = await fetch('/save-tge', {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify(payload),
-        });
-        if (res.ok) {
-          // Saved to disk — clear localStorage (disk is now the source of truth)
-          localStorage.removeItem(LS_KEY);
-          localStorage.removeItem(LS_DELETED);
-          await fetchPublicData();   // re-read the just-written file
-        }
-      } catch { /* server unavailable — localStorage already has the change */ }
-      renderAll();
-    }
+    function allEntries() { return publicData; }
 
     // ── Helpers ───────────────────────────────────────
     function fmtFDV(n) {
@@ -1092,17 +1072,13 @@
         return;
       }
 
-      const sorted    = [...entries].sort((a, b) => new Date(a.tgeDate) - new Date(b.tgeDate));
-      const local     = loadLocal();
-      const localKeys = new Set(local.map(e => e.ticker + e.tgeDate));
+      const sorted = [...entries].sort((a, b) => new Date(a.tgeDate) - new Date(b.tgeDate));
 
       tbody.innerHTML = sorted.map(e => {
-        const vcFDV  = e.fundraising / (e.vcAlloc / 100);
-        const x      = multiple(e);
-        const price  = e.priceTGE != null ? fmtPrice(e.priceTGE) : '—';
-        const key    = e.ticker + e.tgeDate;
-        const isLoc  = localKeys.has(key);
-        // Store entry data as JSON on button for edit
+        const vcFDV     = e.fundraising / (e.vcAlloc / 100);
+        const x         = multiple(e);
+        const price     = e.priceTGE != null ? fmtPrice(e.priceTGE) : '—';
+        const key       = e.ticker + e.tgeDate;
         const entryJson = encodeURIComponent(JSON.stringify(e));
         return `<tr>
           <td class="td-ticker">$${e.ticker.toUpperCase()}</td>
@@ -1112,23 +1088,22 @@
           <td class="td-multi">×${x.toFixed(2)}</td>
           <td style="display:none">
             <button class="edit-btn" data-entry="${entryJson}" style="display:none">✎</button>
-            <button class="del-btn"  data-key="${key}" data-local="${isLoc}" style="display:none">×</button>
+            <button class="del-btn"  data-key="${key}" style="display:none">×</button>
           </td>
         </tr>`;
       }).join('');
 
       tbody.querySelectorAll('.del-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const key     = btn.dataset.key;
-          const isLocal = btn.dataset.local === 'true';
-          if (isLocal) {
-            saveLocal(loadLocal().filter(e => (e.ticker + e.tgeDate) !== key));
-          } else {
-            const del = loadDeleted();
-            del.add(key);
-            saveDeleted(del);
-          }
-          saveToDisk();
+        btn.addEventListener('click', async () => {
+          const key   = btn.dataset.key;
+          const entry = publicData.find(e => e.ticker + e.tgeDate === key);
+          if (!entry) return;
+          btn.disabled = true;
+          await _sb.from('tge_entries').delete()
+            .eq('ticker', entry.ticker)
+            .eq('tge_date', entry.tgeDate);
+          await fetchPublicData();
+          renderAll();
         });
       });
 
@@ -1254,7 +1229,7 @@
       });
     });
 
-    document.getElementById('add-save').addEventListener('click', () => {
+    document.getElementById('add-save').addEventListener('click', async () => {
       const errEl = document.getElementById('add-error');
 
       const fields = {
@@ -1293,28 +1268,40 @@
         Object.entries(fields).map(([k, v]) => [k, v.val])
       );
 
-      // Edit mode: delete old entry first
+      // Edit mode: delete old entry first (ticker or date may have changed)
       if (_editKey) {
-        const publicKeys = new Set(publicData.map(e => e.ticker + e.tgeDate));
-        if (publicKeys.has(_editKey)) {
-          const del = loadDeleted(); del.add(_editKey); saveDeleted(del);
-        } else {
-          saveLocal(loadLocal().filter(e => (e.ticker + e.tgeDate) !== _editKey));
+        const old = publicData.find(e => e.ticker + e.tgeDate === _editKey);
+        if (old) {
+          await _sb.from('tge_entries').delete()
+            .eq('ticker', old.ticker).eq('tge_date', old.tgeDate);
         }
       }
 
-      const arr = loadLocal();
-      arr.push({ ticker, tgeDate, fundraising, vcAlloc, totalSupply, priceTGE });
-      saveLocal(arr);
+      // Insert new / updated entry
+      const { error: insErr } = await _sb.from('tge_entries').insert([
+        entryToDb({ ticker, tgeDate, fundraising, vcAlloc, totalSupply, priceTGE })
+      ]);
 
+      if (insErr) {
+        const errEl = document.getElementById('add-error');
+        errEl.textContent = insErr.message || 'Save failed.';
+        errEl.classList.add('show');
+        return;
+      }
+
+      await fetchPublicData();
       resetModal();
       closeModal('add-modal');
-      saveToDisk();
+      renderAll();
     });
 
     // ── Export JSON ───────────────────────────────────
     document.getElementById('export-btn').addEventListener('click', () => {
-      const data = JSON.stringify(allEntries(), null, 2);
+      const FIELDS = ['ticker','tgeDate','fundraising','vcAlloc','totalSupply','priceTGE'];
+      const data = JSON.stringify(
+        allEntries().map(e => Object.fromEntries(FIELDS.map(k => [k, e[k]]))),
+        null, 2
+      );
       const blob = new Blob([data], { type: 'application/json' });
       const a    = document.createElement('a');
       a.href     = URL.createObjectURL(blob);
