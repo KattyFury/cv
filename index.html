@@ -413,7 +413,7 @@
     .badge-bad      { background: #fde8e8; color: #7a1010; }
     .badge-terrible { background: #1a1a1a; color: #fff; }
 
-    .market-desc { font-size: 13px; color: var(--sub); margin-top: 10px; line-height: 1.6; }
+    .market-term { font-size: 12px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
 
     /* Calculator */
     .calc-fields { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
@@ -752,7 +752,8 @@
         <div class="val-card">
           <div class="val-card-label">Market condition</div>
           <div id="market-badge-wrap"><span class="market-badge badge-avg">—</span></div>
-          <div class="market-desc" id="market-desc">Need at least 3 entries to evaluate.</div>
+          <div class="market-term" id="market-short"></div>
+          <div class="market-term" id="market-mid"></div>
         </div>
 
         <!-- 2. Recent TGE multiples — split Low / High FDV -->
@@ -1122,38 +1123,46 @@
       const entries  = allEntries();
       const sorted   = [...entries].sort((a, b) => new Date(b.tgeDate) - new Date(a.tgeDate));
 
-      // 1. Market condition — 3 most recent non-spike projects, outlier removal, median
-      const badgeWrap  = document.getElementById('market-badge-wrap');
-      const descEl     = document.getElementById('market-desc');
-      const SPIKE_THRESH = 20; // filter out pump-and-dump TGEs (>20x)
-      const recent3 = [];
-      for (const e of sorted) {
-        const m = multiple(e);
-        if (isFinite(m) && m > 0 && m <= SPIKE_THRESH) {
-          recent3.push(m);
-          if (recent3.length >= 3) break;
-        }
+      // 1. Market condition — short-term (4) + mid-term (8, reduce to 6 if span >60d)
+      const badgeWrap = document.getElementById('market-badge-wrap');
+      const shortEl   = document.getElementById('market-short');
+      const midEl     = document.getElementById('market-mid');
+
+      // Valid multiples sorted newest → oldest
+      const validM = sorted
+        .map(e => ({ m: multiple(e), date: e.tgeDate }))
+        .filter(x => isFinite(x.m) && x.m > 0);
+
+      // Short-term: 4 most recent, no outlier removal
+      const short4    = validM.slice(0, 4).map(x => x.m);
+      const shortMed  = median(short4);
+
+      // Mid-term: 8 most recent; if 8th entry is >60 days older than 1st → use 6
+      let midN = Math.min(8, validM.length);
+      if (validM.length >= 8) {
+        const spanDays = (new Date(validM[0].date) - new Date(validM[7].date))
+          / (1000 * 60 * 60 * 24);
+        if (spanDays > 60) midN = 6;
       }
-      if (recent3.length >= 3) {
-        // Outlier removal: if one value > 2× avg of the other two, drop it
-        let clean = recent3;
-        for (let i = 0; i < recent3.length; i++) {
-          const others = recent3.filter((_, j) => j !== i);
-          const avgOthers = others.reduce((s, v) => s + v, 0) / others.length;
-          if (recent3[i] > 2 * avgOthers) { clean = others; break; }
-        }
-        const med = median(clean);
-        let cls, label, desc;
-        if (med > 15)     { cls = 'badge-vgood';    label = 'Very Good'; desc = 'Strong uptrend'; }
-        else if (med > 8) { cls = 'badge-good';     label = 'Good';      desc = 'Uptrend'; }
-        else if (med > 4) { cls = 'badge-avg';      label = 'Average';   desc = 'Good liquidity'; }
-        else if (med > 2) { cls = 'badge-bad';      label = 'Weak';      desc = 'Weak liquidity'; }
-        else              { cls = 'badge-terrible'; label = 'Very Poor'; desc = 'Liquidity exhausted'; }
-        badgeWrap.innerHTML = `<span class="market-badge ${cls}">${label}</span>`;
-        descEl.textContent  = desc;
+      const midValues = validM.slice(0, midN).map(x => x.m);
+      const midMed    = median(midValues);
+
+      if (short4.length >= 4) {
+        let cls, label;
+        if      (shortMed > 15) { cls = 'badge-vgood';    label = 'Very Good'; }
+        else if (shortMed > 8)  { cls = 'badge-good';     label = 'Good'; }
+        else if (shortMed > 4)  { cls = 'badge-avg';      label = 'Average'; }
+        else if (shortMed > 2)  { cls = 'badge-bad';      label = 'Weak'; }
+        else                    { cls = 'badge-terrible'; label = 'Very Poor'; }
+        badgeWrap.innerHTML   = `<span class="market-badge ${cls}">${label}</span>`;
+        shortEl.textContent   = `Ngắn hạn (median ${short4.length} dự án): ×${shortMed.toFixed(2)}`;
+        midEl.textContent     = midValues.length >= 2
+          ? `Trung hạn (median ${midN} dự án): ×${midMed.toFixed(2)}`
+          : '';
       } else {
         badgeWrap.innerHTML = `<span class="market-badge badge-avg">—</span>`;
-        descEl.textContent  = 'Need at least 3 entries to evaluate.';
+        shortEl.textContent = 'Need at least 4 entries to evaluate.';
+        midEl.textContent   = '';
       }
 
       // 2. Recent TGE multiples — split Low FDV (<$300M entry) vs High FDV (≥$300M entry)
