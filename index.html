@@ -1313,25 +1313,33 @@
         Object.entries(fields).map(([k, v]) => [k, v.val])
       );
 
-      // Edit mode: delete old entry first (ticker or date may have changed)
+      const errEl  = document.getElementById('add-error');
+      const newRow = entryToDb({ ticker, tgeDate, fundraising, vcAlloc, totalSupply, priceTGE });
+
       if (_editKey) {
-        const old = publicData.find(e => e.ticker + e.tgeDate === _editKey);
-        if (old) {
-          await _sb.from('tge_entries').delete()
-            .eq('ticker', old.ticker).eq('tge_date', old.tgeDate);
+        const old    = publicData.find(e => e.ticker + e.tgeDate === _editKey);
+        const newKey = ticker + tgeDate;
+
+        if (old && _editKey === newKey) {
+          // Same ticker+date → safe UPDATE (no delete needed)
+          const { error: updErr } = await _sb.from('tge_entries')
+            .update(newRow)
+            .eq('ticker', old.ticker)
+            .eq('tge_date', old.tgeDate);
+          if (updErr) { errEl.textContent = updErr.message || 'Update failed.'; errEl.classList.add('show'); return; }
+        } else {
+          // Key changed → INSERT first, only delete old if insert succeeded
+          const { error: insErr } = await _sb.from('tge_entries').insert([newRow]);
+          if (insErr) { errEl.textContent = insErr.message || 'Save failed.'; errEl.classList.add('show'); return; }
+          if (old) {
+            await _sb.from('tge_entries').delete()
+              .eq('ticker', old.ticker).eq('tge_date', old.tgeDate);
+          }
         }
-      }
-
-      // Insert new / updated entry
-      const { error: insErr } = await _sb.from('tge_entries').insert([
-        entryToDb({ ticker, tgeDate, fundraising, vcAlloc, totalSupply, priceTGE })
-      ]);
-
-      if (insErr) {
-        const errEl = document.getElementById('add-error');
-        errEl.textContent = insErr.message || 'Save failed.';
-        errEl.classList.add('show');
-        return;
+      } else {
+        // New entry → INSERT
+        const { error: insErr } = await _sb.from('tge_entries').insert([newRow]);
+        if (insErr) { errEl.textContent = insErr.message || 'Save failed.'; errEl.classList.add('show'); return; }
       }
 
       await fetchPublicData();
