@@ -246,6 +246,87 @@
     /* ── VALUATION VIEW ───────────────────────────── */
     #valuation-view { display: none; }
 
+    /* ── AIRDROP VIEW ────────────────────────────── */
+    #airdrop-view { display: none; }
+
+    .airdrop-subtabs-bar {
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 4px;
+    }
+    .airdrop-subtabs {
+      display: flex; gap: 0;
+      max-width: 900px; margin: 0 auto; padding: 0 24px;
+    }
+    .airdrop-stab {
+      padding: 14px 18px 12px; border: none; background: none;
+      font-family: 'Roboto', sans-serif; font-size: 14px;
+      font-weight: 500; color: var(--muted); cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      margin-bottom: -1px;
+    }
+    .airdrop-stab:hover:not(:disabled) { color: var(--text); }
+    .airdrop-stab.active { color: var(--text); font-weight: 600; border-bottom-color: var(--accent); }
+    .airdrop-stab:disabled { opacity: 0.35; cursor: default; }
+
+    .ard-wrap { max-width: 900px; margin: 0 auto; padding: 0 24px 40px; }
+
+    .ard-table-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px 10px;
+    }
+    .ard-db-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted);
+    }
+
+    .ard-table-scroll { overflow-x: auto; }
+    .ard-table {
+      width: 100%; border-collapse: collapse; font-size: 14px;
+    }
+    .ard-table thead tr {
+      border-bottom: 1px solid var(--border);
+    }
+    .ard-table th {
+      padding: 0 16px 10px; text-align: left;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--muted); white-space: nowrap;
+    }
+    .ard-table td {
+      padding: 10px 16px; border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .ard-table tbody tr:last-child td { border-bottom: none; }
+    .ard-table tbody tr:hover { background: var(--off); }
+    .ard-ticker-name { font-weight: 600; font-size: 14px; }
+    .ard-type-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .upcoming-tag {
+      font-size: 10px; background: #fff0e6; color: #7a4010;
+      padding: 1px 6px; border-radius: 4px; font-weight: 600; margin-left: 5px;
+      vertical-align: middle;
+    }
+    .income-badge { font-size: 13px; font-weight: 700; color: var(--text); }
+    .income-zero  { font-size: 12px; color: var(--muted); }
+    .score-badge {
+      display: inline-block; padding: 3px 9px;
+      border-radius: 6px; font-size: 12px; font-weight: 700; white-space: nowrap;
+    }
+    .score-very-safe { background: #e6fdf3; color: #0a7a4e; }
+    .score-safe      { background: #eef9e8; color: #2a7a1a; }
+    .score-moderate  { background: #fdf6e6; color: #7a5f0a; }
+    .score-risky     { background: #fde8e8; color: #7a1010; }
+
+    .ard-zone-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .ard-zone-ticker {
+      padding: 3px 10px; border-radius: 20px;
+      font-size: 12px; font-weight: 600; background: var(--off); color: var(--text);
+    }
+    .ard-zone-winrate {
+      font-size: 12px; font-weight: 600; color: var(--accent);
+      margin-top: 6px;
+    }
+    .ard-zone-warning { font-size: 12px; color: #c44; margin-top: 6px; }
+
     .val-wrap {
       max-width: 900px;
       margin: 0 auto;
@@ -620,7 +701,7 @@
       <nav>
         <button class="nav-btn active" id="nav-cv-btn">CV</button>
         <button class="nav-btn" id="nav-val-btn">Valuation</button>
-        <button class="nav-btn" disabled>Airdrop</button>
+        <button class="nav-btn" id="nav-ard-btn">Airdrop</button>
       </nav>
     </div>
   </header>
@@ -858,6 +939,74 @@
     </div>
   </div>
 
+  <!-- ── AIRDROP VIEW ──────────────────────────────── -->
+  <div id="airdrop-view">
+
+    <!-- Sub-tab bar -->
+    <div class="airdrop-subtabs-bar">
+      <div class="airdrop-subtabs">
+        <button class="airdrop-stab active" id="stab-role">Role Safety</button>
+        <button class="airdrop-stab" disabled>Coming soon</button>
+      </div>
+    </div>
+
+    <!-- Role Safety content -->
+    <div id="ard-role-view" class="ard-wrap">
+
+      <!-- Table -->
+      <div class="tge-table-wrap" style="margin-top:20px">
+        <div class="ard-table-head">
+          <span class="ard-db-label">Role Safety — <span id="ard-count">0</span> projects</span>
+        </div>
+        <div class="ard-table-scroll">
+          <table class="ard-table">
+            <thead>
+              <tr>
+                <th>TICKER</th>
+                <th>FUNDRAISED</th>
+                <th>INCOME</th>
+                <th>SCORE</th>
+              </tr>
+            </thead>
+            <tbody id="ard-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Bottom 3 cards -->
+      <div class="val-analysis" style="margin-top:20px">
+
+        <!-- Card 1: Safe Zone -->
+        <div class="val-card">
+          <div class="val-card-label calc-card-label">Safe Zone</div>
+          <div class="split-val" id="ard-safe-count" style="font-size:28px;margin-top:6px">—</div>
+          <div id="ard-safe-list" class="ard-zone-list"></div>
+          <div class="ard-zone-winrate">Win rate 85–100%</div>
+          <div class="split-lbl" style="margin-top:2px">Score ≥ 7 · Income ≠ 0</div>
+        </div>
+
+        <!-- Card 2: Moderate -->
+        <div class="val-card">
+          <div class="val-card-label calc-card-label">Moderate</div>
+          <div class="split-val" id="ard-mod-count" style="font-size:28px;margin-top:6px">—</div>
+          <div id="ard-mod-list" class="ard-zone-list"></div>
+          <div class="ard-zone-winrate">Win rate 62–100%</div>
+          <div class="split-lbl" style="margin-top:2px">Score 5–6</div>
+        </div>
+
+        <!-- Card 3: Danger Zone -->
+        <div class="val-card">
+          <div class="val-card-label calc-card-label">Danger Zone</div>
+          <div class="split-val" id="ard-danger-count" style="font-size:28px;margin-top:6px;color:#c44">—</div>
+          <div id="ard-danger-list" class="ard-zone-list"></div>
+          <div class="ard-zone-warning">Win rate 20–33% ⚠</div>
+          <div class="split-lbl" style="margin-top:2px">Score ≤ 4</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <!-- ── ADD MODAL ─────────────────────────────────── -->
   <div class="modal-overlay" id="add-modal">
     <div class="modal-box">
@@ -960,26 +1109,124 @@
     // ── View switching ────────────────────────────────
     const cvView    = document.getElementById('cv-view');
     const valView   = document.getElementById('valuation-view');
+    const ardView   = document.getElementById('airdrop-view');
     const navCvBtn  = document.getElementById('nav-cv-btn');
     const navValBtn = document.getElementById('nav-val-btn');
+    const navArdBtn = document.getElementById('nav-ard-btn');
+
+    function hideAll() {
+      cvView.style.display  = 'none';
+      valView.style.display = 'none';
+      ardView.style.display = 'none';
+      [navCvBtn, navValBtn, navArdBtn].forEach(b => b.classList.remove('active'));
+    }
 
     function showCV() {
+      hideAll();
       cvView.style.display = '';
-      valView.style.display = 'none';
       navCvBtn.classList.add('active');
-      navValBtn.classList.remove('active');
     }
 
     function showValuation() {
-      cvView.style.display = 'none';
+      hideAll();
       valView.style.display = 'block';
       navValBtn.classList.add('active');
-      navCvBtn.classList.remove('active');
       renderAll();
+    }
+
+    function showAirdrop() {
+      hideAll();
+      ardView.style.display = 'block';
+      navArdBtn.classList.add('active');
+      renderAirdrop();
     }
 
     navValBtn.addEventListener('click', showValuation);
     navCvBtn.addEventListener('click', showCV);
+    navArdBtn.addEventListener('click', showAirdrop);
+
+    // ── AIRDROP LOGIC ─────────────────────────────────
+    let _airdropData = [];
+
+    async function fetchAirdropData() {
+      const res = await fetch('tge-data-merged.json');
+      const all = await res.json();
+      _airdropData = all.filter(e => e.roleIncome !== null);
+    }
+
+    function calcSafetyScore(type, fundraisingUSD) {
+      const typeScore = { 'Layer 1': 4, 'Infra': 3, 'Layer 2': 2, 'AI': 1 }[type] ?? 0;
+      const raisedM = fundraisingUSD / 1_000_000;
+      let raiseScore;
+      if      (raisedM > 100) raiseScore = 6;
+      else if (raisedM > 50)  raiseScore = 5;
+      else if (raisedM >= 20) raiseScore = 3;
+      else                    raiseScore = 1;
+      return typeScore + raiseScore;
+    }
+
+    function scoreLabel(s) {
+      if (s >= 9) return 'Very Safe';
+      if (s >= 7) return 'Safe';
+      if (s >= 5) return 'Moderate';
+      return 'Risky';
+    }
+
+    function scoreCls(s) {
+      if (s >= 9) return 'score-very-safe';
+      if (s >= 7) return 'score-safe';
+      if (s >= 5) return 'score-moderate';
+      return 'score-risky';
+    }
+
+    function renderAirdrop() {
+      const rows = _airdropData
+        .map(e => ({ ...e, score: calcSafetyScore(e.type, e.fundraising) }))
+        .sort((a, b) => b.score - a.score);
+
+      document.getElementById('ard-count').textContent = rows.length;
+
+      // ── Table
+      const tbody = document.getElementById('ard-tbody');
+      tbody.innerHTML = '';
+      rows.forEach(e => {
+        const upcoming = !e.tgeDate;
+        const raise = e.fundraising >= 1e9
+          ? `$${(e.fundraising/1e9).toFixed(1)}B`
+          : `$${(e.fundraising/1e6).toFixed(0)}M`;
+        const incomeHtml = e.roleIncome === '0'
+          ? `<span class="income-zero">–</span>`
+          : `<span class="income-badge">${e.roleIncome}</span>`;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <div class="ard-ticker-name">$${e.ticker}${upcoming ? '<span class="upcoming-tag">Upcoming</span>' : ''}</div>
+            <div class="ard-type-sub">${e.type || '—'}</div>
+          </td>
+          <td>${raise}</td>
+          <td>${incomeHtml}</td>
+          <td><span class="score-badge ${scoreCls(e.score)}">${e.score}/10 · ${scoreLabel(e.score)}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // ── Bottom cards
+      const safe   = rows.filter(e => e.score >= 7 && e.roleIncome !== '0');
+      const mod    = rows.filter(e => e.score >= 5 && e.score < 7);
+      const danger = rows.filter(e => e.score < 5);
+
+      document.getElementById('ard-safe-count').textContent   = safe.length;
+      document.getElementById('ard-mod-count').textContent    = mod.length;
+      document.getElementById('ard-danger-count').textContent = danger.length;
+
+      const fillList = (id, items) => {
+        document.getElementById(id).innerHTML = items
+          .map(e => `<span class="ard-zone-ticker">$${e.ticker}</span>`).join('');
+      };
+      fillList('ard-safe-list',   safe);
+      fillList('ard-mod-list',    mod);
+      fillList('ard-danger-list', danger);
+    }
 
     // ── Admin mode ────────────────────────────────────
     let isAdmin = sessionStorage.getItem('val_admin') === '1';
@@ -1632,7 +1879,7 @@
 
     // ── Init ─────────────────────────────────────────
     (async () => {
-      await fetchPublicData();
+      await Promise.all([fetchPublicData(), fetchAirdropData()]);
       renderAll();
       applyAdminUI();
     })();
