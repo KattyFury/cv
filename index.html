@@ -830,8 +830,15 @@
           .map(l => parseCSVLine(l))
           .filter(r => r[2])   // must have ticker (col C)
           .map(r => {
-            // Generic number: strip $ and comma thousand-separators
-            const num = s => parseFloat(String(s).replace(/[$,]/g, '')) || 0;
+            // Smart number parser: handles both European (1,178 → 1.178) and US (1,178 → 1178)
+            // Rule: single comma = decimal sep; multiple commas = thousand seps
+            const num = s => {
+              let v = String(s).replace(/[$\s]/g, '').trim();
+              const commas = (v.match(/,/g) || []).length;
+              if (commas > 1) v = v.replace(/,/g, '');       // US thousand seps → strip
+              else if (commas === 1) v = v.replace(',', '.'); // European decimal → dot
+              return parseFloat(v) || 0;
+            };
             // Money with dot thousand-separators: "$178.500.000" → 178500000
             const parseMoney = s => {
               let v = String(s).replace(/\$/g, '').trim();
@@ -900,10 +907,23 @@
       return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
     }
 
-    // Parse supply shorthand: "10B" → 10e9, "500M" → 500e6, "1.5T" → 1.5e12
+    // Parse supply: handles "10B", "500M", plain numbers, and thousand-separated numbers
+    // "10.000.000.000" (EU dots) → 10e9 | "10,000,000,000" (US commas) → 10e9 | "10B" → 10e9
     function parseSupply(s) {
       if (!s) return NaN;
-      const m = String(s).trim().match(/^([\d.]+)\s*([bBmMkKtT]?)$/);
+      let v = String(s).trim();
+      // Strip thousand separators before trying shorthand/plain parse
+      const dots   = (v.match(/\./g)  || []).length;
+      const commas = (v.match(/,/g)   || []).length;
+      if (dots > 1)   v = v.replace(/\./g, '');   // EU: "10.000.000.000" → "10000000000"
+      else if (commas > 1) v = v.replace(/,/g, ''); // US: "10,000,000,000" → "10000000000"
+      else if (commas === 1 && !/[bBmMkKtT]/.test(v)) {
+        // single comma — could be decimal (1,5) or thousand sep (1,000)
+        // if digits after comma > 3 chars it's ambiguous; treat as thousand sep
+        const afterComma = v.split(',')[1] || '';
+        v = afterComma.length >= 3 ? v.replace(',', '') : v.replace(',', '.');
+      }
+      const m = v.match(/^([\d.]+)\s*([bBmMkKtT]?)$/i);
       if (!m) return NaN;
       const n = parseFloat(m[1]);
       const u = m[2].toUpperCase();
@@ -915,12 +935,16 @@
     }
 
     // Normalise any date string to YYYY-MM-DD for consistent sorting & display
+    // Sheet uses D/M/YYYY (Vietnamese locale) — day comes first
     function normalizeDate(s) {
       if (!s) return '';
       s = s.trim();
       if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;                     // already ISO
-      const a = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);            // M/D/YYYY
-      if (a) return `${a[3]}-${a[1].padStart(2,'0')}-${a[2].padStart(2,'0')}`;
+      const a = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);            // D/M/YYYY or M/D/YYYY
+      if (a) {
+        const [, d, m, y] = a; // Vietnamese locale: D/M/YYYY
+        return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+      }
       const b = s.match(/^(\d{2})-(\d{2})-(\d{4})$/);                  // DD-MM-YYYY
       if (b) return `${b[3]}-${b[2]}-${b[1]}`;
       return s;
