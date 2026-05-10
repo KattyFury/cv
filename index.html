@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -298,35 +298,6 @@
       gap: 8px;
     }
 
-    .lock-btn {
-      background: none; border: none; cursor: pointer;
-      font-size: 14px; padding: 3px 6px;
-      border-radius: 6px; color: var(--muted);
-      transition: background 0.15s, color 0.15s;
-      line-height: 1;
-    }
-    .lock-btn:hover { background: var(--border); color: var(--text); }
-
-    .add-btn, .export-btn {
-      display: none;
-      align-items: center;
-      gap: 4px;
-      padding: 5px 11px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: white;
-      font-family: 'Roboto', sans-serif;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text);
-      cursor: pointer;
-      transition: border-color 0.15s;
-    }
-    .add-btn:hover { border-color: var(--accent); }
-    .export-btn { border-color: var(--border); color: var(--sub); }
-    .export-btn:hover { border-color: var(--text); color: var(--text); }
-    .admin-visible { display: inline-flex !important; }
-
     .val-table-scroll { max-height: calc(100vh - 520px); min-height: 160px; overflow-y: auto; }
 
     .val-table { width: 100%; border-collapse: collapse; font-size: 14px; }
@@ -350,22 +321,10 @@
     }
 
     .val-table tbody tr:last-child td { border-bottom: none; }
-    .td-ticker { font-weight: 600; color: var(--text) !important; }
-    .td-multi  { font-weight: 700; color: var(--text) !important; }
-    .td-source { font-size: 11px; color: var(--muted) !important; }
-
-    .del-btn, .edit-btn {
-      display: none;
-      background: none; border: none; cursor: pointer;
-      font-size: 13px; padding: 2px 6px;
-      border-radius: 4px; line-height: 1; transition: color 0.15s;
-    }
-    .del-btn  { color: var(--muted); }
-    .del-btn:hover  { color: #d44; }
-    .edit-btn { color: var(--muted); }
-    .edit-btn:hover { color: var(--accent); }
-    .admin-visible-cell { display: table-cell !important; }
-    .input-error { border-color: #c44 !important; }
+    .td-project { font-weight: 500; color: var(--text) !important; }
+    .td-ticker  { font-weight: 600; color: var(--sub)  !important; font-size: 12px; }
+    .td-multi   { font-weight: 700; color: var(--text) !important; }
+    .td-source  { font-size: 11px; color: var(--muted) !important; }
 
     .val-empty { padding: 40px 16px; text-align: center; font-size: 14px; color: var(--muted); }
 
@@ -561,54 +520,211 @@
       margin-top: 8px;
     }
 
-    /* ── MODALS ───────────────────────────────────── */
-    .modal-overlay {
-      display: none; position: fixed; inset: 0; z-index: 500;
-      background: rgba(0,0,0,0.45); align-items: center;
-      justify-content: center; padding: 24px;
-    }
-    .modal-overlay.open { display: flex; }
-
-    .modal-box {
-      background: white; border-radius: 16px; padding: 28px;
-      width: 100%; max-width: 400px;
-      box-shadow: 0 8px 48px rgba(0,0,0,0.18);
-      max-height: 90vh; overflow-y: auto;
+    /* ── AIRDROP VIEW ─────────────────────────────── */
+    #airdrop-view { display: none; }
+    .ard-wrap {
+      max-width: 860px; margin: 0 auto;
+      padding: 32px 20px 60px;
     }
 
-    .modal-title { font-size: 17px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 20px; }
+    /* Sub-tabs */
+    .ard-subnav {
+      display: flex; gap: 4px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+    .ard-tab {
+      background: none; border: none; cursor: pointer;
+      font-family: 'Roboto', sans-serif; font-size: 14px;
+      font-weight: 500; color: var(--muted);
+      padding: 8px 16px 10px;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .ard-tab:hover { color: var(--text); }
+    .ard-tab.active { color: var(--text); border-bottom-color: var(--accent); }
 
-    .modal-fields { display: flex; flex-direction: column; gap: 12px; }
-    .modal-field { display: flex; flex-direction: column; gap: 4px; }
-    .modal-field label {
+    /* Toolbar */
+    .wte-toolbar {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .wte-count { font-size: 12px; color: var(--muted); }
+
+    /* Language toggle */
+    .lang-toggle {
+      display: flex; border: 1px solid var(--border);
+      border-radius: 8px; overflow: hidden;
+    }
+    .lang-btn {
+      background: none; border: none; cursor: pointer;
+      font-family: 'Roboto', sans-serif; font-size: 12px;
+      font-weight: 600; letter-spacing: 0.04em;
+      color: var(--muted); padding: 5px 14px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .lang-btn.active { background: var(--accent); color: #fff; }
+
+    /* Cards wrapper — stacks rank groups vertically */
+    #wte-cards { display: flex; flex-direction: column; gap: 8px; }
+
+    /* Each rank group is its own 2-col grid */
+    .wte-rank-group {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    @media (min-width: 768px) {
+      .wte-rank-group { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* Card */
+    .wte-card {
+      background: white; border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+    }
+    /* Rank-tinted backgrounds — clearly distinct */
+    .wte-card--S { background: rgba(220,38,38,0.10);  border-color: rgba(220,38,38,0.45); }
+    .wte-card--A { background: rgba(37,99,235,0.07);  border-color: rgba(37,99,235,0.35); }
+    .wte-card--B { background: rgba(161,98,7,0.08);   border-color: rgba(161,98,7,0.35);  }
+
+    /* Card header */
+    .wte-card-head {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 18px 12px;
+    }
+    .wte-rank {
+      font-size: 11px; font-weight: 800;
+      letter-spacing: 0.06em;
+      padding: 2px 8px; border-radius: 6px;
+      flex-shrink: 0;
+    }
+    .rank-S { background: #FFA111; color: #fff; }
+    .rank-A { background: #3B82F6; color: #fff; }
+    .rank-B { background: #94A3B8; color: #fff; }
+
+    .wte-name {
+      font-size: 15px; font-weight: 700;
+      color: var(--text); text-decoration: none;
+      flex: 1; min-width: 0;
+    }
+    .wte-name:hover { color: var(--accent); }
+
+    .wte-type {
       font-size: 11px; font-weight: 600;
-      letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted);
+      color: var(--muted); letter-spacing: 0.04em;
+      padding: 2px 8px; border: 1px solid var(--border);
+      border-radius: 999px; white-space: nowrap; flex-shrink: 0;
     }
-    .modal-field input {
-      padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px;
-      font-family: 'Roboto', sans-serif; font-size: 14px; color: var(--text);
-      background: white; outline: none; transition: border-color 0.15s;
+    .wte-guide-link {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.06em;
+      color: #111; text-decoration: none;
+      background: rgba(0,0,0,0.06);
+      border: 1px solid rgba(0,0,0,0.15);
+      padding: 3px 9px; border-radius: 999px;
+      flex-shrink: 0; white-space: nowrap;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
     }
-    .modal-field input:focus { border-color: var(--accent); }
-    .modal-hint { font-size: 11px; color: var(--muted); }
-    .modal-error { font-size: 12px; color: #c44; margin-top: 6px; display: none; }
-    .modal-error.show { display: block; }
+    /* GUIDE pill color follows rank */
+    .wte-card--S .wte-guide-link {
+      background: rgba(220,38,38,0.10); border-color: rgba(220,38,38,0.45); color: rgb(185,28,28);
+    }
+    .wte-card--S .wte-guide-link:hover { background: rgb(220,38,38); color: #fff; border-color: rgb(220,38,38); }
 
-    .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
-
-    .modal-cancel {
-      padding: 8px 18px; border: 1px solid var(--border); border-radius: 8px;
-      background: white; font-family: 'Roboto', sans-serif; font-size: 14px;
-      font-weight: 500; color: var(--sub); cursor: pointer; transition: background 0.15s;
+    .wte-card--A .wte-guide-link {
+      background: rgba(37,99,235,0.10); border-color: rgba(37,99,235,0.45); color: rgb(29,78,216);
     }
-    .modal-cancel:hover { background: var(--off); }
+    .wte-card--A .wte-guide-link:hover { background: rgb(37,99,235); color: #fff; border-color: rgb(37,99,235); }
 
-    .modal-confirm {
-      padding: 8px 18px; border: none; border-radius: 8px; background: var(--accent);
-      font-family: 'Roboto', sans-serif; font-size: 14px; font-weight: 600;
-      color: var(--text); cursor: pointer; transition: opacity 0.15s;
+    .wte-card--B .wte-guide-link {
+      background: rgba(161,98,7,0.10); border-color: rgba(161,98,7,0.45); color: rgb(120,53,15);
     }
-    .modal-confirm:hover { opacity: 0.85; }
+    .wte-card--B .wte-guide-link:hover { background: rgb(161,98,7); color: #fff; border-color: rgb(161,98,7); }
+
+    /* Overview */
+    .wte-overview {
+      font-size: 13px; color: var(--sub);
+      line-height: 1.6;
+      padding: 10px 18px 14px;
+      border-top: 1px solid var(--border);
+      white-space: pre-line;
+    }
+
+    /* Sections */
+    .wte-section {
+      border-top: 1px solid var(--border);
+      padding: 10px 18px 12px;
+    }
+    .wte-section-label {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 8px;
+    }
+    /* Daily section — highlighted, color follows rank */
+    .wte-section--daily {
+      border-left: 3px solid currentColor;
+      padding-left: 15px;
+    }
+    .wte-section--daily .wte-section-label { font-weight: 800; }
+    .wte-section--daily .wte-task-text { color: var(--text); font-weight: 500; }
+
+    /* S rank → red daily */
+    .wte-card--S .wte-section--daily {
+      background: rgba(220,38,38,0.07);
+      border-left-color: rgba(220,38,38,0.7);
+    }
+    .wte-card--S .wte-section--daily .wte-section-label { color: rgb(185,28,28); }
+
+    /* A rank → blue daily */
+    .wte-card--A .wte-section--daily {
+      background: rgba(37,99,235,0.07);
+      border-left-color: rgba(37,99,235,0.7);
+    }
+    .wte-card--A .wte-section--daily .wte-section-label { color: rgb(29,78,216); }
+
+    /* B rank → amber daily */
+    .wte-card--B .wte-section--daily {
+      background: rgba(161,98,7,0.07);
+      border-left-color: rgba(161,98,7,0.7);
+    }
+    .wte-card--B .wte-section--daily .wte-section-label { color: rgb(120,53,15); }
+    .wte-tasks {
+      list-style: none; margin: 0; padding: 0;
+      display: flex; flex-direction: column; gap: 5px;
+    }
+    .wte-task-item {
+      display: flex; align-items: flex-start; gap: 8px;
+      font-size: 13px; color: var(--sub); line-height: 1.5;
+    }
+    .wte-task-item::before {
+      content: '•'; color: var(--accent); flex-shrink: 0;
+    }
+    .wte-task-row {
+      display: flex; align-items: flex-start; gap: 8px;
+      flex: 1; color: inherit; text-decoration: none;
+      border-radius: 6px; padding: 2px 6px 2px 4px;
+      margin: -2px -6px -2px -4px;
+      transition: background 0.15s;
+    }
+    .wte-task-row--link:hover {
+      background: rgba(255,161,17,0.08);
+    }
+    .wte-task-row--link:hover .wte-task-text { color: var(--text); }
+    .wte-task-text { flex: 1; }
+    .wte-task-icon { font-size: 11px; flex-shrink: 0; opacity: 0.5; margin-top: 2px; }
+
+    /* Coming soon */
+    .ard-coming-soon {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 80px 20px; gap: 12px;
+    }
+    .ard-cs-icon { font-size: 32px; }
+    .ard-cs-text { font-size: 14px; color: var(--muted); }
+
   </style>
 </head>
 <body>
@@ -618,9 +734,9 @@
     <div class="header-inner">
       <a class="header-home" href="https://0xhieu.xyz">0xhieu.xyz</a>
       <nav>
-        <button class="nav-btn active" id="nav-cv-btn">CV</button>
+        <button class="nav-btn active" id="nav-cv-btn">About me</button>
         <button class="nav-btn" id="nav-val-btn">Valuation</button>
-        <button class="nav-btn" disabled>Airdrop</button>
+        <button class="nav-btn" id="nav-ard-btn">Airdrop</button>
       </nav>
     </div>
   </header>
@@ -749,22 +865,17 @@
           <div class="val-panel-head-left">
             <span>TGE Database</span>
           </div>
-          <div class="val-panel-head-right">
-            <button class="export-btn" id="export-btn">↓ Export JSON</button>
-            <button class="add-btn" id="add-btn">+ Add</button>
-            <button class="lock-btn" id="lock-btn" title="Admin login">🔒</button>
-          </div>
+          <div class="val-panel-head-right"></div>
         </div>
         <div class="val-table-scroll">
           <table class="val-table">
             <thead>
               <tr>
+                <th>Project</th>
                 <th>Ticker</th>
                 <th>TGE</th>
-                <th>VC Round FDV</th>
                 <th>Price at TGE</th>
                 <th>Multiple</th>
-                <th style="display:none" id="th-actions"></th>
               </tr>
             </thead>
             <tbody id="tge-tbody"></tbody>
@@ -834,6 +945,39 @@
     </div>
   </div>
 
+  <!-- ── AIRDROP VIEW ─────────────────────────────────── -->
+  <div id="airdrop-view" style="display:none">
+    <div class="ard-wrap">
+
+      <!-- Sub-tabs -->
+      <div class="ard-subnav">
+        <button class="ard-tab active" id="ard-tab-wte">Work to Earn</button>
+        <button class="ard-tab" id="ard-tab-brg">Best Roles to Grind</button>
+      </div>
+
+      <!-- Work to Earn panel -->
+      <div id="ard-wte-panel">
+        <div class="wte-toolbar">
+          <span class="wte-count" id="wte-count"></span>
+          <div class="lang-toggle">
+            <button class="lang-btn active" id="lang-en-btn">EN</button>
+            <button class="lang-btn" id="lang-vi-btn">VI</button>
+          </div>
+        </div>
+        <div id="wte-cards"></div>
+      </div>
+
+      <!-- Best Roles panel (placeholder) -->
+      <div id="ard-brg-panel" style="display:none">
+        <div class="ard-coming-soon">
+          <div class="ard-cs-icon">🔜</div>
+          <div class="ard-cs-text">Best Roles to Grind — coming soon</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- ── CALC POPUP ───────────────────────────────────── -->
   <div id="calc-popup">
     <button id="calc-popup-close">×</button>
@@ -858,66 +1002,6 @@
     </div>
   </div>
 
-  <!-- ── ADD MODAL ─────────────────────────────────── -->
-  <div class="modal-overlay" id="add-modal">
-    <div class="modal-box">
-      <div class="modal-title" id="add-modal-title">Add TGE entry</div>
-      <div class="modal-fields">
-        <div class="modal-field">
-          <label>Ticker</label>
-          <input id="m-ticker" type="text" placeholder="e.g. TOKEN" />
-        </div>
-        <div class="modal-field">
-          <label>TGE Date</label>
-          <input id="m-date" type="date" />
-        </div>
-        <div class="modal-field">
-          <label>Fundraising (M USD)</label>
-          <input id="m-raise" type="number" step="0.1" />
-          <div class="modal-hint">Total raised across all rounds, in millions</div>
-        </div>
-        <div class="modal-field">
-          <label>VC Allocation (%)</label>
-          <input id="m-alloc" type="number" step="0.01" />
-          <div class="modal-hint">% of total supply allocated to investors</div>
-        </div>
-        <div class="modal-field">
-          <label>Total Supply</label>
-          <input id="m-supply" type="text" placeholder="e.g. 10B, 500M, 1.5B" />
-          <div class="modal-hint">Supports shorthand: 10B = 10 billion, 500M = 500 million</div>
-        </div>
-        <div class="modal-field">
-          <label>Price at TGE (USD)</label>
-          <input id="m-price" type="number" step="any" placeholder="e.g. 1.23" />
-          <div class="modal-hint">Token price on TGE closing candle</div>
-        </div>
-      </div>
-      <div class="modal-error" id="add-error">Please fill in all fields correctly.</div>
-      <div class="modal-footer">
-        <button class="modal-cancel" id="add-cancel">Cancel</button>
-        <button class="modal-confirm" id="add-save">Save</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── PASSWORD MODAL ────────────────────────────── -->
-  <div class="modal-overlay" id="pw-modal">
-    <div class="modal-box" style="max-width:320px;">
-      <div class="modal-title">Admin</div>
-      <div class="modal-fields">
-        <div class="modal-field">
-          <label>Password</label>
-          <input id="pw-input" type="password" placeholder="Enter password" />
-          <div class="modal-error" id="pw-error">Wrong password</div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="modal-cancel" id="pw-cancel">Cancel</button>
-        <button class="modal-confirm" id="pw-confirm">Login</button>
-      </div>
-    </div>
-  </div>
-
   <!-- Lightbox -->
   <div id="lightbox">
     <button id="lightbox-close" aria-label="Close">&#x2715;</button>
@@ -925,132 +1009,111 @@
   </div>
 
   <script>
-    // ── SUPABASE ──────────────────────────────────────
-    const _sb = supabase.createClient(
-      'https://qtiwpckulrbjgsomckow.supabase.co',
-      'sb_publishable__NaFgk3owzCHL-MAvRv4Vg_mdcyv5qo'
-    );
-
-    // Map DB row → JS entry
-    function dbToEntry(row) {
-      return {
-        ticker:      row.ticker,
-        tgeDate:     row.tge_date,
-        fundraising: Number(row.fundraising),
-        vcAlloc:     Number(row.vc_alloc),
-        totalSupply: Number(row.total_supply),
-        priceTGE:    Number(row.price_tge),
-      };
-    }
-    // Map JS entry → DB row
-    function entryToDb(e) {
-      return {
-        ticker:       e.ticker,
-        tge_date:     e.tgeDate,
-        fundraising:  e.fundraising,
-        vc_alloc:     e.vcAlloc,
-        total_supply: e.totalSupply,
-        price_tge:    e.priceTGE,
-      };
-    }
-
-    // ── ADMIN PASSWORD ────────────────────────────────
-    const ADMIN_PASSWORD = '161194';
-
     // ── View switching ────────────────────────────────
     const cvView    = document.getElementById('cv-view');
     const valView   = document.getElementById('valuation-view');
+    const ardView   = document.getElementById('airdrop-view');
     const navCvBtn  = document.getElementById('nav-cv-btn');
     const navValBtn = document.getElementById('nav-val-btn');
+    const navArdBtn = document.getElementById('nav-ard-btn');
+
+    function hideAllViews() {
+      cvView.style.display  = 'none';
+      valView.style.display = 'none';
+      ardView.style.display = 'none';
+      [navCvBtn, navValBtn, navArdBtn].forEach(b => b.classList.remove('active'));
+    }
 
     function showCV() {
+      hideAllViews();
       cvView.style.display = '';
-      valView.style.display = 'none';
       navCvBtn.classList.add('active');
-      navValBtn.classList.remove('active');
     }
 
     function showValuation() {
-      cvView.style.display = 'none';
+      hideAllViews();
       valView.style.display = 'block';
       navValBtn.classList.add('active');
-      navCvBtn.classList.remove('active');
       renderAll();
     }
 
-    navValBtn.addEventListener('click', showValuation);
-    navCvBtn.addEventListener('click', showCV);
-
-    // ── Admin mode ────────────────────────────────────
-    let isAdmin = sessionStorage.getItem('val_admin') === '1';
-
-    function applyAdminUI() {
-      const lockBtn   = document.getElementById('lock-btn');
-      const addBtn    = document.getElementById('add-btn');
-      const exportBtn = document.getElementById('export-btn');
-      const thActions = document.getElementById('th-actions');
-
-      if (isAdmin) {
-        lockBtn.textContent = '🔓';
-        addBtn.classList.add('admin-visible');
-        exportBtn.classList.add('admin-visible');
-        thActions.style.display = '';
-        document.querySelectorAll('#tge-tbody td:last-child').forEach(td => td.style.display = '');
-        document.querySelectorAll('.del-btn, .edit-btn').forEach(b => b.style.display = 'inline');
-      } else {
-        lockBtn.textContent = '🔒';
-        addBtn.classList.remove('admin-visible');
-        exportBtn.classList.remove('admin-visible');
-        thActions.style.display = 'none';
-        document.querySelectorAll('#tge-tbody td:last-child').forEach(td => td.style.display = 'none');
-        document.querySelectorAll('.del-btn, .edit-btn').forEach(b => b.style.display = 'none');
-      }
+    function showAirdrop() {
+      hideAllViews();
+      ardView.style.display = 'block';
+      navArdBtn.classList.add('active');
+      renderWTE();
     }
 
-    document.getElementById('lock-btn').addEventListener('click', () => {
-      if (isAdmin) {
-        isAdmin = false;
-        sessionStorage.removeItem('val_admin');
-        applyAdminUI();
-      } else {
-        openModal('pw-modal');
-        setTimeout(() => document.getElementById('pw-input').focus(), 50);
+    navCvBtn.addEventListener('click', showCV);
+    navValBtn.addEventListener('click', showValuation);
+    navArdBtn.addEventListener('click', showAirdrop);
+
+    // ── Data layer — Google Sheets (read-only) ────────
+    // Columns: A=project, B=type, C=ticker, D=fundraised($M), E=vcAlloc(%), F=totalSupply, G=tgeDate, H=priceTGE, I=vcMultiple(ignored, recalculated)
+    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1m8_nwbP_Apw43Y8iNxOoGFYy8YA-OpchGnVRfTMBUAo/gviz/tq?tqx=out:csv&sheet=DATA';
+
+    let publicData = [];
+
+    // Robust single-line CSV parser (handles quoted fields with embedded commas)
+    function parseCSVLine(line) {
+      const out = []; let cur = '', inQ = false;
+      for (let i = 0; i < line.length; i++) {
+        const c = line[i];
+        if (inQ) {
+          if (c === '"' && line[i + 1] === '"') { cur += '"'; i++; }
+          else if (c === '"') inQ = false;
+          else cur += c;
+        } else {
+          if (c === '"') inQ = true;
+          else if (c === ',') { out.push(cur.trim()); cur = ''; }
+          else cur += c;
+        }
       }
-    });
-
-    document.getElementById('pw-confirm').addEventListener('click', () => {
-      const val = document.getElementById('pw-input').value;
-      if (val === ADMIN_PASSWORD) {
-        isAdmin = true;
-        sessionStorage.setItem('val_admin', '1');
-        document.getElementById('pw-input').value = '';
-        document.getElementById('pw-error').classList.remove('show');
-        closeModal('pw-modal');
-        applyAdminUI();
-      } else {
-        document.getElementById('pw-error').classList.add('show');
-      }
-    });
-
-    document.getElementById('pw-input').addEventListener('keydown', e => {
-      if (e.key === 'Enter') document.getElementById('pw-confirm').click();
-    });
-
-    document.getElementById('pw-cancel').addEventListener('click', () => {
-      document.getElementById('pw-input').value = '';
-      document.getElementById('pw-error').classList.remove('show');
-      closeModal('pw-modal');
-    });
-
-    // ── Data layer — Supabase ─────────────────────────
-    let publicData = [];  // in-memory cache of tge_entries table
+      out.push(cur.trim());
+      return out;
+    }
 
     async function fetchPublicData() {
-      const { data, error } = await _sb
-        .from('tge_entries')
-        .select('*')
-        .order('tge_date', { ascending: true });
-      if (!error && data) publicData = data.map(dbToEntry);
+      try {
+        const res  = await fetch(SHEET_CSV_URL);
+        const text = await res.text();
+        const lines = text.trim().split('\n');
+        // Skip header row (row 0), parse data rows
+        publicData = lines.slice(1)
+          .map(l => parseCSVLine(l))
+          .filter(r => r[2])   // must have ticker (col C)
+          .map(r => {
+            // Smart number parser: handles both European (1,178 → 1.178) and US (1,178 → 1178)
+            // Rule: single comma = decimal sep; multiple commas = thousand seps
+            const num = s => {
+              let v = String(s).replace(/[$\s]/g, '').trim();
+              const commas = (v.match(/,/g) || []).length;
+              if (commas > 1) v = v.replace(/,/g, '');       // US thousand seps → strip
+              else if (commas === 1) v = v.replace(',', '.'); // European decimal → dot
+              return parseFloat(v) || 0;
+            };
+            // Money with dot thousand-separators: "$178.500.000" → 178500000
+            const parseMoney = s => {
+              let v = String(s).replace(/\$/g, '').trim();
+              const dots = (v.match(/\./g) || []).length;
+              v = dots > 1 ? v.replace(/\./g, '') : v.replace(/,/g, '');
+              return parseFloat(v) || 0;
+            };
+            return {
+              project:     r[0] || '',
+              type:        r[1] || '',
+              ticker:      r[2].replace(/^\$/, '').toUpperCase(),
+              fundraising: parseMoney(r[3]),           // col D: raw USD e.g. $178.500.000
+              vcAlloc:     num(r[4]),                  // col E: percent
+              totalSupply: parseSupply(r[5]) || 0,     // col F: supports 10B / 500M
+              tgeDate:     normalizeDate(r[6]),         // col G: normalised to YYYY-MM-DD
+              priceTGE:    num(r[7]),                   // col H
+            };
+          })
+          .filter(e => e.ticker && e.tgeDate && e.fundraising > 0);
+      } catch (err) {
+        console.warn('Could not load sheet data:', err);
+      }
     }
 
     function allEntries() { return publicData; }
@@ -1097,10 +1160,23 @@
       return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
     }
 
-    // Parse supply shorthand: "10B" → 10e9, "500M" → 500e6, "1.5T" → 1.5e12
+    // Parse supply: handles "10B", "500M", plain numbers, and thousand-separated numbers
+    // "10.000.000.000" (EU dots) → 10e9 | "10,000,000,000" (US commas) → 10e9 | "10B" → 10e9
     function parseSupply(s) {
       if (!s) return NaN;
-      const m = String(s).trim().match(/^([\d.]+)\s*([bBmMkKtT]?)$/);
+      let v = String(s).trim();
+      // Strip thousand separators before trying shorthand/plain parse
+      const dots   = (v.match(/\./g)  || []).length;
+      const commas = (v.match(/,/g)   || []).length;
+      if (dots > 1)   v = v.replace(/\./g, '');   // EU: "10.000.000.000" → "10000000000"
+      else if (commas > 1) v = v.replace(/,/g, ''); // US: "10,000,000,000" → "10000000000"
+      else if (commas === 1 && !/[bBmMkKtT]/.test(v)) {
+        // single comma — could be decimal (1,5) or thousand sep (1,000)
+        // if digits after comma > 3 chars it's ambiguous; treat as thousand sep
+        const afterComma = v.split(',')[1] || '';
+        v = afterComma.length >= 3 ? v.replace(',', '') : v.replace(',', '.');
+      }
+      const m = v.match(/^([\d.]+)\s*([bBmMkKtT]?)$/i);
       if (!m) return NaN;
       const n = parseFloat(m[1]);
       const u = m[2].toUpperCase();
@@ -1111,60 +1187,46 @@
       return n;
     }
 
+    // Normalise any date string to YYYY-MM-DD for consistent sorting & display
+    // Sheet uses D/M/YYYY (Vietnamese locale) — day comes first
+    function normalizeDate(s) {
+      if (!s) return '';
+      s = s.trim();
+      if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;                     // already ISO
+      const a = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);            // D/M/YYYY or M/D/YYYY
+      if (a) {
+        const [, d, m, y] = a; // Vietnamese locale: D/M/YYYY
+        return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+      }
+      const b = s.match(/^(\d{2})-(\d{2})-(\d{4})$/);                  // DD-MM-YYYY
+      if (b) return `${b[3]}-${b[2]}-${b[1]}`;
+      return s;
+    }
+
     // ── Render table ──────────────────────────────────
     function renderTable() {
       const entries = allEntries();
       const tbody = document.getElementById('tge-tbody');
 
       if (!entries.length) {
-        tbody.innerHTML = '<tr><td colspan="6"><div class="val-empty">No data yet.</div></td></tr>';
-        applyAdminUI();
+        tbody.innerHTML = '<tr><td colspan="5"><div class="val-empty">Loading data…</div></td></tr>';
         return;
       }
 
       const sorted = [...entries].sort((a, b) => new Date(a.tgeDate) - new Date(b.tgeDate));
 
       tbody.innerHTML = sorted.map(e => {
-        const vcFDV     = e.fundraising / (e.vcAlloc / 100);
-        const x         = multiple(e);
-        const price     = e.priceTGE != null ? fmtPrice(e.priceTGE) : '—';
-        const key       = e.ticker + e.tgeDate;
-        const entryJson = encodeURIComponent(JSON.stringify(e));
+        const x     = multiple(e);
+        const price = e.priceTGE > 0 ? fmtPrice(e.priceTGE) : '—';
+        const mult  = x > 0 ? `×${x.toFixed(2)}` : '—';
         return `<tr>
-          <td class="td-ticker">$${e.ticker.toUpperCase()}</td>
+          <td class="td-project">${e.project || e.ticker}</td>
+          <td class="td-ticker">$${e.ticker}</td>
           <td>${fmtDate(e.tgeDate)}</td>
-          <td>${fmtFDV(vcFDV)}</td>
           <td>${price}</td>
-          <td class="td-multi">×${x.toFixed(2)}</td>
-          <td style="display:none">
-            <button class="edit-btn" data-entry="${entryJson}" style="display:none">✎</button>
-            <button class="del-btn"  data-key="${key}" style="display:none">×</button>
-          </td>
+          <td class="td-multi">${mult}</td>
         </tr>`;
       }).join('');
-
-      tbody.querySelectorAll('.del-btn').forEach(btn => {
-        btn.addEventListener('click', async () => {
-          const key   = btn.dataset.key;
-          const entry = publicData.find(e => e.ticker + e.tgeDate === key);
-          if (!entry) return;
-          btn.disabled = true;
-          await _sb.from('tge_entries').delete()
-            .eq('ticker', entry.ticker)
-            .eq('tge_date', entry.tgeDate);
-          await fetchPublicData();
-          renderAll();
-        });
-      });
-
-      tbody.querySelectorAll('.edit-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const entry = JSON.parse(decodeURIComponent(btn.dataset.entry));
-          openEditModal(entry);
-        });
-      });
-
-      applyAdminUI();
     }
 
     // ── Render analysis ───────────────────────────────
@@ -1230,148 +1292,6 @@
     }
 
     function renderAll() { renderTable(); renderAnalysis(); }
-
-    // ── Add / Edit modal ──────────────────────────────
-    function openModal(id)  { document.getElementById(id).classList.add('open'); }
-    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-
-    // Format supply for display in edit modal (e.g. 10000000000 → "10B")
-    function fmtSupply(n) {
-      if (!n) return '';
-      // Use unary + to strip trailing zeros: +(10.000) = 10, +(1.500) = 1.5
-      if (n >= 1e12) return +(n / 1e12).toPrecision(9) + 'T';
-      if (n >= 1e9)  return +(n / 1e9).toPrecision(9)  + 'B';
-      if (n >= 1e6)  return +(n / 1e6).toPrecision(9)  + 'M';
-      return String(n);
-    }
-
-    let _editKey = null; // null = add mode, key string = edit mode
-
-    function resetModal() {
-      _editKey = null;
-      document.getElementById('add-modal-title').textContent = 'Add TGE entry';
-      const fields = ['m-ticker', 'm-date', 'm-raise', 'm-alloc', 'm-supply', 'm-price'];
-      fields.forEach(id => {
-        const el = document.getElementById(id);
-        el.value = '';
-        el.classList.remove('input-error');
-      });
-      document.getElementById('add-error').classList.remove('show');
-    }
-
-    function openEditModal(entry) {
-      resetModal();
-      _editKey = entry.ticker + entry.tgeDate;
-      document.getElementById('add-modal-title').textContent = 'Edit TGE entry';
-      document.getElementById('m-ticker').value = entry.ticker;
-      document.getElementById('m-date').value   = entry.tgeDate;
-      document.getElementById('m-raise').value  = entry.fundraising / 1e6;
-      document.getElementById('m-alloc').value  = entry.vcAlloc;
-      document.getElementById('m-supply').value = entry.totalSupply ? fmtSupply(entry.totalSupply) : '';
-      document.getElementById('m-price').value  = entry.priceTGE   || '';
-      openModal('add-modal');
-    }
-
-    document.getElementById('add-btn').addEventListener('click', () => { resetModal(); openModal('add-modal'); });
-    document.getElementById('add-cancel').addEventListener('click', () => { resetModal(); closeModal('add-modal'); });
-    document.getElementById('add-modal').addEventListener('click', e => { if (e.target.id === 'add-modal') { resetModal(); closeModal('add-modal'); } });
-    document.getElementById('pw-modal').addEventListener('click', e => { if (e.target.id === 'pw-modal') closeModal('pw-modal'); });
-
-    // Clear red border when user starts typing
-    ['m-ticker','m-date','m-raise','m-alloc','m-supply','m-price'].forEach(id => {
-      document.getElementById(id).addEventListener('input', function() {
-        this.classList.remove('input-error');
-        document.getElementById('add-error').classList.remove('show');
-      });
-    });
-
-    document.getElementById('add-save').addEventListener('click', async () => {
-      const errEl  = document.getElementById('add-error');
-
-      const fields = {
-        ticker:      { el: document.getElementById('m-ticker'), val: null },
-        tgeDate:     { el: document.getElementById('m-date'),   val: null },
-        fundraising: { el: document.getElementById('m-raise'),  val: null },
-        vcAlloc:     { el: document.getElementById('m-alloc'),  val: null },
-        totalSupply: { el: document.getElementById('m-supply'), val: null },
-        priceTGE:    { el: document.getElementById('m-price'),  val: null },
-      };
-
-      fields.ticker.val      = fields.ticker.el.value.trim().replace(/^\$/, '').toUpperCase();
-      fields.tgeDate.val     = fields.tgeDate.el.value;
-      fields.fundraising.val = parseFloat(fields.fundraising.el.value) * 1e6;
-      fields.vcAlloc.val     = parseFloat(fields.vcAlloc.el.value);
-      fields.totalSupply.val = parseSupply(fields.totalSupply.el.value);
-      fields.priceTGE.val    = parseFloat(fields.priceTGE.el.value);
-
-      // Validate — highlight each bad field individually
-      const checks = {
-        ticker:      !!fields.ticker.val,
-        tgeDate:     !!fields.tgeDate.val,
-        fundraising: fields.fundraising.val > 0,
-        vcAlloc:     fields.vcAlloc.val > 0,
-        totalSupply: fields.totalSupply.val > 0,
-        priceTGE:    fields.priceTGE.val > 0,
-      };
-
-      let hasError = false;
-      for (const [key, ok] of Object.entries(checks)) {
-        if (!ok) { fields[key].el.classList.add('input-error'); hasError = true; }
-      }
-      if (hasError) { errEl.classList.add('show'); return; }
-
-      const { ticker, tgeDate, fundraising, vcAlloc, totalSupply, priceTGE } = Object.fromEntries(
-        Object.entries(fields).map(([k, v]) => [k, v.val])
-      );
-
-      const newRow = entryToDb({ ticker, tgeDate, fundraising, vcAlloc, totalSupply, priceTGE });
-
-      if (_editKey) {
-        const old    = publicData.find(e => e.ticker + e.tgeDate === _editKey);
-        const newKey = ticker + tgeDate;
-
-        if (old && _editKey === newKey) {
-          // Same ticker+date → safe UPDATE (no delete needed)
-          const { error: updErr } = await _sb.from('tge_entries')
-            .update(newRow)
-            .eq('ticker', old.ticker)
-            .eq('tge_date', old.tgeDate);
-          if (updErr) { errEl.textContent = updErr.message || 'Update failed.'; errEl.classList.add('show'); return; }
-        } else {
-          // Key changed → INSERT first, only delete old if insert succeeded
-          const { error: insErr } = await _sb.from('tge_entries').insert([newRow]);
-          if (insErr) { errEl.textContent = insErr.message || 'Save failed.'; errEl.classList.add('show'); return; }
-          if (old) {
-            await _sb.from('tge_entries').delete()
-              .eq('ticker', old.ticker).eq('tge_date', old.tgeDate);
-          }
-        }
-      } else {
-        // New entry → INSERT
-        const { error: insErr } = await _sb.from('tge_entries').insert([newRow]);
-        if (insErr) { errEl.textContent = insErr.message || 'Save failed.'; errEl.classList.add('show'); return; }
-      }
-
-      await fetchPublicData();
-      resetModal();
-      closeModal('add-modal');
-      renderAll();
-    });
-
-    // ── Export JSON ───────────────────────────────────
-    document.getElementById('export-btn').addEventListener('click', () => {
-      const FIELDS = ['ticker','tgeDate','fundraising','vcAlloc','totalSupply','priceTGE'];
-      const data = JSON.stringify(
-        allEntries().map(e => Object.fromEntries(FIELDS.map(k => [k, e[k]]))),
-        null, 2
-      );
-      const blob = new Blob([data], { type: 'application/json' });
-      const a    = document.createElement('a');
-      a.href     = URL.createObjectURL(blob);
-      a.download = 'tge-data.json';
-      a.click();
-      URL.revokeObjectURL(a.href);
-    });
 
     // ── Weighted median ───────────────────────────────
     function weightedMedian(items) {
@@ -1630,11 +1550,223 @@
       }
     })();
 
+    // ══════════════════════════════════════════════════
+    // AIRDROP — Work to Earn
+    // ══════════════════════════════════════════════════
+
+    const WTE_SHEET_ID = '1m8_nwbP_Apw43Y8iNxOoGFYy8YA-OpchGnVRfTMBUAo';
+    const WTE_URL = {
+      VI: `https://docs.google.com/spreadsheets/d/${WTE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Work%20to%20Earn%20VI`,
+      EN: `https://docs.google.com/spreadsheets/d/${WTE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Work%20to%20Earn%20EN`,
+    };
+
+    let wteData   = { VI: [], EN: [] };  // parsed projects per language
+    let wteLang   = 'EN';                // active language
+    let wteLoaded = { VI: false, EN: false };
+
+    // ── Full CSV parser (handles quoted multi-line cells) ─
+    function parseCSVFull(text) {
+      const rows = [];
+      let row = [], field = '', inQ = false;
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        if (inQ) {
+          if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
+          else if (c === '"') inQ = false;
+          else field += c;
+        } else {
+          if (c === '"')  { inQ = true; }
+          else if (c === ',') { row.push(field.trim()); field = ''; }
+          else if (c === '\r') { /* skip CR */ }
+          else if (c === '\n') {
+            row.push(field.trim()); field = '';
+            rows.push(row); row = [];
+          } else field += c;
+        }
+      }
+      if (field || row.length) { row.push(field.trim()); rows.push(row); }
+      return rows;
+    }
+
+    // ── Parse CSV into project list ───────────────────
+    function parseWTE(csvText) {
+      const rows = parseCSVFull(csvText);   // properly handles multi-line cells
+      const projects = [];
+      let current = null;
+
+      for (const r of rows) {
+        const projectName = r[0] ? r[0].trim() : '';
+
+        // Blank row = delimiter between projects
+        if (r.every(c => !c.trim())) {
+          current = null;
+          continue;
+        }
+
+        // New project row: col A has a value
+        if (projectName) {
+          current = {
+            name:       projectName,
+            rank:       (r[1] || '').trim().toUpperCase(),
+            type:       (r[2] || '').trim(),
+            twitter:    (r[3] || '').trim(),
+            overview:   (r[4] || '').trim(),
+            guideUrl:   (r[5] || '').trim(),
+            getStarted: [],
+            daily:      [],
+            weekly:     [],
+            notes:      [],
+          };
+          projects.push(current);
+        }
+
+        // Task rows (new project or continuation): cols G-N
+        if (!current) continue;
+        const task = (r[6] || '').trim();
+        const taskLink = (r[7] || '').trim();
+        const daily = (r[8] || '').trim();
+        const dailyLink = (r[9] || '').trim();
+        const weekly = (r[10] || '').trim();
+        const weeklyLink = (r[11] || '').trim();
+        const note = (r[12] || '').trim();
+        const noteLink = (r[13] || '').trim();
+
+        if (task)   current.getStarted.push({ text: task,   link: taskLink });
+        if (daily)  current.daily.push({      text: daily,  link: dailyLink });
+        if (weekly) current.weekly.push({     text: weekly, link: weeklyLink });
+        if (note)   current.notes.push({      text: note,   link: noteLink });
+      }
+
+      // Sort: S → A → B → others
+      const rankOrder = { S: 0, A: 1, B: 2 };
+      projects.sort((a, b) => (rankOrder[a.rank] ?? 9) - (rankOrder[b.rank] ?? 9));
+
+      return projects;
+    }
+
+    // ── Fetch a language tab ──────────────────────────
+    async function fetchWTE(lang) {
+      if (wteLoaded[lang]) return;
+      try {
+        const res  = await fetch(WTE_URL[lang]);
+        const text = await res.text();
+        wteData[lang] = parseWTE(text);
+        wteLoaded[lang] = true;
+      } catch (err) {
+        console.warn('WTE fetch failed (' + lang + '):', err);
+        wteData[lang] = [];
+      }
+    }
+
+    // ── Render a task section ─────────────────────────
+    function renderTasks(items) {
+      return items.map(item => {
+        const inner = `<span class="wte-task-text">${item.text}</span>${item.link ? '<span class="wte-task-icon">🔗</span>' : ''}`;
+        const content = item.link
+          ? `<a class="wte-task-row wte-task-row--link" href="${item.link}" target="_blank" rel="noopener">${inner}</a>`
+          : `<span class="wte-task-row">${inner}</span>`;
+        return `<li class="wte-task-item">${content}</li>`;
+      }).join('');
+    }
+
+    function section(label, items, key) {
+      if (!items.length) return '';
+      const cls = key === 'daily' ? ' wte-section--daily' : '';
+      return `<div class="wte-section${cls}">
+        <div class="wte-section-label">${label}</div>
+        <ul class="wte-tasks">${renderTasks(items)}</ul>
+      </div>`;
+    }
+
+    // ── Render all cards ──────────────────────────────
+    function renderWTE() {
+      const container = document.getElementById('wte-cards');
+      const countEl   = document.getElementById('wte-count');
+      const projects  = wteData[wteLang];
+
+      if (!projects.length) {
+        container.innerHTML = '<div style="padding:60px 0;text-align:center;color:var(--muted);font-size:14px;">Loading…</div>';
+        countEl.textContent = '';
+        return;
+      }
+
+      countEl.textContent = projects.length + ' projects';
+
+      const cardHtml = p => {
+        const guideHtml = p.guideUrl
+          ? `<a class="wte-guide-link" href="${p.guideUrl}" target="_blank" rel="noopener">📖 GUIDE</a>`
+          : '';
+        const nameHtml = p.twitter
+          ? `<a class="wte-name" href="${p.twitter}" target="_blank" rel="noopener">${p.name}</a>`
+          : `<span class="wte-name">${p.name}</span>`;
+        return `<div class="wte-card wte-card--${p.rank}">
+          <div class="wte-card-head">
+            <span class="wte-rank rank-${p.rank}">${p.rank}</span>
+            ${nameHtml}
+            ${p.type ? `<span class="wte-type">${p.type}</span>` : ''}
+            ${guideHtml}
+          </div>
+          ${p.overview ? `<div class="wte-overview">${p.overview}</div>` : ''}
+          ${section('Get Started', p.getStarted, 'getStarted')}
+          ${section('Daily', p.daily, 'daily')}
+          ${section('Weekly', p.weekly, 'weekly')}
+          ${section('Note', p.notes, 'note')}
+        </div>`;
+      };
+
+      // Group by rank — each rank in its own 2-col grid so ranks never share rows
+      const groups = { S: [], A: [], B: [] };
+      projects.forEach(p => { if (groups[p.rank]) groups[p.rank].push(p); });
+      container.innerHTML = ['S','A','B']
+        .filter(r => groups[r].length)
+        .map(r => `<div class="wte-rank-group wte-rank-group--${r}">${groups[r].map(cardHtml).join('')}</div>`)
+        .join('');
+    }
+
+    // ── Sub-tab switching ─────────────────────────────
+    const ardTabWTE    = document.getElementById('ard-tab-wte');
+    const ardTabBRG    = document.getElementById('ard-tab-brg');
+    const ardWTEPanel  = document.getElementById('ard-wte-panel');
+    const ardBRGPanel  = document.getElementById('ard-brg-panel');
+
+    ardTabWTE.addEventListener('click', () => {
+      ardTabWTE.classList.add('active'); ardTabBRG.classList.remove('active');
+      ardWTEPanel.style.display = ''; ardBRGPanel.style.display = 'none';
+    });
+    ardTabBRG.addEventListener('click', () => {
+      ardTabBRG.classList.add('active'); ardTabWTE.classList.remove('active');
+      ardBRGPanel.style.display = ''; ardWTEPanel.style.display = 'none';
+    });
+
+    // ── Language toggle ───────────────────────────────
+    const langEnBtn = document.getElementById('lang-en-btn');
+    const langViBtn = document.getElementById('lang-vi-btn');
+
+    async function switchLang(lang) {
+      if (wteLang === lang) return;
+      wteLang = lang;
+      langEnBtn.classList.toggle('active', lang === 'EN');
+      langViBtn.classList.toggle('active', lang === 'VI');
+      await fetchWTE(lang);
+      renderWTE();
+    }
+
+    langEnBtn.addEventListener('click', () => switchLang('EN'));
+    langViBtn.addEventListener('click', () => switchLang('VI'));
+
     // ── Init ─────────────────────────────────────────
     (async () => {
+      // Valuation data
       await fetchPublicData();
       renderAll();
-      applyAdminUI();
+      // Pre-fetch EN WTE; if empty (sheet not ready), fall back to VI
+      await fetchWTE('EN');
+      if (!wteData.EN.length) {
+        wteLang = 'VI';
+        langEnBtn.classList.remove('active');
+        langViBtn.classList.add('active');
+        await fetchWTE('VI');
+      }
     })();
   </script>
 
