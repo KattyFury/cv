@@ -585,10 +585,10 @@
       background: white; border: 1px solid var(--border);
       border-radius: 14px; overflow: hidden;
     }
-    /* Rank-tinted backgrounds */
-    .wte-card--S { background: rgba(255,51,51,0.08);  border-color: rgba(255,51,51,0.35); }
-    .wte-card--A { background: rgba(255,161,17,0.08); border-color: rgba(255,161,17,0.40); }
-    .wte-card--B { background: rgba(255,234,0,0.10);  border-color: rgba(255,234,0,0.55); }
+    /* Rank-tinted backgrounds — clearly distinct */
+    .wte-card--S { background: rgba(220,38,38,0.10);  border-color: rgba(220,38,38,0.45); }
+    .wte-card--A { background: rgba(37,99,235,0.07);  border-color: rgba(37,99,235,0.35); }
+    .wte-card--B { background: rgba(161,98,7,0.08);   border-color: rgba(161,98,7,0.35);  }
 
     /* Card header */
     .wte-card-head {
@@ -601,9 +601,9 @@
       padding: 2px 8px; border-radius: 6px;
       flex-shrink: 0;
     }
-    .rank-S { background: #FF3333; color: #fff; }
-    .rank-A { background: #FFA111; color: #fff; }
-    .rank-B { background: #FFEA00; color: #333; }
+    .rank-S { background: #FFA111; color: #fff; }
+    .rank-A { background: #3B82F6; color: #fff; }
+    .rank-B { background: #94A3B8; color: #fff; }
 
     .wte-name {
       font-size: 15px; font-weight: 700;
@@ -613,9 +613,9 @@
     .wte-name:hover { color: var(--accent); }
 
     .wte-type {
-      font-size: 11px; font-weight: 500;
-      color: #bbb; letter-spacing: 0.04em;
-      padding: 2px 8px; border: 1px solid #e5e5e5;
+      font-size: 11px; font-weight: 600;
+      color: var(--muted); letter-spacing: 0.04em;
+      padding: 2px 8px; border: 1px solid var(--border);
       border-radius: 999px; white-space: nowrap; flex-shrink: 0;
     }
     .wte-guide-link {
@@ -628,66 +628,68 @@
       flex-shrink: 0; white-space: nowrap;
       transition: background 0.15s, color 0.15s, border-color 0.15s;
     }
-    /* GUIDE pill — black text, rank-tinted border */
+    /* GUIDE pill color follows rank */
     .wte-card--S .wte-guide-link {
-      background: rgba(255,51,51,0.08); border-color: rgba(255,51,51,0.45); color: #111;
+      background: rgba(220,38,38,0.10); border-color: rgba(220,38,38,0.45); color: rgb(185,28,28);
     }
-    .wte-card--S .wte-guide-link:hover { background: #FF3333; color: #fff; border-color: #FF3333; }
+    .wte-card--S .wte-guide-link:hover { background: rgb(220,38,38); color: #fff; border-color: rgb(220,38,38); }
 
     .wte-card--A .wte-guide-link {
-      background: rgba(255,161,17,0.10); border-color: rgba(255,161,17,0.50); color: #111;
+      background: rgba(37,99,235,0.10); border-color: rgba(37,99,235,0.45); color: rgb(29,78,216);
     }
-    .wte-card--A .wte-guide-link:hover { background: #FFA111; color: #fff; border-color: #FFA111; }
+    .wte-card--A .wte-guide-link:hover { background: rgb(37,99,235); color: #fff; border-color: rgb(37,99,235); }
 
     .wte-card--B .wte-guide-link {
-      background: rgba(255,234,0,0.15); border-color: rgba(255,234,0,0.70); color: #111;
+      background: rgba(161,98,7,0.10); border-color: rgba(161,98,7,0.45); color: rgb(120,53,15);
     }
-    .wte-card--B .wte-guide-link:hover { background: #FFEA00; color: #333; border-color: #FFEA00; }
+    .wte-card--B .wte-guide-link:hover { background: rgb(161,98,7); color: #fff; border-color: rgb(161,98,7); }
 
-    /* Overview */
-    .wte-overview {
-      font-size: 12.5px; color: #aaa;
-      line-height: 1.7;
-      padding: 10px 18px 14px;
-      border-top: 1px solid var(--border);
-      white-space: pre-line;
-    }
 
     /* Sections */
     .wte-section {
       border-top: 1px solid var(--border);
       padding: 10px 18px 12px;
     }
-    /* All section labels: allcaps, colored by rank */
     .wte-section-label {
       font-size: 10px; font-weight: 700;
-      letter-spacing: 0.10em; text-transform: uppercase;
-      color: #999; margin-bottom: 8px;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 8px;
     }
-    .wte-card--S .wte-section-label { color: #FF3333; }
-    .wte-card--A .wte-section-label { color: #FFA111; }
-    .wte-card--B .wte-section-label { color: #c8a800; } /* vàng đậm để đọc được trên nền trắng */
+    /* Daily section — highlighted, color follows rank */
+    .wte-section--daily {
+      border-left: 3px solid currentColor;
+      padding-left: 15px;
+    }
+    .wte-section--daily .wte-section-label { font-weight: 800; }
+    .wte-section--daily .wte-task-text { color: var(--text); font-weight: 500; }
 
-    /* Daily section — rank-tinted, slightly darker than card */
-    .wte-section--daily { padding-left: 15px; }
-    .wte-section--daily .wte-task-text { color: #111; font-weight: 700; }
-
+    /* S rank → red daily */
     .wte-card--S .wte-section--daily {
-      background: rgba(255,51,51,0.14); border-left: 3px solid rgba(255,51,51,0.7);
+      background: rgba(220,38,38,0.07);
+      border-left-color: rgba(220,38,38,0.7);
     }
+    .wte-card--S .wte-section--daily .wte-section-label { color: rgb(185,28,28); }
+
+    /* A rank → blue daily */
     .wte-card--A .wte-section--daily {
-      background: rgba(255,161,17,0.14); border-left: 3px solid rgba(255,161,17,0.7);
+      background: rgba(37,99,235,0.07);
+      border-left-color: rgba(37,99,235,0.7);
     }
+    .wte-card--A .wte-section--daily .wte-section-label { color: rgb(29,78,216); }
+
+    /* B rank → amber daily */
     .wte-card--B .wte-section--daily {
-      background: rgba(255,234,0,0.22); border-left: 3px solid rgba(255,234,0,0.9);
+      background: rgba(161,98,7,0.07);
+      border-left-color: rgba(161,98,7,0.7);
     }
+    .wte-card--B .wte-section--daily .wte-section-label { color: rgb(120,53,15); }
     .wte-tasks {
       list-style: none; margin: 0; padding: 0;
-      display: flex; flex-direction: column; gap: 9px;
+      display: flex; flex-direction: column; gap: 5px;
     }
     .wte-task-item {
       display: flex; align-items: flex-start; gap: 8px;
-      font-size: 13.5px; color: var(--text); line-height: 1.55;
+      font-size: 13px; color: var(--sub); line-height: 1.5;
     }
     .wte-task-item::before {
       content: '•'; color: var(--accent); flex-shrink: 0;
@@ -704,7 +706,7 @@
     }
     .wte-task-row--link:hover .wte-task-text { color: var(--text); }
     .wte-task-text { flex: 1; }
-    .wte-task-icon { font-size: 11px; flex-shrink: 0; opacity: 0.35; margin-top: 2px; }
+    .wte-task-icon { font-size: 11px; flex-shrink: 0; opacity: 0.5; margin-top: 2px; }
 
     /* Coming soon */
     .ard-coming-soon {
@@ -746,7 +748,7 @@
           </div>
         </div>
         <div class="hero-tagline">Former crypto researcher, now creating content and building community.</div>
-        <div class="hero-desc">Highlight promising crypto projects, explain how they work &amp; why they matter, keep everything simple &amp; easy to understand.</div>
+        <div class="hero-desc">I highlight promising crypto projects, explaining how they work and why they matter. With a design background, I keep everything simple and easy to understand.</div>
         <div class="socials">
           <a class="social-btn" href="https://x.com/nguyen0xhieu" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.91-5.622Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
@@ -759,10 +761,6 @@
           <a class="social-btn" href="https://mail.google.com/mail/?view=cm&to=kattyfury1403@gmail.com" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
             Email
-          </a>
-          <a class="social-btn" href="https://t.me/airdrop_1wallet" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-            Community
           </a>
         </div>
       </section>
@@ -954,8 +952,8 @@
         <div class="wte-toolbar">
           <span class="wte-count" id="wte-count"></span>
           <div class="lang-toggle">
-            <button class="lang-btn active" id="lang-vi-btn">VI</button>
-            <button class="lang-btn" id="lang-en-btn">EN</button>
+            <button class="lang-btn active" id="lang-en-btn">EN</button>
+            <button class="lang-btn" id="lang-vi-btn">VI</button>
           </div>
         </div>
         <div id="wte-cards"></div>
@@ -1549,10 +1547,13 @@
     // ══════════════════════════════════════════════════
 
     const WTE_SHEET_ID = '1m8_nwbP_Apw43Y8iNxOoGFYy8YA-OpchGnVRfTMBUAo';
-    const WTE_URL_VI = `https://docs.google.com/spreadsheets/d/${WTE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Work%20to%20Earn%20VI`;
+    const WTE_URL = {
+      VI: `https://docs.google.com/spreadsheets/d/${WTE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Work%20to%20Earn%20VI`,
+      EN: `https://docs.google.com/spreadsheets/d/${WTE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Work%20to%20Earn%20EN`,
+    };
 
-    let wteData   = { VI: [], EN: [] };  // VI = source, EN = auto-translated
-    let wteLang   = 'VI';
+    let wteData   = { VI: [], EN: [] };  // parsed projects per language
+    let wteLang   = 'EN';                // active language
     let wteLoaded = { VI: false, EN: false };
 
     // ── Full CSV parser (handles quoted multi-line cells) ─
@@ -1601,8 +1602,7 @@
             rank:       (r[1] || '').trim().toUpperCase(),
             type:       (r[2] || '').trim(),
             twitter:    (r[3] || '').trim(),
-            overview:   (r[4] || '').trim(),
-            guideUrl:   (r[5] || '').trim(),
+            guideUrl:   (r[4] || '').trim(),
             getStarted: [],
             daily:      [],
             weekly:     [],
@@ -1613,14 +1613,14 @@
 
         // Task rows (new project or continuation): cols G-N
         if (!current) continue;
-        const task = (r[6] || '').trim();
-        const taskLink = (r[7] || '').trim();
-        const daily = (r[8] || '').trim();
-        const dailyLink = (r[9] || '').trim();
-        const weekly = (r[10] || '').trim();
-        const weeklyLink = (r[11] || '').trim();
-        const note = (r[12] || '').trim();
-        const noteLink = (r[13] || '').trim();
+        const task = (r[5] || '').trim();
+        const taskLink = (r[6] || '').trim();
+        const daily = (r[7] || '').trim();
+        const dailyLink = (r[8] || '').trim();
+        const weekly = (r[9] || '').trim();
+        const weeklyLink = (r[10] || '').trim();
+        const note = (r[11] || '').trim();
+        const noteLink = (r[12] || '').trim();
 
         if (task)   current.getStarted.push({ text: task,   link: taskLink });
         if (daily)  current.daily.push({      text: daily,  link: dailyLink });
@@ -1635,68 +1635,18 @@
       return projects;
     }
 
-    // ── Fetch VI sheet (single source of truth) ───────
-    async function fetchWTE() {
-      if (wteLoaded.VI) return;
+    // ── Fetch a language tab ──────────────────────────
+    async function fetchWTE(lang) {
+      if (wteLoaded[lang]) return;
       try {
-        const res  = await fetch(WTE_URL_VI);
+        const res  = await fetch(WTE_URL[lang]);
         const text = await res.text();
-        wteData.VI = parseWTE(text);
-        wteLoaded.VI = true;
+        wteData[lang] = parseWTE(text);
+        wteLoaded[lang] = true;
       } catch (err) {
-        console.warn('WTE fetch failed:', err);
-        wteData.VI = [];
+        console.warn('WTE fetch failed (' + lang + '):', err);
+        wteData[lang] = [];
       }
-    }
-
-    // ── Translate VI → EN via Google Translate (unofficial, no key needed) ─
-    async function translateToEN() {
-      if (wteLoaded.EN) return;
-      if (!wteData.VI.length) return;
-
-      const SEP = '\n[|||]\n';
-
-      // Collect all translatable texts in order
-      const texts = [];
-      wteData.VI.forEach(p => {
-        texts.push(p.overview || '');
-        ['getStarted','daily','weekly','notes'].forEach(f => {
-          (p[f] || []).forEach(item => texts.push(item.text || ''));
-        });
-      });
-
-      // Translate all batches in parallel (faster than sequential)
-      const BATCH = 30;
-      const batches = [];
-      for (let i = 0; i < texts.length; i += BATCH) batches.push(texts.slice(i, i + BATCH));
-
-      const results = await Promise.all(batches.map(async batch => {
-        const joined = batch.join(SEP);
-        try {
-          const url  = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=vi&tl=en&dt=t&q=${encodeURIComponent(joined)}`;
-          const res  = await fetch(url);
-          const data = await res.json();
-          const raw  = data[0].map(x => x[0]).join('');
-          const parts = raw.split(/\n?\[\|\|\|\]\n?/);
-          while (parts.length < batch.length) parts.push(batch[parts.length]);
-          return parts.slice(0, batch.length);
-        } catch {
-          return batch; // fallback: keep VI text
-        }
-      }));
-      const translated = results.flat();
-
-      // Map translated texts back to project structure
-      let idx = 0;
-      wteData.EN = wteData.VI.map(p => {
-        const en = { ...p, overview: translated[idx++] || p.overview };
-        ['getStarted','daily','weekly','notes'].forEach(f => {
-          en[f] = (p[f] || []).map(item => ({ ...item, text: translated[idx++] || item.text }));
-        });
-        return en;
-      });
-
-      wteLoaded.EN = true;
     }
 
     // ── Render a task section ─────────────────────────
@@ -1747,7 +1697,6 @@
             ${p.type ? `<span class="wte-type">${p.type}</span>` : ''}
             ${guideHtml}
           </div>
-          ${p.overview ? `<div class="wte-overview">${p.overview}</div>` : ''}
           ${section('Get Started', p.getStarted, 'getStarted')}
           ${section('Daily', p.daily, 'daily')}
           ${section('Weekly', p.weekly, 'weekly')}
@@ -1786,13 +1735,9 @@
     async function switchLang(lang) {
       if (wteLang === lang) return;
       wteLang = lang;
-      langViBtn.classList.toggle('active', lang === 'VI');
       langEnBtn.classList.toggle('active', lang === 'EN');
-      if (lang === 'EN' && !wteLoaded.EN) {
-        const container = document.getElementById('wte-cards');
-        container.innerHTML = '<div style="padding:60px 0;text-align:center;color:var(--muted);font-size:14px;">Translating…</div>';
-        await translateToEN();
-      }
+      langViBtn.classList.toggle('active', lang === 'VI');
+      await fetchWTE(lang);
       renderWTE();
     }
 
@@ -1804,10 +1749,14 @@
       // Valuation data
       await fetchPublicData();
       renderAll();
-      // Load VI (only source), render, then pre-translate EN in background
-      await fetchWTE();
-      renderWTE();
-      translateToEN(); // no await — runs silently in background
+      // Pre-fetch EN WTE; if empty (sheet not ready), fall back to VI
+      await fetchWTE('EN');
+      if (!wteData.EN.length) {
+        wteLang = 'VI';
+        langEnBtn.classList.remove('active');
+        langViBtn.classList.add('active');
+        await fetchWTE('VI');
+      }
     })();
   </script>
 
