@@ -958,8 +958,8 @@
         <div class="wte-toolbar">
           <span class="wte-count" id="wte-count"></span>
           <div class="lang-toggle">
-            <button class="lang-btn active" id="lang-en-btn">EN</button>
-            <button class="lang-btn" id="lang-vi-btn">VI</button>
+            <button class="lang-btn active" id="lang-vi-btn">VI</button>
+            <button class="lang-btn" id="lang-en-btn">EN</button>
           </div>
         </div>
         <div id="wte-cards"></div>
@@ -1553,13 +1553,10 @@
     // ══════════════════════════════════════════════════
 
     const WTE_SHEET_ID = '1m8_nwbP_Apw43Y8iNxOoGFYy8YA-OpchGnVRfTMBUAo';
-    const WTE_URL = {
-      VI: `https://docs.google.com/spreadsheets/d/${WTE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Work%20to%20Earn%20VI`,
-      EN: `https://docs.google.com/spreadsheets/d/${WTE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Work%20to%20Earn%20EN`,
-    };
+    const WTE_URL_VI = `https://docs.google.com/spreadsheets/d/${WTE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Work%20to%20Earn%20VI`;
 
-    let wteData   = { VI: [], EN: [] };  // parsed projects per language
-    let wteLang   = 'EN';                // active language
+    let wteData   = { VI: [], EN: [] };
+    let wteLang   = 'VI';
     let wteLoaded = { VI: false, EN: false };
 
     // ── Full CSV parser (handles quoted multi-line cells) ─
@@ -1641,18 +1638,56 @@
       return projects;
     }
 
-    // ── Fetch a language tab ──────────────────────────
-    async function fetchWTE(lang) {
-      if (wteLoaded[lang]) return;
+    // ── Fetch VI sheet ────────────────────────────────
+    async function fetchWTE() {
+      if (wteLoaded.VI) return;
       try {
-        const res  = await fetch(WTE_URL[lang]);
+        const res  = await fetch(WTE_URL_VI);
         const text = await res.text();
-        wteData[lang] = parseWTE(text);
-        wteLoaded[lang] = true;
+        wteData.VI = parseWTE(text);
+        wteLoaded.VI = true;
       } catch (err) {
-        console.warn('WTE fetch failed (' + lang + '):', err);
-        wteData[lang] = [];
+        console.warn('WTE fetch failed:', err);
+        wteData.VI = [];
       }
+    }
+
+    // ── Auto-translate VI → EN ────────────────────────
+    async function translateToEN() {
+      if (wteLoaded.EN) return;
+      if (!wteData.VI.length) return;
+      const SEP = '\n[|||]\n';
+      const texts = [];
+      wteData.VI.forEach(p => {
+        ['getStarted','daily','weekly','notes'].forEach(f => {
+          (p[f] || []).forEach(item => texts.push(item.text || ''));
+        });
+      });
+      const BATCH = 30;
+      const batches = [];
+      for (let i = 0; i < texts.length; i += BATCH) batches.push(texts.slice(i, i + BATCH));
+      const results = await Promise.all(batches.map(async batch => {
+        const joined = batch.join(SEP);
+        try {
+          const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=vi&tl=en&dt=t&q=${encodeURIComponent(joined)}`;
+          const res = await fetch(url);
+          const data = await res.json();
+          const raw = data[0].map(x => x[0]).join('');
+          const parts = raw.split(/\n?\[\|\|\|\]\n?/);
+          while (parts.length < batch.length) parts.push(batch[parts.length]);
+          return parts.slice(0, batch.length);
+        } catch { return batch; }
+      }));
+      const translated = results.flat();
+      let idx = 0;
+      wteData.EN = wteData.VI.map(p => {
+        const en = { ...p };
+        ['getStarted','daily','weekly','notes'].forEach(f => {
+          en[f] = (p[f] || []).map(item => ({ ...item, text: translated[idx++] || item.text }));
+        });
+        return en;
+      });
+      wteLoaded.EN = true;
     }
 
     // ── Render a task section ─────────────────────────
@@ -1741,28 +1776,22 @@
     async function switchLang(lang) {
       if (wteLang === lang) return;
       wteLang = lang;
-      langEnBtn.classList.toggle('active', lang === 'EN');
       langViBtn.classList.toggle('active', lang === 'VI');
-      await fetchWTE(lang);
+      langEnBtn.classList.toggle('active', lang === 'EN');
+      if (lang === 'EN' && !wteLoaded.EN) await translateToEN();
       renderWTE();
     }
 
-    langEnBtn.addEventListener('click', () => switchLang('EN'));
     langViBtn.addEventListener('click', () => switchLang('VI'));
+    langEnBtn.addEventListener('click', () => switchLang('EN'));
 
     // ── Init ─────────────────────────────────────────
     (async () => {
-      // Valuation data
       await fetchPublicData();
       renderAll();
-      // Pre-fetch EN WTE; if empty (sheet not ready), fall back to VI
-      await fetchWTE('EN');
-      if (!wteData.EN.length) {
-        wteLang = 'VI';
-        langEnBtn.classList.remove('active');
-        langViBtn.classList.add('active');
-        await fetchWTE('VI');
-      }
+      await fetchWTE();
+      renderWTE();
+      translateToEN(); // pre-translate in background
     })();
   </script>
 
