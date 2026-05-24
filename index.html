@@ -664,29 +664,13 @@
     .wte-section--daily .wte-section-label { font-weight: 800; }
     .wte-section--daily .wte-task-text { color: var(--text); font-weight: 500; }
 
-    /* S rank → solid purple daily */
-    .wte-card--S .wte-section--daily {
-      background: #8B5CF6; border-left-color: #7c3aed; color: #fff;
-    }
-    .wte-card--S .wte-section--daily .wte-section-label { color: rgba(255,255,255,0.85); }
-    .wte-card--S .wte-section--daily .wte-task-text { color: #fff; }
-    .wte-card--S .wte-section--daily .wte-task-item::before { color: rgba(255,255,255,0.7); }
-
-    /* A rank → solid blue daily */
-    .wte-card--A .wte-section--daily {
-      background: #3B82F6; border-left-color: #2563eb; color: #fff;
-    }
-    .wte-card--A .wte-section--daily .wte-section-label { color: rgba(255,255,255,0.85); }
-    .wte-card--A .wte-section--daily .wte-task-text { color: #fff; }
-    .wte-card--A .wte-section--daily .wte-task-item::before { color: rgba(255,255,255,0.7); }
-
-    /* B rank → solid green daily */
-    .wte-card--B .wte-section--daily {
-      background: #22C55E; border-left-color: #16a34a; color: #fff;
-    }
-    .wte-card--B .wte-section--daily .wte-section-label { color: rgba(255,255,255,0.85); }
-    .wte-card--B .wte-section--daily .wte-task-text { color: #fff; }
-    .wte-card--B .wte-section--daily .wte-task-item::before { color: rgba(255,255,255,0.7); }
+    /* Daily — xám nhạt chữ đen, border-left giữ màu rank */
+    .wte-card--S .wte-section--daily { background: #f0f0f0; border-left-color: #8B5CF6; }
+    .wte-card--A .wte-section--daily { background: #f0f0f0; border-left-color: #3B82F6; }
+    .wte-card--B .wte-section--daily { background: #f0f0f0; border-left-color: #22C55E; }
+    .wte-card--S .wte-section--daily .wte-section-label { color: #8B5CF6; }
+    .wte-card--A .wte-section--daily .wte-section-label { color: #3B82F6; }
+    .wte-card--B .wte-section--daily .wte-section-label { color: #22C55E; }
     .wte-tasks {
       list-style: none; margin: 0; padding: 0;
       display: flex; flex-direction: column; gap: 5px;
