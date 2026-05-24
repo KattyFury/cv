@@ -588,9 +588,9 @@
       border-radius: 14px; overflow: hidden;
     }
     /* Rank-tinted backgrounds */
-    .wte-card--S { background: rgba(139,92,246,0.08);  border-color: rgba(139,92,246,0.40); }
-    .wte-card--A { background: rgba(59,130,246,0.07);  border-color: rgba(59,130,246,0.35); }
-    .wte-card--B { background: rgba(34,197,94,0.07);   border-color: rgba(34,197,94,0.38);  }
+    .wte-card--S { background: #fff; border-color: #e0e0e0; }
+    .wte-card--A { background: #fff; border-color: #e0e0e0; }
+    .wte-card--B { background: #fff; border-color: #e0e0e0; }
 
     /* Card header */
     .wte-card-head {
@@ -681,9 +681,10 @@
       display: flex; align-items: flex-start; gap: 8px;
       font-size: 13px; color: var(--sub); line-height: 1.5;
     }
-    .wte-task-item::before {
-      content: '•'; color: var(--accent); flex-shrink: 0;
-    }
+    .wte-task-item::before { content: '•'; flex-shrink: 0; }
+    .wte-card--S .wte-task-item::before { color: #8B5CF6; }
+    .wte-card--A .wte-task-item::before { color: #3B82F6; }
+    .wte-card--B .wte-task-item::before { color: #22C55E; }
     .wte-task-row {
       display: flex; align-items: flex-start; gap: 8px;
       flex: 1; color: inherit; text-decoration: none;
