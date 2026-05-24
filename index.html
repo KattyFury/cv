@@ -374,11 +374,13 @@
       white-space: nowrap;
     }
     .mkt-lvl.mkt-active { opacity: 1; font-weight: 700; font-size: 11px; }
-    .mkt-lvl[data-lvl="0"].mkt-active { background: rgba(139,92,246,0.15); color: #7c3aed; }
-    .mkt-lvl[data-lvl="1"].mkt-active { background: rgba(59,130,246,0.13); color: #1d4ed8; }
-    .mkt-lvl[data-lvl="2"].mkt-active { background: rgba(34,197,94,0.13);  color: #15803d; }
-    .mkt-lvl[data-lvl="3"].mkt-active { background: rgba(234,179,8,0.15);  color: #854d0e; }
-    .mkt-lvl[data-lvl="4"].mkt-active { background: rgba(239,68,68,0.15);  color: #b91c1c; }
+    .mkt-lvl[data-lvl="0"].mkt-active { background: #8B5CF6; color: #fff; }
+    .mkt-lvl[data-lvl="1"].mkt-active { background: #3B82F6; color: #fff; }
+    .mkt-lvl[data-lvl="2"].mkt-active { background: #22C55E; color: #fff; }
+    .mkt-lvl[data-lvl="3"].mkt-active { background: #EAB308; color: #fff; }
+    .mkt-lvl[data-lvl="4"].mkt-active { background: #EF4444; color: #fff; }
+    /* split-box luôn trắng dù card đổi màu */
+    #market-terms { background: #fff; }
 
     .split-box {
       display: flex; align-items: stretch;
@@ -885,7 +887,7 @@
       <div class="val-analysis">
 
         <!-- 1. Market condition -->
-        <div class="val-card">
+        <div class="val-card" id="market-card">
           <div class="val-card-label calc-card-label">Market condition</div>
           <div class="split-box" id="market-terms" style="display:none">
             <div class="split-col">
@@ -1263,6 +1265,10 @@
       document.querySelectorAll('#market-levels .mkt-lvl').forEach((el, i) => {
         el.classList.toggle('mkt-active', i === lvlIdx);
       });
+      // Tint card background to match market level
+      const mktCardBg = ['rgba(139,92,246,0.10)','rgba(59,130,246,0.09)','rgba(34,197,94,0.09)','rgba(234,179,8,0.12)','rgba(239,68,68,0.12)'];
+      const mktCard = document.getElementById('market-card');
+      if (mktCard) mktCard.style.background = mktCardBg[lvlIdx] || '';
 
       if (short4.length >= 4) {
         splitBox.style.display = '';
