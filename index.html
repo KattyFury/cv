@@ -622,25 +622,7 @@
       padding: 2px 8px; border: 1px solid var(--border);
       border-radius: 999px; white-space: nowrap; flex-shrink: 0;
     }
-    .wte-guide-link {
-      display: inline-flex; align-items: center; gap: 4px;
-      font-size: 12px; font-weight: 700; letter-spacing: 0.06em;
-      color: #111; text-decoration: none;
-      background: rgba(0,0,0,0.06);
-      border: 1px solid rgba(0,0,0,0.15);
-      padding: 3px 9px; border-radius: 999px;
-      flex-shrink: 0; white-space: nowrap;
-      transition: background 0.15s, color 0.15s, border-color 0.15s;
-    }
-    /* GUIDE pill — solid rank color, white text */
-    .wte-card--S .wte-guide-link { background: #8B5CF6; border-color: #8B5CF6; color: #fff; }
-    .wte-card--S .wte-guide-link:hover { background: #7c3aed; border-color: #7c3aed; }
 
-    .wte-card--A .wte-guide-link { background: #3B82F6; border-color: #3B82F6; color: #fff; }
-    .wte-card--A .wte-guide-link:hover { background: #2563eb; border-color: #2563eb; }
-
-    .wte-card--B .wte-guide-link { background: #22C55E; border-color: #22C55E; color: #fff; }
-    .wte-card--B .wte-guide-link:hover { background: #16a34a; border-color: #16a34a; }
 
     /* Section labels follow rank */
     .wte-card--S .wte-section-label { color: #8B5CF6; }
@@ -1609,7 +1591,6 @@
             rank:       (r[1] || '').trim().toUpperCase(),
             type:       (r[2] || '').trim(),
             twitter:    (r[3] || '').trim(),
-            guideUrl:   (r[4] || '').trim(),
             getStarted: [],
             daily:      [],
             weekly:     [],
@@ -1618,16 +1599,16 @@
           projects.push(current);
         }
 
-        // Task rows (new project or continuation): cols G-N
+        // Task rows: cols E-L (after removing guideUrl col)
         if (!current) continue;
-        const task = (r[5] || '').trim();
-        const taskLink = (r[6] || '').trim();
-        const daily = (r[7] || '').trim();
-        const dailyLink = (r[8] || '').trim();
-        const weekly = (r[9] || '').trim();
-        const weeklyLink = (r[10] || '').trim();
-        const note = (r[11] || '').trim();
-        const noteLink = (r[12] || '').trim();
+        const task = (r[4] || '').trim();
+        const taskLink = (r[5] || '').trim();
+        const daily = (r[6] || '').trim();
+        const dailyLink = (r[7] || '').trim();
+        const weekly = (r[8] || '').trim();
+        const weeklyLink = (r[9] || '').trim();
+        const note = (r[10] || '').trim();
+        const noteLink = (r[11] || '').trim();
 
         if (task)   current.getStarted.push({ text: task,   link: taskLink });
         if (daily)  current.daily.push({      text: daily,  link: dailyLink });
@@ -1729,9 +1710,6 @@
       countEl.textContent = projects.length + ' projects';
 
       const cardHtml = p => {
-        const guideHtml = p.guideUrl
-          ? `<a class="wte-guide-link" href="${p.guideUrl}" target="_blank" rel="noopener">📖 GUIDE</a>`
-          : '';
         const nameHtml = p.twitter
           ? `<a class="wte-name" href="${p.twitter}" target="_blank" rel="noopener">${p.name}</a>`
           : `<span class="wte-name">${p.name}</span>`;
@@ -1740,7 +1718,6 @@
             <span class="wte-rank rank-${p.rank}">${p.rank}</span>
             ${nameHtml}
             ${p.type ? `<span class="wte-type">${p.type}</span>` : ''}
-            ${guideHtml}
           </div>
           ${section('Get Started', p.getStarted, 'getStarted')}
           ${section('Daily', p.daily, 'daily')}
