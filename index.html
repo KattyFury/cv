@@ -1045,6 +1045,7 @@
     navValBtn.addEventListener('click', () => showValuation());
     navArdBtn.addEventListener('click', () => showAirdrop());
     window.addEventListener('popstate', routeFromPath);
+    routeFromPath(); // hiện đúng tab ngay
 
     // ── Data layer — Google Sheets (read-only) ────────
     // Columns: A=project, B=type, C=ticker, D=fundraised($M), E=vcAlloc(%), F=totalSupply, G=tgeDate, H=priceTGE, I=vcMultiple(ignored, recalculated)
@@ -1792,9 +1793,10 @@
     // ── Init ─────────────────────────────────────────
     (async () => {
       await fetchPublicData();
+      renderAll();
       await fetchWTE();
-      translateToEN(); // pre-translate in background
-      routeFromPath(); // route sau khi data đã sẵn sàng
+      renderWTE();
+      translateToEN();
     })();
   </script>
 
