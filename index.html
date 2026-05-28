@@ -300,7 +300,7 @@
 
     .val-table-scroll { max-height: calc(100vh - 520px); min-height: 160px; overflow-y: auto; overflow-x: auto; }
 
-    .val-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .val-table { width: 100%; border-collapse: collapse; font-size: 14px; table-layout: fixed; }
 
     .val-table thead th {
       padding: 9px 14px;
@@ -321,13 +321,11 @@
     }
 
     .val-table tbody tr:last-child td { border-bottom: none; }
-    .td-ticker  { font-weight: 600; color: var(--sub)  !important; font-size: 12px; white-space: nowrap; }
-    .td-ticker-inner { display: flex; align-items: center; gap: 0; }
-    .td-ticker-stars { display: inline-block; width: 44px; text-align: right; font-size: 10px; opacity: 0.7; letter-spacing: 0px; flex-shrink: 0; }
-    .val-table thead th:first-child { padding-left: 66px; }
-    .td-ticker-name  { margin-left: 8px; }
-    .td-multi   { font-weight: 700; color: var(--text) !important; }
-    .td-source  { font-size: 11px; color: var(--muted) !important; }
+    .val-table th, .val-table td { width: 20%; }
+    .td-ticker { font-weight: 600; color: var(--sub) !important; font-size: 12px; }
+    .td-size   { font-size: 10px; opacity: 0.6; font-weight: 400; margin-left: 3px; }
+    .td-multi  { font-weight: 700; color: var(--text) !important; }
+    .td-source { font-size: 11px; color: var(--muted) !important; }
 
     .val-empty { padding: 40px 16px; text-align: center; font-size: 14px; color: var(--muted); }
 
@@ -418,20 +416,24 @@
       padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px;
       font-family: 'Roboto', sans-serif; font-size: 14px; color: var(--text);
       background: white; outline: none; transition: border-color 0.15s;
+      width: 100%; min-width: 0; box-sizing: border-box;
     }
     .calc-field input:focus { border-color: var(--accent); }
+    .calc-field input[type=number]::-webkit-inner-spin-button,
+    .calc-field input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    .calc-field input[type=number] { -moz-appearance: textfield; }
 
     .calc-btn {
-      width: 100%; padding: 9px; background: var(--accent);
+      width: 100%; min-width: 0; padding: 9px; background: var(--accent);
       color: #1a1a1a; border: none; border-radius: 8px;
       font-family: 'Roboto', sans-serif; font-size: 14px; font-weight: 600;
-      cursor: pointer; transition: opacity 0.15s;
+      cursor: pointer; transition: opacity 0.15s; box-sizing: border-box;
     }
     .calc-btn:hover { opacity: 0.85; }
 
     /* ── CALC INLINE RESULT ─────────────────────────── */
     .calc-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .calc-btn-field { display: flex; align-items: flex-end; }
+    .calc-row-last { align-items: end; }
     .calc-btn-field .calc-btn { width: 100%; }
     .calc-res-range {
       font-size: 17px; font-weight: 700; letter-spacing: -0.03em;
@@ -830,9 +832,9 @@
             <div class="calc-row-2 calc-row-last">
               <div class="calc-field">
                 <label>Total Supply</label>
-                <input type="text" id="calc-supply" placeholder="e.g. 10B" />
+                <input type="text" id="calc-supply" placeholder="e.g. 21M, 10B" />
               </div>
-              <div class="calc-field calc-btn-field">
+              <div>
                 <button class="calc-btn" id="calc-btn">Calculate</button>
               </div>
             </div>
@@ -1164,12 +1166,12 @@
         const xATH  = xMult(e.ath, e);
         const xATM  = xMult(e.currentPrice, e);
         const vcFDV = e.vcAlloc > 0 ? e.fundraising / (e.vcAlloc / 100) : 0;
-        const stars = vcFDV <= 0 ? '' :
-                      vcFDV < 100e6  ? '💲' :
-                      vcFDV < 200e6  ? '💲💲' :
-                      vcFDV < 500e6  ? '💲💲💲' : '💲💲💲💲';
+        const size = vcFDV <= 0 ? '' :
+                     vcFDV < 100e6  ? '$' :
+                     vcFDV < 200e6  ? '$$' :
+                     vcFDV < 500e6  ? '$$$' : '$$$$';
         return `<tr>
-          <td class="td-ticker"><span class="td-ticker-inner"><span class="td-ticker-stars">${stars}</span><span class="td-ticker-name">${e.ticker}</span></span></td>
+          <td class="td-ticker">${e.ticker}${size ? ` <span class="td-size">(${size})</span>` : ''}</td>
           <td>${fmtDate(e.tgeDate)}</td>
           <td class="td-multi">${xTGE > 0 ? '×' + xTGE.toFixed(2) : '—'}</td>
           <td class="td-multi">${xATH > 0 ? '×' + xATH.toFixed(2) : '—'}</td>
@@ -1229,10 +1231,10 @@
       const allSorted = [...entries].sort((a, b) => new Date(b.tgeDate) - new Date(a.tgeDate));
       const lowFDVMults = allSorted
         .filter(e => (e.fundraising / (e.vcAlloc / 100)) < FDV_SPLIT)
-        .slice(0, 10).map(multiple).filter(m => isFinite(m) && m > 0);
+        .slice(0, 6).map(multiple).filter(m => isFinite(m) && m > 0);
       const highFDVMults = allSorted
         .filter(e => (e.fundraising / (e.vcAlloc / 100)) >= FDV_SPLIT)
-        .slice(0, 10).map(multiple).filter(m => isFinite(m) && m > 0);
+        .slice(0, 6).map(multiple).filter(m => isFinite(m) && m > 0);
       const lowEl  = document.getElementById('baseline-low');
       const highEl = document.getElementById('baseline-high');
       lowEl.textContent  = lowFDVMults.length  ? `×${median(lowFDVMults).toFixed(2)}`  : '—';
