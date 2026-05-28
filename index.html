@@ -429,7 +429,9 @@
     .calc-btn:hover { opacity: 0.85; }
 
     /* ── CALC INLINE RESULT ─────────────────────────── */
-    .calc-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+    .calc-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .calc-btn-field { display: flex; flex-direction: column; }
+    .calc-btn-field .calc-btn { flex: 1; margin-top: 0; }
     .calc-res-range {
       font-size: 17px; font-weight: 700; letter-spacing: -0.03em;
       color: var(--text); margin: 2px 0 8px; line-height: 1.3;
@@ -814,7 +816,7 @@
         <div class="val-card" id="calc-card">
           <div class="val-card-label calc-card-label">Predict TGE FDV</div>
           <div id="calc-form">
-            <div class="calc-row-2">
+            <div class="calc-row-2" style="margin-bottom:8px">
               <div class="calc-field">
                 <label>Fundraising ($M)</label>
                 <input type="number" id="calc-raise" step="0.1" placeholder="e.g. 30" />
@@ -824,11 +826,16 @@
                 <input type="number" id="calc-alloc" step="0.1" placeholder="e.g. 20" />
               </div>
             </div>
-            <div class="calc-field" style="margin-bottom:12px">
-              <label>Total Supply</label>
-              <input type="text" id="calc-supply" placeholder="e.g. 10B · 1.5B" />
+            <div class="calc-row-2 calc-row-last">
+              <div class="calc-field">
+                <label>Total Supply</label>
+                <input type="text" id="calc-supply" placeholder="e.g. 10B" />
+              </div>
+              <div class="calc-field calc-btn-field">
+                <label>&nbsp;</label>
+                <button class="calc-btn" id="calc-btn">Calculate</button>
+              </div>
             </div>
-            <button class="calc-btn" id="calc-btn">Calculate</button>
           </div>
           <div id="calc-result" style="display:none">
             <div id="calc-res-range"></div>
