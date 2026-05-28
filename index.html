@@ -838,6 +838,7 @@
                 <th>TGE Date</th>
                 <th>×TGE</th>
                 <th>×ATH</th>
+                <th>×ATM</th>
               </tr>
             </thead>
             <tbody id="tge-tbody"></tbody>
@@ -1076,8 +1077,9 @@
               vcAlloc:     num(r[4]),                                      // col E: percent
               totalSupply: parseSupply(r[5]) || 0,                        // col F
               tgeDate:     normalizeDate(r[6]),                            // col G
-              priceTGE:    num(r[7]),                                      // col H
-              ath:         num(r[11]),                                     // col L (from sheet)
+              priceTGE:     num(r[7]),                                     // col H
+              ath:          num(r[11]),                                    // col L
+              currentPrice: num(r[13]),                                   // col N
             };
           })
           .filter(e => e.ticker && e.tgeDate && e.fundraising > 0);
@@ -1243,11 +1245,13 @@
       tbody.innerHTML = sorted.map(e => {
         const xTGE = multiple(e);
         const xATH = xMult(e.ath, e);
+        const xATM = xMult(e.currentPrice, e);
         return `<tr>
           <td class="td-ticker">$${e.ticker}</td>
           <td>${fmtDate(e.tgeDate)}</td>
           <td class="td-multi">${xTGE > 0 ? '×' + xTGE.toFixed(2) : '—'}</td>
           <td class="td-multi">${xATH > 0 ? '×' + xATH.toFixed(2) : '—'}</td>
+          <td class="td-multi">${xATM > 0 ? '×' + xATM.toFixed(2) : '—'}</td>
         </tr>`;
       }).join('');
     }
