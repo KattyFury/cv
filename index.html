@@ -508,6 +508,38 @@
       .wte-rank-group { grid-template-columns: 1fr 1fr; }
     }
 
+    /* BRG 3-column rank boxes */
+    .brg-cols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    @media (max-width: 600px) { .brg-cols { grid-template-columns: 1fr; } }
+    .brg-col { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .brg-col-header { padding: 6px 12px; text-align: center; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; }
+    .brg-col--S .brg-col-header { background: #FF5A36; color: #fff; }
+    .brg-col--A .brg-col-header { background: #FFA111; color: #fff; }
+    .brg-col--B .brg-col-header { background: #FFD447; color: #fff; }
+    .brg-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; border-bottom: 1px solid var(--border);
+      text-decoration: none; color: var(--text);
+      transition: background 0.15s;
+    }
+    .brg-item:last-child { border-bottom: none; }
+    .brg-item:hover { background: var(--off); }
+    .brg-item-logo {
+      width: 26px; height: 26px; border-radius: 50%;
+      object-fit: cover; flex-shrink: 0; background: var(--border);
+    }
+    .brg-item-name { font-size: 14px; font-weight: 600; }
+
+    /* Each rank group is its own 2-col grid */
+    .wte-rank-group {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    @media (min-width: 768px) {
+      .wte-rank-group { grid-template-columns: 1fr 1fr; }
+    }
+
     /* Card */
     .wte-card {
       background: white; border: 1px solid var(--border);
@@ -936,23 +968,8 @@
       <div id="ard-brg-panel" style="display:none">
         <div class="pf-toolbar">
           <span class="pf-count" id="brg-count"></span>
-          <span class="pf-hint">Projects with roles · rated by fundraising, chain type, VC</span>
         </div>
-        <div class="pf-wrap">
-          <table class="pf-table">
-            <thead>
-              <tr>
-                <th style="width:25%">Project</th>
-                <th style="width:25%">Raised</th>
-                <th style="width:25%">VCs</th>
-                <th style="width:25%">Rating</th>
-              </tr>
-            </thead>
-            <tbody id="brg-tbody">
-              <tr><td colspan="4" style="text-align:center;padding:32px;color:var(--muted)">Click tab to load</td></tr>
-            </tbody>
-          </table>
-        </div>
+        <div id="brg-cols"></div>
       </div>
 
 
@@ -1707,7 +1724,6 @@
         </div>`;
       };
 
-      // Group by rank — each rank in its own 2-col grid so ranks never share rows
       const groups = { S: [], A: [], B: [] };
       projects.forEach(p => { if (groups[p.rank]) groups[p.rank].push(p); });
       container.innerHTML = ['S','A','B']
@@ -1776,12 +1792,12 @@
       else if (amt >= 40) stars += 2;
       else if (amt > 0)   stars += 1;
       const type = (row[1] || '').toLowerCase().trim();
-      if (type === 'l1' || type === 'l2') stars += 1;
-      if (type === 'stablechain')          stars += 2;
-      const vcs = (row[3] || '').toLowerCase();
-      if (TIER1_VCS.some(v => vcs.includes(v))) stars += 1;
+      if (type === 'l1' || type === 'l2' || type.startsWith('layer')) stars += 1;
+      if (type === 'stablechain' || type === 'stable')                 stars += 2;
+      const hasTopVC = (row[3] || '').toLowerCase().trim() === 'yes';
+      if (hasTopVC) stars += 1;
       if (stars >= 5) return '★★★';
-      if (stars >= 3) return '★★';
+      if (stars >= 2) return '★★';
       return '★';
     }
 
@@ -1794,28 +1810,43 @@
     }
 
 async function renderBRG() {
-      const tbody   = document.getElementById('brg-tbody');
-      const countEl = document.getElementById('brg-count');
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted)">Loading...</td></tr>';
+      const container = document.getElementById('brg-cols');
+      const countEl   = document.getElementById('brg-count');
+      container.innerHTML = '<div style="padding:60px 0;text-align:center;color:var(--muted);font-size:14px;">Loading…</div>';
       try {
         await loadEarly();
-        const withRole = earlyRows.filter(r => (r[4] || '').toLowerCase().trim() === 'yes');
+        const withRole = earlyRows.filter(r => (r[5] || '').toLowerCase().trim() === 'yes');
         const rated    = withRole.map(r => ({ r, rank: calcRating(r) }))
-          .sort((a, b) => { const o = {S:0,A:1,B:2}; return o[a.rank] - o[b.rank]; });
+          .sort((a, b) => { const o = {'★★★':0,'★★':1,'★':2}; return (o[a.rank]??9) - (o[b.rank]??9); });
         countEl.textContent = rated.length + ' projects';
-        tbody.innerHTML = rated.map(({ r, rank }) => {
-          const cls    = rank === '★★★' ? 'S' : rank === '★★' ? 'A' : 'B';
-          const top3vc = (r[3] || '').replace(/\r/g, '').replace(/,/g, '\n').split('\n').map(v => v.trim()).filter(Boolean).slice(0, 3).join('<br>') || '—';
-          const typeTag = r[1] ? '<span class="brg-type-tag">' + r[1] + '</span>' : '';
-          return '<tr>'
-            + '<td class="pf-td-name">'   + (r[0] || '—') + typeTag + '</td>'
-            + '<td class="pf-td-amount">' + (r[2] || '—') + '</td>'
-            + '<td class="pf-td-vcs">'    + top3vc        + '</td>'
-            + '<td><span class="brg-rank brg-rank--' + cls + '">' + rank + '</span></td>'
-            + '</tr>';
-        }).join('');
+
+        const groups = { '★★★': [], '★★': [], '★': [] };
+        rated.forEach(({ r, rank }) => { if (groups[rank]) groups[rank].push(r); });
+
+        const clsMap = { '★★★': 'S', '★★': 'A', '★': 'B' };
+
+        container.innerHTML = '<div class="brg-cols">' +
+          ['★★★','★★','★'].map(rank => {
+            const items = groups[rank];
+            if (!items.length) return '';
+            const itemsHtml = items.map(r => {
+              const twitter = (r[4] || '').trim();
+              const handle  = twitter
+                ? twitter.replace(/.*twitter\.com\/|.*x\.com\/|^@/, '').split('?')[0].trim()
+                : '';
+              const logoHtml = handle
+                ? `<img class="brg-item-logo" src="https://unavatar.io/twitter/${handle}" alt="${r[0]}" loading="lazy">`
+                : `<span class="brg-item-logo"></span>`;
+              const inner = logoHtml + `<span class="brg-item-name">${r[0] || '—'}</span>`;
+              return twitter
+                ? `<a class="brg-item" href="${twitter}" target="_blank" rel="noopener">${inner}</a>`
+                : `<div class="brg-item">${inner}</div>`;
+            }).join('');
+            return `<div class="brg-col brg-col--${clsMap[rank]}"><div class="brg-col-header">${rank}</div>${itemsHtml}</div>`;
+          }).join('') +
+        '</div>';
       } catch(err) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:32px;color:var(--muted)">Failed to load</td></tr>';
+        container.innerHTML = '<div style="padding:32px;text-align:center;color:var(--muted)">Failed to load</div>';
         console.warn('renderBRG failed:', err);
       }
     }
