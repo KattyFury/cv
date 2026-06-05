@@ -538,9 +538,9 @@
       padding: 2px 8px; border-radius: 6px;
       flex-shrink: 0;
     }
-    .rank-S { background: #FF5A36; color: #1a1a1a; }
-    .rank-A { background: #FFA111; color: #1a1a1a; }
-    .rank-B { background: #FFD447; color: #1a1a1a; }
+    .rank-S { background: #FF5A36; color: #fff; }
+    .rank-A { background: #FFA111; color: #fff; }
+    .rank-B { background: #FFD447; color: #fff; }
 
     .wte-name {
       font-size: 15px; font-weight: 700;
@@ -1698,7 +1698,7 @@
             ${nameHtml}
             <div class="wte-card-meta">
               ${p.type ? `<span class="wte-type">${p.type}</span>` : ''}
-              <span class="wte-rank rank-${p.rank}">${p.rank}</span>
+              <span class="wte-rank rank-${p.rank}">${{S:'★★★',A:'★★',B:'★'}[p.rank]||p.rank}</span>
             </div>
           </div>
           ${section('Get Started', p.getStarted, 'getStarted')}
