@@ -455,24 +455,6 @@
       padding: 32px 24px 60px;
     }
 
-    /* Sub-tabs */
-    .ard-subnav {
-      display: flex; gap: 4px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 24px;
-    }
-    .ard-tab {
-      background: none; border: none; cursor: pointer;
-      font-family: 'Roboto', sans-serif; font-size: 14px;
-      font-weight: 500; color: var(--muted);
-      padding: 8px 16px 10px;
-      border-bottom: 2px solid transparent;
-      margin-bottom: -1px;
-      transition: color 0.15s, border-color 0.15s;
-    }
-    .ard-tab:hover { color: var(--text); }
-    .ard-tab.active { color: var(--text); border-bottom-color: var(--accent); }
-
     /* Toolbar */
     .wte-toolbar {
       display: flex; align-items: center;
@@ -507,28 +489,6 @@
     @media (min-width: 768px) {
       .wte-rank-group { grid-template-columns: 1fr 1fr; }
     }
-
-    /* BRG 3-column rank boxes */
-    .brg-cols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-    @media (max-width: 600px) { .brg-cols { grid-template-columns: 1fr; } }
-    .brg-col { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-    .brg-col-header { padding: 6px 12px; text-align: center; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; }
-    .brg-col--S .brg-col-header { background: #FF5A36; color: #fff; }
-    .brg-col--A .brg-col-header { background: #FFA111; color: #fff; }
-    .brg-col--B .brg-col-header { background: #FFD447; color: #fff; }
-    .brg-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 14px; border-bottom: 1px solid var(--border);
-      text-decoration: none; color: var(--text);
-      transition: background 0.15s;
-    }
-    .brg-item:last-child { border-bottom: none; }
-    .brg-item:hover { background: var(--off); }
-    .brg-item-logo {
-      width: 26px; height: 26px; border-radius: 50%;
-      object-fit: cover; flex-shrink: 0; background: var(--border);
-    }
-    .brg-item-name { font-size: 14px; font-weight: 600; }
 
     /* Each rank group is its own 2-col grid */
     .wte-rank-group {
@@ -649,11 +609,6 @@
     .wte-task-icon { font-size: 11px; flex-shrink: 0; opacity: 0.5; margin-top: 2px; }
 
     /* ── PROJECTS & FUNDRAISING TABLE ────────────────── */
-    .pf-toolbar {
-      display: flex; align-items: center; justify-content: space-between;
-      margin: 16px 0 10px;
-    }
-    .pf-count { font-size: 12px; color: var(--muted); }
     .pf-hint  { font-size: 11px; color: var(--muted); opacity: 0.7; }
     .pf-wrap  {
       border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
@@ -679,24 +634,6 @@
     .pf-td-round  { font-size: 11px; color: var(--muted); white-space: nowrap; }
     .pf-td-vcs    { font-size: 12px; line-height: 1.55; }
     .pf-td-date   { font-size: 11px; color: var(--muted); white-space: nowrap; }
-
-    /* BRG project type tag */
-    .brg-type-tag {
-      display: inline-block;
-      font-size: 10px; font-weight: 500; color: var(--muted);
-      border: 1px solid var(--border); border-radius: 4px;
-      padding: 1px 5px; margin-left: 6px;
-      vertical-align: middle; white-space: nowrap;
-    }
-
-    /* BRG rank badge */
-    .brg-rank {
-      display: inline-block; font-size: 11px; font-weight: 800;
-      letter-spacing: 0.06em; padding: 2px 8px; border-radius: 6px;
-    }
-    .brg-rank--S { background: #FF5A36; color: #fff; }
-    .brg-rank--A { background: #FFA111; color: #1a1a1a; }
-    .brg-rank--B { background: #FFD447; color: #1a1a1a; }
 
     /* Coming soon */
     .ard-coming-soon {
@@ -946,13 +883,6 @@
   <div id="airdrop-view" style="display:none">
     <div class="ard-wrap">
 
-      <!-- Sub-tabs -->
-      <div class="ard-subnav">
-        <button class="ard-tab active" id="ard-tab-wte">Work to Earn</button>
-        <button class="ard-tab" id="ard-tab-brg">Safest Roles to Grind</button>
-      </div>
-
-      <!-- Work to Earn panel -->
       <div id="ard-wte-panel">
         <div class="wte-toolbar">
           <span class="wte-count" id="wte-count"></span>
@@ -963,15 +893,6 @@
         </div>
         <div id="wte-cards"></div>
       </div>
-
-      <!-- Best Roles panel -->
-      <div id="ard-brg-panel" style="display:none">
-        <div class="pf-toolbar">
-          <span class="pf-count" id="brg-count"></span>
-        </div>
-        <div id="brg-cols"></div>
-      </div>
-
 
     </div>
   </div>
@@ -1732,23 +1653,6 @@
         .join('');
     }
 
-    // ── Sub-tab switching ─────────────────────────────
-    const ardTabWTE   = document.getElementById('ard-tab-wte');
-    const ardTabBRG   = document.getElementById('ard-tab-brg');
-    const ardWTEPanel = document.getElementById('ard-wte-panel');
-    const ardBRGPanel = document.getElementById('ard-brg-panel');
-
-    function switchArdTab(active) {
-      [ardTabWTE, ardTabBRG].forEach(t => t.classList.remove('active'));
-      [ardWTEPanel, ardBRGPanel].forEach(p => p.style.display = 'none');
-      active.tab.classList.add('active');
-      active.panel.style.display = '';
-      if (active.onShow) active.onShow();
-    }
-
-    ardTabWTE.addEventListener('click', () => switchArdTab({ tab: ardTabWTE, panel: ardWTEPanel }));
-    ardTabBRG.addEventListener('click', () => switchArdTab({ tab: ardTabBRG, panel: ardBRGPanel, onShow: renderBRG }));
-
     // ── Language toggle ───────────────────────────────
     const langEnBtn = document.getElementById('lang-en-btn');
     const langViBtn = document.getElementById('lang-vi-btn');
@@ -1764,92 +1668,6 @@
 
     langViBtn.addEventListener('click', () => switchLang('VI'));
     langEnBtn.addEventListener('click', () => switchLang('EN'));
-
-    // ── EARLY sheet — Projects & Fundraising + BRG ───────
-    // Columns: A=NAME B=TYPE C=FUNDRAISED D=VC E=ROLE(yes/no)
-    const EARLY_URL  = 'https://docs.google.com/spreadsheets/d/1m8_nwbP_Apw43Y8iNxOoGFYy8YA-OpchGnVRfTMBUAo/gviz/tq?tqx=out:csv&sheet=EARLY';
-    const TIER1_VCS  = ['a16z','andreessen','paradigm','binance labs','coinbase ventures','sequoia','polychain','pantera','dragonfly','multicoin','spartan','delphi','framework','electric capital'];
-    let earlyRows    = [];
-    let earlyLoaded  = false;
-
-    function parseAmount(str) {
-      const s = String(str || '').replace(/\s/g, '').toUpperCase();
-      if (s === 'S') return 150;
-      if (s === 'A') return 40;
-      if (s === 'B') return 1;
-      const m = s.match(/\$?([\d.]+)([BMK]?)/);
-      if (!m) return 0;
-      let v = parseFloat(m[1]);
-      if (m[2] === 'B') v *= 1000;
-      if (m[2] === 'K') v /= 1000;
-      return v;
-    }
-
-    function calcRating(row) {
-      let stars = 0;
-      const amt  = parseAmount(row[2]);
-      if (amt >= 150)     stars += 3;
-      else if (amt >= 40) stars += 2;
-      else if (amt > 0)   stars += 1;
-      const type = (row[1] || '').toLowerCase().trim();
-      if (type === 'l1' || type === 'l2' || type.startsWith('layer')) stars += 1;
-      if (type === 'stablechain' || type === 'stable')                 stars += 2;
-      const hasTopVC = (row[3] || '').toLowerCase().trim() === 'yes';
-      if (hasTopVC) stars += 1;
-      if (stars >= 5) return '★★★';
-      if (stars >= 3) return '★★';
-      return '★';
-    }
-
-    async function loadEarly() {
-      if (earlyLoaded) return;
-      const res  = await fetch(EARLY_URL);
-      const text = await res.text();
-      earlyRows  = parseCSVFull(text).slice(1).filter(r => r[0]);
-      earlyLoaded = true;
-    }
-
-async function renderBRG() {
-      const container = document.getElementById('brg-cols');
-      const countEl   = document.getElementById('brg-count');
-      container.innerHTML = '<div style="padding:60px 0;text-align:center;color:var(--muted);font-size:14px;">Loading…</div>';
-      try {
-        await loadEarly();
-        const withRole = earlyRows.filter(r => (r[5] || '').toLowerCase().trim() === 'yes');
-        const rated    = withRole.map(r => ({ r, rank: calcRating(r) }))
-          .sort((a, b) => { const o = {'★★★':0,'★★':1,'★':2}; return (o[a.rank]??9) - (o[b.rank]??9); });
-        countEl.textContent = rated.length + ' projects';
-
-        const groups = { '★★★': [], '★★': [], '★': [] };
-        rated.forEach(({ r, rank }) => { if (groups[rank]) groups[rank].push(r); });
-
-        const clsMap = { '★★★': 'S', '★★': 'A', '★': 'B' };
-
-        container.innerHTML = '<div class="brg-cols">' +
-          ['★★★','★★','★'].map(rank => {
-            const items = groups[rank];
-            if (!items.length) return '';
-            const itemsHtml = items.map(r => {
-              const twitter = (r[4] || '').trim();
-              const handle  = twitter
-                ? twitter.replace(/.*twitter\.com\/|.*x\.com\/|^@/, '').split('?')[0].trim()
-                : '';
-              const logoHtml = handle
-                ? `<img class="brg-item-logo" src="https://unavatar.io/twitter/${handle}" alt="${r[0]}" loading="lazy">`
-                : `<span class="brg-item-logo"></span>`;
-              const inner = logoHtml + `<span class="brg-item-name">${r[0] || '—'}</span>`;
-              return twitter
-                ? `<a class="brg-item" href="${twitter}" target="_blank" rel="noopener">${inner}</a>`
-                : `<div class="brg-item">${inner}</div>`;
-            }).join('');
-            return `<div class="brg-col brg-col--${clsMap[rank]}"><div class="brg-col-header">${rank}</div>${itemsHtml}</div>`;
-          }).join('') +
-        '</div>';
-      } catch(err) {
-        container.innerHTML = '<div style="padding:32px;text-align:center;color:var(--muted)">Failed to load</div>';
-        console.warn('renderBRG failed:', err);
-      }
-    }
 
     // ── Init ─────────────────────────────────────────
     routeFromPath(); // tất cả biến đã khai báo xong, an toàn để gọi
