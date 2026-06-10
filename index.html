@@ -345,6 +345,7 @@
       border: 1px solid var(--border);
       border-radius: 10px;
       padding: 10px 12px;
+      background: var(--off);
     }
 
     .val-card-label {
@@ -386,6 +387,7 @@
       display: flex; align-items: stretch;
       margin-top: 6px; border: 1px solid var(--border);
       border-radius: 8px; overflow: hidden;
+      background: var(--white);
     }
     .split-col {
       flex: 1; padding: 6px 8px;
@@ -433,15 +435,30 @@
     .calc-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .calc-row-last { align-items: end; }
     .calc-btn-field .calc-btn { width: 100%; }
-    .calc-res-range {
-      font-size: 14px; font-weight: 700; letter-spacing: -0.03em;
-      color: var(--text); margin: 2px 0 6px; line-height: 1.3;
+    #calc-result {
+      background: linear-gradient(135deg, rgba(255,161,17,0.12), rgba(255,161,17,0.02));
+      border: 1px solid rgba(255,161,17,0.25);
+      border-radius: 10px;
+      padding: 12px 14px;
     }
-    .calc-res-sub { font-size: 11px; color: var(--muted); line-height: 1.7; margin-bottom: 6px; }
-    .calc-res-sub .res-expected { font-weight: 600; color: var(--text); }
-    .calc-res-price { font-size: 12px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+    .calc-res-label {
+      font-size: 10px; font-weight: 600; letter-spacing: 0.07em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 4px;
+    }
+    #calc-res-range {
+      font-size: 22px; font-weight: 700; letter-spacing: -0.04em;
+      color: var(--text); margin: 0 0 8px; line-height: 1.2;
+    }
+    #calc-res-sub { font-size: 11px; color: var(--muted); line-height: 1.7; margin-bottom: 10px; }
+    #calc-res-sub .res-expected { font-weight: 600; color: var(--text); }
+    #calc-res-price {
+      display: inline-block; font-size: 12px; font-weight: 700; color: #1a1a1a;
+      background: var(--accent); border-radius: 6px; padding: 4px 10px;
+      margin-bottom: 10px;
+    }
+    #calc-res-price:empty { display: none; margin-bottom: 0; }
     .calc-reset-btn {
-      background: none; border: none; font-family: inherit;
+      display: block; background: none; border: none; font-family: inherit;
       font-size: 12px; color: var(--muted); cursor: pointer; padding: 0;
     }
     .calc-reset-btn:hover { color: var(--text); }
@@ -864,6 +881,7 @@
             </div>
           </div>
           <div id="calc-result" style="display:none">
+            <div class="calc-res-label">Predicted TGE FDV</div>
             <div id="calc-res-range"></div>
             <div id="calc-res-sub"></div>
             <div id="calc-res-price"></div>
