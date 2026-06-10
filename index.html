@@ -1244,12 +1244,26 @@
       // 2. Recent TGE multiples — split Low FDV (<$300M entry) vs High FDV (≥$300M entry)
       const FDV_SPLIT = 300e6;
       const allSorted = [...entries].sort((a, b) => new Date(b.tgeDate) - new Date(a.tgeDate));
-      const lowFDVMults = allSorted
+      const lowFDV = allSorted
         .filter(e => (e.fundraising / (e.vcAlloc / 100)) < FDV_SPLIT)
-        .slice(0, 6).map(multiple).filter(m => isFinite(m) && m > 0);
-      const highFDVMults = allSorted
+        .map(e => ({ m: multiple(e), date: e.tgeDate }))
+        .filter(x => isFinite(x.m) && x.m > 0);
+      const highFDV = allSorted
         .filter(e => (e.fundraising / (e.vcAlloc / 100)) >= FDV_SPLIT)
-        .slice(0, 6).map(multiple).filter(m => isFinite(m) && m > 0);
+        .map(e => ({ m: multiple(e), date: e.tgeDate }))
+        .filter(x => isFinite(x.m) && x.m > 0);
+
+      // 6 most recent; if 6th entry is >60 days older than 1st → reduce to 4
+      function recentWindow(arr) {
+        let n = Math.min(6, arr.length);
+        if (arr.length >= 6) {
+          const spanDays = (new Date(arr[0].date) - new Date(arr[5].date)) / (1000 * 60 * 60 * 24);
+          if (spanDays > 60) n = 4;
+        }
+        return arr.slice(0, n).map(x => x.m);
+      }
+      const lowFDVMults  = recentWindow(lowFDV);
+      const highFDVMults = recentWindow(highFDV);
       const lowEl  = document.getElementById('baseline-low');
       const highEl = document.getElementById('baseline-high');
       lowEl.textContent  = lowFDVMults.length  ? `×${median(lowFDVMults).toFixed(2)}`  : '—';
