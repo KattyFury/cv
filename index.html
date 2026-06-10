@@ -442,12 +442,11 @@
       padding: 8px 10px;
       box-sizing: border-box;
     }
-    #calc-res-range {
-      font-size: 17px; font-weight: 700; letter-spacing: -0.03em;
-      color: var(--text); margin: 0 0 3px; line-height: 1.2;
+    #calc-res-sub { line-height: 1.4; }
+    #calc-res-sub .res-expected {
+      font-size: 18px; font-weight: 700; letter-spacing: -0.03em; color: var(--text);
     }
-    #calc-res-sub { font-size: 11px; color: var(--muted); line-height: 1.5; margin-bottom: 4px; }
-    #calc-res-sub .res-expected { font-weight: 600; color: var(--text); }
+    #calc-res-sub .res-price { font-size: 11px; color: var(--muted); margin-left: 4px; }
     .calc-reset-btn {
       display: block; margin-top: 4px; background: none; border: none; font-family: inherit;
       font-size: 11px; color: var(--muted); cursor: pointer; padding: 0;
@@ -872,7 +871,6 @@
             </div>
           </div>
           <div id="calc-result" style="display:none">
-            <div id="calc-res-range"></div>
             <div id="calc-res-sub"></div>
             <button class="calc-reset-btn" id="calc-reset-btn">← New calculation</button>
           </div>
@@ -1399,18 +1397,15 @@
       const entries = allEntries();
       const result  = predictFDV(raise, alloc, entries);
 
-      const rangeEl = document.getElementById('calc-res-range');
-      const subEl   = document.getElementById('calc-res-sub');
+      const subEl = document.getElementById('calc-res-sub');
 
       if (!result) {
         const vcFDV = raise / (alloc / 100);
-        rangeEl.textContent = fmtFDV(vcFDV);
-        subEl.textContent   = 'Not enough data to predict.';
+        subEl.innerHTML = `<span class="res-expected">${fmtFDV(vcFDV)}</span><span class="res-price">Not enough data to predict</span>`;
       } else {
-        const { exp, lo, hi } = result;
-        rangeEl.textContent = `${fmtFDV(lo)} – ${fmtFDV(hi)}`;
-        const pricePart = supply > 0 ? ` · ≈ ${fmtTokenPrice(exp / supply)}/token` : '';
-        subEl.innerHTML = `<span class="res-expected">Expected ${fmtFDV(exp)}</span>${pricePart}`;
+        const { exp } = result;
+        const pricePart = supply > 0 ? ` <span class="res-price">≈ ${fmtTokenPrice(exp / supply)}/token</span>` : '';
+        subEl.innerHTML = `<span class="res-expected">${fmtFDV(exp)}</span>${pricePart}`;
       }
 
       document.getElementById('calc-form').style.display   = 'none';
