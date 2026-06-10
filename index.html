@@ -1302,11 +1302,23 @@
     function predictFDV(raise, allocPct, entries) {
       const vcFDV = raise / (allocPct / 100);
 
-      // Valid entries sorted newest-first
-      const valid = [...entries]
+      // Sample only from the same FDV bucket as the input project
+      // (Low <$300M / High >=$300M), matching the "Recent TGE Multiples" split
+      const FDV_SPLIT = 300e6;
+      const bucket = vcFDV < FDV_SPLIT ? 'low' : 'high';
+      const inBucket = e => {
+        const efdv = e.fundraising / (e.vcAlloc / 100);
+        return bucket === 'low' ? efdv < FDV_SPLIT : efdv >= FDV_SPLIT;
+      };
+
+      const toValid = pool => [...pool]
         .map(e => ({ e, m: multiple(e) }))
         .filter(({ m }) => isFinite(m) && m > 0 && m < 1000)
         .sort((a, b) => new Date(b.e.tgeDate) - new Date(a.e.tgeDate));
+
+      // Valid entries sorted newest-first; fall back to all entries if bucket too sparse
+      let valid = toValid(entries.filter(inBucket));
+      if (valid.length < 2) valid = toValid(entries);
 
       if (valid.length < 2) return null;
 
