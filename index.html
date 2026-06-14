@@ -387,8 +387,12 @@
     }
     .baseline-sub { font-size: 13px; color: var(--muted); margin-top: 5px; }
 
+    /* Cả 3 card cùng hệ flex column — margin không bị gộp, 3 vùng thẳng hàng:
+       Tiêu đề (label) → Box nội dung (split-box / inputs) → Chốt (levels / nút Calculate) */
+    .val-analysis > .val-card { display: flex; flex-direction: column; }
+    #calc-form { display: flex; flex-direction: column; flex: 1; margin-top: 6px; }
     .market-levels {
-      display: flex; gap: 4px; margin-top: 12px;
+      display: flex; gap: 4px; margin-top: auto; padding-top: 12px;
     }
     .mkt-lvl {
       flex: 1; text-align: center; padding: 7px 2px;
@@ -445,17 +449,21 @@
     .calc-field input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     .calc-field input[type=number] { -moz-appearance: textfield; }
 
+    /* Cùng kích cỡ với nút level (.mkt-lvl), nằm 1/2 width cạnh Total Supply */
     .calc-btn {
-      width: 100%; min-width: 0; padding: 7px; background: var(--accent);
+      width: 100%; min-width: 0; padding: 7px 2px;
+      background: var(--accent);
       color: #1a1a1a; border: none; border-radius: 8px;
-      font-family: 'Roboto', sans-serif; font-size: 14px; font-weight: 600;
+      font-family: 'Roboto', sans-serif; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.02em; line-height: 1.2;
       cursor: pointer; transition: opacity 0.15s; box-sizing: border-box;
     }
     .calc-btn:hover { opacity: 0.85; }
 
     /* ── CALC INLINE RESULT ─────────────────────────── */
     .calc-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .calc-row-last { align-items: end; }
+    /* Hàng cuối ghim đáy card — nút Calculate ngang hàng với Strong/Normal/Weak */
+    .calc-row-last { align-items: end; margin-top: auto; padding-top: 8px; }
     .calc-btn-field .calc-btn { width: 100%; }
     #calc-result {
       position: relative;
@@ -675,8 +683,53 @@
       align-items: center; justify-content: center;
       padding: 80px 20px; gap: 12px;
     }
-    .ard-cs-icon { font-size: 32px; }
+    .ard-cs-icon { color: var(--muted); }
+    .ard-cs-icon svg { width: 32px; height: 32px; }
     .ard-cs-text { font-size: 14px; color: var(--muted); }
+
+    /* ── PERSONAL VIEW ────────────────────────────── */
+    #personal-view { display: none; }
+    .personal-wrap {
+      max-width: 900px; margin: 0 auto;
+      padding: 32px 24px 60px;
+    }
+
+    .personal-lock {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 14px;
+      padding: 100px 20px; text-align: center;
+    }
+    .personal-lock-icon { color: var(--muted); }
+    .personal-lock-icon svg { width: 28px; height: 28px; }
+    .personal-lock input {
+      font-family: 'Roboto', sans-serif; font-size: 14px;
+      padding: 9px 12px; border: 1px solid var(--border);
+      border-radius: 8px; outline: none; width: 220px;
+      text-align: center;
+    }
+    .personal-lock input:focus { border-color: var(--accent); }
+    .personal-lock-btn {
+      font-family: 'Roboto', sans-serif; font-size: 14px; font-weight: 600;
+      padding: 9px 20px; border: none; border-radius: 8px;
+      background: var(--accent); color: #1a1a1a; cursor: pointer;
+    }
+    .personal-lock-error { font-size: 12px; color: #e0453a; min-height: 16px; }
+
+    .personal-tabs {
+      display: flex; gap: 8px; border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+    .personal-tab-btn {
+      background: none; border: none; cursor: pointer;
+      font-family: 'Roboto', sans-serif; font-size: 14px; font-weight: 500;
+      color: var(--muted); padding: 10px 4px; margin-bottom: -1px;
+      border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s;
+    }
+    .personal-tab-btn:hover { color: var(--text); }
+    .personal-tab-btn.active { color: var(--text); border-color: var(--accent); }
+
+    .personal-tab-panel { display: none; }
+    .personal-tab-panel.active { display: block; }
 
   </style>
 </head>
@@ -690,6 +743,7 @@
         <button class="nav-btn active" id="nav-cv-btn">About me</button>
         <button class="nav-btn" id="nav-val-btn">Valuation</button>
         <button class="nav-btn" id="nav-ard-btn">Airdrop</button>
+        <button class="nav-btn" id="nav-personal-btn">Personal</button>
       </nav>
     </div>
   </header>
@@ -938,6 +992,57 @@
     </div>
   </div>
 
+  <!-- ── PERSONAL VIEW ─────────────────────────────────── -->
+  <div id="personal-view" style="display:none">
+    <div class="personal-wrap">
+
+      <!-- Lock screen -->
+      <div id="personal-lock" class="personal-lock">
+        <div class="personal-lock-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <input type="password" id="personal-pw-input" placeholder="Password" />
+        <button class="personal-lock-btn" id="personal-unlock-btn">Unlock</button>
+        <div class="personal-lock-error" id="personal-pw-error"></div>
+      </div>
+
+      <!-- Unlocked content -->
+      <div id="personal-content" style="display:none">
+        <div class="personal-tabs">
+          <button class="personal-tab-btn active" id="ptab-x-btn">X analysis</button>
+          <button class="personal-tab-btn" id="ptab-watchlist-btn">Watchlist</button>
+          <button class="personal-tab-btn" id="ptab-writing-btn">Writing</button>
+        </div>
+
+        <div class="personal-tab-panel active" id="ptab-x-panel">
+          <div class="ard-coming-soon">
+            <div class="ard-cs-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+            </div>
+            <div class="ard-cs-text">X analysis — coming soon</div>
+          </div>
+        </div>
+        <div class="personal-tab-panel" id="ptab-watchlist-panel">
+          <div class="ard-coming-soon">
+            <div class="ard-cs-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            </div>
+            <div class="ard-cs-text">Watchlist — coming soon</div>
+          </div>
+        </div>
+        <div class="personal-tab-panel" id="ptab-writing-panel">
+          <div class="ard-coming-soon">
+            <div class="ard-cs-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+            </div>
+            <div class="ard-cs-text">Writing — coming soon</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Lightbox -->
   <div id="lightbox">
     <button id="lightbox-close" aria-label="Close">&#x2715;</button>
@@ -949,15 +1054,18 @@
     const cvView    = document.getElementById('cv-view');
     const valView   = document.getElementById('valuation-view');
     const ardView   = document.getElementById('airdrop-view');
+    const personalView = document.getElementById('personal-view');
     const navCvBtn  = document.getElementById('nav-cv-btn');
     const navValBtn = document.getElementById('nav-val-btn');
     const navArdBtn = document.getElementById('nav-ard-btn');
+    const navPersonalBtn = document.getElementById('nav-personal-btn');
 
     function hideAllViews() {
       cvView.style.display  = 'none';
       valView.style.display = 'none';
       ardView.style.display = 'none';
-      [navCvBtn, navValBtn, navArdBtn].forEach(b => b.classList.remove('active'));
+      personalView.style.display = 'none';
+      [navCvBtn, navValBtn, navArdBtn, navPersonalBtn].forEach(b => b.classList.remove('active'));
     }
 
     function showCV(push = true) {
@@ -983,17 +1091,72 @@
       if (push) history.pushState({}, '', '/airdrop');
     }
 
+    function showPersonal(push = true) {
+      hideAllViews();
+      personalView.style.display = 'block';
+      navPersonalBtn.classList.add('active');
+      if (push) history.pushState({}, '', '/personal');
+    }
+
     function routeFromPath() {
       const p = window.location.pathname;
       if (p === '/valuation') showValuation(false);
       else if (p === '/airdrop') showAirdrop(false);
+      else if (p === '/personal') showPersonal(false);
       else showCV(false);
     }
 
     navCvBtn.addEventListener('click', () => showCV());
     navValBtn.addEventListener('click', () => showValuation());
     navArdBtn.addEventListener('click', () => showAirdrop());
+    navPersonalBtn.addEventListener('click', () => showPersonal());
     window.addEventListener('popstate', routeFromPath);
+
+    // ── Personal view — password gate ────────────────
+    const PERSONAL_PASSWORD = 'hieu1403';
+    const personalLock    = document.getElementById('personal-lock');
+    const personalContent = document.getElementById('personal-content');
+    const personalPwInput = document.getElementById('personal-pw-input');
+    const personalPwError = document.getElementById('personal-pw-error');
+    const personalUnlockBtn = document.getElementById('personal-unlock-btn');
+
+    function tryUnlockPersonal() {
+      if (personalPwInput.value === PERSONAL_PASSWORD) {
+        sessionStorage.setItem('personal_unlocked', '1');
+        personalLock.style.display = 'none';
+        personalContent.style.display = '';
+        personalPwError.textContent = '';
+      } else {
+        personalPwError.textContent = 'Incorrect password';
+      }
+    }
+
+    personalUnlockBtn.addEventListener('click', tryUnlockPersonal);
+    personalPwInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') tryUnlockPersonal();
+    });
+
+    if (sessionStorage.getItem('personal_unlocked') === '1') {
+      personalLock.style.display = 'none';
+      personalContent.style.display = '';
+    }
+
+    // ── Personal view — sub-tab switching ────────────
+    const personalTabs = [
+      { btn: 'ptab-x-btn',         panel: 'ptab-x-panel' },
+      { btn: 'ptab-watchlist-btn', panel: 'ptab-watchlist-panel' },
+      { btn: 'ptab-writing-btn',   panel: 'ptab-writing-panel' },
+    ];
+    personalTabs.forEach(({ btn, panel }) => {
+      document.getElementById(btn).addEventListener('click', () => {
+        personalTabs.forEach(({ btn: b, panel: p }) => {
+          document.getElementById(b).classList.remove('active');
+          document.getElementById(p).classList.remove('active');
+        });
+        document.getElementById(btn).classList.add('active');
+        document.getElementById(panel).classList.add('active');
+      });
+    });
 
     // ── Data layer — Google Sheets (read-only) ────────
     // Columns: A=tgeDate, B=ticker, C=cgId, D=type, E=fundraising($), F=vcAlloc(%), G=totalSupply, H=priceTGE, J=ath, N=currentPrice
@@ -1469,13 +1632,17 @@
         subEl.innerHTML = `<span class="res-expected">${fmtFDV(exp)}</span>${pricePart}`;
       }
 
+      // Khóa chiều cao card trước khi đổi nội dung — tránh cả hàng card co giãn
+      const calcCard = document.getElementById('calc-card');
+      calcCard.style.minHeight = calcCard.offsetHeight + 'px';
+
       document.getElementById('calc-form').style.display   = 'none';
       document.getElementById('calc-result').style.display = 'block';
     });
 
     document.getElementById('calc-reset-btn').addEventListener('click', () => {
       document.getElementById('calc-result').style.display = 'none';
-      document.getElementById('calc-form').style.display   = 'block';
+      document.getElementById('calc-form').style.display   = 'flex';
     });
 
     // ── Lightbox ──────────────────────────────────────

@@ -1,6 +1,6 @@
 # HANDOFF — CV / Portfolio (0xhieu.xyz)
 
-**Date:** 2026-06-05  
+**Date:** 2026-06-11  
 **Repo:** https://github.com/KattyFury/CV  
 **Live:** Cloudflare Pages (auto-deploy từ main branch)  
 **Local:** `node server.js` → http://localhost:8080
@@ -40,7 +40,8 @@ Google Sheet (DATA tab)
 | F | 5 | vcAlloc (%) |
 | G | 6 | totalSupply |
 | H | 7 | priceTGE |
-| J | 9 | ATH (dùng cho ×ATH, ×ATM filter) |
+| I | 8 | beforeATH (fill bằng `fetch-before-ath.js`, xem mục riêng) |
+| J | 9 | ATH (sync bởi Apps Script, dùng cho ×ATH; bỏ trống nếu ATH cùng ngày TGE) |
 | N | 13 | currentPrice (sync bởi Apps Script) |
 
 ---
@@ -75,6 +76,25 @@ vcFDV = fundraising / (vcAlloc / 100)
 - Window: **6 token gần nhất** mỗi bucket; nếu token thứ 6 cách token mới nhất >60 ngày → giảm còn **4** (giống logic mid-term của Market Condition)
 - Hiển thị median
 
+### Danger Zone (box 4, thêm 2026-06-11)
+
+- Lọc token đang có **×ATM ≥ 15** — VC lãi 15×+, sell pressure cực đại
+- Backtest: 17 token từng ở vùng ≥15× (ACE ×69, SAGA ×97, ENA ×142, XPL ×131, HOOK, MIRA, ERA, VANA...) → 100% về đáy, không con nào giữ giá
+- Sort: token TGE mới nhất lên đầu (bắt ứng cử viên vừa chớm)
+- TGE < 30 ngày mà đã vào vùng → badge **⚠ FAKE PUMP** đỏ + nền đậm (pump láo sắp về 0)
+- Nằm ở hàng card thứ 2 (`.val-analysis` row 2), render bởi `renderDanger()`
+
+### Pattern analysis (phân tích 2026-06-11, làm nền cho các box sau)
+
+Metric chính: `retention = ×ATM / ×TGE` — tách các nhóm nhãn tay sạch:
+- **Mạnh**: retention 0.53–2.42 (median 0.85)
+- **RUG**: retention 0.03–0.25 (growth thấp ~1.3 — xả thẳng từ vùng list, không có sóng)
+- **FOMO rồi về 0**: retention ≤0.14 + ×TGE rất cao (median 22.7) — list giá ảo
+- **ATH rồi về 0**: retention ≤0.27 + growth cao (~6×) — pump sau TGE rồi sập
+- **rug?**: nhóm trộn — nửa giống RUG (retention <0.4), nửa số đẹp nhưng còn trẻ (<6 tháng)
+
+Box ý tưởng chưa build (user chỉ duyệt Danger Zone): Token Health (retention-based, khớp 85% label tay), Dip Zone (median dip trước ATH — cần cột beforeATH).
+
 ### Market Condition
 
 - `shortMed` = median của 4 ×TGE gần nhất
@@ -89,7 +109,37 @@ vcFDV = fundraising / (vcAlloc / 100)
 ## Apps Script (Google Sheet)
 
 **Function:** `syncAll()`  
-**Trigger:** Daily 2am (setup bằng `setupDailyTrigger()`)
+**Trigger:** Daily 2am (setup bằng `setupDailyTrigger()` — chạy 1 lần để tạo trigger; kiểm tra ở panel Triggers/đồng hồ, lịch sử chạy ở panel Executions)
+
+Logic hiện tại (2026-06-11):
+- Cột N: current price — luôn cập nhật
+- Cột J: ATH — cập nhật, NHƯNG nếu `ath_date` cùng ngày TGE (râu nến listing) → giữ nguyên giá trị cũ
+- KHÔNG sync beforeATH (cột I) — Apps Script chạy trên server Mỹ, bị Binance chặn HTTP 451. Dùng `fetch-before-ath.js` local thay thế.
+
+---
+
+## fetch-before-ath.js — script local fill cột I (beforeATH)
+
+Chạy trên máy local (VN IP nên không bị sàn chặn):
+
+```bash
+cd C:\Users\p\Desktop\Claude\CV
+node fetch-before-ath.js
+```
+
+Cách hoạt động:
+1. Đọc sheet DATA (CSV public) → ticker + TGE date
+2. Lấy `ath_date` mới nhất từ CoinGecko `/coins/markets` (key đọc từ `.env`)
+3. Mỗi token hỏi lần lượt: **Binance → Bybit → Gate.io → MEXC** (public API, không cần key)
+4. Tính `min(low)` daily candles trong [TGE → ATH], theo các rule:
+   - ATH trước TGE hoặc cùng ngày TGE (intraday) → bỏ trống
+   - ATH trong 1–3 ngày TGE → beforeATH = close ngày TGE
+   - **Bỏ candle đầu tiên của sàn** — wick listing là giá ảo (ARB mở 0.5, SUI 0.1); rule này cũng cover case sàn list muộn hơn TGE (SUI TGE 01/05 nhưng Binance list 03/05)
+5. Output cuối: cột số (dấu phẩy thập phân) → copy paste thẳng vào ô **I2** của sheet
+
+Khi nào chạy lại: khi thêm token mới vào sheet, hoặc khi token phá ATH mới (beforeATH phụ thuộc cửa sổ TGE→ATH nên ATH đổi thì phải tính lại). Không cần daily.
+
+Đã verify khớp với số nhập tay: OP 0.396, SUI 0.362, ARB 0.739, TIA 2.13, ENA 0.703, EIGEN 2.142...
 
 Chỉ sync 2 cột:
 - Col L: ATH (`c.ath`)
@@ -104,6 +154,18 @@ Cột J (beforeATH) **bỏ trống** — đã thử CoinGecko (401), Binance (45
 - Logo: lấy từ `unavatar.io/twitter/{handle}` — extract handle từ cột Twitter
 - Rank badge (S/A/B) nằm góc phải card, đứng sau Type
 - Colors: S=#FF5A36, A=#FFA111, B=#FFD447
+
+---
+
+## Personal Tab (mục thứ 4 cạnh About me/Valuation/Airdrop)
+
+- Nav button "Personal" → password gate client-side (`PERSONAL_PASSWORD = 'hieu1403'`, hardcoded trong `index.html`, không phải bảo mật thật — chỉ chặn người xem thường)
+- Unlock → lưu `sessionStorage.personal_unlocked = '1'`, không cần nhập lại trong session
+- 3 sub-tab (placeholder "coming soon", chưa có nội dung):
+  - **X analysis** — trợ lý theo dõi account X của user, phân tích thuật toán, gợi ý cải thiện. Chưa có data source (cần bàn X API hoặc nguồn khác trước khi build).
+  - **Watchlist** — chưa định nghĩa nội dung
+  - **Writing** — chưa định nghĩa nội dung
+- Route `/personal` đã thêm vào `routeFromPath()`, server SPA fallback đã cover
 
 ---
 
@@ -135,25 +197,24 @@ Cần có bộ data: danh sách VC tier-1/tier-2 → nếu project có VC trong 
 
 ## Pending / Known Issues
 
-1. **beforeATH (cột J)** — chưa có giải pháp. Cân nhắc:
-   - CryptoCompare free key (đăng ký free, ~100k calls/tháng) — user gặp SSL issue khi đăng ký
-   - Nhập tay cho ~15-20 token lớn
-   - Bybit API (chưa thử)
+1. ~~**beforeATH** — chưa có giải pháp~~ → **ĐÃ GIẢI QUYẾT 2026-06-11** bằng `fetch-before-ath.js` chạy local (xem mục riêng ở trên).
 
-2. **×ATH filter** — hiện filter ATH cùng ngày TGE. Nhưng một số token ATH trong 1-3 ngày đầu cũng có thể là pump ảo. Cân nhắc mở rộng window filter.
+2. **×ATH filter** — hiện filter ATH cùng ngày TGE (cả ở website lẫn Apps Script). Nhưng một số token ATH trong 1-3 ngày đầu cũng có thể là pump ảo. Cân nhắc mở rộng window filter.
 
-3. **CoinGecko API key** — đang dùng Demo key `CG-Z7aWtTW1pcctWZeu9eebaDTw` (trong `.env.txt`). Key này từng bị commit lên GitHub (đã fix với `.gitignore`). Nên regenerate nếu cần bảo mật.
+3. **CoinGecko API key** — đang dùng Demo key trong `.env` (đổi từ `.env.txt`, 2026-06-11; gitignored). Key từng bị commit lên GitHub trước đây — nên regenerate nếu cần bảo mật. `.env` cũng chứa `COINDESK_API_KEY` (chưa dùng — CoinDesk API thử rồi nhưng ít data).
 
 ---
 
 ## Files quan trọng
 
 ```
-index.html          — toàn bộ website (HTML + CSS + JS)
-server.js           — dev server
-export-pdf.js       — xuất PDF bằng Puppeteer
-.env.txt            — API keys (gitignored)
-.gitignore          — bao gồm .env, node_modules, .claude/
+index.html            — toàn bộ website (HTML + CSS + JS)
+server.js             — dev server (có SPA fallback cho /valuation)
+export-pdf.js         — xuất PDF toàn trang bằng Puppeteer (cần server đang chạy)
+fetch-before-ath.js   — fill cột I beforeATH, chạy local (xem mục riêng)
+analyze-pattern.js    — script nháp phân tích pattern retention (local, không push)
+.env                  — API keys: CG_API_KEY, COINDESK_API_KEY (gitignored)
+.gitignore            — bao gồm .env, node_modules, .claude/
 ```
 
 ---
@@ -161,8 +222,9 @@ export-pdf.js       — xuất PDF bằng Puppeteer
 ## Lệnh thường dùng
 
 ```bash
-node server.js          # chạy local
-node export-pdf.js      # xuất cv.pdf (cần server đang chạy)
+node server.js              # chạy local → http://localhost:8080
+node export-pdf.js          # xuất cv.pdf (cần server đang chạy)
+node fetch-before-ath.js    # tính beforeATH → copy output paste vào cột I sheet
 git add index.html && git commit -m "..." && git push
 ```
 
@@ -185,8 +247,25 @@ git add index.html && git commit -m "..." && git push
 - 2026-06-10: `predictFDV()` — sample pool (regime detection + base_mult) giờ lọc theo FDV bucket của project đang predict (Low <$300M / High ≥$300M, giống "Recent TGE Multiples"), fallback dùng toàn bộ data nếu bucket <2 entries — reason: trước đó sample lấy từ toàn bộ data (đa số là Low FDV, median ×4.8) nên project High FDV ($300M) bị predict ra ×1.33 ($400M), trong khi thực tế High FDV median chỉ ×0.60-2.70. Sau khi split, $300M FDV ra ×0.33 ($99M) — cùng bậc với median thực tế.
 - 2026-06-10: Bỏ luôn STEP 7-9 (market compression `mktMap`, FDV penalty `kMap`, liquidity cliff) trong `predictFDV()` — `finalMult = base_mult` (weighted median, recency-weighted, đã clamp theo min/max của bucket) — reason: sau khi sample đã split theo FDV bucket (commit 3859f71), 2 lớp compression/penalty cũ làm "double-compress" → High FDV $300M ra ×0.33, thấp hơn cả median thực tế ×0.60. Bỏ 2 lớp này, $300M FDV ra đúng ×0.60 (= median thực tế), $150M FDV ra ×2.53. User chọn đơn giản hóa (option C) thay vì giữ 1 lớp phạt nhẹ (option B).
 
+- 2026-06-11: Thêm box **Danger Zone** (×ATM ≥ 15, token TGE mới nhất lên đầu, TGE < 30 ngày → badge "⚠ FAKE PUMP") — reason: backtest 17 token từng ≥15× cho thấy 100% về đáy; ngưỡng 15× do user chọn từ kinh nghiệm 2025-2026 (thị trường rút thanh khoản, VC lãi 15×+ chắc chắn xả). Token vừa TGE đã vào vùng = pump láo → cảnh báo đặc biệt.
+- 2026-06-11: Website lưu thêm `ath_date` từ CoinGecko, filter ×ATH = "—" nếu ATH cùng ngày TGE — reason: CoinGecko lấy absolute high kể cả râu nến intraday ngày listing, không phản ánh giá có thể trade được. Apps Script cũng áp rule tương tự (giữ nguyên giá trị cũ thay vì ghi đè ATH intraday).
+- 2026-06-11: Build `fetch-before-ath.js` chạy local thay vì Apps Script — reason: Apps Script chạy trên server Google ở Mỹ → Binance chặn HTTP 451, CoinGecko Demo không có quyền market_chart (401), CryptoCompare cần key (user gặp lỗi SSL khi đăng ký), CoinDesk/OKX ít data. Máy local VN IP gọi Binance/Bybit/Gate/MEXC thoải mái, cascade 4 sàn cover 49/68 token (19 còn lại là ATH intraday — bỏ đúng logic).
+- 2026-06-11: `fetch-before-ath.js` bỏ candle ĐẦU TIÊN của sàn khi tìm min — reason: wick listing là giá khớp ảo (ARB mở 0.5, SUI 0.1, HOOK 0.1 trong khi đáy thật là 0.739/0.362/1.08); bỏ theo "candle đầu của sàn" thay vì "ngày TGE+1" vì có case sàn list muộn hơn TGE (SUI TGE 01/05, Binance list 03/05).
+- 2026-06-11: Chuyển key từ `.env.txt` sang `.env`, script đọc key bằng regex từ file — reason: không hardcode key trong source trước khi push fetch-before-ath.js lên GitHub.
+- 2026-06-11: WTE cards thêm logo từ `unavatar.io/twitter/{handle}` (22px, tròn), Rank badge chuyển sang góc phải đứng sau Type — reason: user muốn nhận diện dự án bằng logo, không cần thêm cột sheet hay folder ảnh.
+- 2026-06-11: Đổi "Investment Researcher" → "Investment Analyst" + mô tả "Analyzed Bitcoin and altcoins at VHG"; hero tagline "Former crypto researcher" → "Former crypto analyst" — reason: user thấy mô tả đúng bản thân hơn.
+- 2026-06-11: Xuất PDF bằng Puppeteer (`export-pdf.js`) với `height = document.body.scrollHeight` — reason: khổ giấy cố định làm PDF bị cắt 3 trang; set height động ra 1 trang liền y chang website.
+
+---
+
+- 2026-06-15: Thêm tab **Personal** (4th nav item) với password gate client-side + 3 sub-tab placeholder (X analysis / Watchlist / Writing) — reason: user cần khu vực riêng cho công việc cá nhân (X growth, watchlist, writing), chưa cần bảo mật thật nên chọn gate đơn giản để làm nhanh, build nội dung từng sub-tab sau.
+
 ---
 
 ## Failed Approaches
 
-(chưa có)
+- 2026-06-11: Apps Script + CoinGecko `market_chart/range` và `market_chart?days=max` → 401 (Demo key không có quyền) → bỏ.
+- 2026-06-11: Apps Script + Binance klines → 451 geo-block (server Google ở Mỹ) → chuyển sang chạy local.
+- 2026-06-11: Apps Script + CryptoCompare → yêu cầu API key, user đăng ký bị "Invalid SSL certificate" → bỏ.
+- 2026-06-11: Apps Script + Gate.io → user từ chối dùng. OKX + CoinDesk Data API → chạy được nhưng coverage quá ít → bỏ.
+- 2026-06-11: `fetch-before-ath.js` bản đầu lấy min kể cả candle listing → ra giá wick ảo (ARB 0.5, SUI 0.1) → fix bỏ candle đầu tiên của sàn.
