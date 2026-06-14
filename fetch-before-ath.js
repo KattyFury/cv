@@ -174,7 +174,7 @@ async function fetchCandles(ticker, fromTs, toTs) {
 
   // 4. Output
   console.log('═'.repeat(70));
-  console.log('KẾT QUẢ — paste cột "beforeATH" vào cột J theo đúng thứ tự sheet');
+  console.log('KẾT QUẢ — paste cột "beforeATH" vào cột I (BEFORE ATH) theo đúng thứ tự sheet');
   console.log('═'.repeat(70));
   console.log('TICKER'.padEnd(10) + 'beforeATH'.padEnd(16) + 'SOURCE'.padEnd(9) + 'NOTE');
   console.log('─'.repeat(70));
@@ -188,8 +188,10 @@ async function fetchCandles(ticker, fromTs, toTs) {
   }
 
   // Cột thuần để copy-paste vào sheet (theo thứ tự dòng)
+  const column = results.map(r => r.value !== '' ? String(r.value).replace('.', ',') : '-').join('\r\n');
+  fs.writeFileSync(path.join(__dirname, 'before-ath-output.txt'), column, 'utf8');
   console.log('\n' + '═'.repeat(70));
-  console.log('CỘT J — copy từ dòng dưới đây paste thẳng vào J2 (giữ nguyên thứ tự):');
+  console.log('ĐÃ XUẤT FILE: before-ath-output.txt');
+  console.log('Mở file → Ctrl+A → Ctrl+C → click ô I2 trong sheet → Ctrl+V');
   console.log('═'.repeat(70));
-  console.log(results.map(r => r.value !== '' ? String(r.value).replace('.', ',') : '').join('\n'));
 })();
