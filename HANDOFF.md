@@ -152,8 +152,9 @@ Cột J (beforeATH) **bỏ trống** — đã thử CoinGecko (401), Binance (45
 ## WTE Cards (Airdrop tab)
 
 - Logo: lấy từ `unavatar.io/twitter/{handle}` — extract handle từ cột Twitter
-- Rank badge (S/A/B) nằm góc phải card, đứng sau Type
-- Colors: S=#FF5A36, A=#FFA111, B=#FFD447
+- Rank badge (SS/S/A/B) nằm góc phải card, đứng sau Type
+- Colors: SS=#8B5CF6 (purple, ★★★★), S=#FF5A36 (★★★), A=#FFA111 (★★), B=#FFD447 (★)
+- CSS classes dùng rank trực tiếp: `.wte-card--SS`, `.rank-SS` — valid vì SS là alphanumeric
 
 ---
 
@@ -161,11 +162,37 @@ Cột J (beforeATH) **bỏ trống** — đã thử CoinGecko (401), Binance (45
 
 - Nav button "Personal" → password gate client-side (`PERSONAL_PASSWORD = 'hieu1403'`, hardcoded trong `index.html`, không phải bảo mật thật — chỉ chặn người xem thường)
 - Unlock → lưu `sessionStorage.personal_unlocked = '1'`, không cần nhập lại trong session
-- 3 sub-tab (placeholder "coming soon", chưa có nội dung):
-  - **X analysis** — trợ lý theo dõi account X của user, phân tích thuật toán, gợi ý cải thiện. Chưa có data source (cần bàn X API hoặc nguồn khác trước khi build).
+- 3 sub-tab:
+  - **X analysis** — xem mục riêng "X Analysis Tab" bên dưới
   - **Watchlist** — chưa định nghĩa nội dung
   - **Writing** — chưa định nghĩa nội dung
 - Route `/personal` đã thêm vào `routeFromPath()`, server SPA fallback đã cover
+
+---
+
+## X Analysis Tab (Personal → X analysis)
+
+**Status (2026-06-15):** MVP table view xong, đã test bằng `wrangler pages dev`, **chưa commit/push**.
+
+### Đã làm
+- `functions/api/x-analysis.js` — Cloudflare Pages Function, gọi X API v2 `GET /2/users/{id}/tweets?tweet.fields=public_metrics,created_at&exclude=retweets,replies`, trả 20 tweet gần nhất
+- Secrets: `X_BEARER_TOKEN`, `X_USER_ID` (user `nguyen0xhieu`, id `1518820673581305857`) lưu trong `.env` (tham khảo) và `.dev.vars` (dùng cho `wrangler pages dev`, gitignored) — **CHƯA set trên Cloudflare Pages Dashboard** (cần làm trước khi deploy production)
+- `.gitignore` thêm `.dev.vars`
+- Frontend tab X analysis: 3 summary card (Posts / Avg engagement rate / Total impressions) + bảng tweet gần nhất (ngày, nội dung-link, impressions, eng. rate, like, RT, reply)
+- Local test: chạy `npx wrangler pages dev . --port 8788` (server.js cũ port 8080 KHÔNG hỗ trợ Functions)
+
+### X API setup — lưu ý quan trọng
+- Account "Free" project bị **deprecated**, app trong đó báo lỗi `client-not-enrolled` dù đã add payment method
+- Fix: tạo app mới trong project **"Pay Per Use"** (môi trường development/staging/production, mỗi cái cho phép tối đa 3 app) → Bearer Token từ app này hoạt động được
+- X API hiện dùng **prepaid credits** (pay-per-use), không phải subscription tier cố định
+
+### Đánh giá & hướng tiếp theo (chưa quyết định)
+- Bàn về dashboard kiểu "KOL Growth OS" (Grok gợi ý, copy template của người khác) — nhận định: nếu chỉ làm metric card + chart tĩnh thì **không hữu ích hơn X Analytics có sẵn (free)**.
+- Phần thực sự có giá trị, dựa theo phân tích x-algorithm (xai-org/x-algorithm):
+  1. Tính tỉ lệ **(reply+quote)/like** — đo "amplification", X Analytics không show trực tiếp
+  2. **Tracking theo thời gian** (followers/engagement theo tuần) — cần lưu snapshot định kỳ (vd: ghi vào Google Sheet hàng ngày, giống pattern ATH/currentPrice hiện tại), vì API chỉ trả 20 tweet gần nhất, không có lịch sử
+- Sidebar kiểu Content Pillars/Calendar/Roadmap/Task Tracker (từ template Grok) — quá lớn, để dành cho sub-tab **Writing** sau, không làm trong X analysis.
+- **User dừng ở đây vì mệt — quyết định hướng tiếp theo (amplification ratio / tracking) vào buổi sau.**
 
 ---
 
@@ -257,6 +284,8 @@ git add index.html && git commit -m "..." && git push
 - 2026-06-11: Xuất PDF bằng Puppeteer (`export-pdf.js`) với `height = document.body.scrollHeight` — reason: khổ giấy cố định làm PDF bị cắt 3 trang; set height động ra 1 trang liền y chang website.
 
 ---
+
+- 2026-06-16: Thêm rank tier **SS** (★★★★, purple #8B5CF6) vào WTE cards — nằm trên S, sort đầu tiên. Set cột Rank = `SS` trong sheet để dùng.
 
 - 2026-06-15: Thêm tab **Personal** (4th nav item) với password gate client-side + 3 sub-tab placeholder (X analysis / Watchlist / Writing) — reason: user cần khu vực riêng cho công việc cá nhân (X growth, watchlist, writing), chưa cần bảo mật thật nên chọn gate đơn giản để làm nhanh, build nội dung từng sub-tab sau.
 
