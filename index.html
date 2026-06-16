@@ -548,7 +548,7 @@
       border-radius: 14px; overflow: hidden;
     }
     /* Rank-tinted backgrounds */
-    .wte-card--Splus { background: #fff; border-color: #e0e0e0; }
+    .wte-card--SS { background: #fff; border-color: #e0e0e0; }
     .wte-card--S { background: #fff; border-color: #e0e0e0; }
     .wte-card--A { background: #fff; border-color: #e0e0e0; }
     .wte-card--B { background: #fff; border-color: #e0e0e0; }
@@ -573,7 +573,7 @@
       padding: 2px 8px; border-radius: 6px;
       flex-shrink: 0;
     }
-    .rank-Splus { background: #8B5CF6; color: #fff; }
+    .rank-SS { background: #8B5CF6; color: #fff; }
     .rank-S { background: #FF5A36; color: #fff; }
     .rank-A { background: #FFA111; color: #fff; }
     .rank-B { background: #FFD447; color: #fff; }
@@ -596,7 +596,7 @@
 
 
     /* Section labels follow rank */
-    .wte-card--Splus .wte-section-label { color: #8B5CF6; }
+    .wte-card--SS .wte-section-label { color: #8B5CF6; }
     .wte-card--S .wte-section-label { color: #FF5A36; }
     .wte-card--A .wte-section-label { color: #FFA111; }
     .wte-card--B .wte-section-label { color: #c8a000; }
@@ -621,7 +621,7 @@
     .wte-section--daily .wte-task-text { color: var(--text); font-weight: 500; }
 
     /* Daily — xám nhạt chữ đen, border-left giữ màu rank */
-    .wte-card--Splus .wte-section--daily { background: rgba(139,92,246,0.12); border-left-color: #8B5CF6; }
+    .wte-card--SS .wte-section--daily { background: rgba(139,92,246,0.12); border-left-color: #8B5CF6; }
     .wte-card--S .wte-section--daily { background: rgba(255,90,54,0.12);  border-left-color: #FF5A36; }
     .wte-card--A .wte-section--daily { background: rgba(255,161,17,0.12); border-left-color: #FFA111; }
     .wte-card--B .wte-section--daily { background: rgba(255,212,71,0.20); border-left-color: #FFD447; }
@@ -1862,8 +1862,8 @@
         if (weekly) current.weekly.push({     text: weekly, link: weeklyLink });
       }
 
-      // Sort: S+ → S → A → B → others
-      const rankOrder = { 'S+': 0, S: 1, A: 2, B: 3 };
+      // Sort: SS → S → A → B → others
+      const rankOrder = { SS: 0, S: 1, A: 2, B: 3 };
       projects.sort((a, b) => (rankOrder[a.rank] ?? 9) - (rankOrder[b.rank] ?? 9));
 
       return projects;
@@ -1965,14 +1965,13 @@
         const nameHtml = p.twitter
           ? `<a class="wte-name" href="${p.twitter}" target="_blank" rel="noopener">${p.name}</a>`
           : `<span class="wte-name">${p.name}</span>`;
-        const rc = p.rank.replace('+', 'plus');
-        return `<div class="wte-card wte-card--${rc}">
+        return `<div class="wte-card wte-card--${p.rank}">
           <div class="wte-card-head">
             ${logoHtml}
             ${nameHtml}
             <div class="wte-card-meta">
               ${p.type ? `<span class="wte-type">${p.type}</span>` : ''}
-              <span class="wte-rank rank-${rc}">${{'S+':'★★★★',S:'★★★',A:'★★',B:'★'}[p.rank]||p.rank}</span>
+              <span class="wte-rank rank-${p.rank}">${{SS:'★★★★',S:'★★★',A:'★★',B:'★'}[p.rank]||p.rank}</span>
             </div>
           </div>
           ${section('Get Started', p.getStarted, 'getStarted')}
@@ -1981,9 +1980,9 @@
         </div>`;
       };
 
-      const groups = { 'S+': [], S: [], A: [], B: [] };
+      const groups = { SS: [], S: [], A: [], B: [] };
       projects.forEach(p => { if (groups[p.rank]) groups[p.rank].push(p); });
-      container.innerHTML = ['S+','S','A','B']
+      container.innerHTML = ['SS','S','A','B']
         .filter(r => groups[r].length)
         .map(r => `<div class="wte-rank-group wte-rank-group--${r}">${groups[r].map(cardHtml).join('')}</div>`)
         .join('');
