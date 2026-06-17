@@ -702,6 +702,188 @@
     .ard-cs-text { font-size: 14px; color: var(--muted); }
 
     /* ── PERSONAL VIEW ────────────────────────────── */
+    /* ── WATCHLIST VIEW ──────────────────────────────── */
+    #watchlist-view { display: none; }
+
+    .wl-wrap {
+      max-width: 900px; margin: 0 auto;
+      padding: 32px 24px 60px;
+    }
+
+    .wl-header {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .wl-title {
+      font-size: 20px; font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .wl-header-right {
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .wl-progress-text {
+      font-size: 12px; color: var(--muted);
+    }
+
+    .wl-admin-btn, .wl-add-btn {
+      font-family: 'Roboto', sans-serif;
+      font-size: 13px; font-weight: 500;
+      border: 1px solid var(--border);
+      border-radius: 6px; background: var(--white);
+      color: var(--sub); cursor: pointer;
+      padding: 5px 12px;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .wl-admin-btn:hover, .wl-add-btn:hover {
+      border-color: var(--accent); color: var(--text);
+    }
+    .wl-add-btn {
+      font-size: 18px; padding: 2px 10px; line-height: 1;
+      color: var(--accent); border-color: var(--accent);
+    }
+
+    .wl-gate {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 16px;
+    }
+    .wl-gate input {
+      font-family: 'Roboto', sans-serif; font-size: 14px;
+      border: 1px solid var(--border); border-radius: 6px;
+      padding: 6px 12px; outline: none; width: 180px;
+      transition: border-color 0.15s;
+    }
+    .wl-gate input:focus { border-color: var(--accent); }
+    .wl-gate-submit {
+      font-family: 'Roboto', sans-serif; font-size: 13px;
+      font-weight: 500; border: 1px solid var(--border);
+      border-radius: 6px; background: var(--white);
+      color: var(--sub); cursor: pointer; padding: 6px 14px;
+    }
+    .wl-gate-submit:hover { border-color: var(--accent); color: var(--text); }
+    .wl-gate-error { font-size: 12px; color: #e0453a; }
+
+    .wl-add-form {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 16px;
+    }
+    .wl-add-form input {
+      font-family: 'Roboto', sans-serif; font-size: 14px;
+      border: 1px solid var(--border); border-radius: 6px;
+      padding: 6px 12px; outline: none; width: 220px;
+      transition: border-color 0.15s;
+    }
+    .wl-add-form input:focus { border-color: var(--accent); }
+    .wl-add-submit {
+      font-family: 'Roboto', sans-serif; font-size: 13px;
+      font-weight: 500; border: 1px solid var(--accent);
+      border-radius: 6px; background: var(--white);
+      color: var(--accent); cursor: pointer; padding: 6px 14px;
+    }
+    .wl-add-status { font-size: 12px; color: var(--muted); }
+
+    .wl-table-section {
+      border: 1px solid var(--border); border-radius: 14px;
+      overflow: hidden;
+    }
+    .wl-table-scroll { overflow-x: auto; }
+
+    .wl-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 14px;
+    }
+    .wl-table thead th,
+    .wl-table tbody td {
+      padding: 10px 16px;
+      vertical-align: middle;
+    }
+    .wl-table thead th {
+      text-align: left;
+      font-size: 11px; font-weight: 600;
+      color: var(--muted); letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+      background: var(--off); white-space: nowrap;
+    }
+    .wl-table tbody tr:hover { background: var(--off); }
+    .wl-table tbody td {
+      color: var(--sub);
+      border-bottom: 1px solid var(--border);
+    }
+    .wl-table tbody tr:last-child td { border-bottom: none; }
+    /* rank col compact */
+    .wl-table th:first-child,
+    .wl-table td:first-child { padding-right: 6px; }
+
+    .wl-proj-cell {
+      display: flex; align-items: center; gap: 8px;
+      white-space: nowrap;
+    }
+    .wl-logo {
+      width: 22px; height: 22px; border-radius: 50%;
+      object-fit: cover; flex-shrink: 0;
+      background: var(--border);
+    }
+    .wl-logo-fallback {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--accent); color: #fff;
+      font-size: 10px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .wl-proj-name { font-weight: 600; color: var(--text); }
+    .wl-raise { font-weight: 700; color: var(--text); white-space: nowrap; }
+    .wl-backers { font-size: 12px; color: var(--muted); max-width: 200px; }
+
+    .wl-chips { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+
+    .wl-chip {
+      font-family: 'Roboto', sans-serif; font-size: 11px; font-weight: 500;
+      border: 1px solid var(--border); border-radius: 999px;
+      padding: 2px 9px; cursor: pointer; transition: all 0.15s;
+      background: var(--white); color: var(--muted);
+      user-select: none; white-space: nowrap;
+    }
+    .wl-chip:hover { border-color: var(--muted); color: var(--sub); }
+
+    /* Contribute = orange accent */
+    .wl-chip[data-val="contribute"].on {
+      background: var(--accent); border-color: var(--accent); color: #fff;
+    }
+    /* Others = dark when selected */
+    .wl-chip[data-val="point"].on,
+    .wl-chip[data-val="retroactive"].on,
+    .wl-chip[data-val="yap"].on {
+      background: var(--text); border-color: var(--text); color: #fff;
+    }
+    /* View mode: non-selected chips hidden, only selected visible */
+    .wl-chips.view-mode .wl-chip:not(.on) { display: none; }
+    .wl-chips.view-mode .wl-chip { cursor: default; }
+
+    .wl-arrow-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--accent); font-size: 18px; font-weight: 700;
+      padding: 8px 12px; border-radius: 6px;
+      transition: opacity 0.15s; line-height: 1;
+      display: inline-block;
+    }
+    .wl-arrow-btn:hover { opacity: 0.65; }
+
+    .wl-del-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); font-size: 14px; padding: 2px 6px;
+      border-radius: 4px; transition: color 0.15s;
+    }
+    .wl-del-btn:hover { color: #e0453a; }
+
+    .wl-empty {
+      text-align: center; padding: 40px;
+      color: var(--muted); font-size: 14px;
+    }
+
     #personal-view { display: none; }
     .personal-wrap {
       max-width: 900px; margin: 0 auto;
@@ -770,8 +952,8 @@
       <nav>
         <button class="nav-btn active" id="nav-cv-btn">About me</button>
         <button class="nav-btn" id="nav-val-btn">Valuation</button>
+        <button class="nav-btn" id="nav-wl-btn">Watchlist</button>
         <button class="nav-btn" id="nav-ard-btn">Airdrop</button>
-        <button class="nav-btn" id="nav-personal-btn">Personal</button>
       </nav>
     </div>
   </header>
@@ -1020,6 +1202,56 @@
     </div>
   </div>
 
+  <!-- ── WATCHLIST VIEW ───────────────────────────────── -->
+  <div id="watchlist-view" style="display:none">
+    <div class="wl-wrap">
+
+      <div class="wl-header">
+        <span class="wl-title">Watchlist</span>
+        <div class="wl-header-right" id="wl-header-right">
+          <span class="wl-progress-text" id="wl-progress"></span>
+          <!-- gate: static, toggled by JS -->
+          <span id="wl-gate-inline" style="display:none;align-items:center;gap:6px">
+            <input type="password" id="wl-pw" placeholder="Password"
+              style="font-family:'Roboto',sans-serif;font-size:13px;border:1px solid var(--border);
+                     border-radius:6px;padding:4px 10px;outline:none;width:130px;" />
+            <button id="wl-pw-submit" class="wl-gate-submit">Unlock</button>
+            <span id="wl-gate-error" class="wl-gate-error"></span>
+          </span>
+          <button class="wl-add-btn" id="wl-sync-btn" style="display:none" title="Sync from Surf API">↻</button>
+          <button class="wl-add-btn" id="wl-add-btn" style="display:none" title="Add project">+</button>
+          <button class="wl-admin-btn" id="wl-admin-btn">Admin</button>
+        </div>
+      </div>
+
+      <div class="wl-add-form" id="wl-add-form" style="display:none">
+        <input type="text" id="wl-add-input" placeholder="Project name..." />
+        <button class="wl-add-submit" id="wl-add-submit">Add</button>
+        <span class="wl-add-status" id="wl-add-status"></span>
+      </div>
+
+      <div class="wl-table-section">
+        <div class="wl-table-scroll">
+          <table class="wl-table">
+            <thead>
+              <tr>
+                <th style="width:32px">#</th>
+                <th>Dự án</th>
+                <th>Gọi vốn</th>
+                <th>VCs</th>
+                <th style="width:160px">Available</th>
+                <th style="width:40px"></th>
+                <th id="wl-del-col" style="width:36px;display:none"></th>
+              </tr>
+            </thead>
+            <tbody id="wl-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- ── PERSONAL VIEW ─────────────────────────────────── -->
   <div id="personal-view" style="display:none">
     <div class="personal-wrap">
@@ -1094,19 +1326,19 @@
     // ── View switching ────────────────────────────────
     const cvView    = document.getElementById('cv-view');
     const valView   = document.getElementById('valuation-view');
+    const wlView    = document.getElementById('watchlist-view');
     const ardView   = document.getElementById('airdrop-view');
-    const personalView = document.getElementById('personal-view');
     const navCvBtn  = document.getElementById('nav-cv-btn');
     const navValBtn = document.getElementById('nav-val-btn');
+    const navWlBtn  = document.getElementById('nav-wl-btn');
     const navArdBtn = document.getElementById('nav-ard-btn');
-    const navPersonalBtn = document.getElementById('nav-personal-btn');
 
     function hideAllViews() {
-      cvView.style.display  = 'none';
+      cvView.style.display = 'none';
       valView.style.display = 'none';
+      wlView.style.display  = 'none';
       ardView.style.display = 'none';
-      personalView.style.display = 'none';
-      [navCvBtn, navValBtn, navArdBtn, navPersonalBtn].forEach(b => b.classList.remove('active'));
+      [navCvBtn, navValBtn, navWlBtn, navArdBtn].forEach(b => b.classList.remove('active'));
     }
 
     function showCV(push = true) {
@@ -1124,6 +1356,14 @@
       if (push) history.pushState({}, '', '/valuation');
     }
 
+    function showWatchlist(push = true) {
+      hideAllViews();
+      wlView.style.display = 'block';
+      navWlBtn.classList.add('active');
+      wlInit();
+      if (push) history.pushState({}, '', '/watchlist');
+    }
+
     function showAirdrop(push = true) {
       hideAllViews();
       ardView.style.display = 'block';
@@ -1132,26 +1372,391 @@
       if (push) history.pushState({}, '', '/airdrop');
     }
 
-    function showPersonal(push = true) {
-      hideAllViews();
-      personalView.style.display = 'block';
-      navPersonalBtn.classList.add('active');
-      if (push) history.pushState({}, '', '/personal');
-    }
-
     function routeFromPath() {
       const p = window.location.pathname;
-      if (p === '/valuation') showValuation(false);
-      else if (p === '/airdrop') showAirdrop(false);
-      else if (p === '/personal') showPersonal(false);
+      if (p === '/valuation')  showValuation(false);
+      else if (p === '/watchlist') showWatchlist(false);
+      else if (p === '/airdrop')   showAirdrop(false);
       else showCV(false);
     }
 
-    navCvBtn.addEventListener('click', () => showCV());
+    navCvBtn.addEventListener('click',  () => showCV());
     navValBtn.addEventListener('click', () => showValuation());
+    navWlBtn.addEventListener('click',  () => showWatchlist());
     navArdBtn.addEventListener('click', () => showAirdrop());
-    navPersonalBtn.addEventListener('click', () => showPersonal());
     window.addEventListener('popstate', routeFromPath);
+
+    // ── WATCHLIST ─────────────────────────────────────
+    const WL_PW        = 'vi2702';
+    const WL_DATA_KEY  = 'wl_projects_v2';
+    const WL_USER_KEY  = 'wl_user_v2';
+
+    let wlAdmin    = false;
+    let wlProjects = [];
+    let wlUser     = {};
+    let wlInited   = false;
+    let wlTier1    = [];   // loaded from vc-tier1.json
+
+    function wlNorm(s) { return s.toLowerCase().replace(/[^a-z0-9]/g,' ').trim(); }
+    function wlHasTier1(backers) {
+      if (!wlTier1.length) return true; // if not loaded yet, show all
+      const t1 = wlTier1.map(wlNorm);
+      return (backers || []).some(b => {
+        const bn = wlNorm(b);
+        return t1.some(t => bn.includes(t) || t.includes(bn));
+      });
+    }
+
+    const wlAdminBtn   = document.getElementById('wl-admin-btn');
+    const wlSyncBtn    = document.getElementById('wl-sync-btn');
+    const wlAddBtn     = document.getElementById('wl-add-btn');
+    const wlGateInline = document.getElementById('wl-gate-inline');
+    const wlPwInput    = document.getElementById('wl-pw');
+    const wlPwSubmit   = document.getElementById('wl-pw-submit');
+    const wlGateError  = document.getElementById('wl-gate-error');
+    const wlAddForm    = document.getElementById('wl-add-form');
+    const wlAddInput   = document.getElementById('wl-add-input');
+    const wlAddSubmit  = document.getElementById('wl-add-submit');
+    const wlAddStatus  = document.getElementById('wl-add-status');
+    const wlProgress   = document.getElementById('wl-progress');
+    const wlDelCol     = document.getElementById('wl-del-col');
+    const wlTbody      = document.getElementById('wl-tbody');
+
+    function wlLoadStorage() {
+      try { wlProjects = JSON.parse(localStorage.getItem(WL_DATA_KEY) || 'null') || []; } catch { wlProjects = []; }
+      try { wlUser = JSON.parse(localStorage.getItem(WL_USER_KEY) || '{}'); } catch { wlUser = {}; }
+      // migrate old string participation → array
+      Object.keys(wlUser).forEach(k => {
+        const p = wlUser[k].participation;
+        if (typeof p === 'string') wlUser[k].participation = p ? [p] : [];
+      });
+    }
+
+    function wlSaveStorage() {
+      localStorage.setItem(WL_DATA_KEY, JSON.stringify(wlProjects));
+      localStorage.setItem(WL_USER_KEY, JSON.stringify(wlUser));
+    }
+
+    function wlFmtRaise(num) {
+      if (!num) return '—';
+      if (num >= 1e9) return '$' + (num / 1e9).toFixed(2).replace(/\.?0+$/, '') + 'B';
+      if (num >= 1e6) return '$' + (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+      return '$' + num.toLocaleString();
+    }
+
+    function wlSlug(name) {
+      return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    }
+
+    function wlHasGuide(name) {
+      const all = [...(wteData?.VI || []), ...(wteData?.EN || [])];
+      return all.some(p => p.name.toLowerCase() === name.toLowerCase());
+    }
+
+    function wlMakeRow(p, rank) {
+      const uid  = String(p.id || p.name);
+      const sel  = wlUser[uid]?.participation || [];
+
+      const imgSrc = p.logo_url || p.logo || '';
+      const logo = imgSrc
+        ? `<img class="wl-logo" src="${imgSrc}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" /><span class="wl-logo-fallback" style="display:none">${p.name[0]}</span>`
+        : `<span class="wl-logo-fallback">${p.name[0]}</span>`;
+
+      const nameHtml = p.x_handle
+        ? `<a class="wl-proj-name" href="https://x.com/${p.x_handle}" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text)'">${p.name}</a>`
+        : `<span class="wl-proj-name">${p.name}</span>`;
+
+      const bTop   = (p.backers || []).slice(0, 3).join(', ');
+      const arrowBtn = `<button class="wl-arrow-btn" data-name="${p.name}" title="View in Airdrop"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>`;
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="color:var(--muted);font-size:12px">${rank}</td>
+        <td><div class="wl-proj-cell">${logo}${nameHtml}</div></td>
+        <td class="wl-raise">${wlFmtRaise(p.raise_num)}</td>
+        <td class="wl-backers">${bTop || '—'}</td>
+        <td>
+          <div class="wl-chips ${wlAdmin ? '' : 'view-mode'}" data-uid="${uid}">
+            ${['contribute','point','retroactive','yap'].map(v =>
+              `<span class="wl-chip ${sel.includes(v)?'on':''}" data-val="${v}">${v[0].toUpperCase()+v.slice(1)}</span>`
+            ).join('')}
+          </div>
+        </td>
+        <td style="text-align:center">${arrowBtn}</td>
+        <td style="display:${wlAdmin ? '' : 'none'}">
+          <button class="wl-del-btn" data-uid="${uid}">✕</button>
+        </td>`;
+      return tr;
+    }
+
+    function wlRender() {
+      wlDelCol.style.display = wlAdmin ? '' : 'none';
+
+      if (!wlProjects.length) {
+        wlTbody.innerHTML = '<tr><td colspan="7" class="wl-empty">No projects yet.</td></tr>';
+        return;
+      }
+
+      const sorted = [...wlProjects]
+        .filter(p => wlHasTier1(p.backers))
+        .sort((a, b) => (b.raise_num || 0) - (a.raise_num || 0));
+
+      if (!sorted.length) {
+        wlTbody.innerHTML = '<tr><td colspan="7" class="wl-empty">No Tier-1 backed projects.</td></tr>';
+        return;
+      }
+
+      wlTbody.innerHTML = '';
+      sorted.forEach((p, i) => wlTbody.appendChild(wlMakeRow(p, i + 1)));
+
+      if (wlAdmin) {
+        wlTbody.querySelectorAll('.wl-chips[data-uid]').forEach(group => {
+          group.querySelectorAll('.wl-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+              const uid = group.dataset.uid;
+              const val = chip.dataset.val;
+              if (!wlUser[uid]) wlUser[uid] = {};
+              let cur = wlUser[uid].participation || [];
+              if (!Array.isArray(cur)) cur = cur ? [cur] : [];
+              wlUser[uid].participation = cur.includes(val)
+                ? cur.filter(v => v !== val)
+                : [...cur, val];
+              chip.classList.toggle('on');
+              wlSaveStorage();
+            });
+          });
+        });
+      }
+
+      wlTbody.querySelectorAll('.wl-arrow-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+          const name = e.currentTarget.dataset.name;
+          showAirdrop();
+          setTimeout(() => {
+            const slug = wlSlug(name);
+            const el = document.getElementById('wte-card-' + slug);
+            if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.style.outline = '2px solid var(--accent)'; setTimeout(() => el.style.outline = '', 1500); }
+          }, 150);
+        });
+      });
+
+      wlTbody.querySelectorAll('.wl-del-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+          const uid = e.target.dataset.uid;
+          wlProjects = wlProjects.filter(p => String(p.id || p.name) !== uid);
+          wlSaveStorage();
+          wlRender();
+        });
+      });
+    }
+
+    async function wlInitialFetch() {
+      wlProgress.textContent = 'Loading...';
+      try {
+        const res  = await fetch('/watchlist-data.json?v=' + Date.now());
+        const base = await res.json();
+        wlProjects = base;
+        wlSaveStorage();
+        wlProgress.textContent = '';
+        wlRender();
+      } catch (e) {
+        wlProgress.textContent = 'Error loading data.';
+        console.error(e);
+      }
+    }
+
+    async function wlInit() {
+      if (wlInited) return;
+      wlInited = true;
+
+      // load Tier-1 list
+      try {
+        const r = await fetch('/vc-tier1.json');
+        wlTier1 = await r.json();
+      } catch { wlTier1 = []; }
+
+      wlLoadStorage();
+      // nếu data cũ không có logo_url → reload từ JSON
+      const hasLogos = wlProjects.length > 0 && wlProjects[0].logo_url;
+      if (wlProjects.length && hasLogos) { wlRender(); return; }
+      wlInitialFetch();
+    }
+
+    // Admin toggle — static gate elements, toggle display
+    function wlShowGate() {
+      wlGateInline.style.display = 'flex';
+      wlAdminBtn.style.display   = 'none';
+      wlPwInput.value            = '';
+      wlGateError.textContent    = '';
+      wlPwInput.focus();
+    }
+
+    function wlHideGate() {
+      wlGateInline.style.display = 'none';
+      wlAdminBtn.style.display   = '';
+    }
+
+    function wlTryUnlock() {
+      if (wlPwInput.value === WL_PW) {
+        wlAdmin = true;
+        wlHideGate();
+        wlAdminBtn.textContent  = 'Logout';
+        wlSyncBtn.style.display = '';
+        wlAddBtn.style.display  = '';
+        wlRender();
+      } else {
+        wlGateError.textContent = 'Wrong password';
+        wlPwInput.value         = '';
+        wlPwInput.focus();
+      }
+    }
+
+    wlPwSubmit.addEventListener('click', wlTryUnlock);
+    wlPwInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter')  wlTryUnlock();
+      if (e.key === 'Escape') wlHideGate();
+    });
+
+    wlAdminBtn.addEventListener('click', () => {
+      if (wlAdmin) {
+        wlAdmin = false;
+        wlAdminBtn.textContent  = 'Admin';
+        wlSyncBtn.style.display = 'none';
+        wlAddBtn.style.display  = 'none';
+        wlAddForm.style.display = 'none';
+        wlRender();
+        return;
+      }
+      wlGateInline.style.display === 'none' ? wlShowGate() : wlHideGate();
+    });
+
+    // Add project via API
+    wlAddBtn.addEventListener('click', () => {
+      wlAddForm.style.display = wlAddForm.style.display === 'none' ? 'flex' : 'none';
+      if (wlAddForm.style.display !== 'none') wlAddInput.focus();
+    });
+
+    async function wlAddProject() {
+      const q = wlAddInput.value.trim();
+      if (!q) return;
+      wlAddStatus.textContent = 'Searching...';
+      wlAddSubmit.disabled = true;
+      try {
+        const res  = await fetch('/api/watchlist?action=detail&q=' + encodeURIComponent(q));
+        const body = await res.json();
+        const d    = body.data;
+        if (!d) { wlAddStatus.textContent = 'Not found.'; wlAddSubmit.disabled = false; return; }
+
+        const ov    = d.overview || {};
+        const fund  = d.funding  || {};
+        const name  = ov.name || q;
+        const exists = wlProjects.some(p => p.name.toLowerCase() === name.toLowerCase());
+        if (exists) { wlAddStatus.textContent = 'Already in list.'; wlAddSubmit.disabled = false; return; }
+
+        const backers = (fund.rounds || [])
+          .flatMap(r => (r.investors || []).map(inv => inv.name))
+          .filter((v, i, a) => a.indexOf(v) === i)
+          .slice(0, 5);
+
+        const newP = {
+          id:        'custom_' + Date.now(),
+          name,
+          category:  (ov.tags || []).join(', '),
+          raise:     wlFmtRaise(fund.total_raise),
+          raise_num: fund.total_raise || 0,
+          round:     '',
+          date:      '',
+          backers,
+          x_handle:  ov.x_handle || '',
+          logo:      ov.logo_url || '',
+        };
+
+        wlProjects.push(newP);
+        wlSaveStorage();
+        wlRender();
+        wlAddInput.value = '';
+        wlAddStatus.textContent = `✓ Added ${name}`;
+        setTimeout(() => { wlAddStatus.textContent = ''; }, 3000);
+      } catch (e) {
+        wlAddStatus.textContent = 'Connection error.';
+        console.error(e);
+      }
+      wlAddSubmit.disabled = false;
+    }
+
+    wlAddSubmit.addEventListener('click', wlAddProject);
+    wlAddInput.addEventListener('keydown', e => { if (e.key === 'Enter') wlAddProject(); });
+
+    // ── Sync từ Surf API ──────────────────────────────
+    async function wlSync() {
+      wlSyncBtn.disabled = true;
+      wlSyncBtn.textContent = '…';
+      wlProgress.textContent = 'Fetching list...';
+
+      try {
+        const listRes  = await fetch('/api/watchlist?action=list');
+        const listBody = await listRes.json();
+        const apiList  = listBody.data || [];
+
+        const existing = new Set(wlProjects.map(p => p.name.toLowerCase()));
+        const newItems = apiList.filter(p => !existing.has((p.project_name || '').toLowerCase()));
+
+        if (!newItems.length) {
+          wlProgress.textContent = 'Already up to date.';
+          setTimeout(() => { wlProgress.textContent = ''; }, 3000);
+          wlSyncBtn.disabled = false; wlSyncBtn.textContent = '↻';
+          return;
+        }
+
+        wlProgress.textContent = `Checking ${newItems.length} new projects...`;
+        let added = 0;
+
+        for (let i = 0; i < newItems.length; i++) {
+          const item = newItems[i];
+          wlProgress.textContent = `${i + 1}/${newItems.length} — ${item.project_name}`;
+
+          try {
+            const dRes  = await fetch('/api/watchlist?action=detail&q=' + encodeURIComponent(item.project_name));
+            const dBody = await dRes.json();
+            const ov    = dBody.data?.overview || {};
+            const fund  = dBody.data?.funding  || {};
+
+            const backers = (fund.rounds || [])
+              .flatMap(r => (r.investors || []).map(inv => inv.name))
+              .filter((v, i, a) => a.indexOf(v) === i);
+
+            if (!wlHasTier1(backers)) continue;
+
+            wlProjects.push({
+              id:        'sync_' + Date.now() + '_' + i,
+              name:      ov.name || item.project_name,
+              category:  (ov.tags || []).join(', '),
+              raise:     item.total_raise ? '$' + (item.total_raise / 1e6).toFixed(1) + 'M' : '—',
+              raise_num: item.total_raise || fund.total_raise || 0,
+              round:     '',
+              date:      '',
+              backers,
+              x_handle:  ov.x_handle  || '',
+              logo_url:  ov.logo_url  || '',
+            });
+            added++;
+          } catch { /* skip */ }
+        }
+
+        wlSaveStorage();
+        wlRender();
+        wlProgress.textContent = added ? `+${added} new project${added > 1 ? 's' : ''} added.` : 'No new Tier-1 projects found.';
+        setTimeout(() => { wlProgress.textContent = ''; }, 4000);
+      } catch (e) {
+        wlProgress.textContent = 'Sync failed.';
+        console.error(e);
+      }
+
+      wlSyncBtn.disabled = false;
+      wlSyncBtn.textContent = '↻';
+    }
+
+    wlSyncBtn.addEventListener('click', wlSync);
 
     // ── Personal view — password gate ────────────────
     const PERSONAL_PASSWORD = 'hieu1403';
@@ -1976,7 +2581,8 @@
         const nameHtml = p.twitter
           ? `<a class="wte-name" href="${p.twitter}" target="_blank" rel="noopener">${p.name}</a>`
           : `<span class="wte-name">${p.name}</span>`;
-        return `<div class="wte-card wte-card--${p.rank}">
+        const cardId = 'wte-card-' + p.name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+        return `<div class="wte-card wte-card--${p.rank}" id="${cardId}">
           <div class="wte-card-head">
             ${logoHtml}
             ${nameHtml}

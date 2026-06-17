@@ -1,0 +1,611 @@
+[
+  {
+    "id": 1,
+    "name": "XO Market",
+    "category": "DEX & AMM, Prediction Market",
+    "raise": "$6.5M",
+    "raise_num": 6500000,
+    "round": "Seed",
+    "date": "2026-04-30",
+    "backers": [
+      "Coinbase Ventures"
+    ],
+    "x_handle": "xomarket",
+    "logo_url": "https://images.asksurf.ai/i_sstPr-nW2gbIpLUGvc5o9tt-C89nLE0p1z0_bHMug/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE5MTYzNzQ4NjUxNjgyNTcwMjQvckVsUmRCT0wuanBn"
+  },
+  {
+    "id": 2,
+    "name": "Noise",
+    "category": "Data & Analytics, Derivatives, Prediction Market",
+    "raise": "$7.1M",
+    "raise_num": 7100000,
+    "round": "Seed",
+    "date": "2026-01-14",
+    "backers": [
+      "Paradigm"
+    ],
+    "x_handle": "noise_xyz",
+    "logo_url": "https://images.asksurf.ai/uBPGhkpcAU0i7KlAOJThsC-JEYzat4RbY8c_6f2tim0/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzIwMzk3MDkzNDQwMzY3NDUyMTYvNDNmSk5YRmcuanBn"
+  },
+  {
+    "id": 3,
+    "name": "Surf",
+    "category": "Data & Analytics, Quant Tools, Web3 AI",
+    "raise": "$15M",
+    "raise_num": 15000000,
+    "round": "Undisclosed",
+    "date": "2025-12-10",
+    "backers": [
+      "Coinbase Ventures",
+      "Pantera Capital"
+    ],
+    "x_handle": "SurfAI",
+    "logo_url": "https://images.asksurf.ai/VCf8xXa-DrHydQNRak1ui-TLPLuVJslX1ansb1NJHCE/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE5ODQ2NDkzNTE5NDgzNDEyNDgvR01fbHFuQmQuanBn"
+  },
+  {
+    "id": 4,
+    "name": "seismic",
+    "category": "Layer1",
+    "raise": "$17M",
+    "raise_num": 17000000,
+    "round": "Undisclosed",
+    "date": "2025-11-12",
+    "backers": [
+      "Andreessen Horowitz",
+      "Polychain Capital"
+    ],
+    "x_handle": "SeismicSys",
+    "logo_url": "https://images.asksurf.ai/i_UqfstjrsOd4wzBYLJ80tTIX8IINF1xDtQWQS2Zzco/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzIwNDczODg3NTk3MDA2ODg4OTYvZUIzYUwzb0YuanBn"
+  },
+  {
+    "id": 5,
+    "name": "Multipli.fi",
+    "category": "RWA, Stablecoins, Yield",
+    "raise": "$21.5M",
+    "raise_num": 21500000,
+    "round": "Undisclosed",
+    "date": "2025-08-28",
+    "backers": [
+      "Pantera Capital",
+      "Sequoia Capital",
+      "The Spartan Group"
+    ],
+    "x_handle": "multiplifi",
+    "logo_url": "https://images.asksurf.ai/F6wwtgwNpo2uE3Jog9aWQmZmFiZ8x5FrBOGt2VvzybM/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE5NjYxNjk0NTQ5MzA0NDAxOTUvelJYeHNrN1AuanBn"
+  },
+  {
+    "id": 6,
+    "name": "o1.exchange",
+    "category": "Quant Tools, Web3 AI, Derivatives",
+    "raise": "$4.2M",
+    "raise_num": 4200000,
+    "round": "Undisclosed",
+    "date": "2025-08-19",
+    "backers": [
+      "Coinbase Ventures"
+    ],
+    "x_handle": "o1_exchange",
+    "logo_url": "https://images.asksurf.ai/xsU-QxaNI5_tbBk13SdejFQQc4igAteEXUOI2qvFYtw/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzIwMTAyOTQyMTIxNzczNzExMzYva1d6dmxET3gucG5n"
+  },
+  {
+    "id": 7,
+    "name": "Rialo",
+    "category": "Layer1, Privacy & ZK",
+    "raise": "$20M",
+    "raise_num": 20000000,
+    "round": "Seed",
+    "date": "2025-08-01",
+    "backers": [
+      "Coinbase Ventures",
+      "Pantera Capital"
+    ],
+    "x_handle": "RialoHQ",
+    "logo_url": "https://images.asksurf.ai/T1sD06qpm0B2OP-6nI7UqTeErsxWuLMPUnFrDksyw5Q/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE5NTAyNjU1Mzc3ODQ5MjYyMDgvcWJqU1dNRFAuanBn"
+  },
+  {
+    "id": 8,
+    "name": "Questflow",
+    "category": "Developer Tooling, Web3 AI",
+    "raise": "$8M",
+    "raise_num": 8000000,
+    "round": "Seed",
+    "date": "2025-07-22",
+    "backers": [
+      "HashKey Capital"
+    ],
+    "x_handle": "questflow",
+    "logo_url": "https://images.asksurf.ai/NNVlf9HZjGW_NFG2f2a6TIR7Mu2daeQFpYJ7n6ET2OE/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzIwNjQxNzkwMDA4OTM5MzE1MjAvTHZmWmJVbFQuanBn"
+  },
+  {
+    "id": 9,
+    "name": "Kuru",
+    "category": "DEX & AMM",
+    "raise": "$13.6M",
+    "raise_num": 13600000,
+    "round": "Series A",
+    "date": "2025-07-07",
+    "backers": [
+      "Paradigm"
+    ],
+    "x_handle": "KuruExchange",
+    "logo_url": "https://images.asksurf.ai/DpsEAtq-dzvKTM53LFqcNIiM53cu0_y_VY2bnyg8fMo/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE5NTA5NjIxNDI5MTc2MTk3MTQvUjdDal9xazcuanBn"
+  },
+  {
+    "id": 10,
+    "name": "GTE",
+    "category": "DEX, Derivatives, Launchpad",
+    "raise": "$25.9M",
+    "raise_num": 25900000,
+    "round": "Series A",
+    "date": "2025-06-23",
+    "backers": [
+      "Paradigm"
+    ],
+    "x_handle": "GTE_XYZ",
+    "logo_url": "https://images.asksurf.ai/qBRmeP916puZfrgOTZYHHLsmEiM4W-5MLg52yMlAs9w/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE4NzIxMDMzNDE2ODMzMjI4ODAvdmkxMFlheEkuanBn"
+  },
+  {
+    "id": 11,
+    "name": "Concrete",
+    "category": "Yield & Asset Mgmt",
+    "raise": "$17M",
+    "raise_num": 17000000,
+    "round": "Strategic",
+    "date": "2025-06-23",
+    "backers": [
+      "Polychain Capital",
+      "VanEck",
+      "YZi Labs"
+    ],
+    "x_handle": "ConcreteXYZ",
+    "logo_url": "https://images.asksurf.ai/9yVSrcLHWzTMfZhoIn4atnxQ2MGD97mThpYlj8tUAas/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE3NTgyMzAzOTA5MzI5MDU5ODQvYXhwR1J6M2MucG5n"
+  },
+  {
+    "id": 12,
+    "name": "Yupp",
+    "category": "Web3 AI",
+    "raise": "$33M",
+    "raise_num": 33000000,
+    "round": "Seed",
+    "date": "2025-06-13",
+    "backers": [
+      "Andreessen Horowitz",
+      "Coinbase Ventures"
+    ],
+    "x_handle": "yupp_ai",
+    "logo_url": "https://images.asksurf.ai/OR99LvFCCTrd7wJjsWKlsWxALjGkNdtUkiehcSV9_-Q/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE5NzEzMzg4MzA4MzkxNTI2NDAvQVVDc2JyVVYucG5n"
+  },
+  {
+    "id": 13,
+    "name": "RISE Chain",
+    "category": "Layer2, Derivatives",
+    "raise": "$9.2M",
+    "raise_num": 9200000,
+    "round": "IDO",
+    "date": "2025-08-18",
+    "backers": [
+      "Galaxy"
+    ],
+    "x_handle": "rise_chain",
+    "logo_url": "https://images.asksurf.ai/8n8fQHjuAyH-IwkT6LclC-7w5BpLt3C4wRmYrDn11v4/aHR0cHM6Ly9pbWcuY3J5cHRvcmFuay5pby9jb2lucy9yaXNlX2NoYWluMTcyNjUwNDg0NDUxMy5wbmc"
+  },
+  {
+    "id": 14,
+    "name": "Perpl",
+    "category": "Derivatives",
+    "raise": "$9.5M",
+    "raise_num": 9500000,
+    "round": "ICO",
+    "date": "2025-08-12",
+    "backers": [
+      "DragonFly Capital",
+      "HashKey Capital"
+    ],
+    "x_handle": "perpltrade",
+    "logo_url": "https://images.asksurf.ai/hfY1aovRMs-10-qLOYwmfvYusEv-ETxxWcOczMidauU/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzIwNjUzNDY0NzQxNTAzMzQ0NjUvcHhhOUpNY0wuanBn"
+  },
+  {
+    "id": 15,
+    "name": "DogeOS",
+    "category": "Layer2, Privacy & ZK",
+    "raise": "$6.9M",
+    "raise_num": 6900000,
+    "round": "Undisclosed",
+    "date": "2025-05-06",
+    "backers": [
+      "Polychain Capital"
+    ],
+    "x_handle": "DogeOS",
+    "logo_url": "https://images.asksurf.ai/vb7qqET__wOJHz7iCEF3j2DdDkNkOrza-hVITxjsB0E/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzIwNTc4NTc5NTkxMTI0NTAwNDgvc1ZIQUNSVFYuanBn"
+  },
+  {
+    "id": 16,
+    "name": "Miden",
+    "category": "Layer2, Privacy & ZK",
+    "raise": "$25M",
+    "raise_num": 25000000,
+    "round": "Seed",
+    "date": "2025-04-29",
+    "backers": [
+      "Andreessen Horowitz"
+    ],
+    "x_handle": "0xMiden",
+    "logo_url": "https://images.asksurf.ai/xlE60xJ-jooykalcbpqbPY-0oFMj5SIG1xGfEYMY9F0/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE5MTY5NjE0Mjk5NDY0OTkwNzMvXzRuV3hGOEwucG5n"
+  },
+  {
+    "id": 17,
+    "name": "Nous Research",
+    "category": "Compute, Web3 AI",
+    "raise": "$70M",
+    "raise_num": 70000000,
+    "round": "Series A",
+    "date": "2025-04-25",
+    "backers": [
+      "Paradigm"
+    ],
+    "x_handle": "NousResearch",
+    "logo_url": "https://images.asksurf.ai/h1C06d_TwEC3QwDVceXVqdo19MN4nTBKKvioJ-Z93mk/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE4MTYyNTQ3MzgyMzQ3NjEyMTYvVFg3VFctTXAuanBn"
+  },
+  {
+    "id": 18,
+    "name": "Inco Network",
+    "category": "Layer1, Privacy & ZK",
+    "raise": "$10M",
+    "raise_num": 10000000,
+    "round": "Strategic",
+    "date": "2025-04-24",
+    "backers": [
+      "Circle",
+      "Coinbase Ventures",
+      "a16z CSX"
+    ],
+    "x_handle": "inconetwork",
+    "logo_url": "https://images.asksurf.ai/hDeuCrDo7IZrOD6fJjMWfIYgGcc2xa6mIezyqb2qOO4/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE5MDk4NTA0Mzk3ODY2NTk4NDEvbmZ3czdLX2kuanBn"
+  },
+  {
+    "id": 19,
+    "name": "Symbiotic",
+    "category": "Restaking, Validator Infra",
+    "raise": "$34.8M",
+    "raise_num": 34800000,
+    "round": "Series A",
+    "date": "2025-04-23",
+    "backers": [
+      "Coinbase Ventures",
+      "Pantera Capital",
+      "Paradigm"
+    ],
+    "x_handle": "symbioticfi",
+    "logo_url": "https://images.asksurf.ai/V1wj95MZWmgWtafuGcA94UlDyptYtOe7dQvn1bFqDdU/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzIwNTY5OTA1NTAyMDU2MzI1MTIveldaVlZxZlAucG5n"
+  },
+  {
+    "id": 20,
+    "name": "Glider",
+    "category": "Yield & Asset Mgmt",
+    "raise": "$4M",
+    "raise_num": 4000000,
+    "round": "Incubation",
+    "date": "2025-09-09",
+    "backers": [
+      "Coinbase Ventures",
+      "a16z CSX"
+    ],
+    "x_handle": "glider__",
+    "logo_url": "https://images.asksurf.ai/7CfaJbjZxizRzR4DYvbTKiNp3HNZWEp8PMzBNDu3x6E/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzIwMDgxMTExNDE5NTcwMjE2OTYvZlVGUlpqUzMuanBn"
+  },
+  {
+    "id": 21,
+    "name": "Blackbird",
+    "category": "Payments, Layer2",
+    "raise": "$85M",
+    "raise_num": 85000000,
+    "round": "Series B",
+    "date": "2025-04-08",
+    "backers": [
+      "a16z",
+      "Circle",
+      "Coinbase Ventures",
+      "Multicoin Capital"
+    ],
+    "x_handle": "blackbird",
+    "logo_url": "https://images.asksurf.ai/cX-1mtGrTX4I4TX5n82G7v2gN3wc-a5ir37bJ3nMMEY/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE1Njk2OTM0ODY0MDc4NzY2MDkvbFh1OGc3ci0uanBn"
+  },
+  {
+    "id": 22,
+    "name": "GOAT Gaming",
+    "category": "GameFi, Gaming Infra, Web3 AI",
+    "raise": "$15M",
+    "raise_num": 15000000,
+    "round": "Strategic",
+    "date": "2025-02-03",
+    "backers": [
+      "The Spartan Group"
+    ],
+    "x_handle": "playgoatgaming",
+    "logo_url": "https://images.asksurf.ai/V6WcRO8InIP1kCZG6_5s_f863F4CGKaOJTEfhdyas68/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE3OTYxNTE2NjAwMjIyOTY1NzYvbWVkbmtFVkYucG5n"
+  },
+  {
+    "id": 23,
+    "name": "Fableborne",
+    "category": "GameFi",
+    "raise": "$17.9M",
+    "raise_num": 17900000,
+    "round": "Strategic",
+    "date": "2025-01-27",
+    "backers": [
+      "The Spartan Group"
+    ],
+    "x_handle": "fableborne",
+    "logo_url": "https://images.asksurf.ai/UQireC8GtVMlYD_qyzUCUt3fdbtIHqok5z83Z1eT-vw/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE3OTAwNjQ0OTU5NDA3MzkwNzMvSjNBcmZWanouanBn"
+  },
+  {
+    "id": 24,
+    "name": "Polymarket",
+    "category": "Prediction Market",
+    "raise": "$2.88B",
+    "raise_num": 2880000000,
+    "round": "Strategic",
+    "date": "2026-03-27",
+    "backers": [
+      "Blockchain Capital",
+      "Coinbase Ventures",
+      "DragonFly Capital",
+      "Polychain Capital"
+    ],
+    "x_handle": "Polymarket",
+    "logo_url": "https://images.asksurf.ai/FWgQEzcdAkXYlTdeUoaO6axawiOhGYuDLXAygl-SKdU/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzIwMDU2NjQyODEwMDI0OTE5MDQvYnoyWk9fblUuanBn"
+  },
+  {
+    "id": 25,
+    "name": "commonware",
+    "category": "Developer Tooling, Modular, Validator Infra",
+    "raise": "$34M",
+    "raise_num": 34000000,
+    "round": "Undisclosed",
+    "date": "2025-11-07",
+    "backers": [
+      "DragonFly Capital"
+    ],
+    "x_handle": "commonwarexyz",
+    "logo_url": "https://images.asksurf.ai/Bjx8PiUtrZqLJ6u89Ty8YoCuOuz3brK-795-rS6nrHg/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE4MTI0OTQ4NjM3ODQzNzgzNjgvMUlxaXAxaXIuanBn"
+  },
+  {
+    "id": 26,
+    "name": "Hyperbolic Labs",
+    "category": "DePIN, Compute, Web3 AI",
+    "raise": "$19.7M",
+    "raise_num": 19700000,
+    "round": "Series A",
+    "date": "2024-12-10",
+    "backers": [
+      "Polychain Capital"
+    ],
+    "x_handle": "hyperbolic_labs",
+    "logo_url": "https://images.asksurf.ai/TKWYzZ40YxzfaO6APyJ3pEfukXp2EqMuYXT4XJcfeSE/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE5Mzc5MzE3NjgzOTQ1NTUzOTIvRGNoclV4cTIuanBn"
+  },
+  {
+    "id": 27,
+    "name": "Puffpaw",
+    "category": "DePIN, GameFi",
+    "raise": "$6M",
+    "raise_num": 6000000,
+    "round": "Seed",
+    "date": "2024-09-05",
+    "backers": [
+      "The Spartan Group"
+    ],
+    "x_handle": "puffpaw_xyz",
+    "logo_url": "https://images.asksurf.ai/F7mHcJZmiesNVXcd5RBR4BJ74zpXuwdwV6aKbxYlG3Y/aHR0cHM6Ly9pbWcuY3J5cHRvcmFuay5pby9jb2lucy9wdWZmcGF3MTcyMzAzMzU0MTMyNC5wbmc"
+  },
+  {
+    "id": 28,
+    "name": "Chaos Labs",
+    "category": "Oracle, Data, Web3 AI",
+    "raise": "$79M",
+    "raise_num": 79000000,
+    "round": "Undisclosed",
+    "date": "2024-09-20",
+    "backers": [
+      "Coinbase Ventures",
+      "Galaxy",
+      "HashKey Capital",
+      "The Spartan Group"
+    ],
+    "x_handle": "chaoslabs",
+    "logo_url": "https://images.asksurf.ai/dpmMDuSoSQSoFW6O-y-K4x-tTrwa7SD_aK9MZ_yRZtM/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE5MDAyMjY2NjE2NTc4MDg4OTYvaU5TS2ZINzguanBn"
+  },
+  {
+    "id": 29,
+    "name": "Nubit",
+    "category": "Bitcoin Ecosystem, Modular DA",
+    "raise": "$11M",
+    "raise_num": 11000000,
+    "round": "Strategic",
+    "date": "2025-07-21",
+    "backers": [
+      "Polychain Capital",
+      "The Spartan Group"
+    ],
+    "x_handle": "nubit_org",
+    "logo_url": "https://images.asksurf.ai/IJLX12BoTKdvH4oaqpA56a7s8_-f-FxATixFaNLkP9U/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE5MDA1OTg3NjMwNzAzODYxNzYvZFFYVXRNZ2YuanBn"
+  },
+  {
+    "id": 30,
+    "name": "Farcaster",
+    "category": "DID, Messaging, SocialFi",
+    "raise": "$180M",
+    "raise_num": 180000000,
+    "round": "M&A",
+    "date": "2026-01-21",
+    "backers": [
+      "a16z",
+      "Coinbase Ventures",
+      "Multicoin Capital",
+      "Paradigm"
+    ],
+    "x_handle": "farcaster_xyz",
+    "logo_url": "https://images.asksurf.ai/Px2_D0lRLSuAY-YNCsn3mcNDwpXRUMslNX3Lr-lZ8QQ/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE5ODAzMTAyODE1NTg0MDkyMTYvRFdvWWNLUjcuanBn"
+  },
+  {
+    "id": 31,
+    "name": "Shogun",
+    "category": "Cross-chain, DEX, Intent",
+    "raise": "$6.9M",
+    "raise_num": 6900000,
+    "round": "Seed",
+    "date": "2024-05-15",
+    "backers": [
+      "Polychain Capital",
+      "YZi Labs"
+    ],
+    "x_handle": "gundotfun",
+    "logo_url": "https://images.asksurf.ai/rLZ_PibiOu9b4v5T7SO3d7WVUQWlI3pqOzNw89iFWfE/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE5NDczNDU2NTM4NjIxNzQ3MjAvWFFka2pmZDUuanBn"
+  },
+  {
+    "id": 32,
+    "name": "Botanix Labs",
+    "category": "Layer2",
+    "raise": "$11.5M",
+    "raise_num": 11500000,
+    "round": "Seed",
+    "date": "2024-05-07",
+    "backers": [
+      "Polychain Capital"
+    ],
+    "x_handle": "botanixlabs",
+    "logo_url": "https://images.asksurf.ai/6o9Tv9aGH-p7RRW1UjlwSAXt6sT-aHty2W0s9QK68-c/aHR0cHM6Ly9pbWcuY3J5cHRvcmFuay5pby9jb2lucy9ib3Rhbml4X2xhYnMxNzUwMjYwNzEyNjM5LnBuZw"
+  },
+  {
+    "id": 33,
+    "name": "Reya Labs / Voltz",
+    "category": "Derivatives, Layer2",
+    "raise": "$19M",
+    "raise_num": 19000000,
+    "round": "ICO",
+    "date": "2025-11-25",
+    "backers": [
+      "Coinbase Ventures"
+    ],
+    "x_handle": "reya_xyz",
+    "logo_url": "https://images.asksurf.ai/WHOsiML_UJNlPO_q9v5wia5l-jm1lQ7FUWmXnyoCJj8/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE5Njk2NzU4MTk1MTAzNzQ0MDAvVi1sZEk1eHEucG5n"
+  },
+  {
+    "id": 34,
+    "name": "Polymer Labs",
+    "category": "Cross-chain, Layer2, Intent",
+    "raise": "$26.6M",
+    "raise_num": 26600000,
+    "round": "Series A",
+    "date": "2024-01-23",
+    "backers": [
+      "Blockchain Capital",
+      "Coinbase Ventures"
+    ],
+    "x_handle": "Polymer_Labs",
+    "logo_url": "https://images.asksurf.ai/TStC73iCLQrPD5vaOs1SE68KbzlGCdNpyLuhY5w_V7g/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE5MzI0NDgzMDQ0NTA3MDMzNjAvUlVCbmZHaG0uanBn"
+  },
+  {
+    "id": 35,
+    "name": "Fhenix",
+    "category": "Developer Tooling, Compute",
+    "raise": "$22M",
+    "raise_num": 22000000,
+    "round": "Undisclosed",
+    "date": "2025-03-26",
+    "backers": [
+      "Multicoin Capital"
+    ],
+    "x_handle": "fhenix",
+    "logo_url": "https://images.asksurf.ai/w4IZ-65hr14bHek6CjHBNpsZ3lANZEs7MycNHF0mWWM/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzIwNDE5MTY3OTkxMDE2NjkzNzYvTU5vZ0YzbTcuanBn"
+  },
+  {
+    "id": 36,
+    "name": "GONDI",
+    "category": "Lending, NFTFi",
+    "raise": "$5.3M",
+    "raise_num": 5300000,
+    "round": "Seed",
+    "date": "2023-07-11",
+    "backers": [
+      "DragonFly Capital",
+      "Pantera Capital"
+    ],
+    "x_handle": "gondixyz",
+    "logo_url": "https://images.asksurf.ai/GvJsSiEu56XuMHf1e6kziggkOzmyhniegrltVQtfpDA/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE5ODc4OTUyMzAyNTk5NjU5NTIvVWdiWV80TDkuanBn"
+  },
+  {
+    "id": 37,
+    "name": "Tabi",
+    "category": "Layer1, Payments, Gaming Infra",
+    "raise": "$27.1M",
+    "raise_num": 27100000,
+    "round": "ICO",
+    "date": "2024-06-13",
+    "backers": [
+      "HashKey Capital",
+      "YZi Labs"
+    ],
+    "x_handle": "TabiVibe",
+    "logo_url": "https://images.asksurf.ai/8argWpTljgyCDzomJJTHFM7rk3E51m231jcDmC4Vjyc/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzIwMDQ0ODczODU1ODE3NjA1MTIvNk5UZ1FZc0UuanBn"
+  },
+  {
+    "id": 38,
+    "name": "Cashmere Labs",
+    "category": "Stablecoins, DEX, Cross-chain",
+    "raise": "$3M",
+    "raise_num": 3000000,
+    "round": "Seed",
+    "date": "2022-08-09",
+    "backers": [
+      "Coinbase Ventures",
+      "Y Combinator"
+    ],
+    "x_handle": "CashmereLabs",
+    "logo_url": "https://images.asksurf.ai/pW4Tw-mHIFrGlQPV7splnBok6JSt_77qVXTGEPa091M/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzIwMTEwMTYzOTQwNTAwNjAyODgvd29GeDhNNS0uanBn"
+  },
+  {
+    "id": 39,
+    "name": "Linera",
+    "category": "Layer1",
+    "raise": "$12M",
+    "raise_num": 12000000,
+    "round": "Undisclosed",
+    "date": "2023-08-16",
+    "backers": [
+      "Andreessen Horowitz"
+    ],
+    "x_handle": "linera_io",
+    "logo_url": "https://images.asksurf.ai/OqvtLIwGRMile51hkNdNPO7BIDLaBbtu_zZS4qUn1SM/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE4Nzg4NjY2MDMzNjgxNzc2NjQvclFMV1QzTFguanBn"
+  },
+  {
+    "id": 40,
+    "name": "MetaLend",
+    "category": "Lending, Payments, Yield",
+    "raise": "$5M",
+    "raise_num": 5000000,
+    "round": "Seed",
+    "date": "2022-04-21",
+    "backers": [
+      "Pantera Capital"
+    ],
+    "x_handle": "MetaLend_DeFi",
+    "logo_url": "https://images.asksurf.ai/Ij7gW9z_C4TmheaD9-2_lixG-K9p2LRaLVPCpBSCDVI/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzE5MTI5NDAwNjQyNjAxMzY5NjAvMXRVVThBbEwuanBn"
+  },
+  {
+    "id": 41,
+    "name": "OpenSea",
+    "category": "Developer Tooling, NFT Marketplace",
+    "raise": "$425.1M",
+    "raise_num": 425100000,
+    "round": "Series C",
+    "date": "2022-01-04",
+    "backers": [
+      "a16z",
+      "Blockchain Capital",
+      "Coinbase Ventures",
+      "Paradigm"
+    ],
+    "x_handle": "opensea",
+    "logo_url": "https://images.asksurf.ai/3Dmy2QxgekNlUW0QDUjy5acRG2kLldS7S8_ryQnvHso/aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzIwMTQ5NTgxNjUwNTA1MDcyNjQvZHZiT0xOTEwuanBn"
+  }
+]
