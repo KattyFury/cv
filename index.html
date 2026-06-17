@@ -1438,6 +1438,10 @@
         const p = wlUser[k].participation;
         if (typeof p === 'string') wlUser[k].participation = p ? [p] : [];
       });
+      // xóa project không pass Tier-1 đang nằm nhầm trong cache
+      if (wlTier1.length && wlProjects.length) {
+        wlProjects = wlProjects.filter(p => wlHasTier1(p.backers));
+      }
     }
 
     function wlSaveStorage() {
@@ -1709,8 +1713,11 @@
         const listBody = await listRes.json();
         const apiList  = listBody.data || [];
 
-        const existing = new Set(wlProjects.map(p => p.name.toLowerCase()));
-        const newItems = apiList.filter(p => !existing.has((p.project_name || '').toLowerCase()));
+        // chỉ check against project đã pass Tier-1 (đang hiển thị)
+        const shownNames = new Set(
+          wlProjects.filter(p => wlHasTier1(p.backers)).map(p => p.name.toLowerCase())
+        );
+        const newItems = apiList.filter(p => !shownNames.has((p.project_name || '').toLowerCase()));
 
         if (!newItems.length) {
           wlProgress.textContent = 'Already up to date.';
