@@ -1468,6 +1468,12 @@
     function wlSaveStorage() {
       localStorage.setItem(WL_DATA_KEY, JSON.stringify(wlProjects));
       localStorage.setItem(WL_USER_KEY, JSON.stringify(wlUser));
+      // also persist projects to KV so all devices stay in sync
+      fetch('/api/watchlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'kv-save', data: wlProjects }),
+      }).catch(() => {});
     }
 
     function wlFmtRaise(num) {
@@ -1609,8 +1615,20 @@
         wlTier1 = await r.json();
       } catch { wlTier1 = []; }
 
+      // try KV first (cross-device), fall back to localStorage, then static JSON
+      try {
+        const r    = await fetch('/api/watchlist?action=kv-load');
+        const body = await r.json();
+        if (body.data && body.data.length) {
+          wlProjects = body.data;
+          wlLoadStorage(); // still load wlUser from localStorage
+          wlSaveStorage(); // sync KV data into localStorage
+          wlRender();
+          return;
+        }
+      } catch {}
+
       wlLoadStorage();
-      // nếu data cũ không có logo_url → reload từ JSON
       const hasLogos = wlProjects.length > 0 && wlProjects[0].logo_url;
       if (wlProjects.length && hasLogos) { wlRender(); return; }
       wlInitialFetch();
