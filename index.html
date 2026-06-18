@@ -935,17 +935,20 @@
     .wl-raise { font-weight: 700; color: var(--text); white-space: nowrap; }
     .wl-backers { font-size: 13px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     @media (max-width: 640px) {
-      /* mobile: ẩn VCs, tỉ lệ cột 1-6-3-3-1 (#/Project/Raise/Available/arrow) */
+      /* mobile: bảng FIXED hẳn — không kéo ngang */
+      .wl-table-scroll { overflow-x: hidden; }
+      /* ẩn VCs, tỉ lệ cột 1-6-3-3-1 (#/Project/Raise/Available/arrow) */
       .wl-table th:nth-child(1), .wl-table td:nth-child(1) { width: 7%; }
       .wl-table th:nth-child(2), .wl-table td:nth-child(2) { width: 43%; }
       .wl-table th:nth-child(3), .wl-table td:nth-child(3) { width: 21%; }
       .wl-table th:nth-child(4), .wl-table td:nth-child(4) { display: none; }
       .wl-table th:nth-child(5), .wl-table td:nth-child(5) { width: 22%; }
       .wl-table th:nth-child(6), .wl-table td:nth-child(6) { width: 7%; }
-      .wl-table thead th { padding: 8px 8px; }
-      .wl-table tbody td { padding: 12px 8px; }
-      .wl-table th:first-child, .wl-table td:first-child { padding-left: 12px; }
-      .wl-table th:last-child,  .wl-table td:last-child  { padding-right: 12px; }
+      .wl-table thead th { padding: 8px 6px; }
+      .wl-table tbody td { padding: 12px 6px; }
+      /* cột # và mũi tên hẹp → padding nhỏ để content khỏi tràn */
+      .wl-table th:first-child, .wl-table td:first-child { padding-left: 8px; padding-right: 2px; }
+      .wl-table th:last-child,  .wl-table td:last-child  { padding-right: 8px; padding-left: 2px; }
       .wl-chip { font-size: 10px; padding: 2px 4px; }
     }
 
