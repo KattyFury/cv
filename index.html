@@ -315,7 +315,18 @@
     .val-intro-clickable:hover { color: var(--accent); }
     /* 2 size popup chuẩn: nhỏ .wl-modal (--modal-w, form) · lớn = ĐÚNG 2× popup nhỏ (nội dung nhiều) */
     .wl-modal--wide { width: calc(var(--modal-w) * 2); max-width: 92vw; }
+    .wl-modal--wide .wl-modal-title { font-size: 14px; line-height: 1.3; }
     .tge-modal-body { overflow: auto; max-height: 78vh; }
+    /* mobile: thu nhỏ font bảng trong popup để nội dung không lồng nhau */
+    @media (max-width: 640px) {
+      .wl-modal--wide { padding: 16px; }
+      .wl-modal--wide .wl-modal-title { font-size: 13px; }
+      .tge-modal-body .val-table { font-size: 11px; }
+      .tge-modal-body .val-table thead th,
+      .tge-modal-body .val-table tbody td { padding: 6px 4px; }
+      .tge-modal-body .td-ticker { font-size: 11px; }
+      .tge-modal-body .td-size { font-size: 9px; }
+    }
 
     .val-table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
 
@@ -371,7 +382,10 @@
     .vc-q234 { grid-row: 2 / 5; min-height: 0; }   /* nội dung khi không kết luận */
     .vc-q4   { grid-row: 4 / 5; }   /* kết luận */
     .val-boxes > .val-card > .vc-q234,
-    .val-boxes > .val-card > .vc-q23 { overflow: auto; }
+    .val-boxes > .val-card > .vc-q23 { overflow: auto; align-self: stretch; }
+    /* split-box lấp đầy đúng vùng grid (rows 2-3), nội dung canh giữa dọc */
+    .val-boxes .split-box { margin-top: 0; height: 100%; box-sizing: border-box; }
+    .val-boxes .split-col { justify-content: center; }
 
     .val-card {
       border: 1px solid var(--border);
@@ -868,8 +882,15 @@
 
     .wl-table {
       width: 100%; border-collapse: collapse;
-      font-size: 13px;
+      font-size: 13px; table-layout: fixed;
     }
+    /* Cột cố định: # | Project 26% | Raise 72 | VCs (auto, hút phần dư) | Available 188 | arrow 44
+       → Raise nằm sát Project, phần trống dồn vào cột VCs, không kéo ngang */
+    .wl-table th:nth-child(1), .wl-table td:nth-child(1) { width: 32px; }
+    .wl-table th:nth-child(2), .wl-table td:nth-child(2) { width: 26%; }
+    .wl-table th:nth-child(3), .wl-table td:nth-child(3) { width: 72px; }
+    .wl-table th:nth-child(5), .wl-table td:nth-child(5) { width: 188px; }
+    .wl-table th:nth-child(6), .wl-table td:nth-child(6) { width: 44px; }
     .wl-table thead th,
     .wl-table tbody td {
       padding: 7px 10px;
@@ -909,14 +930,19 @@
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
     }
-    .wl-proj-name { font-weight: 600; color: var(--text); }
+    .wl-proj-name { font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
     .wl-raise { font-weight: 700; color: var(--text); white-space: nowrap; }
-    .wl-table th:nth-child(3), .wl-table td:nth-child(3) { width: 72px; }
-    .wl-backers { font-size: 13px; color: var(--muted); max-width: 160px; }
+    .wl-backers { font-size: 13px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     @media (max-width: 640px) {
+      /* mobile: ẩn VCs, Project hút phần dư, mọi cột vừa khít màn hình (không kéo ngang) */
+      .wl-table th:nth-child(1), .wl-table td:nth-child(1) { width: 24px; }
+      .wl-table th:nth-child(2), .wl-table td:nth-child(2) { width: auto; }
+      .wl-table th:nth-child(3), .wl-table td:nth-child(3) { width: 52px; }
       .wl-table th:nth-child(4), .wl-table td:nth-child(4) { display: none; }
+      .wl-table th:nth-child(5), .wl-table td:nth-child(5) { width: 96px; }
+      .wl-table th:nth-child(6), .wl-table td:nth-child(6) { width: 28px; }
+      .wl-table thead th, .wl-table tbody td { padding: 7px 4px; }
       .wl-chip { font-size: 10px; padding: 2px 4px; }
-      .wl-table th:nth-child(5) { width: 120px; }
     }
 
     .wl-chips { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
@@ -1288,8 +1314,8 @@
       <div class="ard-tab-panel" id="ard-wte-panel">
         <div style="position:relative">
           <div class="val-intro">Active airdrop guides</div>
-          <div style="position:absolute;top:50%;right:0;transform:translateY(-50%);display:flex;align-items:center;gap:8px">
-            <span class="wte-count" id="wte-count"></span>
+          <span class="wte-count" id="wte-count" style="position:absolute;top:50%;left:0;transform:translateY(-50%)"></span>
+          <div style="position:absolute;top:50%;right:0;transform:translateY(-50%)">
             <div class="lang-toggle">
               <button class="lang-btn active" id="lang-vi-btn">VI</button>
               <button class="lang-btn" id="lang-en-btn">EN</button>
