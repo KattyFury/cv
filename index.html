@@ -785,22 +785,38 @@
     .wl-gate-submit:hover { border-color: var(--accent); color: var(--text); }
     .wl-gate-error { font-size: 13px; color: #e0453a; }
 
-    .wl-add-form {
-      display: flex; align-items: center; gap: 8px;
-      margin-bottom: 16px;
+    .wl-modal-backdrop {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.35); z-index: 200;
+      align-items: center; justify-content: center;
     }
-    .wl-add-form input {
+    .wl-modal-backdrop.open { display: flex; }
+    .wl-modal {
+      background: #fff; border-radius: 14px;
+      padding: 24px 28px; width: 340px; max-width: 90vw;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.14);
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .wl-modal-title { font-size: 16px; font-weight: 600; color: var(--text); }
+    .wl-modal input {
       font-family: 'Roboto', sans-serif; font-size: 15px;
-      border: 1px solid var(--border); border-radius: 6px;
-      padding: 6px 12px; outline: none; width: 220px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 8px 12px; outline: none; width: 100%; box-sizing: border-box;
       transition: border-color 0.15s;
     }
-    .wl-add-form input:focus { border-color: var(--accent); }
+    .wl-modal input:focus { border-color: var(--accent); }
+    .wl-modal-actions { display: flex; gap: 8px; align-items: center; }
     .wl-add-submit {
       font-family: 'Roboto', sans-serif; font-size: 13px;
-      font-weight: 500; border: 1px solid var(--accent);
-      border-radius: 6px; background: var(--white);
-      color: var(--accent); cursor: pointer; padding: 6px 14px;
+      font-weight: 500; border: none; border-radius: 8px;
+      background: var(--accent); color: #fff;
+      cursor: pointer; padding: 8px 18px;
+    }
+    .wl-add-submit:disabled { opacity: 0.5; cursor: default; }
+    .wl-modal-cancel {
+      font-family: 'Roboto', sans-serif; font-size: 13px;
+      background: none; border: none; color: var(--muted);
+      cursor: pointer; padding: 8px 4px;
     }
     .wl-add-status { font-size: 13px; color: var(--muted); }
 
@@ -1243,11 +1259,6 @@
             <button class="wl-admin-btn" id="wl-admin-btn">Admin</button>
           </div>
         </div>
-        <div class="wl-add-form" id="wl-add-form" style="display:none">
-          <input type="text" id="wl-add-input" placeholder="Project name..." />
-          <button class="wl-add-submit" id="wl-add-submit">Add</button>
-          <span class="wl-add-status" id="wl-add-status"></span>
-        </div>
         <div class="wl-table-section">
           <div class="wl-table-scroll">
             <table class="wl-table">
@@ -1453,10 +1464,11 @@
     const wlPwInput    = document.getElementById('wl-pw');
     const wlPwSubmit   = document.getElementById('wl-pw-submit');
     const wlGateError  = document.getElementById('wl-gate-error');
-    const wlAddForm    = document.getElementById('wl-add-form');
+    const wlAddModal   = document.getElementById('wl-add-modal');
     const wlAddInput   = document.getElementById('wl-add-input');
     const wlAddSubmit  = document.getElementById('wl-add-submit');
     const wlAddStatus  = document.getElementById('wl-add-status');
+    const wlModalCancel = document.getElementById('wl-modal-cancel');
     const wlProgress   = document.getElementById('wl-progress');
     const wlDelCol     = document.getElementById('wl-del-col');
     const wlTbody      = document.getElementById('wl-tbody');
@@ -1703,7 +1715,7 @@
         wlSyncBtn.style.display  = 'none';
         wlSaveBtn.style.display  = 'none';
         wlAddBtn.style.display   = 'none';
-        wlAddForm.style.display = 'none';
+        wlAddModal.classList.remove('open');
         wlRender();
         return;
       }
@@ -1712,8 +1724,9 @@
 
     // Add project via API
     wlAddBtn.addEventListener('click', () => {
-      wlAddForm.style.display = wlAddForm.style.display === 'none' ? 'flex' : 'none';
-      if (wlAddForm.style.display !== 'none') wlAddInput.focus();
+      wlAddModal.classList.add('open');
+      wlAddInput.value = ''; wlAddStatus.textContent = '';
+      setTimeout(() => wlAddInput.focus(), 50);
     });
 
     async function wlAddProject() {
@@ -1754,15 +1767,20 @@
         wlProjects.push(newP);
         wlSaveStorage();
         wlRender();
-        wlAddInput.value = '';
-        wlAddStatus.textContent = `✓ Added ${name}`;
-        setTimeout(() => { wlAddStatus.textContent = ''; }, 3000);
+        wlCloseModal();
+        wlProgress.textContent = `✓ Added ${name}`;
+        setTimeout(() => { wlProgress.textContent = ''; }, 3000);
       } catch (e) {
         wlAddStatus.textContent = 'Connection error.';
         console.error(e);
       }
       wlAddSubmit.disabled = false;
     }
+
+    function wlCloseModal() { wlAddModal.classList.remove('open'); }
+    wlModalCancel.addEventListener('click', wlCloseModal);
+    wlAddModal.addEventListener('click', e => { if (e.target === wlAddModal) wlCloseModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') wlCloseModal(); });
 
     wlAddSubmit.addEventListener('click', wlAddProject);
     wlAddInput.addEventListener('keydown', e => { if (e.key === 'Enter') wlAddProject(); });
@@ -2737,5 +2755,17 @@
     })();
   </script>
 
+  <!-- Add project modal -->
+  <div class="wl-modal-backdrop" id="wl-add-modal">
+    <div class="wl-modal">
+      <div class="wl-modal-title">Add project</div>
+      <input type="text" id="wl-add-input" placeholder="Project name..." autocomplete="off" />
+      <div class="wl-modal-actions">
+        <button class="wl-add-submit" id="wl-add-submit">Add</button>
+        <button class="wl-modal-cancel" id="wl-modal-cancel">Cancel</button>
+        <span class="wl-add-status" id="wl-add-status"></span>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
