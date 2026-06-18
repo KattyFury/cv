@@ -1795,7 +1795,7 @@
         const shownNames = new Set(wlProjects.filter(p => wlHasTier1(p.backers)).map(p => p.name.toLowerCase()));
         const newItems   = apiList.filter(p =>
           !shownNames.has((p.project_name || '').toLowerCase()) &&
-          (p.total_raise || 0) >= 5_000_000
+          (!p.total_raise || p.total_raise >= 5_000_000)
         );
 
         let added = 0;
