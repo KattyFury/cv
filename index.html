@@ -1763,7 +1763,7 @@
     wlAddSubmit.addEventListener('click', wlAddProject);
     wlAddInput.addEventListener('keydown', e => { if (e.key === 'Enter') wlAddProject(); });
 
-    // ── Sync từ Surf API ──────────────────────────────
+    // ── Sync từ Surf API (gộp luôn clean TGE) ────────
     async function wlSync() {
       wlSyncBtn.disabled = true;
       wlSyncBtn.textContent = '…';
@@ -1774,52 +1774,53 @@
         const listBody = await listRes.json();
         const apiList  = listBody.data || [];
 
-        // chỉ check against project đã pass Tier-1 (đang hiển thị)
-        const shownNames = new Set(
-          wlProjects.filter(p => wlHasTier1(p.backers)).map(p => p.name.toLowerCase())
-        );
-        const newItems = apiList.filter(p => !shownNames.has((p.project_name || '').toLowerCase()));
+        const activeNames = new Set(apiList.map(p => (p.project_name || '').toLowerCase()));
 
-        if (!newItems.length) {
-          wlProgress.textContent = 'Already up to date.';
-          setTimeout(() => { wlProgress.textContent = ''; }, 3000);
-          wlSyncBtn.disabled = false; wlSyncBtn.textContent = '↻';
-          return;
+        // — Phase 1: xóa project đã TGE (chỉ check tối đa 10, project còn trong active list bỏ qua)
+        let removed = 0;
+        const maybeGone = wlProjects.filter(p => !activeNames.has(p.name.toLowerCase())).slice(0, 10);
+        for (const p of maybeGone) {
+          wlProgress.textContent = `Checking ${p.name}...`;
+          try {
+            const r = await fetch('/api/watchlist?action=detail&q=' + encodeURIComponent(p.name));
+            const d = await r.json();
+            if (d.data?.overview?.tge_status === 'post') {
+              wlProjects = wlProjects.filter(x => x.name !== p.name);
+              removed++;
+            }
+          } catch { /* skip */ }
         }
 
-        wlProgress.textContent = `Checking ${newItems.length} new projects...`;
-        let added = 0;
+        // — Phase 2: thêm project mới có Tier-1 (raise ≥ $5M mới check — dưới đó Tier-1 không invest)
+        const shownNames = new Set(wlProjects.filter(p => wlHasTier1(p.backers)).map(p => p.name.toLowerCase()));
+        const newItems   = apiList.filter(p =>
+          !shownNames.has((p.project_name || '').toLowerCase()) &&
+          (p.total_raise || 0) >= 5_000_000
+        );
 
+        let added = 0;
         for (let i = 0; i < newItems.length; i++) {
           const item = newItems[i];
           wlProgress.textContent = `${i + 1}/${newItems.length} — ${item.project_name}`;
-
           try {
             const dRes  = await fetch('/api/watchlist?action=detail&q=' + encodeURIComponent(item.project_name));
             const dBody = await dRes.json();
             const ov    = dBody.data?.overview || {};
             const fund  = dBody.data?.funding  || {};
-
-            // skip nếu đã TGE
             if (ov.tge_status === 'post') continue;
-
             const backers = (fund.rounds || [])
               .flatMap(r => (r.investors || []).map(inv => inv.name))
               .filter((v, i, a) => a.indexOf(v) === i);
-
             if (!wlHasTier1(backers)) continue;
-
             wlProjects.push({
-              id:        'sync_' + Date.now() + '_' + i,
-              name:      ov.name || item.project_name,
-              category:  (ov.tags || []).join(', '),
-              raise:     item.total_raise ? '$' + (item.total_raise / 1e6).toFixed(1) + 'M' : '—',
+              id: 'sync_' + Date.now() + '_' + i,
+              name: ov.name || item.project_name,
+              category: (ov.tags || []).join(', '),
+              raise: item.total_raise ? '$' + (item.total_raise / 1e6).toFixed(1) + 'M' : '—',
               raise_num: item.total_raise || fund.total_raise || 0,
-              round:     '',
-              date:      '',
-              backers,
-              x_handle:  ov.x_handle  || '',
-              logo_url:  ov.logo_url  || '',
+              round: '', date: '', backers,
+              x_handle: ov.x_handle || '',
+              logo_url: ov.logo_url || '',
             });
             added++;
           } catch { /* skip */ }
@@ -1827,7 +1828,8 @@
 
         wlSaveStorage();
         wlRender();
-        wlProgress.textContent = added ? `+${added} new project${added > 1 ? 's' : ''} added.` : 'No new Tier-1 projects found.';
+        const msg = [added && `+${added} added`, removed && `-${removed} TGE'd`].filter(Boolean).join(', ');
+        wlProgress.textContent = msg || 'Already up to date.';
         setTimeout(() => { wlProgress.textContent = ''; }, 4000);
       } catch (e) {
         wlProgress.textContent = 'Sync failed.';
@@ -1839,34 +1841,6 @@
     }
 
     wlSyncBtn.addEventListener('click', wlSync);
-
-    // ── Clean: xóa dự án đã TGE ──────────────────────
-    async function wlClean() {
-      wlCleanBtn.disabled = true;
-      wlProgress.textContent = 'Checking TGE status...';
-      let removed = 0;
-
-      for (let i = wlProjects.length - 1; i >= 0; i--) {
-        const p = wlProjects[i];
-        wlProgress.textContent = `Checking ${p.name}...`;
-        try {
-          const r = await fetch('/api/watchlist?action=detail&q=' + encodeURIComponent(p.name));
-          const d = await r.json();
-          if (d.data?.overview?.tge_status === 'post') {
-            wlProjects.splice(i, 1);
-            removed++;
-          }
-        } catch { /* skip */ }
-      }
-
-      wlSaveStorage();
-      wlRender();
-      wlProgress.textContent = removed ? `Removed ${removed} TGE'd project${removed > 1 ? 's' : ''}.` : 'All projects are still pre-TGE.';
-      setTimeout(() => { wlProgress.textContent = ''; }, 4000);
-      wlCleanBtn.disabled = false;
-    }
-
-    wlCleanBtn.addEventListener('click', wlClean);
 
     // ── Personal view — password gate ────────────────
     const PERSONAL_PASSWORD = 'hieu1403';
