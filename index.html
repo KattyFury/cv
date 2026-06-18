@@ -309,6 +309,29 @@
 
     .val-table-scroll { max-height: calc(50vh - 120px); min-height: 160px; overflow-y: auto; overflow-x: auto; }
 
+    /* ── Bảng full màn hình ───────────────────────────── */
+    .val-intro-clickable { cursor: pointer; }
+    .val-intro-clickable:hover { color: var(--accent); }
+    .val-expand-icon { font-size: 13px; color: var(--muted); margin-left: 4px; }
+    .val-fs-close { display: none; }
+    body.val-fs-open { overflow: hidden; }
+    .val-table-section.fs {
+      position: fixed; inset: 0; z-index: 300;
+      margin: 0; border: none; border-radius: 0; background: #fff;
+      display: flex; flex-direction: column;
+    }
+    .val-table-section.fs .val-table-scroll {
+      max-height: none; height: 100%; flex: 1;
+    }
+    .val-table-section.fs .val-fs-close {
+      display: flex; align-items: center; justify-content: center;
+      position: absolute; top: 12px; right: 12px; z-index: 4;
+      width: 32px; height: 32px; border-radius: 8px;
+      border: 1px solid var(--border); background: #fff;
+      color: var(--sub); font-size: 16px; cursor: pointer;
+    }
+    .val-table-section.fs .val-fs-close:hover { border-color: var(--accent); color: var(--text); }
+
     .val-table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
 
     .val-table thead th {
@@ -1145,11 +1168,11 @@
   <!-- ── VALUATION VIEW ────────────────────────────── -->
   <div id="valuation-view">
     <div class="val-wrap">
-      <div class="val-intro">Tracking altcoins to read market conditions</div>
+      <div class="val-intro val-intro-clickable" id="tge-intro" title="Mở full màn hình">Tracking altcoins to read market conditions<span class="val-expand-icon">⤢</span></div>
 
       <!-- TOP: TGE table -->
-      <div class="val-table-section">
-
+      <div class="val-table-section" id="tge-section">
+        <button class="val-fs-close" id="tge-fs-close" title="Đóng">✕</button>
         <div class="val-table-scroll">
           <table class="val-table">
             <thead>
@@ -1409,6 +1432,16 @@
     const navCvBtn  = document.getElementById('nav-cv-btn');
     const navValBtn = document.getElementById('nav-val-btn');
     const navArdBtn = document.getElementById('nav-ard-btn');
+
+    // ── TGE table fullscreen toggle ──────────────────
+    const tgeSection = document.getElementById('tge-section');
+    function toggleTgeFs(on) {
+      tgeSection.classList.toggle('fs', on);
+      document.body.classList.toggle('val-fs-open', on);
+    }
+    document.getElementById('tge-intro').addEventListener('click', () => toggleTgeFs(true));
+    document.getElementById('tge-fs-close').addEventListener('click', () => toggleTgeFs(false));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') toggleTgeFs(false); });
 
     function hideAllViews() {
       cvView.style.display = 'none';
