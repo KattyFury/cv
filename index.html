@@ -507,11 +507,8 @@
     }
     .calc-btn:hover { opacity: 0.85; }
 
-    /* ── CALC INLINE RESULT ─────────────────────────── */
+    /* ── CALC RESULT ─────────────────────────── */
     .calc-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    /* Hàng cuối ghim đáy card — nút Calculate ngang hàng với Strong/Normal/Weak */
-    .calc-row-last { align-items: end; margin-top: auto; padding-top: 8px; }
-    .calc-btn-field .calc-btn { width: 100%; }
     #calc-result {
       position: relative;
       margin-top: 8px;
@@ -1189,8 +1186,8 @@
         </div>
       </div>
 
-      <!-- BOTTOM: Analysis cards — Market condition | Recent TGE multiples | Predict TGE FDV -->
-      <div class="val-analysis val-boxes" id="val-row1">
+      <!-- BOTTOM: Analysis cards — Market condition | Recent TGE multiples -->
+      <div class="val-analysis val-boxes" id="val-row1" style="grid-template-columns:1fr 1fr">
 
         <!-- 1. Market condition -->
         <div class="val-card" id="market-card">
@@ -1213,10 +1210,10 @@
           </div>
         </div>
 
-        <!-- 2. Recent TGE multiples — split Low / High FDV -->
+        <!-- 2. Recent TGE multiples — split Low / High FDV + nút Predict ở hàng 4 -->
         <div class="val-card">
           <div class="val-card-label calc-card-label vc-q1">Recent TGE multiples</div>
-          <div class="split-box vc-q234">
+          <div class="split-box vc-q23">
             <div class="split-col">
               <div class="split-val" id="baseline-low">—</div>
               <div class="split-lbl">Low FDV<br><span>Median</span></div>
@@ -1227,36 +1224,7 @@
               <div class="split-lbl">High FDV<br><span>Median</span></div>
             </div>
           </div>
-        </div>
-
-        <!-- 3. Predict TGE FDV -->
-        <div class="val-card" id="calc-card">
-          <div class="val-card-label calc-card-label vc-q1">Predict TGE FDV</div>
-          <div id="calc-form" class="vc-q234">
-            <div class="calc-row-2" style="margin-bottom:8px">
-              <div class="calc-field">
-                <label>Fundraising ($M)</label>
-                <input type="number" id="calc-raise" step="0.1" placeholder="e.g. 30" />
-              </div>
-              <div class="calc-field">
-                <label>VC Alloc (%)</label>
-                <input type="number" id="calc-alloc" step="0.1" placeholder="e.g. 20" />
-              </div>
-            </div>
-            <div class="calc-row-2 calc-row-last">
-              <div class="calc-field">
-                <label>Total Supply</label>
-                <input type="text" id="calc-supply" placeholder="e.g. 21M, 10B" />
-              </div>
-              <div>
-                <button class="calc-btn" id="calc-btn">Calculate</button>
-              </div>
-            </div>
-          </div>
-          <div id="calc-result" class="vc-q234" style="display:none">
-            <div id="calc-res-sub"></div>
-            <button class="calc-reset-btn" id="calc-reset-btn" title="New calculation">✕</button>
-          </div>
+          <button class="calc-btn vc-q4" id="predict-open-btn">Predict TGE FDV</button>
         </div>
 
       </div>
@@ -1424,6 +1392,37 @@
     </div>
   </div>
 
+  <!-- Predict TGE FDV modal -->
+  <div class="wl-modal-backdrop" id="predict-modal">
+    <div class="wl-modal">
+      <div class="wl-modal-title">Predict TGE FDV</div>
+      <div id="calc-form">
+        <div class="calc-row-2" style="margin-bottom:8px">
+          <div class="calc-field">
+            <label>Fundraising ($M)</label>
+            <input type="number" id="calc-raise" step="0.1" placeholder="e.g. 30" />
+          </div>
+          <div class="calc-field">
+            <label>VC Alloc (%)</label>
+            <input type="number" id="calc-alloc" step="0.1" placeholder="e.g. 20" />
+          </div>
+        </div>
+        <div class="calc-field" style="margin-bottom:8px">
+          <label>Total Supply</label>
+          <input type="text" id="calc-supply" placeholder="e.g. 21M, 10B" />
+        </div>
+        <div class="wl-modal-actions">
+          <button class="wl-add-submit" id="calc-btn">Calculate</button>
+          <button class="wl-modal-cancel" id="predict-cancel">Close</button>
+        </div>
+      </div>
+      <div id="calc-result" style="display:none">
+        <div id="calc-res-sub"></div>
+        <button class="calc-reset-btn" id="calc-reset-btn" title="New calculation">✕</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // ── View switching ────────────────────────────────
     const cvView    = document.getElementById('cv-view');
@@ -1442,6 +1441,14 @@
     document.getElementById('tge-intro').addEventListener('click', () => toggleTgeFs(true));
     document.getElementById('tge-fs-close').addEventListener('click', () => toggleTgeFs(false));
     document.addEventListener('keydown', e => { if (e.key === 'Escape') toggleTgeFs(false); });
+
+    // ── Predict TGE FDV modal ────────────────────────
+    const predictModal = document.getElementById('predict-modal');
+    const closePredict = () => predictModal.classList.remove('open');
+    document.getElementById('predict-open-btn').addEventListener('click', () => predictModal.classList.add('open'));
+    document.getElementById('predict-cancel').addEventListener('click', closePredict);
+    predictModal.addEventListener('click', e => { if (e.target === predictModal) closePredict(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closePredict(); });
 
     function hideAllViews() {
       cvView.style.display = 'none';
@@ -2534,10 +2541,6 @@
         const pricePart = supply > 0 ? ` <span class="res-price">≈ ${fmtTokenPrice(exp / supply)}/token</span>` : '';
         subEl.innerHTML = `<span class="res-expected">${fmtFDV(exp)}</span>${pricePart}`;
       }
-
-      // Khóa chiều cao card trước khi đổi nội dung — tránh cả hàng card co giãn
-      const calcCard = document.getElementById('calc-card');
-      calcCard.style.minHeight = calcCard.offsetHeight + 'px';
 
       document.getElementById('calc-form').style.display   = 'none';
       document.getElementById('calc-result').style.display = 'block';
