@@ -506,6 +506,9 @@
       cursor: pointer; transition: opacity 0.15s; box-sizing: border-box;
     }
     .calc-btn:hover { opacity: 0.85; }
+    /* Nút Predict ở hàng 4 — khớp vị trí & chiều cao với hàng Strong/Normal/Weak
+       (.market-levels có padding-top:12px nên nút levels cao ~36px, bám đáy) */
+    #predict-open-btn { margin-top: 12px; }
 
     /* ── CALC RESULT ─────────────────────────── */
     .calc-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -1186,8 +1189,8 @@
         </div>
       </div>
 
-      <!-- BOTTOM: Analysis cards — Market condition | Recent TGE multiples -->
-      <div class="val-analysis val-boxes" id="val-row1" style="grid-template-columns:1fr 1fr">
+      <!-- BOTTOM: Analysis cards — Market | Recent TGE | Danger Zone (mỗi box 1/3) -->
+      <div class="val-analysis val-boxes" id="val-row1">
 
         <!-- 1. Market condition -->
         <div class="val-card" id="market-card">
@@ -1227,12 +1230,7 @@
           <button class="calc-btn vc-q4" id="predict-open-btn">Predict TGE FDV</button>
         </div>
 
-      </div>
-
-      <!-- ROW 2: Advanced boxes — Danger Zone -->
-      <div class="val-analysis val-boxes" style="margin-top:8px">
-
-        <!-- 4. Danger Zone -->
+        <!-- 3. Danger Zone -->
         <div class="val-card" id="danger-card">
           <div class="val-card-label calc-card-label vc-q1">🔴 Danger Zone <span class="danger-sub">×ATM ≥ 15</span></div>
           <div id="danger-list" class="vc-q234"></div>
