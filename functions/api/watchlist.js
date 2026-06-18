@@ -3,7 +3,7 @@ export async function onRequestGet(context) {
   const action = searchParams.get('action') || 'list';
   const q      = searchParams.get('q') || '';
   const key    = context.env.SURF_API;
-  const kv     = context.env.KV_BINDING;
+  const kv     = context.env.WATCHLIST;
 
   // Load saved projects from KV
   if (action === 'kv-load') {
@@ -33,7 +33,7 @@ export async function onRequestGet(context) {
 }
 
 export async function onRequestPost(context) {
-  const kv = context.env.KV_BINDING;
+  const kv = context.env.WATCHLIST;
   if (!kv) return Response.json({ error: 'KV not configured' }, { status: 500 });
 
   const { action, data } = await context.request.json();
