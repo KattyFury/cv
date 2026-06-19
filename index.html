@@ -1502,14 +1502,39 @@
     ardPretgeBtn.addEventListener('click', () => showArdTab('pretge'));
 
     // ── Rank filter S+/S/A/B → scroll to section ──────
+    // Rank filter: click → scroll, scroll → highlight
+    function setActiveRankBtn(rank) {
+      document.querySelectorAll('#rank-filter .lang-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.rank === rank);
+      });
+    }
+
     document.getElementById('rank-filter').addEventListener('click', e => {
       const btn = e.target.closest('[data-rank]');
       if (!btn) return;
-      document.querySelectorAll('#rank-filter .lang-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      setActiveRankBtn(btn.dataset.rank);
       const el = document.getElementById('wte-rank-' + btn.dataset.rank);
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
+
+    // IntersectionObserver: đổi active khi section vào viewport
+    let rankObserver = null;
+    function observeRankSections() {
+      if (rankObserver) rankObserver.disconnect();
+      const sections = document.querySelectorAll('[id^="wte-rank-"]');
+      if (!sections.length) return;
+      rankObserver = new IntersectionObserver(entries => {
+        // lấy section visible gần đầu trang nhất
+        const visible = [...entries]
+          .filter(e => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible.length) {
+          const rank = visible[0].target.id.replace('wte-rank-', '');
+          setActiveRankBtn(rank);
+        }
+      }, { rootMargin: '-56px 0px -60% 0px', threshold: 0 });
+      sections.forEach(s => rankObserver.observe(s));
+    }
 
     function showCV(push = true) {
       hideAllViews();
@@ -2850,6 +2875,7 @@
         .filter(r => groups[r].length)
         .map(r => `<div id="wte-rank-${r}" class="wte-rank-group wte-rank-group--${r}">${groups[r].map(cardHtml).join('')}</div>`)
         .join('');
+      observeRankSections();
     }
 
     // ── Language toggle ───────────────────────────────
