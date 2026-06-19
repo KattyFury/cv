@@ -555,9 +555,9 @@
       padding: 0 24px 24px;
     }
     .ard-subtabs {
-      display: flex; gap: 8px;
+      display: flex; gap: 16px; align-items: center;
       border-bottom: 1px solid var(--border);
-      padding-top: 8px; margin-bottom: 0;
+      padding: 15px 0 0; margin-bottom: 0;
       position: sticky; top: 56px;
       background: #fff; z-index: 10;
     }
@@ -565,7 +565,7 @@
       background: none; border: none; cursor: pointer;
       font-family: 'Roboto', sans-serif; font-size: 15px; font-weight: 500;
       letter-spacing: -0.01em;
-      color: var(--muted); padding: 12px 4px; margin-bottom: -1px;
+      color: var(--muted); padding: 0 0 15px; margin-bottom: -1px;
       border-bottom: 2px solid transparent;
       transition: color 0.15s, border-color 0.15s;
     }
@@ -1270,7 +1270,7 @@
       <div class="ard-subtabs" id="ard-subtabs">
         <button class="ard-subtab-btn active" id="ard-tab-wte-btn">Work to Earn</button>
         <button class="ard-subtab-btn" id="ard-tab-pretge-btn">Pre-TGE</button>
-        <div id="ard-lang-wrap" style="margin-left:auto;display:flex;align-items:center;gap:8px">
+        <div id="ard-lang-wrap" style="margin-left:auto;display:flex;align-items:flex-end;gap:8px;padding-bottom:15px">
           <div class="lang-toggle">
             <button class="lang-btn active" id="lang-vi-btn">VI</button>
             <button class="lang-btn" id="lang-en-btn">EN</button>
