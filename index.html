@@ -661,16 +661,6 @@
     .wte-card--A .wte-name:hover { color: #FFA111; }
     .wte-card--B .wte-name:hover { color: #c8a000; }
 
-    .wte-deal-type {
-      font-size: 12px; font-weight: 600;
-      color: var(--muted); letter-spacing: 0.04em;
-      padding: 2px 8px; border: 1px solid var(--border);
-      border-radius: 999px; white-space: nowrap; flex-shrink: 0;
-    }
-    .wte-deal-type--contribute {
-      color: #b45309; background: #fef3c7;
-      border-color: #F59E0B;
-    }
     .wte-type {
       font-size: 12px; font-weight: 600;
       color: var(--muted); letter-spacing: 0.04em;
@@ -2690,8 +2680,7 @@
             name:       projectName,
             rank:       (r[1] || '').trim().toUpperCase(),
             type:       (r[2] || '').trim(),
-            dealType:   (r[3] || '').trim(),
-            twitter:    (r[4] || '').trim(),
+            twitter:    (r[3] || '').trim(),
             getStarted: [],
             daily:      [],
             weekly:     [],
@@ -2699,14 +2688,15 @@
           projects.push(current);
         }
 
-        // Task rows: cols F-K (shifted +1 after new dealType col D)
+        // Đã bỏ cột D (phân loại). Cột: A name · B rank · C type · D twitter ·
+        // E/F getStarted+link · G/H daily+link · I/J weekly+link
         if (!current) continue;
-        const task = (r[5] || '').trim();
-        const taskLink = (r[6] || '').trim();
-        const daily = (r[7] || '').trim();
-        const dailyLink = (r[8] || '').trim();
-        const weekly = (r[9] || '').trim();
-        const weeklyLink = (r[10] || '').trim();
+        const task = (r[4] || '').trim();
+        const taskLink = (r[5] || '').trim();
+        const daily = (r[6] || '').trim();
+        const dailyLink = (r[7] || '').trim();
+        const weekly = (r[8] || '').trim();
+        const weeklyLink = (r[9] || '').trim();
         if (task)   current.getStarted.push({ text: task,   link: taskLink });
         if (daily)  current.daily.push({      text: daily,  link: dailyLink });
         if (weekly) current.weekly.push({     text: weekly, link: weeklyLink });
@@ -2823,7 +2813,6 @@
             ${logoHtml}
             ${nameHtml}
             <div class="wte-card-meta">
-              ${p.dealType ? `<span class="wte-deal-type${p.dealType.toLowerCase()==='contribute'?' wte-deal-type--contribute':''}">${p.dealType}</span>` : ''}
               ${p.type ? `<span class="wte-type">${p.type}</span>` : ''}
               <span class="wte-rank rank-${p.rank}">${{SS:'★★★★',S:'★★★',A:'★★',B:'★'}[p.rank]||p.rank}</span>
             </div>
