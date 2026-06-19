@@ -1553,6 +1553,9 @@
         return t1.some(t => bn.includes(t) || t.includes(bn));
       });
     }
+    // Project add tay (id 'custom_…') luôn được giữ/hiện, bỏ qua lọc Tier-1
+    function wlIsManual(p) { return String(p.id || '').startsWith('custom_'); }
+    function wlVisible(p) { return wlIsManual(p) || wlHasTier1(p.backers); }
 
     const wlAdminBtn   = document.getElementById('wl-admin-btn');
     const wlCleanBtn   = document.getElementById('wl-clean-btn');
@@ -1579,9 +1582,9 @@
         const p = wlUser[k].participation;
         if (typeof p === 'string') wlUser[k].participation = p ? [p] : [];
       });
-      // xóa project không pass Tier-1 đang nằm nhầm trong cache
+      // xóa project không pass Tier-1 nằm nhầm trong cache (giữ lại project add tay)
       if (wlTier1.length && wlProjects.length) {
-        wlProjects = wlProjects.filter(p => wlHasTier1(p.backers));
+        wlProjects = wlProjects.filter(wlVisible);
       }
     }
 
@@ -1657,7 +1660,7 @@
       }
 
       const sorted = [...wlProjects]
-        .filter(p => wlHasTier1(p.backers))
+        .filter(wlVisible)
         .sort((a, b) => (b.raise_num || 0) - (a.raise_num || 0));
 
       if (!sorted.length) {
@@ -1842,33 +1845,38 @@
         const ov    = d.overview || {};
         const fund  = d.funding  || {};
         const name  = ov.name || q;
-        const exists = wlProjects.some(p => p.name.toLowerCase() === name.toLowerCase());
-        if (exists) { wlAddStatus.textContent = 'Already in list.'; wlAddSubmit.disabled = false; return; }
 
         const backers = (fund.rounds || [])
           .flatMap(r => (r.investors || []).map(inv => inv.name))
           .filter((v, i, a) => a.indexOf(v) === i)
           .slice(0, 5);
 
-        const newP = {
-          id:        'custom_' + Date.now(),
+        const fields = {
           name,
           category:  (ov.tags || []).join(', '),
           raise:     wlFmtRaise(fund.total_raise),
           raise_num: fund.total_raise || 0,
-          round:     '',
-          date:      '',
           backers,
           x_handle:  ov.x_handle || '',
           logo:      ov.logo_url || '',
         };
 
-        wlProjects.push(newP);
+        // Đã có → cập nhật lại bằng data mới (sửa entry cũ thiếu/sai), không chặn
+        const existing = wlProjects.find(p => p.name.toLowerCase() === name.toLowerCase());
+        let verb = 'Added';
+        if (existing) {
+          Object.assign(existing, fields);
+          if (!String(existing.id || '').startsWith('custom_')) existing.id = 'custom_' + Date.now();
+          verb = 'Updated';
+        } else {
+          wlProjects.push({ id: 'custom_' + Date.now(), round: '', date: '', ...fields });
+        }
+
         wlSaveStorage();
         wlRender();
         wlCloseModal();
         const via = body.source && body.source !== 'surf' ? ` (via ${body.source})` : '';
-        wlProgress.textContent = `✓ Added ${name}${via}`;
+        wlProgress.textContent = `✓ ${verb} ${name}${via}`;
         setTimeout(() => { wlProgress.textContent = ''; }, 3000);
       } catch (e) {
         wlAddStatus.textContent = 'Connection error.';
