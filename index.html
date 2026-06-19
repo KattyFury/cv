@@ -1271,7 +1271,6 @@
         <button class="ard-subtab-btn active" id="ard-tab-wte-btn">Work to Earn</button>
         <button class="ard-subtab-btn" id="ard-tab-pretge-btn">Pre-TGE</button>
         <div id="ard-lang-wrap" style="margin-left:auto;display:flex;align-items:center;gap:8px">
-          <span class="wte-count" id="wte-count"></span>
           <div class="lang-toggle">
             <button class="lang-btn active" id="lang-vi-btn">VI</button>
             <button class="lang-btn" id="lang-en-btn">EN</button>
@@ -2802,16 +2801,12 @@
     // ── Render all cards ──────────────────────────────
     function renderWTE() {
       const container = document.getElementById('wte-cards');
-      const countEl   = document.getElementById('wte-count');
       const projects  = wteData[wteLang];
 
       if (!projects.length) {
         container.innerHTML = '<div style="padding:60px 0;text-align:center;color:var(--muted);font-size:14px;">Loading…</div>';
-        countEl.textContent = '';
         return;
       }
-
-      countEl.textContent = projects.length + ' projects';
 
       const cardHtml = p => {
         const handle   = p.twitter
