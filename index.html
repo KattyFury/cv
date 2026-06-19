@@ -1303,7 +1303,7 @@
           </div>
           <div class="lang-dropdown" id="lang-dropdown">
             <button class="lang-dd-btn" id="lang-dd-trigger">
-              Language: <span id="lang-dd-label">Vietnamese</span>
+              Language <span id="lang-dd-label" style="color:var(--text);font-weight:600">[Vietnamese]</span>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:4px"><path d="m6 9 6 6 6-6"/></svg>
             </button>
             <div class="lang-dd-menu" id="lang-dd-menu" style="display:none">
@@ -2933,7 +2933,7 @@
       wteLang = lang;
       langViBtn.classList.toggle('active', lang === 'VI');
       langEnBtn.classList.toggle('active', lang === 'EN');
-      langDdLabel.textContent = lang === 'VI' ? 'Vietnamese' : 'English';
+      langDdLabel.textContent = lang === 'VI' ? '[Vietnamese]' : '[English]';
       langDdMenu.style.display = 'none';
       if (lang === 'EN' && !wteLoaded.EN) await translateToEN();
       renderWTE();
