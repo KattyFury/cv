@@ -1299,7 +1299,7 @@
               <tr>
                 <th>Project</th>
                 <th>Raise</th>
-                <th>VCs</th>
+                <th>Tier-1 VCs</th>
                 <th>Available</th>
                 <th></th>
               </tr>
@@ -1556,6 +1556,15 @@
     // Project add tay (id 'custom_…') luôn được giữ/hiện, bỏ qua lọc Tier-1
     function wlIsManual(p) { return String(p.id || '').startsWith('custom_'); }
     function wlVisible(p) { return wlIsManual(p) || wlHasTier1(p.backers); }
+    // Lọc backers → chỉ giữ VC thuộc Tier-1 list
+    function wlTier1Backers(backers) {
+      if (!wlTier1.length) return backers || [];
+      const t1 = wlTier1.map(wlNorm);
+      return (backers || []).filter(b => {
+        const bn = wlNorm(b);
+        return t1.some(t => bn.includes(t) || t.includes(bn));
+      });
+    }
 
     const wlAdminBtn   = document.getElementById('wl-admin-btn');
     const wlCleanBtn   = document.getElementById('wl-clean-btn');
@@ -1631,7 +1640,7 @@
         ? `<a class="wl-proj-name" href="https://x.com/${p.x_handle}" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text)'">${p.name}</a>`
         : `<span class="wl-proj-name">${p.name}</span>`;
 
-      const bTop   = (p.backers || []).slice(0, 5).join('<br>');
+      const bTop   = wlTier1Backers(p.backers).slice(0, 5).join('<br>');
       const hasGuide = wlHasGuide(p.name);
       const arrowBtn = `<button class="wl-arrow-btn ${hasGuide ? 'has-guide' : 'no-guide'}" data-name="${p.name}" title="${hasGuide ? 'View guide' : 'No guide yet'}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>`;
 
