@@ -48,6 +48,64 @@ export async function onRequestGet(context) {
     return Response.json({ data: null, source: 'surf' }, { headers: { 'Cache-Control': 'no-store' } });
   }
 
+  // Server-side sync: fetch Surf list → check new/removed → save to KV
+  // Dùng cho Telegram bot (1 request thay vì loop client-side)
+  if (action === 'sync') {
+    if (!kv) return Response.json({ error: 'KV not configured' }, { status: 500 });
+
+    // Load Tier-1 list
+    const t1Res  = await fetch('https://0xhieu.xyz/vc-tier1.json').catch(() => null);
+    const tier1  = t1Res ? await t1Res.json().catch(() => []) : [];
+    const norm   = s => s.toLowerCase().replace(/[^a-z0-9]/g, ' ').trim();
+    const t1norm = tier1.map(norm);
+    const hasTier1 = backers => (backers || []).some(b => { const bn = norm(b); return t1norm.some(t => bn.includes(t) || t.includes(bn)); });
+
+    // Load current projects from KV
+    const raw      = await kv.get('projects');
+    const existing = raw ? JSON.parse(raw) : [];
+    const existingNames = new Set(existing.map(p => (p.name || '').toLowerCase()));
+
+    // Fetch active list from Surf
+    const listRes  = await fetch(`${BASE}/search/airdrop?sort_by=total_raise&order=desc&limit=100&phase=active`, { headers });
+    const listBody = await listRes.json();
+    const apiList  = listBody.data || [];
+    const activeNames = new Set(apiList.map(p => (p.project_name || '').toLowerCase()));
+
+    // Phase 1: clean TGE'd (cap 10 checks)
+    let removed = 0;
+    const projects = [...existing];
+    const maybeGone = projects.filter(p => !activeNames.has((p.name || '').toLowerCase())).slice(0, 10);
+    for (const p of maybeGone) {
+      const r = await fetch(`${BASE}/project/detail?q=${encodeURIComponent(p.name)}`, { headers }).catch(() => null);
+      if (!r) continue;
+      const d = await r.json().catch(() => null);
+      if (d?.data?.overview?.tge_status === 'post') {
+        const idx = projects.findIndex(x => x.name === p.name);
+        if (idx >= 0) { projects.splice(idx, 1); removed++; }
+      }
+    }
+
+    // Phase 2: add new Tier-1 projects
+    const newItems = apiList.filter(p => !existingNames.has((p.project_name || '').toLowerCase()));
+    let added = 0;
+    for (let i = 0; i < newItems.length; i++) {
+      const item = newItems[i];
+      const dRes = await fetch(`${BASE}/project/detail?q=${encodeURIComponent(item.project_name)}`, { headers }).catch(() => null);
+      if (!dRes) continue;
+      const dBody = await dRes.json().catch(() => null);
+      const ov = dBody?.data?.overview || {};
+      const fund = dBody?.data?.funding || {};
+      if (ov.tge_status === 'post') continue;
+      const backers = (fund.rounds || []).flatMap(r => (r.investors || []).map(inv => inv.name)).filter((v, i, a) => a.indexOf(v) === i);
+      if (!hasTier1(backers)) continue;
+      projects.push({ id: `sync_${Date.now()}_${i}`, name: ov.name || item.project_name, category: (ov.tags || []).join(', '), raise: item.total_raise ? '$' + (item.total_raise / 1e6).toFixed(1) + 'M' : '—', raise_num: item.total_raise || fund.total_raise || 0, round: '', date: '', backers, x_handle: ov.x_handle || '', logo_url: ov.logo_url || '' });
+      added++;
+    }
+
+    await kv.put('projects', JSON.stringify(projects));
+    return Response.json({ ok: true, added, removed, total: projects.length });
+  }
+
   return Response.json({ error: 'invalid action' }, { status: 400 });
 }
 
