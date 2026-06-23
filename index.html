@@ -378,14 +378,14 @@
       height: var(--box-h); min-height: var(--box-h);
       display: grid; grid-template-rows: 1fr 2fr 1fr;
     }
-    .vc-q1   { grid-row: 1 / 2; display: flex; align-items: center; padding-top: 12px; }   /* tiêu đề */
-    .vc-q23  { grid-row: 2 / 3; min-height: 0; }   /* nội dung khi có kết luận */
-    .vc-q234 { grid-row: 2 / 4; min-height: 0; }   /* nội dung khi không kết luận */
-    .vc-q4   { grid-row: 3 / 4; display: flex; align-items: center; padding-bottom: 12px; }   /* kết luận */
+    .vc-q1   { grid-row: 1 / 2; }   /* tiêu đề */
+    .vc-q23  { grid-row: 2 / 4; min-height: 0; }   /* nội dung khi có kết luận */
+    .vc-q234 { grid-row: 2 / 5; min-height: 0; }   /* nội dung khi không kết luận */
+    .vc-q4   { grid-row: 4 / 5; }   /* kết luận */
     .val-boxes > .val-card > .vc-q234,
     .val-boxes > .val-card > .vc-q23 { overflow: auto; align-self: stretch; }
     /* split-box lấp đầy đúng vùng grid (rows 2-3), nội dung canh giữa dọc */
-    .val-boxes .split-box { margin-top: 0; height: auto; align-self: stretch; box-sizing: border-box; }
+    .val-boxes .split-box { margin-top: 0; height: 100%; box-sizing: border-box; }
     .val-boxes .split-col { justify-content: center; }
 
     .val-card {
