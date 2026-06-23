@@ -29,7 +29,7 @@
       --text:   #1a1a1a;
       --accent: #FFA111;
       --max:    900px;
-      --box-h:  152px;   /* chiều cao cố định của box 4-quarter (Valuation) */
+      --box-h:  160px;   /* chiều cao cố định của box 4-quarter (Valuation) */
       --modal-w: 340px;  /* popup nhỏ; popup lớn = 2× giá trị này */
     }
 
@@ -376,16 +376,17 @@
        Box không có kết luận: nội dung chiếm q2-3-4 (3/4). */
     .val-analysis.val-boxes > .val-card {
       height: var(--box-h); min-height: var(--box-h);
-      display: grid; grid-template-rows: 1fr 2fr 1fr;
+      display: grid; grid-template-rows: 40px 80px 40px;
+      padding: 0 12px;
     }
-    .vc-q1   { grid-row: 1 / 2; display: flex; align-items: center; }   /* tiêu đề */
-    .vc-q23  { grid-row: 2 / 4; min-height: 0; }   /* nội dung khi có kết luận */
-    .vc-q234 { grid-row: 2 / 5; min-height: 0; }   /* nội dung khi không kết luận */
-    .vc-q4   { grid-row: 4 / 5; }   /* kết luận */
+    .vc-q1   { grid-row: 1 / 2; display: flex; align-items: center; justify-content: center; align-self: stretch; }
+    .vc-q1.val-card-label, .vc-q1.calc-card-label { margin: 0; }
+    .vc-q23  { grid-row: 2 / 3; min-height: 0; }
+    .vc-q234 { grid-row: 2 / 4; min-height: 0; }
+    .vc-q4   { grid-row: 3 / 4; display: flex; align-items: stretch; justify-content: space-around; }
     .val-boxes > .val-card > .vc-q234,
-    .val-boxes > .val-card > .vc-q23 { overflow: auto; align-self: stretch; }
-    /* split-box lấp đầy đúng vùng grid (rows 2-3), nội dung canh giữa dọc */
-    .val-boxes .split-box { margin-top: 0; height: 100%; box-sizing: border-box; }
+    .val-boxes > .val-card > .vc-q23 { overflow: hidden; align-self: stretch; }
+    .val-boxes .split-box { margin: 0; height: 100%; box-sizing: border-box; }
     .val-boxes .split-col { justify-content: center; }
 
     .val-card {
@@ -438,20 +439,21 @@
        Tiêu đề (label) → Box nội dung (split-box / inputs) → Chốt (levels / nút Calculate) */
     .val-analysis > .val-card { display: flex; flex-direction: column; }
     .market-levels {
-      display: flex; gap: 4px; align-items: center; justify-content: space-around; height: 100%;
+      display: flex; gap: 4px; align-items: center; justify-content: space-around; height: 100%; padding: 0;
     }
     .mkt-lvl {
-      flex: 1; text-align: center; padding: 8px 2px;
+      flex: 1; text-align: center; padding: 7px 2px;
+      margin: 0;
       border-radius: 8px; font-size: 12px; font-weight: 500;
       color: var(--muted); opacity: 0.28;
       letter-spacing: 0.02em; line-height: 1.2;
       transition: opacity 0.2s, font-weight 0.2s;
       white-space: nowrap;
     }
-    .mkt-lvl.mkt-active { opacity: 1; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
-    .mkt-lvl[data-lvl="0"].mkt-active { color: #22C55E; }
-    .mkt-lvl[data-lvl="1"].mkt-active { color: #B8860B; }
-    .mkt-lvl[data-lvl="2"].mkt-active { color: #FF5A36; }
+    .mkt-lvl.mkt-active { opacity: 1; font-weight: 700; }
+    .mkt-lvl[data-lvl="0"].mkt-active { background: #22C55E; color: #fff; }
+    .mkt-lvl[data-lvl="1"].mkt-active { background: #FFD447; color: #1a1a1a; }
+    .mkt-lvl[data-lvl="2"].mkt-active { background: #FF5A36; color: #1a1a1a; }
     /* split-box luôn trắng dù card đổi màu */
     #market-terms { background: #fff; }
 
@@ -507,7 +509,7 @@
     .calc-btn:hover { opacity: 0.85; }
     /* Nút Predict ở hàng 4 — khớp vị trí & chiều cao với hàng Strong/Normal/Weak
        (.market-levels có padding-top:12px nên nút levels cao ~36px, bám đáy) */
-    #predict-open-btn { margin-top: 12px; }
+    #predict-open-btn { margin: 0; padding: 7px 2px; }
 
     /* ── PREDICT MODAL FORM ─────────────────────────── */
     #calc-form { display: flex; flex-direction: column; gap: 12px; }
