@@ -429,6 +429,16 @@
     .danger-date  { font-size: 11px; color: var(--muted); width: 60px; text-align: right; }
     .danger-empty { font-size: 13px; color: var(--muted); padding: 8px 0; }
 
+    /* ── PROFITABLE PATTERNS ─────────────────────────── */
+    .pattern-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 4px 8px; border-radius: 6px;
+      background: rgba(34,197,94,0.08);
+      margin-bottom: 4px;
+    }
+    .pattern-name { font-size: 13px; font-weight: 700; color: var(--text); flex: 1; }
+    .pattern-count { font-size: 11px; color: var(--muted); }
+
     .baseline-num {
       font-size: 19px; font-weight: 700;
       letter-spacing: -0.04em; color: var(--text); line-height: 1.2;
@@ -1279,6 +1289,14 @@
           <div id="danger-list" class="vc-q234"></div>
         </div>
 
+      </div>
+
+      <!-- ROW 2: Profitable Patterns -->
+      <div class="val-analysis val-boxes" id="val-row2" style="margin-top: 8px;">
+        <div class="val-card" id="pattern-card">
+          <div class="val-card-label calc-card-label vc-q1">Profitable Patterns</div>
+          <div id="pattern-list" class="vc-q234"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -2250,6 +2268,7 @@
               priceTGE:     num(r[7]),                                     // col H
               ath:          num(r[9]),                                    // col J
               currentPrice: num(r[13]),                                   // col N
+              label:        (r[15] || '').trim(),                         // col P: pattern label
             };
           })
           .filter(e => e.ticker && e.tgeDate && e.fundraising > 0);
@@ -2540,7 +2559,29 @@
       }).join('');
     }
 
-    function renderAll() { renderTable(); renderAnalysis(); renderDanger(); }
+    function renderPatterns() {
+      const listEl = document.getElementById('pattern-list');
+      const PATTERNS = ['healthy', 'x10-ed', 'x5-ed'];
+      const groups = {};
+      PATTERNS.forEach(k => { groups[k] = { count: 0, xTGEs: [] }; });
+
+      allEntries().forEach(e => {
+        if (!PATTERNS.includes(e.label)) return;
+        const xTGE = xMult(e.priceTGE, e);
+        groups[e.label].count++;
+        if (xTGE !== null) groups[e.label].xTGEs.push(xTGE);
+      });
+
+      listEl.innerHTML = PATTERNS.map(label => {
+          const g = groups[label];
+          return `<div class="pattern-row">
+            <span class="pattern-name">${label}</span>
+            <span class="pattern-count">${g.count} project${g.count !== 1 ? 's' : ''}</span>
+          </div>`;
+        }).join('');
+    }
+
+    function renderAll() { renderTable(); renderAnalysis(); renderDanger(); renderPatterns(); }
 
     // ── Weighted median ───────────────────────────────
     function weightedMedian(items) {
