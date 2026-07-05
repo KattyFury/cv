@@ -415,29 +415,42 @@
     .danger-row {
       display: flex; align-items: center; gap: 8px;
       padding: 4px 8px; border-radius: 6px;
-      background: rgba(255,90,54,0.08);
+      background: rgba(255,161,17,0.08);
       margin-bottom: 4px;
     }
-    .danger-row.danger-new { background: rgba(255,90,54,0.18); }
+    .danger-row.danger-new { background: rgba(255,161,17,0.20); }
     .danger-ticker { font-size: 13px; font-weight: 700; color: var(--text); flex: 1; }
     .danger-badge-new {
       font-size: 10px; font-weight: 800; letter-spacing: 0.05em;
-      color: #fff; background: #FF5A36;
+      color: var(--accent); background: #1a1a1a;
       padding: 1px 4px; border-radius: 4px;
     }
-    .danger-multi { font-size: 13px; font-weight: 700; color: #FF5A36; }
+    .danger-multi { font-size: 13px; font-weight: 700; color: var(--accent); }
     .danger-date  { font-size: 11px; color: var(--muted); width: 60px; text-align: right; }
     .danger-empty { font-size: 13px; color: var(--muted); padding: 8px 0; }
 
-    /* ── PROFITABLE PATTERNS ─────────────────────────── */
-    .pattern-row {
-      display: flex; align-items: center; gap: 8px;
-      padding: 4px 8px; border-radius: 6px;
-      background: rgba(34,197,94,0.08);
+    /* ── TRENDING NARRATIVES ──────────────────────────
+       Box này liệt kê hết narrative đủ dữ liệu (n≥2) nên chiều cao co giãn,
+       khác với 4-quarter box cố định 160px của row 1. */
+    #narrative-card {
+      grid-column: 1 / -1;
+      height: auto; min-height: var(--box-h);
+      grid-template-rows: 40px auto;
+    }
+    #narrative-list {
+      max-height: 320px; overflow-y: auto; overflow-x: hidden;
+      align-self: stretch;
+    }
+    .narrative-row {
+      padding: 6px 8px; border-radius: 6px;
+      background: rgba(255,161,17,0.08);
       margin-bottom: 4px;
     }
-    .pattern-name { font-size: 13px; font-weight: 700; color: var(--text); flex: 1; }
-    .pattern-count { font-size: 11px; color: var(--muted); }
+    .narrative-head { display: flex; align-items: center; gap: 8px; }
+    .narrative-name { font-size: 13px; font-weight: 700; color: var(--text); flex: 1; }
+    .narrative-count { font-size: 11px; color: var(--muted); }
+    .narrative-med { font-size: 13px; font-weight: 700; color: var(--accent); }
+    .narrative-tickers { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
     .baseline-num {
       font-size: 19px; font-weight: 700;
@@ -452,18 +465,19 @@
       display: flex; gap: 4px; align-items: center; justify-content: space-around; padding: 0;
     }
     .mkt-lvl {
-      flex: 1; text-align: center; padding: 0 2px;
+      flex: 1; text-align: center; padding: 0 2px 4px;
       margin: 0; height: 26px; display: flex; align-items: center; justify-content: center;
-      border-radius: 8px; font-size: 12px; font-weight: 500;
-      color: var(--muted); opacity: 0.28;
+      font-size: 12px; font-weight: 500;
+      color: var(--muted); opacity: 0.4;
       letter-spacing: 0.02em; line-height: 1.2;
-      transition: opacity 0.2s, font-weight 0.2s;
+      border-bottom: 2px solid transparent;
+      transition: opacity 0.2s, font-weight 0.2s, border-color 0.2s;
       white-space: nowrap;
     }
-    .mkt-lvl.mkt-active { opacity: 1; font-weight: 700; }
-    .mkt-lvl[data-lvl="0"].mkt-active { background: #22C55E; color: #fff; }
-    .mkt-lvl[data-lvl="1"].mkt-active { background: #FFD447; color: #1a1a1a; }
-    .mkt-lvl[data-lvl="2"].mkt-active { background: #FF5A36; color: #1a1a1a; }
+    .mkt-lvl.mkt-active {
+      opacity: 1; font-weight: 700; color: var(--text);
+      border-bottom-color: var(--accent);
+    }
     /* split-box luôn trắng dù card đổi màu */
     #market-terms { background: #fff; }
 
@@ -629,10 +643,10 @@
     .lang-dd-item:hover { background: var(--off); color: var(--text); }
     .lang-dd-item.active { color: var(--text); font-weight: 600; }
     /* Rank filter màu theo tier */
-    #rf-ss.active { background: #8B5CF6; color: #fff; }
-    #rf-s.active  { background: #FF5A36; color: #fff; }
-    #rf-a.active  { background: #FFA111; color: #fff; }
-    #rf-b.active  { background: #FFD447; color: #1a1a1a; }
+    #rf-ss.active { background: #FFA111; color: #fff; }
+    #rf-s.active  { background: #8B5CF6; color: #fff; }
+    #rf-a.active  { background: #3B82F6; color: #fff; }
+    #rf-b.active  { background: #22C55E; color: #fff; }
 
     /* Cards wrapper — stacks rank groups vertically */
     #wte-cards { display: flex; flex-direction: column; gap: 8px; }
@@ -681,19 +695,19 @@
       padding: 2px 8px; border-radius: 6px;
       flex-shrink: 0;
     }
-    .rank-SS { background: #8B5CF6; color: #fff; }
-    .rank-S { background: #FF5A36; color: #fff; }
-    .rank-A { background: #FFA111; color: #fff; }
-    .rank-B { background: #FFD447; color: #fff; }
+    .rank-SS { background: #FFA111; color: #fff; }
+    .rank-S { background: #8B5CF6; color: #fff; }
+    .rank-A { background: #3B82F6; color: #fff; }
+    .rank-B { background: #22C55E; color: #fff; }
 
     .wte-name {
       font-size: 15px; font-weight: 700;
       color: var(--text); text-decoration: none;
       flex: 1; min-width: 0;
     }
-    .wte-card--S .wte-name:hover { color: #FF5A36; }
-    .wte-card--A .wte-name:hover { color: #FFA111; }
-    .wte-card--B .wte-name:hover { color: #c8a000; }
+    .wte-card--S .wte-name:hover { color: #8B5CF6; }
+    .wte-card--A .wte-name:hover { color: #3B82F6; }
+    .wte-card--B .wte-name:hover { color: #22C55E; }
 
     .wte-type {
       font-size: 12px; font-weight: 600;
@@ -704,10 +718,10 @@
 
 
     /* Section labels follow rank */
-    .wte-card--SS .wte-section-label { color: #8B5CF6; }
-    .wte-card--S .wte-section-label { color: #FF5A36; }
-    .wte-card--A .wte-section-label { color: #FFA111; }
-    .wte-card--B .wte-section-label { color: #c8a000; }
+    .wte-card--SS .wte-section-label { color: #FFA111; }
+    .wte-card--S .wte-section-label { color: #8B5CF6; }
+    .wte-card--A .wte-section-label { color: #3B82F6; }
+    .wte-card--B .wte-section-label { color: #22C55E; }
 
 
     /* Sections */
@@ -729,13 +743,13 @@
     .wte-section--daily .wte-task-text { color: var(--text); font-weight: 500; }
 
     /* Daily — xám nhạt chữ đen, border-left giữ màu rank */
-    .wte-card--SS .wte-section--daily { background: rgba(139,92,246,0.12); border-left-color: #8B5CF6; }
-    .wte-card--S .wte-section--daily { background: rgba(255,90,54,0.12);  border-left-color: #FF5A36; }
-    .wte-card--A .wte-section--daily { background: rgba(255,161,17,0.12); border-left-color: #FFA111; }
-    .wte-card--B .wte-section--daily { background: rgba(255,212,71,0.20); border-left-color: #FFD447; }
-    .wte-card--S .wte-section--daily .wte-section-label { color: #FF5A36; }
-    .wte-card--A .wte-section--daily .wte-section-label { color: #FFA111; }
-    .wte-card--B .wte-section--daily .wte-section-label { color: #c8a000; }
+    .wte-card--SS .wte-section--daily { background: rgba(255,161,17,0.12); border-left-color: #FFA111; }
+    .wte-card--S .wte-section--daily { background: rgba(139,92,246,0.12);  border-left-color: #8B5CF6; }
+    .wte-card--A .wte-section--daily { background: rgba(59,130,246,0.12); border-left-color: #3B82F6; }
+    .wte-card--B .wte-section--daily { background: rgba(34,197,94,0.12); border-left-color: #22C55E; }
+    .wte-card--S .wte-section--daily .wte-section-label { color: #8B5CF6; }
+    .wte-card--A .wte-section--daily .wte-section-label { color: #3B82F6; }
+    .wte-card--B .wte-section--daily .wte-section-label { color: #22C55E; }
     .wte-tasks {
       list-style: none; margin: 0; padding: 0;
       display: flex; flex-direction: column; gap: 4px;
@@ -745,9 +759,9 @@
       font-size: 13px; color: var(--sub); line-height: 1.5;
     }
     .wte-task-item::before { content: '•'; flex-shrink: 0; }
-    .wte-card--S .wte-task-item::before { color: #FF5A36; }
-    .wte-card--A .wte-task-item::before { color: #FFA111; }
-    .wte-card--B .wte-task-item::before { color: #FFD447; }
+    .wte-card--S .wte-task-item::before { color: #8B5CF6; }
+    .wte-card--A .wte-task-item::before { color: #3B82F6; }
+    .wte-card--B .wte-task-item::before { color: #22C55E; }
     .wte-task-row {
       display: flex; align-items: flex-start; gap: 8px;
       flex: 1; color: inherit; text-decoration: none;
@@ -1291,11 +1305,11 @@
 
       </div>
 
-      <!-- ROW 2: Profitable Patterns -->
+      <!-- ROW 2: Trending Narratives -->
       <div class="val-analysis val-boxes" id="val-row2" style="margin-top: 8px;">
-        <div class="val-card" id="pattern-card">
-          <div class="val-card-label calc-card-label vc-q1">Profitable Patterns</div>
-          <div id="pattern-list" class="vc-q234"></div>
+        <div class="val-card" id="narrative-card">
+          <div class="val-card-label calc-card-label vc-q1">Trending Narratives</div>
+          <div id="narrative-list" class="vc-q234"></div>
         </div>
       </div>
     </div>
@@ -2267,8 +2281,9 @@
               totalSupply: parseSupply(r[6]) || 0,                        // col G
               priceTGE:     num(r[7]),                                     // col H
               ath:          num(r[9]),                                    // col J
+              xTGEm:        num(r[10]),                                   // col K: ×TGE multiple (precomputed)
+              xATHm:        num(r[12]),                                   // col M: ×ATH multiple (precomputed)
               currentPrice: num(r[13]),                                   // col N
-              label:        (r[15] || '').trim(),                         // col P: pattern label
             };
           })
           .filter(e => e.ticker && e.tgeDate && e.fundraising > 0);
@@ -2492,8 +2507,8 @@
       document.querySelectorAll('#market-levels .mkt-lvl').forEach((el, i) => {
         el.classList.toggle('mkt-active', i === lvlIdx);
       });
-      // Tint card background to match market level
-      const mktCardBg = ['rgba(34,197,94,0.09)','rgba(255,212,71,0.14)','rgba(255,90,54,0.12)'];
+      // Tint card background to match market level — cùng 1 màu (accent), chỉ khác độ đậm nhạt
+      const mktCardBg = ['rgba(255,161,17,0.04)','rgba(255,161,17,0.09)','rgba(255,161,17,0.16)'];
       const mktCard = document.getElementById('market-card');
       if (mktCard) mktCard.style.background = mktCardBg[lvlIdx] || '';
 
@@ -2559,29 +2574,50 @@
       }).join('');
     }
 
-    function renderPatterns() {
-      const listEl = document.getElementById('pattern-list');
-      const PATTERNS = ['healthy', 'x10-ed', 'x5-ed'];
-      const groups = {};
-      PATTERNS.forEach(k => { groups[k] = { count: 0, xTGEs: [] }; });
+    // ── Trending Narratives: narrative nào đang là meta của market ──
+    // Xếp theo median ×ATH (không dùng trung bình) vì median không bị 1 con
+    // bơm thổi đơn lẻ (kiểu MYX ×380) kéo lệch cả nhóm. Chỉ tính narrative có
+    // ≥2 dự án từ 02/2025 tới nay — 1 dự án chưa đủ để gọi là "meta".
+    const NARRATIVE_SINCE = '2025-02-01';
 
+    function renderNarratives() {
+      const listEl = document.getElementById('narrative-list');
+
+      const groups = {};
       allEntries().forEach(e => {
-        if (!PATTERNS.includes(e.label)) return;
-        const xTGE = xMult(e.priceTGE, e);
-        groups[e.label].count++;
-        if (xTGE !== null) groups[e.label].xTGEs.push(xTGE);
+        if (!e.type || !e.tgeDate || e.tgeDate < NARRATIVE_SINCE) return;
+        if (!e.xATHm || e.xATHm <= 0) return;
+        if (!groups[e.type]) groups[e.type] = [];
+        groups[e.type].push(e);
       });
 
-      listEl.innerHTML = PATTERNS.map(label => {
-          const g = groups[label];
-          return `<div class="pattern-row">
-            <span class="pattern-name">${label}</span>
-            <span class="pattern-count">${g.count} project${g.count !== 1 ? 's' : ''}</span>
-          </div>`;
-        }).join('');
+      const ranked = Object.keys(groups)
+        .map(name => ({ name, list: groups[name], med: median(groups[name].map(e => e.xATHm)) }))
+        .filter(g => g.list.length >= 2)
+        .sort((a, b) => b.med - a.med);
+
+      if (!ranked.length) {
+        listEl.innerHTML = '<div class="danger-empty">Not enough data yet</div>';
+        return;
+      }
+
+      listEl.innerHTML = ranked.map(({ name, list, med }) => {
+        const tickers = [...list]
+          .sort((a, b) => b.xATHm - a.xATHm)
+          .map(e => `${e.ticker} ${e.xTGEm.toFixed(1)}-${e.xATHm.toFixed(1)}`)
+          .join(', ');
+        return `<div class="narrative-row">
+          <div class="narrative-head">
+            <span class="narrative-name">${name}</span>
+            <span class="narrative-count">${list.length} projects</span>
+            <span class="narrative-med">×${med.toFixed(1)}</span>
+          </div>
+          <div class="narrative-tickers">${tickers}</div>
+        </div>`;
+      }).join('');
     }
 
-    function renderAll() { renderTable(); renderAnalysis(); renderDanger(); renderPatterns(); }
+    function renderAll() { renderTable(); renderAnalysis(); renderDanger(); renderNarratives(); }
 
     // ── Weighted median ───────────────────────────────
     function weightedMedian(items) {
