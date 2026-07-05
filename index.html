@@ -429,28 +429,16 @@
     .danger-date  { font-size: 11px; color: var(--muted); width: 60px; text-align: right; }
     .danger-empty { font-size: 13px; color: var(--muted); padding: 8px 0; }
 
-    /* ── TRENDING NARRATIVES ──────────────────────────
-       Box này liệt kê hết narrative đủ dữ liệu (n≥2) nên chiều cao co giãn,
-       khác với 4-quarter box cố định 160px của row 1. */
-    #narrative-card {
-      grid-column: 1 / -1;
-      height: auto; min-height: var(--box-h);
-      grid-template-rows: 40px auto;
-    }
-    #narrative-list {
-      max-height: 320px; overflow-y: auto; overflow-x: hidden;
-      align-self: stretch;
-    }
+    /* ── TRENDING NARRATIVES ── box 1/3 width, chiều cao cố định như row 1 ── */
+    #narrative-list { overflow-y: auto; }
     .narrative-row {
-      padding: 6px 8px; border-radius: 6px;
+      display: flex; align-items: center; gap: 8px;
+      padding: 4px 8px; border-radius: 6px;
       background: rgba(255,161,17,0.08);
       margin-bottom: 4px;
     }
-    .narrative-head { display: flex; align-items: center; gap: 8px; }
     .narrative-name { font-size: 13px; font-weight: 700; color: var(--text); flex: 1; }
-    .narrative-count { font-size: 11px; color: var(--muted); }
     .narrative-med { font-size: 13px; font-weight: 700; color: var(--accent); }
-    .narrative-tickers { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
     .baseline-num {
       font-size: 19px; font-weight: 700;
@@ -2578,6 +2566,10 @@
     // Xếp theo median ×ATH (không dùng trung bình) vì median không bị 1 con
     // bơm thổi đơn lẻ (kiểu MYX ×380) kéo lệch cả nhóm. Chỉ tính narrative có
     // ≥2 dự án từ 02/2025 tới nay — 1 dự án chưa đủ để gọi là "meta".
+    // Gate thêm median ×TGE ≥ 1: nếu thị trường trả giá TGE THẤP HƠN giá VC
+    // (×TGE <1) thì đây không phải narrative được tin ngay từ đầu — chỉ là
+    // 1 coin ăn may pump sau (vd Identity: H ×0.76, BILL ×0.9 lúc TGE, H pump
+    // ×16.9 sau đó kéo median ATH lên dù cả nhóm bị chê lúc launch).
     const NARRATIVE_SINCE = '2025-02-01';
 
     function renderNarratives() {
@@ -2586,35 +2578,35 @@
       const groups = {};
       allEntries().forEach(e => {
         if (!e.type || !e.tgeDate || e.tgeDate < NARRATIVE_SINCE) return;
-        if (!e.xATHm || e.xATHm <= 0) return;
+        if (!e.xATHm || e.xATHm <= 0 || !e.xTGEm || e.xTGEm <= 0) return;
         if (!groups[e.type]) groups[e.type] = [];
         groups[e.type].push(e);
       });
 
       const ranked = Object.keys(groups)
-        .map(name => ({ name, list: groups[name], med: median(groups[name].map(e => e.xATHm)) }))
-        .filter(g => g.list.length >= 2)
-        .sort((a, b) => b.med - a.med);
+        .map(name => {
+          const list = groups[name];
+          return {
+            name,
+            count: list.length,
+            medATH: median(list.map(e => e.xATHm)),
+            medTGE: median(list.map(e => e.xTGEm)),
+          };
+        })
+        .filter(g => g.count >= 2 && g.medTGE >= 1)
+        .sort((a, b) => b.medATH - a.medATH);
 
       if (!ranked.length) {
         listEl.innerHTML = '<div class="danger-empty">Not enough data yet</div>';
         return;
       }
 
-      listEl.innerHTML = ranked.map(({ name, list, med }) => {
-        const tickers = [...list]
-          .sort((a, b) => b.xATHm - a.xATHm)
-          .map(e => `${e.ticker} ${e.xTGEm.toFixed(1)}-${e.xATHm.toFixed(1)}`)
-          .join(', ');
-        return `<div class="narrative-row">
-          <div class="narrative-head">
-            <span class="narrative-name">${name}</span>
-            <span class="narrative-count">${list.length} projects</span>
-            <span class="narrative-med">×${med.toFixed(1)}</span>
-          </div>
-          <div class="narrative-tickers">${tickers}</div>
-        </div>`;
-      }).join('');
+      listEl.innerHTML = ranked.map(g => `
+        <div class="narrative-row">
+          <span class="narrative-name">${g.name}</span>
+          <span class="narrative-med">×${g.medATH.toFixed(1)}</span>
+        </div>
+      `).join('');
     }
 
     function renderAll() { renderTable(); renderAnalysis(); renderDanger(); renderNarratives(); }
