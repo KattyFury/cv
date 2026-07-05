@@ -279,36 +279,12 @@
       margin-bottom: 16px;
     }
 
-    .val-panel-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--border);
-      background: var(--off);
+    /* Scroll được nhưng ẩn thanh scrollbar (đỡ chiếm chỗ/xấu) — vẫn lướt chuột/chạm bình thường */
+    .val-table-scroll {
+      max-height: calc(50vh - 120px); min-height: 160px; overflow-y: auto; overflow-x: auto;
+      scrollbar-width: none; -ms-overflow-style: none;
     }
-
-    .val-panel-head-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .val-panel-head span {
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    .val-panel-head-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .val-table-scroll { max-height: calc(50vh - 120px); min-height: 160px; overflow-y: auto; overflow-x: auto; }
+    .val-table-scroll::-webkit-scrollbar { display: none; }
 
     /* ── Bảng mở popup ───────────────────────────────── */
     .val-intro-clickable { cursor: pointer; }
@@ -354,7 +330,6 @@
     .td-ticker { font-weight: 600; color: var(--sub) !important; font-size: 13px; }
     .td-size   { font-size: 11px; opacity: 0.6; font-weight: 400; margin-left: 4px; }
     .td-multi  { font-weight: 700; color: var(--text) !important; }
-    .td-source { font-size: 12px; color: var(--muted) !important; }
 
     .val-empty { padding: 40px 16px; text-align: center; font-size: 15px; color: var(--muted); }
 
@@ -409,10 +384,12 @@
     }
 
     /* ── DANGER ZONE ────────────────────────────────── */
-    .danger-sub {
-      font-size: 11px; font-weight: 400; color: var(--muted);
-      margin-left: 8px; letter-spacing: 0;
+    /* Scroll được (nhiều token) nhưng ẩn thanh scrollbar — không chiếm chỗ/xấu */
+    #danger-list {
+      overflow-y: auto;
+      scrollbar-width: none; -ms-overflow-style: none;
     }
+    #danger-list::-webkit-scrollbar { display: none; }
     .danger-row {
       display: flex; align-items: center; gap: 8px;
       padding: 4px 8px; border-radius: 6px;
@@ -430,8 +407,15 @@
     .danger-date  { font-size: 11px; color: var(--muted); width: 60px; text-align: right; }
     .danger-empty { font-size: 13px; color: var(--muted); padding: 8px 0; }
 
-    /* ── TRENDING NARRATIVES ── box 1/3 width, chiều cao cố định như row 1 ── */
-    #narrative-list { overflow-y: auto; }
+    /* ── TRENDING NARRATIVES ── box 1/3 width, chiều cao cố định như row 1 ──
+       Chỉ hiện ~3 dòng, chừa spacing; scroll được nhưng ẩn thanh scrollbar
+       (giống Danger Zone + bảng "Tracking altcoins" — không dùng thanh cuộn
+       chiếm chỗ/xấu, chỉ cho phép lướt chuột/chạm để xem thêm). */
+    #narrative-list {
+      max-height: 88px; overflow-y: auto;
+      scrollbar-width: none; -ms-overflow-style: none;
+    }
+    #narrative-list::-webkit-scrollbar { display: none; }
     .narrative-row {
       display: flex; align-items: center; gap: 8px;
       padding: 4px 8px; border-radius: 6px;
@@ -440,12 +424,6 @@
     }
     .narrative-name { font-size: 13px; font-weight: 700; color: var(--text); flex: 1; }
     .narrative-med { font-size: 13px; font-weight: 700; color: var(--accent); }
-
-    .baseline-num {
-      font-size: 19px; font-weight: 700;
-      letter-spacing: -0.04em; color: var(--text); line-height: 1.2;
-    }
-    .baseline-sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
 
     /* Cả 3 card cùng hệ flex column — margin không bị gộp, 3 vùng thẳng hàng:
        Tiêu đề (label) → Box nội dung (split-box / inputs) → Chốt (levels / nút Calculate) */
@@ -489,7 +467,6 @@
     .split-lbl span { font-weight: 400; text-transform: none; letter-spacing: 0; }
 
     /* Calculator */
-    .calc-fields { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
     .calc-field { display: flex; flex-direction: column; gap: 2px; }
     .calc-field label {
       font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
@@ -571,21 +548,6 @@
       position: sticky; top: 56px;
       background: #fff; z-index: 10;
     }
-    .ard-subtab-btn {
-      background: none; border: none; cursor: pointer;
-      font-family: 'Roboto', sans-serif; font-size: 15px; font-weight: 500;
-      letter-spacing: -0.01em;
-      color: var(--muted); padding: 6px 16px;
-      border-radius: 8px;
-      transition: background 0.15s, color 0.15s;
-    }
-    .ard-subtab-btn:hover { background: var(--off); color: var(--text); }
-    .ard-subtab-btn.active { background: var(--off); color: var(--text); }
-    .ard-tab-panel { display: none; }
-    .ard-tab-panel.active { display: block; }
-
-    /* Toolbar */
-    .wte-count { font-size: 13px; color: var(--muted); }
 
     /* Language toggle */
     .lang-toggle {
@@ -761,33 +723,6 @@
     .wte-task-text { flex: 1; }
     .wte-task-icon { font-size: 12px; flex-shrink: 0; opacity: 0.5; margin-top: 2px; }
 
-    /* ── PROJECTS & FUNDRAISING TABLE ────────────────── */
-    .pf-hint  { font-size: 12px; color: var(--muted); opacity: 0.7; }
-    .pf-wrap  {
-      border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
-      max-height: calc(100vh - 240px); overflow-y: auto;
-    }
-    .pf-table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
-    .pf-table td, .pf-table th { overflow: hidden; text-overflow: ellipsis; }
-    .pf-table thead th {
-      padding: 8px 16px; text-align: left;
-      font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
-      text-transform: uppercase; color: var(--muted);
-      background: white; position: sticky; top: 0; z-index: 2;
-      border-bottom: 1px solid var(--border); white-space: nowrap;
-    }
-    .pf-table tbody td {
-      padding: 8px 16px; color: var(--sub);
-      border-bottom: 1px solid var(--border); vertical-align: top;
-    }
-    .pf-table tbody tr:last-child td { border-bottom: none; }
-    .pf-table tbody tr:hover { background: var(--off); }
-    .pf-td-name   { font-weight: 600; color: var(--text); white-space: nowrap; }
-    .pf-td-amount { font-weight: 700; color: var(--text); white-space: nowrap; }
-    .pf-td-round  { font-size: 12px; color: var(--muted); white-space: nowrap; }
-    .pf-td-vcs    { font-size: 13px; line-height: 1.55; }
-    .pf-td-date   { font-size: 12px; color: var(--muted); white-space: nowrap; }
-
     /* Coming soon */
     .ard-coming-soon {
       display: flex; flex-direction: column;
@@ -797,71 +732,6 @@
     .ard-cs-icon { color: var(--muted); }
     .ard-cs-icon svg { width: 32px; height: 32px; }
     .ard-cs-text { font-size: 15px; color: var(--muted); }
-
-    /* ── PERSONAL VIEW ────────────────────────────── */
-    /* ── WATCHLIST VIEW ──────────────────────────────── */
-
-    .wl-wrap {
-      max-width: 900px; margin: 0 auto;
-      padding: 0 24px 24px;
-    }
-
-    .wl-header {
-      display: flex; align-items: center;
-      justify-content: flex-end;
-      margin-bottom: 0;
-    }
-
-    .wl-title {
-      font-size: 19px; font-weight: 700;
-      letter-spacing: -0.03em;
-    }
-
-    .wl-header-right {
-      display: flex; align-items: center; gap: 12px;
-    }
-
-    .wl-progress-text {
-      font-size: 13px; color: var(--muted);
-    }
-
-    .wl-admin-btn, .wl-add-btn {
-      font-family: 'Roboto', sans-serif;
-      font-size: 13px; font-weight: 500;
-      border: 1px solid var(--border);
-      border-radius: 6px; background: var(--white);
-      color: var(--sub); cursor: pointer;
-      height: 30px; padding: 0 12px;
-      display: inline-flex; align-items: center; justify-content: center;
-      box-sizing: border-box;
-      transition: border-color 0.15s, color 0.15s;
-    }
-    .wl-admin-btn:hover, .wl-add-btn:hover {
-      border-color: var(--accent); color: var(--text);
-    }
-    .wl-add-btn {
-      font-size: 15px; padding: 0 12px; line-height: 1;
-    }
-
-    .wl-gate {
-      display: flex; align-items: center; gap: 8px;
-      margin-bottom: 16px;
-    }
-    .wl-gate input {
-      font-family: 'Roboto', sans-serif; font-size: 15px;
-      border: 1px solid var(--border); border-radius: 6px;
-      padding: 8px 12px; outline: none; width: 180px;
-      transition: border-color 0.15s;
-    }
-    .wl-gate input:focus { border-color: var(--accent); }
-    .wl-gate-submit {
-      font-family: 'Roboto', sans-serif; font-size: 13px;
-      font-weight: 500; border: 1px solid var(--border);
-      border-radius: 6px; background: var(--white);
-      color: var(--sub); cursor: pointer; padding: 8px 16px;
-    }
-    .wl-gate-submit:hover { border-color: var(--accent); color: var(--text); }
-    .wl-gate-error { font-size: 13px; color: #e0453a; }
 
     .wl-modal-backdrop {
       display: none; position: fixed; inset: 0;
@@ -876,159 +746,8 @@
       display: flex; flex-direction: column; gap: 12px;
     }
     .wl-modal-title { font-size: 15px; font-weight: 600; color: var(--text); }
-    .wl-modal input {
-      font-family: 'Roboto', sans-serif; font-size: 15px;
-      border: 1px solid var(--border); border-radius: 8px;
-      padding: 8px 12px; outline: none; width: 100%; box-sizing: border-box;
-      transition: border-color 0.15s;
-    }
-    .wl-modal input:focus { border-color: var(--accent); }
-    .wl-modal-actions { display: flex; gap: 8px; align-items: center; }
-    .wl-add-submit {
-      font-family: 'Roboto', sans-serif; font-size: 13px;
-      font-weight: 500; border: none; border-radius: 8px;
-      background: var(--accent); color: #fff;
-      cursor: pointer; padding: 8px 20px;
-    }
-    .wl-add-submit:disabled { opacity: 0.5; cursor: default; }
-    .wl-modal-cancel {
-      font-family: 'Roboto', sans-serif; font-size: 13px;
-      background: none; border: none; color: var(--muted);
-      cursor: pointer; padding: 8px 4px;
-    }
-    .wl-add-status { font-size: 13px; color: var(--muted); }
 
-    .wl-table-section {
-      border: 1px solid var(--border); border-radius: 14px;
-      overflow: hidden; margin-bottom: 16px;
-    }
-    /* scroll nội bộ — thead sticky giữ nguyên, tbody cuộn */
-    .wl-table-scroll { overflow-x: auto; overflow-y: auto; max-height: calc(100vh - 180px); scrollbar-gutter: stable; }
-
-    .wl-table {
-      width: 100%; border-collapse: collapse;
-      font-size: 13px; table-layout: fixed;
-    }
-    /* Tỉ lệ cột desktop 4-2-4-2-1: Project | Raise | VCs | Available | arrow */
-    .wl-table th:nth-child(1), .wl-table td:nth-child(1) { width: 30.77%; }
-    .wl-table th:nth-child(2), .wl-table td:nth-child(2) { width: 15.38%; }
-    .wl-table th:nth-child(3), .wl-table td:nth-child(3) { width: 30.77%; }
-    .wl-table th:nth-child(4), .wl-table td:nth-child(4) { width: 15.38%; }
-    .wl-table th:nth-child(5), .wl-table td:nth-child(5) { width: 7.69%; }
-    .wl-table th:first-child, .wl-table td:first-child { padding-left: 16px; }
-    /* PROJECT header lùi thêm logo(22px)+gap(8px) để align với text tên dự án */
-    .wl-table thead th:first-child { padding-left: 46px; }
-    /* AVAILABLE header lùi thêm chip padding-left(8px) để align với chip text */
-    .wl-table thead th:nth-child(4) { padding-left: 24px; }
-    .wl-table th:last-child,  .wl-table td:last-child  { padding-right: 16px; text-align: center; }
-    .wl-table thead th { padding: 8px 16px; vertical-align: middle; }
-    .wl-table tbody td { padding: 12px 16px; vertical-align: middle; }
-    .wl-table thead th {
-      text-align: left;
-      font-size: 12px; font-weight: 600;
-      color: var(--muted); letter-spacing: 0.05em;
-      text-transform: uppercase;
-      border-bottom: 1px solid var(--border);
-      background: white; position: sticky; top: 0; z-index: 2; white-space: nowrap;
-    }
-    .wl-table tbody tr:hover { background: var(--off); }
-    .wl-table tbody td {
-      color: var(--sub);
-      border-bottom: 1px solid var(--border);
-      text-align: left;
-    }
-    .wl-table tbody tr:last-child td { border-bottom: none; }
-    /* rank col compact */
-    .wl-table th:first-child,
-    .wl-table td:first-child { padding-right: 8px; }
-
-    .wl-proj-cell {
-      display: flex; align-items: center; gap: 8px;
-      white-space: nowrap;
-    }
-    .wl-logo {
-      width: 22px; height: 22px; border-radius: 50%;
-      object-fit: cover; flex-shrink: 0;
-      background: var(--border);
-    }
-    .wl-logo-fallback {
-      width: 22px; height: 22px; border-radius: 50%;
-      background: var(--accent); color: #fff;
-      font-size: 11px; font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .wl-proj-name { font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-    .wl-raise { font-weight: 700; color: var(--text); white-space: nowrap; }
-    .wl-backers { font-size: 13px; color: var(--muted); line-height: 1.6; }
-    @media (max-width: 640px) {
-      /* mobile: bảng FIXED hẳn — không kéo ngang */
-      .wl-table-scroll { overflow-x: hidden; }
-      /* ẩn VCs, tỉ lệ cột 4-2-2-1 (Project/Raise/Available/arrow) */
-      .wl-table th:nth-child(1), .wl-table td:nth-child(1) { width: 44.44%; }
-      .wl-table th:nth-child(2), .wl-table td:nth-child(2) { width: 22.22%; }
-      .wl-table th:nth-child(3), .wl-table td:nth-child(3) { display: none; }
-      .wl-table th:nth-child(4), .wl-table td:nth-child(4) { width: 22.22%; }
-      .wl-table th:nth-child(5), .wl-table td:nth-child(5) { width: 11.11%; }
-      .wl-table thead th { padding: 8px 6px; text-align: left; }
-      .wl-table tbody td { padding: 12px 6px; text-align: left; }
-      .wl-table th:first-child, .wl-table td:first-child { padding-left: 8px; }
-      .wl-table th:last-child,  .wl-table td:last-child  { padding-right: 8px; padding-left: 2px; }
-      .wl-chip { font-size: 10px; padding: 2px 4px; }
-    }
-
-    .wl-chips { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
-
-    .wl-chip {
-      font-family: 'Roboto', sans-serif; font-size: 12px; font-weight: 500;
-      border: 1px solid var(--border); border-radius: 999px;
-      padding: 2px 8px; cursor: pointer; transition: all 0.15s;
-      background: var(--white); color: var(--muted);
-      user-select: none; white-space: nowrap;
-    }
-    .wl-chip:hover { border-color: var(--muted); color: var(--sub); }
-
-    /* Contribute = orange accent */
-    .wl-chip[data-val="contribute"].on {
-      background: var(--accent); border-color: var(--accent); color: #fff;
-    }
-    /* Others = dark when selected */
-    .wl-chip[data-val="point"].on,
-    .wl-chip[data-val="retroactive"].on,
-    .wl-chip[data-val="else"].on {
-      background: var(--text); border-color: var(--text); color: #fff;
-    }
-    /* View mode: always show all 4, non-selected just dimmed */
-    .wl-chips.view-mode .wl-chip { cursor: default; }
-    .wl-chips.view-mode .wl-chip:not(.on) { opacity: 0.25; }
-
-    .wl-arrow-btn {
-      background: none; border: none;
-      padding: 8px 12px; border-radius: 6px;
-      transition: opacity 0.15s; line-height: 1;
-      display: inline-block;
-    }
-    .wl-arrow-btn.has-guide {
-      cursor: pointer; color: var(--accent);
-    }
-    .wl-arrow-btn.has-guide:hover { opacity: 0.65; }
-    .wl-arrow-btn.no-guide {
-      cursor: default; color: var(--border);
-      pointer-events: none;
-    }
-
-    .wl-del-btn {
-      background: none; border: none; cursor: pointer;
-      color: var(--muted); font-size: 15px; padding: 2px 8px;
-      border-radius: 4px; transition: color 0.15s;
-    }
-    .wl-del-btn:hover { color: #e0453a; }
-
-    .wl-empty {
-      text-align: center; padding: 40px;
-      color: var(--muted); font-size: 15px;
-    }
-
+    /* ── PERSONAL VIEW ────────────────────────────── */
     #personal-view { display: none; }
     .personal-wrap {
       max-width: 900px; margin: 0 auto;
@@ -1300,19 +1019,13 @@
     </div>
   </div>
 
-  <!-- Pre-TGE / Watchlist content đã chuyển vào #ard-pretge-panel trong #airdrop-view -->
-
   <!-- ── AIRDROP VIEW ─────────────────────────────────── -->
   <div id="airdrop-view" style="display:none">
     <div class="ard-wrap">
 
-      <!-- Sub-tab bar -->
-      <div class="ard-subtabs" id="ard-subtabs">
-        <button class="ard-subtab-btn active" id="ard-tab-wte-btn">Work to Earn</button>
-        <button class="ard-subtab-btn" id="ard-tab-pretge-btn">Pre-TGE</button>
-
-        <!-- WTE controls: Language only (rank filter đã chuyển xuống floating bar) -->
-        <div id="ard-wte-controls" style="margin-left:auto;display:flex;align-items:center;gap:18px">
+      <!-- Header: Language switch -->
+      <div class="ard-subtabs" id="ard-subtabs" style="justify-content:flex-end">
+        <div id="ard-wte-controls" style="display:flex;align-items:center;gap:18px">
           <div class="lang-dropdown" id="lang-dropdown">
             <button class="lang-dd-btn" id="lang-dd-trigger">
               <span id="lang-dd-label">Vietnamese</span>
@@ -1325,48 +1038,11 @@
             </div>
           </div>
         </div>
-
-        <!-- Pre-TGE controls: sync/save/add + Admin (ẩn khi WTE) -->
-        <div id="wl-header-right" style="margin-left:auto;display:none;align-items:center;gap:8px">
-          <span class="wl-progress-text" id="wl-progress"></span>
-          <span id="wl-gate-inline" style="display:none;align-items:center;gap:8px">
-            <input type="password" id="wl-pw" placeholder="Password"
-              style="font-family:'Roboto',sans-serif;font-size:13px;border:1px solid var(--border);
-                     border-radius:6px;padding:4px 12px;outline:none;width:130px;" />
-            <button id="wl-pw-submit" class="wl-gate-submit">Unlock</button>
-            <span id="wl-gate-error" class="wl-gate-error"></span>
-          </span>
-          <button class="wl-add-btn" id="wl-clean-btn" style="display:none" title="Remove TGE'd projects">🧹</button>
-          <button class="wl-add-btn" id="wl-sync-btn" style="display:none" title="Sync from Surf API">↻</button>
-          <button class="wl-add-btn" id="wl-save-btn" style="display:none" title="Save to cloud">↑</button>
-          <button class="wl-add-btn" id="wl-add-btn" style="display:none" title="Add project">+</button>
-          <button class="wl-admin-btn" id="wl-admin-btn">Admin</button>
-        </div>
       </div>
 
-      <!-- Work to Earn panel -->
-      <div class="ard-tab-panel active" id="ard-wte-panel">
+      <!-- Work to Earn -->
+      <div id="ard-wte-panel">
         <div id="wte-cards" style="margin-top:4px"></div>
-      </div>
-
-      <!-- Pre-TGE panel (Watchlist) -->
-      <div class="ard-tab-panel" id="ard-pretge-panel">
-        <div class="wl-table-section">
-          <div class="wl-table-scroll">
-            <table class="wl-table">
-              <thead>
-                <tr>
-                  <th>Project</th>
-                  <th>Raise</th>
-                  <th>Tier-1 VCs</th>
-                  <th>Available</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody id="wl-tbody"></tbody>
-            </table>
-          </div>
-        </div>
       </div>
 
     </div>
@@ -1452,19 +1128,6 @@
     </div>
   </div>
 
-  <!-- Add project modal -->
-  <div class="wl-modal-backdrop" id="wl-add-modal">
-    <div class="wl-modal">
-      <div class="wl-modal-title">Add project</div>
-      <input type="text" id="wl-add-input" placeholder="Project name..." autocomplete="off" />
-      <div class="wl-modal-actions">
-        <button class="wl-add-submit" id="wl-add-submit">Add</button>
-        <button class="wl-modal-cancel" id="wl-modal-cancel">Cancel</button>
-        <span class="wl-add-status" id="wl-add-status"></span>
-      </div>
-    </div>
-  </div>
-
   <!-- TGE table modal -->
   <div class="wl-modal-backdrop" id="tge-modal">
     <div class="wl-modal wl-modal--wide">
@@ -1540,29 +1203,6 @@
       [navCvBtn, navValBtn, navArdBtn].forEach(b => b.classList.remove('active'));
     }
 
-    // ── Airdrop sub-tabs: Work to Earn | Pre-TGE ─────
-    const ardWtePanel     = document.getElementById('ard-wte-panel');
-    const ardPretgePanel  = document.getElementById('ard-pretge-panel');
-    const ardWteBtn       = document.getElementById('ard-tab-wte-btn');
-    const ardPretgeBtn    = document.getElementById('ard-tab-pretge-btn');
-    const ardWteControls  = document.getElementById('ard-wte-controls');
-    const ardPretgeCtrl   = document.getElementById('wl-header-right');
-
-    function showArdTab(tab) {
-      const isWte = tab === 'wte';
-      ardWtePanel.classList.toggle('active', isWte);
-      ardPretgePanel.classList.toggle('active', !isWte);
-      ardWteBtn.classList.toggle('active', isWte);
-      ardPretgeBtn.classList.toggle('active', !isWte);
-      ardWteControls.style.display = isWte ? 'flex' : 'none';
-      ardPretgeCtrl.style.display  = isWte ? 'none' : 'flex';
-      document.getElementById('rank-filter-float').style.display = isWte ? 'block' : 'none';
-      if (!isWte) wlInit();
-    }
-
-    ardWteBtn.addEventListener('click',    () => showArdTab('wte'));
-    ardPretgeBtn.addEventListener('click', () => showArdTab('pretge'));
-
     // ── Rank filter S+/S/A/B → scroll to section ──────
     // Rank filter: click → scroll, scroll → highlight
     function setActiveRankBtn(rank) {
@@ -1613,20 +1253,19 @@
       if (push) history.pushState({}, '', '/valuation');
     }
 
-    function showAirdrop(push = true, tab = 'wte') {
+    function showAirdrop(push = true) {
       hideAllViews();
       ardView.style.display = 'block';
       navArdBtn.classList.add('active');
       if (push) history.pushState({}, '', '/airdrop');
-      showArdTab(tab);
-      if (tab === 'wte') renderWTE();
+      document.getElementById('rank-filter-float').style.display = 'block';
+      renderWTE();
     }
 
     function routeFromPath() {
       const p = window.location.pathname;
       if (p === '/valuation') showValuation(false);
-      else if (p === '/pre-tge' || p === '/watchlist') showAirdrop(false, 'pretge');
-      else if (p === '/airdrop') showAirdrop(false, 'wte');
+      else if (p === '/airdrop') showAirdrop(false);
       else showCV(false);
     }
 
@@ -1634,469 +1273,6 @@
     navValBtn.addEventListener('click', () => showValuation());
     navArdBtn.addEventListener('click', () => showAirdrop());
     window.addEventListener('popstate', routeFromPath);
-
-    // ── WATCHLIST ─────────────────────────────────────
-    const WL_PW        = 'vi2702';
-    const WL_DATA_KEY  = 'wl_projects_v2';
-    const WL_USER_KEY  = 'wl_user_v2';
-
-    let wlAdmin    = false;
-    let wlProjects = [];
-    let wlUser     = {};
-    let wlInited   = false;
-    let wlTier1    = [];   // loaded from vc-tier1.json
-
-    function wlNorm(s) { return s.toLowerCase().replace(/[^a-z0-9]/g,' ').trim(); }
-    function wlHasTier1(backers) {
-      if (!wlTier1.length) return true; // if not loaded yet, show all
-      const t1 = wlTier1.map(wlNorm);
-      return (backers || []).some(b => {
-        const bn = wlNorm(b);
-        return t1.some(t => bn.includes(t) || t.includes(bn));
-      });
-    }
-    // Project add tay (id 'custom_…') luôn được giữ/hiện, bỏ qua lọc Tier-1
-    function wlIsManual(p) { return String(p.id || '').startsWith('custom_'); }
-    function wlVisible(p) { return wlIsManual(p) || wlHasTier1(p.backers); }
-    // Lọc backers → chỉ giữ VC thuộc Tier-1 list
-    function wlTier1Backers(backers) {
-      if (!wlTier1.length) return backers || [];
-      const t1 = wlTier1.map(wlNorm);
-      return (backers || []).filter(b => {
-        const bn = wlNorm(b);
-        return t1.some(t => bn.includes(t) || t.includes(bn));
-      });
-    }
-
-    const wlAdminBtn   = document.getElementById('wl-admin-btn');
-    const wlCleanBtn   = document.getElementById('wl-clean-btn');
-    const wlSyncBtn    = document.getElementById('wl-sync-btn');
-    const wlSaveBtn    = document.getElementById('wl-save-btn');
-    const wlAddBtn     = document.getElementById('wl-add-btn');
-    const wlGateInline = document.getElementById('wl-gate-inline');
-    const wlPwInput    = document.getElementById('wl-pw');
-    const wlPwSubmit   = document.getElementById('wl-pw-submit');
-    const wlGateError  = document.getElementById('wl-gate-error');
-    const wlAddModal   = document.getElementById('wl-add-modal');
-    const wlAddInput   = document.getElementById('wl-add-input');
-    const wlAddSubmit  = document.getElementById('wl-add-submit');
-    const wlAddStatus  = document.getElementById('wl-add-status');
-    const wlModalCancel = document.getElementById('wl-modal-cancel');
-    const wlProgress   = document.getElementById('wl-progress');
-    const wlTbody      = document.getElementById('wl-tbody');
-
-    function wlLoadStorage() {
-      try { wlProjects = JSON.parse(localStorage.getItem(WL_DATA_KEY) || 'null') || []; } catch { wlProjects = []; }
-      try { wlUser = JSON.parse(localStorage.getItem(WL_USER_KEY) || '{}'); } catch { wlUser = {}; }
-      // migrate old string participation → array
-      Object.keys(wlUser).forEach(k => {
-        const p = wlUser[k].participation;
-        if (typeof p === 'string') wlUser[k].participation = p ? [p] : [];
-      });
-      // xóa project không pass Tier-1 nằm nhầm trong cache (giữ lại project add tay)
-      if (wlTier1.length && wlProjects.length) {
-        wlProjects = wlProjects.filter(wlVisible);
-      }
-    }
-
-    function wlSaveStorage() {
-      localStorage.setItem(WL_DATA_KEY, JSON.stringify(wlProjects));
-      localStorage.setItem(WL_USER_KEY, JSON.stringify(wlUser));
-      fetch('/api/watchlist', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'kv-save', data: wlProjects }),
-      }).then(r => {
-        if (!document.getElementById('ard-pretge-panel')?.classList.contains('active')) return;
-        if (r.ok) { wlProgress.textContent = '✓ Saved'; setTimeout(() => { wlProgress.textContent = ''; }, 2000); }
-        else { r.json().then(b => { wlProgress.textContent = '⚠ ' + (b.error || 'Save failed'); setTimeout(() => { wlProgress.textContent = ''; }, 4000); }).catch(() => {}); }
-      }).catch(() => {});
-    }
-
-    function wlFmtRaise(num) {
-      if (!num) return '—';
-      if (num >= 1e9) return '$' + (num / 1e9).toFixed(2).replace(/\.?0+$/, '') + 'B';
-      if (num >= 1e6) return '$' + (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
-      return '$' + num.toLocaleString();
-    }
-
-    function wlSlug(name) {
-      return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-    }
-
-    function wlHasGuide(name) {
-      const all = [...(wteData?.VI || []), ...(wteData?.EN || [])];
-      return all.some(p => p.name.toLowerCase() === name.toLowerCase());
-    }
-
-    function wlMakeRow(p, rank) {
-      const uid  = String(p.id || p.name);
-      const sel  = wlUser[uid]?.participation || [];
-
-      const imgSrc = p.logo_url || p.logo || '';
-      const logo = imgSrc
-        ? `<img class="wl-logo" src="${imgSrc}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" /><span class="wl-logo-fallback" style="display:none">${p.name[0]}</span>`
-        : `<span class="wl-logo-fallback">${p.name[0]}</span>`;
-
-      const nameHtml = p.x_handle
-        ? `<a class="wl-proj-name" href="https://x.com/${p.x_handle}" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text)'">${p.name}</a>`
-        : `<span class="wl-proj-name">${p.name}</span>`;
-
-      const bTop   = wlTier1Backers(p.backers).slice(0, 5).join('<br>');
-      const hasGuide = wlHasGuide(p.name);
-      const arrowBtn = `<button class="wl-arrow-btn ${hasGuide ? 'has-guide' : 'no-guide'}" data-name="${p.name}" title="${hasGuide ? 'View guide' : 'No guide yet'}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>`;
-
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td><div class="wl-proj-cell">${logo}${nameHtml}</div></td>
-        <td class="wl-raise">${wlFmtRaise(p.raise_num)}</td>
-        <td class="wl-backers">${bTop || '—'}</td>
-        <td>
-          <div class="wl-chips ${wlAdmin ? '' : 'view-mode'}" data-uid="${uid}">
-            ${['contribute','point','retroactive','else'].map(v =>
-              `<span class="wl-chip ${sel.includes(v)?'on':''}" data-val="${v}">${v[0].toUpperCase()+v.slice(1)}</span>`
-            ).join('')}
-          </div>
-        </td>
-        <td style="text-align:center">${wlAdmin
-          ? `<button class="wl-del-btn" data-uid="${uid}" title="Xóa">✕</button>`
-          : arrowBtn}</td>`;
-      return tr;
-    }
-
-    function wlRender() {
-      if (!wlProjects.length) {
-        wlTbody.innerHTML = '<tr><td colspan="5" class="wl-empty">No projects yet.</td></tr>';
-        return;
-      }
-
-      const sorted = [...wlProjects]
-        .filter(wlVisible)
-        .sort((a, b) => (b.raise_num || 0) - (a.raise_num || 0));
-
-      if (!sorted.length) {
-        wlTbody.innerHTML = '<tr><td colspan="5" class="wl-empty">No Tier-1 backed projects.</td></tr>';
-        return;
-      }
-
-      wlTbody.innerHTML = '';
-      sorted.forEach((p, i) => wlTbody.appendChild(wlMakeRow(p, i + 1)));
-
-      if (wlAdmin) {
-        wlTbody.querySelectorAll('.wl-chips[data-uid]').forEach(group => {
-          group.querySelectorAll('.wl-chip').forEach(chip => {
-            chip.addEventListener('click', () => {
-              const uid = group.dataset.uid;
-              const val = chip.dataset.val;
-              if (!wlUser[uid]) wlUser[uid] = {};
-              let cur = wlUser[uid].participation || [];
-              if (!Array.isArray(cur)) cur = cur ? [cur] : [];
-              wlUser[uid].participation = cur.includes(val)
-                ? cur.filter(v => v !== val)
-                : [...cur, val];
-              chip.classList.toggle('on');
-              // lưu local tức thì; bấm Save (↑) để đẩy lên KV
-              localStorage.setItem(WL_USER_KEY, JSON.stringify(wlUser));
-            });
-          });
-        });
-      }
-
-      wlTbody.querySelectorAll('.wl-arrow-btn').forEach(btn => {
-        btn.addEventListener('click', e => {
-          const name = e.currentTarget.dataset.name;
-          showAirdrop();
-          setTimeout(() => {
-            const slug = wlSlug(name);
-            const el = document.getElementById('wte-card-' + slug);
-            if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.style.outline = '2px solid var(--accent)'; setTimeout(() => el.style.outline = '', 1500); }
-          }, 150);
-        });
-      });
-
-      wlTbody.querySelectorAll('.wl-del-btn').forEach(btn => {
-        btn.addEventListener('click', e => {
-          const uid = e.target.dataset.uid;
-          wlProjects = wlProjects.filter(p => String(p.id || p.name) !== uid);
-          wlSaveStorage();
-          wlRender();
-        });
-      });
-    }
-
-    async function wlInitialFetch() {
-      wlProgress.textContent = 'Loading...';
-      try {
-        const res  = await fetch('/watchlist-data.json?v=' + Date.now());
-        const base = await res.json();
-        wlProjects = base;
-        localStorage.setItem(WL_DATA_KEY, JSON.stringify(wlProjects));
-        wlProgress.textContent = '';
-        wlRender();
-      } catch (e) {
-        wlProgress.textContent = 'Error loading data.';
-        console.error(e);
-      }
-    }
-
-    async function wlInit() {
-      if (wlInited) return;
-      wlInited = true;
-
-      // load Tier-1 list
-      try {
-        const r = await fetch('/vc-tier1.json');
-        wlTier1 = await r.json();
-      } catch { wlTier1 = []; }
-
-      // try KV first (cross-device), fall back to localStorage, then static JSON
-      try {
-        const r    = await fetch('/api/watchlist?action=kv-load');
-        const body = await r.json();
-        if (body.data && body.data.length) {
-          wlProjects = body.data;
-          // participation: ưu tiên KV (cross-device), không có thì lấy localStorage
-          if (body.user && Object.keys(body.user).length) wlUser = body.user;
-          else { try { wlUser = JSON.parse(localStorage.getItem(WL_USER_KEY) || '{}'); } catch { wlUser = {}; } }
-          Object.keys(wlUser).forEach(k => { const v = wlUser[k].participation; if (typeof v === 'string') wlUser[k].participation = v ? [v] : []; });
-          localStorage.setItem(WL_DATA_KEY, JSON.stringify(wlProjects));
-          localStorage.setItem(WL_USER_KEY, JSON.stringify(wlUser));
-          wlRender();
-          return;
-        }
-      } catch {}
-
-      // KV empty — load localStorage and push it up to KV
-      wlLoadStorage();
-      const hasLogos = wlProjects.length > 0 && wlProjects[0].logo_url;
-      if (wlProjects.length && hasLogos) {
-        // migrate: save localStorage data to KV so other devices get it
-        fetch('/api/watchlist', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'kv-save', data: wlProjects }),
-        }).catch(() => {});
-        wlRender();
-        return;
-      }
-      wlInitialFetch();
-    }
-
-    // Admin toggle — static gate elements, toggle display
-    function wlShowGate() {
-      wlGateInline.style.display = 'flex';
-      wlAdminBtn.style.display   = 'none';
-      wlPwInput.value            = '';
-      wlGateError.textContent    = '';
-      wlPwInput.focus();
-    }
-
-    function wlHideGate() {
-      wlGateInline.style.display = 'none';
-      wlAdminBtn.style.display   = '';
-    }
-
-    function wlTryUnlock() {
-      if (wlPwInput.value === WL_PW) {
-        wlAdmin = true;
-        wlHideGate();
-        wlAdminBtn.textContent   = 'Logout';
-        wlCleanBtn.style.display = 'none';
-        wlSyncBtn.style.display  = '';
-        wlSaveBtn.style.display  = '';
-        wlAddBtn.style.display   = '';
-        wlRender();
-      } else {
-        wlGateError.textContent = 'Wrong password';
-        wlPwInput.value         = '';
-        wlPwInput.focus();
-      }
-    }
-
-    wlPwSubmit.addEventListener('click', wlTryUnlock);
-    wlPwInput.addEventListener('keydown', e => {
-      if (e.key === 'Enter')  wlTryUnlock();
-      if (e.key === 'Escape') wlHideGate();
-    });
-
-    wlAdminBtn.addEventListener('click', () => {
-      if (wlAdmin) {
-        wlAdmin = false;
-        wlAdminBtn.textContent   = 'Admin';
-        wlCleanBtn.style.display = 'none';
-        wlSyncBtn.style.display  = 'none';
-        wlSaveBtn.style.display  = 'none';
-        wlAddBtn.style.display   = 'none';
-        wlAddModal.classList.remove('open');
-        wlRender();
-        return;
-      }
-      wlGateInline.style.display === 'none' ? wlShowGate() : wlHideGate();
-    });
-
-    // Add project via API
-    wlAddBtn.addEventListener('click', () => {
-      wlAddModal.classList.add('open');
-      wlAddInput.value = ''; wlAddStatus.textContent = '';
-      setTimeout(() => wlAddInput.focus(), 50);
-    });
-
-    async function wlAddProject() {
-      const q = wlAddInput.value.trim();
-      if (!q) return;
-      wlAddStatus.textContent = 'Searching...';
-      wlAddSubmit.disabled = true;
-      try {
-        // Add dùng SURF + Claude (web search); llm=1 bật fallback khi Surf trống
-        const res  = await fetch('/api/watchlist?action=detail&llm=1&q=' + encodeURIComponent(q));
-        const body = await res.json();
-        const d    = body.data;
-        if (!d) { wlAddStatus.textContent = 'Not found.'; wlAddSubmit.disabled = false; return; }
-
-        const ov    = d.overview || {};
-        const fund  = d.funding  || {};
-        const name  = ov.name || q;
-
-        const backers = (fund.rounds || [])
-          .flatMap(r => (r.investors || []).map(inv => inv.name))
-          .filter((v, i, a) => a.indexOf(v) === i)
-          .slice(0, 5);
-
-        const fields = {
-          name,
-          category:  (ov.tags || []).join(', '),
-          raise:     wlFmtRaise(fund.total_raise),
-          raise_num: fund.total_raise || 0,
-          backers,
-          x_handle:  ov.x_handle || '',
-          logo:      ov.logo_url || '',
-        };
-
-        // Đã có → cập nhật lại bằng data mới (sửa entry cũ thiếu/sai), không chặn
-        const existing = wlProjects.find(p => p.name.toLowerCase() === name.toLowerCase());
-        let verb = 'Added';
-        if (existing) {
-          Object.assign(existing, fields);
-          if (!String(existing.id || '').startsWith('custom_')) existing.id = 'custom_' + Date.now();
-          verb = 'Updated';
-        } else {
-          wlProjects.push({ id: 'custom_' + Date.now(), round: '', date: '', ...fields });
-        }
-
-        wlSaveStorage();
-        wlRender();
-        wlCloseModal();
-        const via = body.source && body.source !== 'surf' ? ` (via ${body.source})` : '';
-        wlProgress.textContent = `✓ ${verb} ${name}${via}`;
-        setTimeout(() => { wlProgress.textContent = ''; }, 3000);
-      } catch (e) {
-        wlAddStatus.textContent = 'Connection error.';
-        console.error(e);
-      }
-      wlAddSubmit.disabled = false;
-    }
-
-    function wlCloseModal() { wlAddModal.classList.remove('open'); }
-    wlModalCancel.addEventListener('click', wlCloseModal);
-    wlAddModal.addEventListener('click', e => { if (e.target === wlAddModal) wlCloseModal(); });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') wlCloseModal(); });
-
-    wlAddSubmit.addEventListener('click', wlAddProject);
-    wlAddInput.addEventListener('keydown', e => { if (e.key === 'Enter') wlAddProject(); });
-
-    // ── Sync từ Surf API (gộp luôn clean TGE) ────────
-    async function wlSync() {
-      wlSyncBtn.disabled = true;
-      wlSyncBtn.textContent = '…';
-      wlProgress.textContent = 'Fetching list...';
-
-      try {
-        const listRes  = await fetch('/api/watchlist?action=list');
-        const listBody = await listRes.json();
-        const apiList  = listBody.data || [];
-
-        const activeNames = new Set(apiList.map(p => (p.project_name || '').toLowerCase()));
-
-        // — Phase 1: xóa project đã TGE (chỉ check tối đa 10, project còn trong active list bỏ qua)
-        let removed = 0;
-        const maybeGone = wlProjects.filter(p => !activeNames.has(p.name.toLowerCase())).slice(0, 10);
-        for (const p of maybeGone) {
-          wlProgress.textContent = `Checking ${p.name}...`;
-          try {
-            const r = await fetch('/api/watchlist?action=detail&q=' + encodeURIComponent(p.name));
-            const d = await r.json();
-            if (d.data?.overview?.tge_status === 'post') {
-              wlProjects = wlProjects.filter(x => x.name !== p.name);
-              removed++;
-            }
-          } catch { /* skip */ }
-        }
-
-        // — Phase 2: thêm project mới có Tier-1 (raise ≥ $5M mới check — dưới đó Tier-1 không invest)
-        const shownNames = new Set(wlProjects.filter(p => wlHasTier1(p.backers)).map(p => p.name.toLowerCase()));
-        const newItems = apiList.filter(p => !shownNames.has((p.project_name || '').toLowerCase()));
-
-        let added = 0;
-        for (let i = 0; i < newItems.length; i++) {
-          const item = newItems[i];
-          wlProgress.textContent = `${i + 1}/${newItems.length} — ${item.project_name}`;
-          try {
-            const dRes  = await fetch('/api/watchlist?action=detail&q=' + encodeURIComponent(item.project_name));
-            const dBody = await dRes.json();
-            const ov    = dBody.data?.overview || {};
-            const fund  = dBody.data?.funding  || {};
-            if (ov.tge_status === 'post') continue;
-            const backers = (fund.rounds || [])
-              .flatMap(r => (r.investors || []).map(inv => inv.name))
-              .filter((v, i, a) => a.indexOf(v) === i);
-            if (!wlHasTier1(backers)) continue;
-            wlProjects.push({
-              id: 'sync_' + Date.now() + '_' + i,
-              name: ov.name || item.project_name,
-              category: (ov.tags || []).join(', '),
-              raise: item.total_raise ? '$' + (item.total_raise / 1e6).toFixed(1) + 'M' : '—',
-              raise_num: item.total_raise || fund.total_raise || 0,
-              round: '', date: '', backers,
-              x_handle: ov.x_handle || '',
-              logo_url: ov.logo_url || '',
-            });
-            added++;
-          } catch { /* skip */ }
-        }
-
-        wlSaveStorage();
-        wlRender();
-        const msg = [added && `+${added} added`, removed && `-${removed} TGE'd`].filter(Boolean).join(', ');
-        wlProgress.textContent = msg || 'Already up to date.';
-        setTimeout(() => { wlProgress.textContent = ''; }, 4000);
-      } catch (e) {
-        wlProgress.textContent = 'Sync failed.';
-        console.error(e);
-      }
-
-      wlSyncBtn.disabled = false;
-      wlSyncBtn.textContent = '↻';
-    }
-
-    wlSyncBtn.addEventListener('click', wlSync);
-
-    wlSaveBtn.addEventListener('click', async () => {
-      wlSaveBtn.disabled = true;
-      wlProgress.textContent = 'Saving...';
-      try {
-        const r = await fetch('/api/watchlist', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'kv-save', data: wlProjects, user: wlUser }),
-        });
-        const body = await r.json();
-        wlProgress.textContent = body.ok ? `✓ Saved ${wlProjects.length} projects + chips` : '⚠ Save failed: ' + (body.error || r.status);
-      } catch (e) {
-        wlProgress.textContent = '⚠ Save failed: ' + e.message;
-      }
-      setTimeout(() => { wlProgress.textContent = ''; }, 4000);
-      wlSaveBtn.disabled = false;
-    });
 
     // ── Personal view — password gate ────────────────
     const PERSONAL_PASSWORD = 'hieu1403';
@@ -2874,8 +2050,6 @@
         const text = await res.text();
         wteData.VI = parseWTE(text);
         wteLoaded.VI = true;
-        // re-render watchlist nếu đang mở để cập nhật arrow màu
-        if (document.getElementById('ard-pretge-panel')?.classList.contains('active')) wlRender();
       } catch (err) {
         console.warn('WTE fetch failed:', err);
         wteData.VI = [];
