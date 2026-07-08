@@ -4,3 +4,5 @@
 .dev.vars
 .claude/
 node_modules/
+.wrangler/
+.agents/
