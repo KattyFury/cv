@@ -1,14 +1,15 @@
 // watchlist-research.js
 // Gom dự án chưa TGE từ Surf API + Telegram @crypto_fundraising,
 // lọc VC Tier-1 (vc-tier1.json) + ChatGPT chấm "degen farm được không",
-// rồi ghi ứng viên vào tab "Danh sách chờ" của Google Sheet.
+// rồi GỬI ứng viên tới Apps Script (cổng ghi) -> tab "Danh sách chờ".
 // Bạn tự thẩm rồi copy dòng ngon sang tab "Watchlist" (web đọc).
 //
 // Chạy:  node watchlist-research.js          (cron trên VPS, 1 lần/ngày)
-//        node watchlist-research.js --dry     (chỉ in, KHÔNG ghi Sheet)
+//        node watchlist-research.js --dry     (chỉ in, KHÔNG gửi lên Sheet)
 //
-// Cần: .env có SURF_API + OPENAI ; service-account.json (key robot Google, gitignored)
-//      Xem WATCHLIST-RESEARCH-SETUP.md để cài.
+// Không cần npm install (Node >=18 có sẵn fetch).
+// Cần .env:  SURF_API, OPENAI, WL_WEBHOOK_URL, WL_WEBHOOK_SECRET
+// Xem WATCHLIST-RESEARCH-SETUP.md để cài Apps Script.
 
 const fs   = require('fs');
 const path = require('path');
@@ -24,18 +25,19 @@ function readEnv() {
   } catch {}
   return { ...e, ...process.env };
 }
-const ENV        = readEnv();
-const SURF_KEY   = ENV.SURF_API;
-const OPENAI_KEY = ENV.OPENAI;
-const SHEET_ID   = ENV.SHEET_ID || '1m8_nwbP_Apw43Y8iNxOoGFYy8YA-OpchGnVRfTMBUAo';
-const SA_FILE    = path.join(__dirname, 'service-account.json');
-const DRY        = process.argv.includes('--dry') || !fs.existsSync(SA_FILE);
+const ENV            = readEnv();
+const SURF_KEY       = ENV.SURF_API;
+const OPENAI_KEY     = ENV.OPENAI;
+const SHEET_ID       = ENV.SHEET_ID || '1m8_nwbP_Apw43Y8iNxOoGFYy8YA-OpchGnVRfTMBUAo';
+const WEBHOOK_URL    = ENV.WL_WEBHOOK_URL;
+const WEBHOOK_SECRET = ENV.WL_WEBHOOK_SECRET;
+const DRY            = process.argv.includes('--dry') || !WEBHOOK_URL;
 
 const SURF_BASE   = 'https://api.asksurf.ai/gateway/v1';
 const PENDING_TAB = 'Danh sách chờ';
 const LIVE_TAB    = 'Watchlist';
 const TG_PAGES    = parseInt(ENV.TG_PAGES || '5', 10);
-const MAX_DETAIL  = parseInt(ENV.MAX_DETAIL || '60', 10);   // trần số Surf detail call/lần (tiết kiệm credit)
+const MAX_DETAIL  = parseInt(ENV.MAX_DETAIL || '60', 10);   // trần Surf detail call/lần (tiết kiệm credit)
 
 // 13 narrative cố định (khớp dropdown cột C của Sheet)
 const NARRATIVES = ['Stablechain','Layer-2','DeFi','AI','Payment','Layer-1','Infra','Game','Bitcoin','Identity','Prediction','Privacy','Trading'];
@@ -52,6 +54,27 @@ const tier1Of = backers => [...new Set((backers || []).filter(b => {
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const log   = m => console.log('[' + new Date().toLocaleTimeString() + '] ' + m);
 
+// ── CSV parser (dùng để đọc gviz khi dedup) ───────────
+function parseCSV(text) {
+  const rows = []; let row = [], field = '', inQ = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQ) {
+      if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
+      else if (c === '"') inQ = false;
+      else field += c;
+    } else {
+      if (c === '"') inQ = true;
+      else if (c === ',') { row.push(field.trim()); field = ''; }
+      else if (c === '\r') {}
+      else if (c === '\n') { row.push(field.trim()); field = ''; rows.push(row); row = []; }
+      else field += c;
+    }
+  }
+  if (field || row.length) { row.push(field.trim()); rows.push(row); }
+  return rows;
+}
+
 // ── Surf API ──────────────────────────────────────────
 async function surfList() {
   const r = await fetch(SURF_BASE + '/search/airdrop?sort_by=total_raise&order=desc&limit=100&phase=active',
@@ -67,7 +90,7 @@ async function surfDetail(name) {
   return (b && b.data) || null;
 }
 
-// ── Telegram @crypto_fundraising scraper (trang public t.me/s) ──
+// ── Telegram @crypto_fundraising (trang public t.me/s) ─
 function stripHtml(html) {
   return html.replace(/<[^>]+>/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>').replace(/&#8203;/g, '').replace(/\s+/g, ' ').trim();
@@ -122,7 +145,6 @@ async function telegramScrape(pages) {
     url = TG + '?before=' + minId;
     await sleep(500);
   }
-  // dedup theo slug
   const seen = new Set();
   return results.filter(r => (seen.has(r.slug) ? false : (seen.add(r.slug), true)));
 }
@@ -166,51 +188,48 @@ async function gptJudge({ name, description, tags, chains, backers }) {
   } catch { return { degen_farm: '?', narrative: '', ly_do: 'parse lỗi' }; }
 }
 
-// ── Google Sheet ──────────────────────────────────────
+// ── Dedup: đọc cột A của 1 tab qua gviz CSV (free, không cần auth) ──
+async function gvizNames(tab) {
+  const url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID +
+    '/gviz/tq?tqx=out:csv&sheet=' + encodeURIComponent(tab);
+  try {
+    const txt  = await (await fetch(url)).text();
+    const rows = parseCSV(txt);
+    const head = (rows[0] || []).join('|').toUpperCase();
+    // tab chưa tồn tại -> gviz trả tab DATA (sheet đầu) -> bỏ qua
+    if (/TGE DATE|FUNDRAISED|TICKER|TOTAL SUPPLY/.test(head)) return [];
+    return rows.slice(1).map(r => r[0]).filter(Boolean);
+  } catch { return []; }
+}
+
 function raiseM(n) {
   if (!n) return '';
   const m = n / 1e6;
   return m >= 100 ? Math.round(m) : Math.round(m * 10) / 10;   // 30 = $30M
 }
-async function openPending() {
-  const { GoogleSpreadsheet } = require('google-spreadsheet');
-  const { JWT } = require('google-auth-library');
-  const creds = JSON.parse(fs.readFileSync(SA_FILE, 'utf8'));
-  const jwt = new JWT({
-    email: creds.client_email, key: creds.private_key,
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+
+// ── Gửi rows tới Apps Script (cổng ghi) ───────────────
+async function postRows(rows) {
+  const r = await fetch(WEBHOOK_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ secret: WEBHOOK_SECRET, rows }),
+    redirect: 'follow',
   });
-  const doc = new GoogleSpreadsheet(SHEET_ID, jwt);
-  await doc.loadInfo();
-  const pending = doc.sheetsByTitle[PENDING_TAB];
-  if (!pending) throw new Error('Không thấy tab "' + PENDING_TAB + '" trong Sheet');
-  return { doc, pending, live: doc.sheetsByTitle[LIVE_TAB] };
-}
-// đọc cột A (tên) của 1 sheet để dedup — bỏ hàng header
-async function colANames(sheet) {
-  const set = new Set();
-  if (!sheet) return set;
-  await sheet.loadCells('A1:A2000');
-  for (let r = 1; r < sheet.rowCount && r < 2000; r++) {
-    const v = sheet.getCell(r, 0).value;
-    if (v) set.add(norm(String(v)));
-  }
-  return set;
+  const t = await r.text();
+  try { return JSON.parse(t); } catch { return { ok: false, error: 'resp: ' + t.slice(0, 200) }; }
 }
 
 // ── Main ──────────────────────────────────────────────
 async function main() {
-  log('=== watchlist research start' + (DRY ? ' [DRY-RUN, không ghi Sheet]' : '') + ' ===');
+  log('=== watchlist research start' + (DRY ? ' [DRY-RUN, không gửi Sheet]' : '') + ' ===');
   if (!SURF_KEY)   throw new Error('Thiếu SURF_API trong .env');
   if (!OPENAI_KEY) throw new Error('Thiếu OPENAI trong .env');
 
-  let pending = null, live = null;
+  // dedup nhẹ (best-effort; Apps Script vẫn dedup lần cuối)
   const seen = new Set();
-  if (!DRY) {
-    ({ pending, live } = await openPending());
-    for (const s of [pending, live]) (await colANames(s)).forEach(n => seen.add(n));
-    log('Đã có ' + seen.size + ' tên trong Sheet (dedup)');
-  }
+  for (const tab of [PENDING_TAB, LIVE_TAB]) (await gvizNames(tab)).forEach(n => seen.add(norm(n)));
+  log('Đã có ~' + seen.size + ' tên trong Sheet (dedup nhẹ)');
 
   const out = [];   // [name, xLink, narrative, raiseM, note]
 
@@ -252,21 +271,16 @@ async function main() {
     log('  + ' + it.name + ' [' + (g.narrative || '?') + '] ' + g.degen_farm);
   }
 
-  // ── Ghi ──
+  // ── Gửi ──
   if (!out.length) { log('Không có kèo mới.'); return; }
   if (DRY) {
-    log('=== DRY-RUN: ' + out.length + ' kèo (không ghi Sheet) ===');
+    log('=== DRY-RUN: ' + out.length + ' kèo (không gửi Sheet) ===');
     out.forEach(r => console.log('   ' + JSON.stringify(r)));
     return;
   }
-  // map theo header thực tế của tab (robust nếu tên cột khác)
-  await pending.loadHeaderRow().catch(() => {});
-  const H = (pending.headerValues && pending.headerValues.length)
-    ? pending.headerValues
-    : (await pending.setHeaderRow(['Tên dự án', 'X', 'Narrative', 'Gọi vốn', 'Note']), pending.headerValues);
-  const rows = out.map(r => { const o = {}; r.forEach((v, i) => { if (H[i] !== undefined) o[H[i]] = v; }); return o; });
-  await pending.addRows(rows);
-  log('=== Đã ghi ' + out.length + ' kèo vào tab "' + PENDING_TAB + '" ===');
+  const res = await postRows(out);
+  if (res.ok) log('=== Đã gửi: thêm ' + res.added + ' · trùng bỏ ' + res.skipped + ' vào "' + PENDING_TAB + '" ===');
+  else log('LỖI gửi Sheet: ' + res.error);
 }
 
 main().catch(e => { console.error('Fatal:', e.message); process.exit(1); });

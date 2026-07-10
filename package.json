@@ -1,16 +1,13 @@
 {
   "name": "cv-watchlist-research",
   "version": "1.0.0",
-  "description": "Node script: Surf API + Telegram @crypto_fundraising + ChatGPT -> tab 'Danh sách chờ' trong Google Sheet",
+  "description": "Node script: Surf API + Telegram @crypto_fundraising + ChatGPT -> Apps Script webhook -> tab 'Danh sách chờ'",
   "private": true,
   "scripts": {
-    "research": "node watchlist-research.js"
+    "research": "node watchlist-research.js",
+    "research:dry": "node watchlist-research.js --dry"
   },
   "engines": {
     "node": ">=18"
-  },
-  "dependencies": {
-    "google-auth-library": "^9.14.1",
-    "google-spreadsheet": "^4.1.4"
   }
 }
