@@ -31,10 +31,10 @@
       --max:    900px;
       --box-h:  160px;   /* chiều cao cố định của box 4-quarter (Valuation) */
       --modal-w: 340px;  /* popup nhỏ; popup lớn = 2× giá trị này */
-      /* 1 HÀNG của lưới: màn hình chia 30 hàng, navbar chiếm 2 hàng (57px), 28 hàng còn lại
-         chia đều phần thân → dùng làm đơn vị khoảng cách chung cho cả trang:
-         yếu tố cùng cụm = 1×--row · cụm khác cụm = 2×--row */
-      --row: calc((100vh - 57px) / 28);
+      /* 1 HÀNG của lưới: MÀN HÌNH chia ĐÚNG 30 hàng bằng nhau (kể cả navbar = 2 hàng đầu).
+         Navbar cao đúng 2×--row nên line xám nằm CHÍNH XÁC ở ranh giới hàng 2/3.
+         Đơn vị khoảng cách chung: yếu tố cùng cụm 1×--row · cụm khác cụm 2×--row */
+      --row: calc(100vh / 30);
     }
 
     html {
@@ -72,7 +72,7 @@
       max-width: 900px;
       margin: 0 auto;
       padding: 0 calc(var(--row) * 0.75);
-      height: 56px;
+      height: calc(var(--row) * 2 - 1px);   /* + border-bottom 1px = đúng 2 hàng; line ở ranh giới hàng 2/3 */
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -631,12 +631,21 @@
       max-width: 900px; margin: 0 auto;
       padding: 0 calc(var(--row) * 0.75) 24px;
     }
+    /* Sub-tabs nằm gọn hàng 3-4 (cao 2 hàng), yếu tố căn giữa dọc, Work|Watchlist trái · lang phải */
     .ard-subtabs {
-      display: flex; gap: 8px; align-items: center;
-      padding: 20px 0 16px; margin-bottom: 0;
-      position: sticky; top: 56px;
-      background: var(--white); z-index: 10;
+      display: flex; align-items: center; justify-content: space-between;
+      height: calc(var(--row) * 2); padding: 0;
+      background: var(--white);
     }
+    .ard-tabs { display: flex; align-items: center; gap: 12px; }
+    .ard-tab {
+      background: none; border: none; cursor: pointer; padding: 0;
+      font-family: 'Roboto', sans-serif; font-size: 15px; font-weight: 400;
+      color: var(--sub); transition: color 0.15s; white-space: nowrap;
+    }
+    .ard-tab:hover { color: var(--accent); }
+    .ard-tab.active { color: var(--text); font-weight: 500; }
+    .ard-tab-sep { color: var(--border); user-select: none; }
 
     /* Language toggle */
     .lang-toggle {
@@ -693,7 +702,7 @@
       grid-template-columns: 1fr;
       gap: 16px;
       margin-bottom: 32px;
-      scroll-margin-top: 132px; /* header(56) + subtab(~76) */
+      scroll-margin-top: calc(var(--row) * 2); /* chỉ navbar sticky = 2 hàng (subtab không sticky) */
     }
     .wte-rank-group:last-child { margin-bottom: 0; }
     @media (min-width: 768px) {
@@ -1107,8 +1116,13 @@
   <div id="airdrop-view" style="display:none">
     <div class="ard-wrap">
 
-      <!-- Header: Language switch -->
-      <div class="ard-subtabs" id="ard-subtabs" style="justify-content:flex-end">
+      <!-- Sub-tabs (hàng 3-4): Work | Watchlist  ·············  Vietnamese -->
+      <div class="ard-subtabs" id="ard-subtabs">
+        <div class="ard-tabs">
+          <button class="ard-tab active" id="ard-work-btn">Work</button>
+          <span class="ard-tab-sep">|</span>
+          <button class="ard-tab" id="ard-watchlist-btn">Watchlist</button>
+        </div>
         <div id="ard-wte-controls" style="display:flex;align-items:center;gap:18px">
           <div class="lang-dropdown" id="lang-dropdown">
             <button class="lang-dd-btn" id="lang-dd-trigger">
@@ -1126,6 +1140,16 @@
       <!-- Work to Earn -->
       <div id="ard-wte-panel">
         <div id="wte-cards" style="margin-top:4px"></div>
+      </div>
+
+      <!-- Watchlist (coming soon) -->
+      <div id="ard-watchlist-panel" style="display:none">
+        <div class="ard-coming-soon">
+          <div class="ard-cs-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <div class="ard-cs-text">Watchlist — coming soon</div>
+        </div>
       </div>
 
     </div>
@@ -1325,7 +1349,7 @@
           const rank = visible[0].target.id.replace('wte-rank-', '');
           setActiveRankBtn(rank);
         }
-      }, { rootMargin: '-56px 0px -60% 0px', threshold: 0 });
+      }, { rootMargin: `-${(window.innerHeight / 30) * 2}px 0px -60% 0px`, threshold: 0 });
       sections.forEach(s => rankObserver.observe(s));
     }
 
@@ -1349,9 +1373,27 @@
       ardView.style.display = 'block';
       navArdBtn.classList.add('active');
       if (push) history.pushState({}, '', '/airdrop');
-      document.getElementById('rank-filter-float').style.display = 'block';
+      showArdTab('work');
       renderWTE();
     }
+
+    // ── Airdrop sub-tabs: Work | Watchlist ───────────
+    const ardWorkBtn     = document.getElementById('ard-work-btn');
+    const ardWatchBtn    = document.getElementById('ard-watchlist-btn');
+    const ardWtePanel    = document.getElementById('ard-wte-panel');
+    const ardWatchPanel  = document.getElementById('ard-watchlist-panel');
+
+    function showArdTab(tab) {
+      const work = tab !== 'watchlist';
+      ardWorkBtn.classList.toggle('active', work);
+      ardWatchBtn.classList.toggle('active', !work);
+      ardWtePanel.style.display    = work ? 'block' : 'none';
+      ardWatchPanel.style.display  = work ? 'none'  : 'block';
+      document.getElementById('rank-filter-float').style.display = work ? 'block' : 'none';
+      // language dropdown hiện luôn ở cả 2 tab cho đồng bộ giao diện
+    }
+    ardWorkBtn.addEventListener('click',  () => showArdTab('work'));
+    ardWatchBtn.addEventListener('click', () => showArdTab('watchlist'));
 
     function routeFromPath() {
       const p = window.location.pathname;
