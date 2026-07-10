@@ -833,6 +833,47 @@
     .ard-cs-icon svg { width: 32px; height: 32px; }
     .ard-cs-text { font-size: 15px; color: var(--muted); }
 
+    /* ── Watchlist cards (Pre-TGE tracker) ─────────── */
+    #wl-cards {
+      display: grid; grid-template-columns: 1fr;
+      gap: calc(var(--row) * 0.5);
+    }
+    @media (min-width: 768px) { #wl-cards { grid-template-columns: 1fr 1fr; } }
+    .wl-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 14px; padding: 16px 20px;
+    }
+    .wl-card-head { display: flex; align-items: center; gap: 12px; }
+    .wl-logo {
+      width: 22px; height: 22px; border-radius: 50%;
+      object-fit: cover; flex-shrink: 0; background: var(--border);
+    }
+    /* Tên = tiêu đề: bold 13px đen (đồng bộ toàn site) */
+    .wl-name {
+      font-size: 13px; font-weight: 700; color: var(--text);
+      text-decoration: none; flex: 1; min-width: 0;
+    }
+    .wl-name:hover { color: var(--accent); }
+    /* Badge trạng thái: có việc = cam, chưa có = xám */
+    .wl-badge {
+      font-size: 11px; font-weight: 700; padding: 2px 8px;
+      border-radius: 6px; flex-shrink: 0; border: none;
+      font-family: inherit; white-space: nowrap; line-height: 1.4;
+    }
+    .wl-badge--yes { background: var(--accent); color: #fff; }
+    .wl-badge--no  { background: var(--off); color: var(--muted); }
+    .wl-badge--link { cursor: pointer; }
+    .wl-badge--link:hover { filter: brightness(0.94); }
+    /* Meta phụ: narrative · gọi vốn — regular 11px xám (không allcaps) */
+    .wl-meta {
+      margin-top: 8px; display: flex; align-items: center;
+      flex-wrap: wrap; font-size: 11px; color: var(--muted);
+    }
+    .wl-dot { margin: 0 8px; color: var(--border); }
+    .wl-empty { padding: 60px 0; text-align: center; color: var(--muted); font-size: 14px; }
+    /* Flash khi nhảy từ Watchlist sang card Work tương ứng */
+    .wte-card--flash { box-shadow: 0 0 0 2px var(--accent); transition: box-shadow 0.2s; }
+
     .wl-modal-backdrop {
       display: none; position: fixed; inset: 0;
       background: rgba(0,0,0,0.35); z-index: 200;
@@ -1156,14 +1197,9 @@
         <div id="wte-cards"></div>
       </div>
 
-      <!-- Watchlist (coming soon) -->
+      <!-- Watchlist -->
       <div id="ard-watchlist-panel" style="display:none">
-        <div class="ard-coming-soon">
-          <div class="ard-cs-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-          </div>
-          <div class="ard-cs-text">Watchlist — coming soon</div>
-        </div>
+        <div id="wl-cards"></div>
       </div>
 
     </div>
@@ -1405,6 +1441,7 @@
       ardWatchPanel.style.display  = work ? 'none'  : 'block';
       document.getElementById('rank-filter-float').style.display = work ? 'block' : 'none';
       // language dropdown hiện luôn ở cả 2 tab cho đồng bộ giao diện
+      if (!work) { renderWL(); fetchWL().then(renderWL); }
     }
     ardWorkBtn.addEventListener('click',  () => showArdTab('work'));
     ardWatchBtn.addEventListener('click', () => showArdTab('watchlist'));
@@ -2333,6 +2370,104 @@
 
     langViBtn.addEventListener('click', () => switchLang('VI'));
     langEnBtn.addEventListener('click', () => switchLang('EN'));
+
+    // ══════════════════════════════════════════════════
+    // AIRDROP — Watchlist (Pre-TGE tracker)
+    // Sheet tab "Watchlist" · cột A tên · B X · C narrative · D gọi vốn · E có việc (YES/NO)
+    // ══════════════════════════════════════════════════
+    const WL_URL = `https://docs.google.com/spreadsheets/d/${WTE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Watchlist`;
+    let wlData = [];
+    let wlLoaded = false;
+
+    const wlSlug = n => n.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+    function parseWL(csvText) {
+      const rows = parseCSVFull(csvText);
+      // Nếu tab "Watchlist" chưa tồn tại, gviz trả về tab DATA (sheet đầu) thay vì báo lỗi.
+      // Nhận diện chữ ký cột của DATA để không render nhầm data valuation thành card rác.
+      const head = (rows[0] || []).join('|').toUpperCase();
+      if (/TGE DATE|FUNDRAISED|TICKER|TOTAL SUPPLY/.test(head)) return [];
+      const out = [];
+      rows.forEach((r, i) => {
+        const name = (r[0] || '').trim();
+        if (!name) return;
+        // Bỏ dòng header (row 1 nếu cột A là "tên"/"name"/"dự án"/"project")
+        if (i === 0 && /^(t[eê]n|name|project|d[uự]\s*[aá]n)/i.test(name)) return;
+        out.push({
+          name,
+          x:         (r[1] || '').trim(),
+          narrative: (r[2] || '').trim(),
+          raise:     (r[3] || '').trim(),
+          hasWork:   /^(yes|y|có|co|1|true|✓)$/i.test((r[4] || '').trim()),
+        });
+      });
+      return out;
+    }
+
+    async function fetchWL() {
+      if (wlLoaded) return;
+      try {
+        const res  = await fetch(WL_URL);
+        const text = await res.text();
+        wlData = parseWL(text);
+        wlLoaded = true;
+      } catch (err) {
+        console.warn('WL fetch failed:', err);
+        wlData = [];
+      }
+    }
+
+    function renderWL() {
+      const container = document.getElementById('wl-cards');
+      if (!wlLoaded) { container.innerHTML = '<div class="wl-empty">Loading…</div>'; return; }
+      if (!wlData.length) { container.innerHTML = '<div class="wl-empty">Chưa có dự án nào trong watchlist.</div>'; return; }
+
+      const wteSlugs = new Set((wteData.VI || []).map(p => wlSlug(p.name)));
+
+      container.innerHTML = wlData.map(p => {
+        const handle = p.x
+          ? p.x.replace(/.*twitter\.com\/|.*x\.com\/|^@/, '').split('?')[0].trim()
+          : '';
+        const xUrl = handle ? `https://x.com/${handle}` : '';
+        const logo = handle
+          ? `<img class="wl-logo" src="https://unavatar.io/twitter/${handle}" alt="${p.name}" loading="lazy" />`
+          : '';
+        const nameHtml = xUrl
+          ? `<a class="wl-name" href="${xUrl}" target="_blank" rel="noopener">${p.name}</a>`
+          : `<span class="wl-name">${p.name}</span>`;
+
+        let badge;
+        if (p.hasWork) {
+          badge = wteSlugs.has(wlSlug(p.name))
+            ? `<button class="wl-badge wl-badge--yes wl-badge--link" onclick="wlGoWork('${wlSlug(p.name)}')">Có việc →</button>`
+            : `<span class="wl-badge wl-badge--yes">Có việc</span>`;
+        } else {
+          badge = `<span class="wl-badge wl-badge--no">Chưa có</span>`;
+        }
+
+        const meta = [
+          p.narrative ? `<span class="wl-meta-item">${p.narrative}</span>` : '',
+          p.raise     ? `<span class="wl-meta-item">${p.raise}</span>`     : '',
+        ].filter(Boolean).join('<span class="wl-dot">·</span>');
+
+        return `<div class="wl-card">
+          <div class="wl-card-head">${logo}${nameHtml}${badge}</div>
+          ${meta ? `<div class="wl-meta">${meta}</div>` : ''}
+        </div>`;
+      }).join('');
+    }
+
+    // Nhảy từ Watchlist sang card Work tương ứng + flash 1.5s
+    function wlGoWork(slugId) {
+      showArdTab('work');
+      requestAnimationFrame(() => {
+        const el = document.getElementById('wte-card-' + slugId);
+        if (!el) return;
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.classList.add('wte-card--flash');
+        setTimeout(() => el.classList.remove('wte-card--flash'), 1500);
+      });
+    }
 
     // ── Init ─────────────────────────────────────────
     routeFromPath(); // tất cả biến đã khai báo xong, an toàn để gọi
