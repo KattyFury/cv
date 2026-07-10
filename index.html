@@ -105,13 +105,13 @@
       font-family: 'Roboto', sans-serif;
       font-size: 15px;
       font-weight: 400;
-      color: var(--muted);   /* chưa chọn: xám thường (nhạt) cho rõ khác biệt với tab đang chọn */
+      color: var(--muted); opacity: 0.55;   /* chưa chọn: xám thường + mờ rõ rệt */
       padding: 0;
-      transition: color 0.15s;
+      transition: color 0.15s, opacity 0.15s;
       white-space: nowrap;
     }
-    .nav-btn:hover { color: var(--accent); }
-    .nav-btn.active { color: var(--text); font-weight: 500; }
+    .nav-btn:hover { color: var(--accent); opacity: 1; }
+    .nav-btn.active { color: var(--text); opacity: 1; font-weight: 500; }
     .nav-btn:disabled { color: var(--muted); cursor: default; }
     .nav-btn:disabled:hover { color: var(--muted); }
 
@@ -641,10 +641,11 @@
     .ard-tab {
       background: none; border: none; cursor: pointer; padding: 0;
       font-family: 'Roboto', sans-serif; font-size: 15px; font-weight: 400;
-      color: var(--muted); transition: color 0.15s; white-space: nowrap;  /* chưa chọn: xám thường (nhạt) */
+      color: var(--muted); opacity: 0.55;   /* chưa chọn: xám thường + mờ rõ rệt */
+      transition: color 0.15s, opacity 0.15s; white-space: nowrap;
     }
-    .ard-tab:hover { color: var(--accent); }
-    .ard-tab.active { color: var(--text); font-weight: 500; }  /* đang chọn: đen đậm */
+    .ard-tab:hover { color: var(--accent); opacity: 1; }
+    .ard-tab.active { color: var(--text); opacity: 1; font-weight: 500; }  /* đang chọn: đen đậm */
 
     /* Language toggle */
     .lang-toggle {
