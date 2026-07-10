@@ -195,11 +195,11 @@
       max-width: 560px;
     }
 
-    /* ── SOCIALS — nút gọn, không icon, 4 nút vừa 1 hàng cả trên mobile ── */
+    /* ── SOCIALS — nút gọn, có icon (3 nút vừa 1 hàng cả trên mobile) ── */
     .socials { display: flex; flex-wrap: nowrap; justify-content: flex-start; gap: 8px; }
 
     .social-btn {
-      display: inline-flex; align-items: center; justify-content: center;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
       padding: 6px 14px; border-radius: 999px;
       border: 1px solid var(--border);
       font-family: 'Roboto', sans-serif; font-size: 13px; font-weight: 700;
@@ -208,6 +208,7 @@
       transition: border-color 0.15s, background 0.15s;
     }
     .social-btn:hover { border-color: var(--accent); background: var(--off); }
+    .social-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
 
     @media (max-width: 480px) {
       .socials { gap: 6px; }
@@ -936,10 +937,18 @@
         <div class="hero-tagline">Former crypto analyst, now creating content and building community</div>
         <div class="hero-desc">I highlight promising crypto projects, explaining how they work and why they matter in a simple, easy-to-understand way.</div>
         <div class="socials">
-          <a class="social-btn" href="https://x.com/0xhieuxyz" target="_blank" rel="noopener">Twitter</a>
-          <a class="social-btn" href="https://t.me/nguyen0xhieu" target="_blank" rel="noopener">Telegram</a>
-          <a class="social-btn" href="https://mail.google.com/mail/?view=cm&to=kattyfury1403@gmail.com" target="_blank" rel="noopener">Email</a>
-          <a class="social-btn" href="https://t.me/airdrop_1wallet" target="_blank" rel="noopener">My community</a>
+          <a class="social-btn" href="https://x.com/0xhieuxyz" target="_blank" rel="noopener">
+            <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path d="M44.2857 55.7143L10 10H30L55.7143 44.2857M44.2857 55.7143L70 90H90L55.7143 44.2857M44.2857 55.7143L10 90M55.7143 44.2857L90 10"/></svg>
+            Twitter
+          </a>
+          <a class="social-btn" href="https://t.me/nguyen0xhieu" target="_blank" rel="noopener">
+            <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path fill-rule="evenodd" clip-rule="evenodd" d="M30 50L80 20L40 60V80L48.8889 66.6667L80 90L90 10L10 40L30 50Z"/></svg>
+            Telegram
+          </a>
+          <a class="social-btn" href="https://mail.google.com/mail/?view=cm&to=kattyfury1403@gmail.com" target="_blank" rel="noopener">
+            <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="10" stroke-linejoin="round"><path d="M90 20H10V80H90V20ZM10 20L50 50L90 20"/></svg>
+            Email
+          </a>
         </div>
       </section>
 
