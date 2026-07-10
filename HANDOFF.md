@@ -7,6 +7,41 @@
 
 ---
 
+## ⭐ HANDOFF mới nhất (2026-07-10) — Watchlist + auto-research
+
+**Đã xong (chạy được, đã test):**
+1. **CV site — sub-tab Watchlist** (trong tab Airdrop): đọc Google Sheet tab `Watchlist` qua gviz,
+   render card đồng bộ lưới hàng. Cột A tên·B X·C narrative·D gọi vốn·E "có việc" YES/NO. (commit 4982a71)
+2. **`watchlist-research.js`** (repo cv, Node ≥18, không deps): quét **Surf API** (`search/airdrop` +
+   `project/detail`) + scrape **Telegram `t.me/s/crypto_fundraising`**, lọc **VC Tier-1** (`vc-tier1.json`, 38)
+   → **ChatGPT gpt-4o-mini** chấm `degen_farm YES/NO/MAYBE` + narrative (1/13) + lý do → **POST tới
+   Apps Script webhook** → tab `Danh sách chờ`. `--dry` = in không gửi; env `MAX_DETAIL`/`TG_PAGES` test nhẹ.
+3. **`apps-script-webhook.gs`**: dán vào Sheet (Extensions→Apps Script, **file MỚI**, đừng đè code lấy giá),
+   deploy Web app, dedup 2 tab rồi ghi `Danh sách chờ`. Đã pivot từ service account (Google chặn tạo SA key).
+4. **Bot `research_airdrop_bot` — lệnh `/work`** (repo riêng, commit 717a143): spawn `watchlist-research.js`
+   → đổ cả loạt vào `Danh sách chờ`, không review từng cái. `/scan` cũ vẫn còn (review nút ✅/❌).
+
+**Env (secret, tự sync tay, KHÔNG commit):**
+- `cv/.env`: `SURF_API`, `OPENAI`, `WL_WEBHOOK_URL`, `WL_WEBHOOK_SECRET` — đã set đủ.
+- `research_airdrop_bot/.env`: cần thêm `WATCHLIST_RESEARCH_DIR=<path repo cv>` — **user CHƯA thêm**.
+
+**Việc dở (next):**
+- User thêm `WATCHLIST_RESEARCH_DIR` vào .env bot → bật `npm start` → gõ `/work` trong Telegram test live.
+- Đảm bảo Sheet có 2 tab `Watchlist` + `Danh sách chờ`; webhook đã deploy + `WL_SECRET` khớp `.env`.
+- Cadence: chạy tay 2 tuần/lần, local, khỏi VPS.
+- Luồng: `/work` (hoặc `node watchlist-research.js`) → `Danh sách chờ` → user liếc, kéo kèo ngon sang `Watchlist` → lên web.
+
+**⚠ OPEN ISSUE — Surf trả ÍT dự án pre-TGE (user nói xưa ~60, nay ~22):**
+- `watchlist-research.js` `surfList()` dùng `limit=100&phase=active&sort_by=total_raise&order=desc` → list trả 100 item,
+  nhưng nhiều cái đã TGE (lọc `tge_status==='post'` bỏ) + lọc Tier-1 → còn ít.
+- Bot cũ `src/surf.ts` `fetchSurfCandidates` dùng **`limit=25`** (mặc định) → chỉ ~22 sau lọc raise. **Đây khả năng cao là nguồn "22".**
+- Cần điều tra: (a) tăng `limit` trong surf.ts của bot; (b) kiểm Surf API `phase=active` có thu hẹp data không
+  (thử bỏ param, đổi sort); (c) kiểm credit/plan Surf còn hạn (nói ~2.850 credits, hết hạn 06/2027). Chưa làm.
+
+Chi tiết cơ chế + quyết định xem Decisions Log bên dưới (các entry 2026-07-10).
+
+---
+
 ## Spacing System (2026-06-18) — QUY ĐỊNH BẮT BUỘC
 
 Toàn site dùng **grid 4px**. Mọi `margin / padding / gap` PHẢI là bội số của 4:
