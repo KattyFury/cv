@@ -31,9 +31,21 @@
       --max:    900px;
       --box-h:  160px;   /* chiều cao cố định của box 4-quarter (Valuation) */
       --modal-w: 340px;  /* popup nhỏ; popup lớn = 2× giá trị này */
+      /* 1 HÀNG của lưới: màn hình chia 30 hàng, navbar chiếm 2 hàng (57px), 28 hàng còn lại
+         chia đều phần thân → dùng làm đơn vị khoảng cách chung cho cả trang:
+         yếu tố cùng cụm = 1×--row · cụm khác cụm = 2×--row */
+      --row: calc((100vh - 57px) / 28);
     }
 
-    html { scroll-behavior: smooth; overflow-y: scroll; }
+    html {
+      scroll-behavior: smooth; overflow-y: scroll;
+      /* scrollbar trang mảnh, đồng bộ với scrollbar các box */
+      scrollbar-width: thin;
+      scrollbar-color: var(--muted) transparent;
+    }
+    html::-webkit-scrollbar { width: 6px; }
+    html::-webkit-scrollbar-track { background: transparent; }
+    html::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 999px; }
 
     body {
       font-family: 'Roboto', sans-serif;
@@ -59,7 +71,7 @@
     .header-inner {
       max-width: 900px;
       margin: 0 auto;
-      padding: 0 24px;
+      padding: 0 calc(var(--row) * 0.75);
       height: 56px;
       display: flex;
       align-items: center;
@@ -107,11 +119,12 @@
     main {
       max-width: var(--max);
       margin: 0 auto;
-      padding: 0 24px;
+      padding: 0 calc(var(--row) * 0.75);
     }
 
-    section { padding: 64px 0; }
-    section + section { border-top: 1px solid var(--border); }
+    /* Không còn line ngăn cách; các cụm (section) cách nhau đúng 2 hàng */
+    section { padding: 0; }
+    section + section { margin-top: calc(var(--row) * 2); }
 
     h2 {
       font-family: 'Roboto', sans-serif;
@@ -119,20 +132,35 @@
       font-weight: 500;
       letter-spacing: -0.01em;
       color: var(--text);
-      margin-bottom: 28px;
+      margin-bottom: var(--row);   /* tiêu đề cách nội dung 1 hàng (yếu tố trong cụm) */
     }
 
-    /* ── HERO ─────────────────────────────────────── */
+    /* ── HERO — 1 CỤM "About", cao vừa đủ nội dung (KHÔNG lấp đầy màn hình) ──
+       Lưới 11 hàng, mỗi hàng cao đúng var(--row); mọi yếu tố cách nhau 1 hàng.
+       Hero kết thúc ngay ở socials → Experience nằm 2 hàng dưới (luật cụm-cách-cụm):
+         hàng 1-2  : trống  ← cách navbar 2 hàng (cụm khác)
+         hàng 3-4  : PFP + tên/nơi ở
+         hàng 5    : trống (1 hàng)
+         hàng 6    : tagline
+         hàng 7    : trống (1 hàng)
+         hàng 8-9  : desc
+         hàng 10   : trống (1 hàng)
+         hàng 11   : socials  ← đáy Hero */
     .hero {
-      padding: 64px 0 60px;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
+      padding: 0;
+      display: grid;
+      grid-template-rows: repeat(11, var(--row));
       text-align: left;
-      gap: 16px;
     }
 
-    .hero-top { display: flex; flex-direction: row; align-items: center; gap: 20px; }
+    .hero-top {
+      grid-row: 3 / span 2;
+      align-self: center;
+      display: flex; flex-direction: row; align-items: center; gap: 20px;
+    }
+    .hero-tagline { grid-row: 6; align-self: center; }
+    .hero-desc    { grid-row: 8 / span 2; align-self: center; }
+    .socials      { grid-row: 11; align-self: center; }
 
     .pfp {
       width: 72px; height: 72px;
@@ -167,19 +195,24 @@
       max-width: 560px;
     }
 
-    /* ── SOCIALS ──────────────────────────────────── */
-    .socials { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 8px; }
+    /* ── SOCIALS — nút gọn, không icon, 4 nút vừa 1 hàng cả trên mobile ── */
+    .socials { display: flex; flex-wrap: nowrap; justify-content: flex-start; gap: 8px; }
 
     .social-btn {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 8px 16px; border-radius: 999px;
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 6px 14px; border-radius: 999px;
       border: 1px solid var(--border);
-      font-family: 'Roboto', sans-serif; font-size: 15px; font-weight: 400;
+      font-family: 'Roboto', sans-serif; font-size: 13px; font-weight: 400;
       color: var(--text); text-decoration: none; background: var(--white);
+      white-space: nowrap;
       transition: border-color 0.15s, background 0.15s;
     }
     .social-btn:hover { border-color: var(--accent); background: var(--off); }
-    .social-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    @media (max-width: 480px) {
+      .socials { gap: 6px; }
+      .social-btn { padding: 6px 10px; font-size: 12px; }
+    }
 
     /* ── TIMELINE ─────────────────────────────────── */
     .timeline { display: flex; flex-direction: column; }
@@ -212,7 +245,7 @@
     .tl-bullets li::before { content: '–'; position: absolute; left: 0; color: var(--muted); }
 
     /* ── HIGHLIGHTS ───────────────────────────────── */
-    #highlights-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    #highlights-grid { display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--row) * 0.5); }
 
     @media (max-width: 480px) { #highlights-grid { grid-template-columns: 1fr; } }
 
@@ -249,7 +282,7 @@
     .avail-list li::before { content: '–'; position: absolute; left: 0; color: var(--muted); }
 
     /* ── FOOTER ───────────────────────────────────── */
-    footer { border-top: 1px solid var(--border); padding: 28px 24px; max-width: var(--max); margin: 0 auto; }
+    footer { padding: 28px calc(var(--row) * 0.75); max-width: var(--max); margin: calc(var(--row) * 2) auto 0; }
     .footer-inner { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
     .footer-contact { font-size: 15px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
     .footer-links { display: flex; gap: 20px; }
@@ -262,12 +295,15 @@
     .val-wrap {
       max-width: 900px;
       margin: 0 auto;
-      padding: 0 24px 24px;
+      padding: 0 calc(var(--row) * 0.75) 24px;
     }
 
+    /* Tiêu đề "Tracking altcoins" — nằm trung tâm hàng 3-4 (cao đúng 2 hàng, canh giữa) */
     .val-intro {
+      height: calc(var(--row) * 2);
+      padding: 0;
+      display: flex; align-items: center; justify-content: center;
       text-align: center;
-      padding: 20px 0 16px;
       font-size: 15px;
       font-weight: 500;
       color: var(--text);
@@ -280,6 +316,43 @@
       border-radius: 14px;
       overflow: hidden;
       margin-bottom: 16px;
+    }
+
+    /* ── Bảng Tracking altcoins theo lưới hàng (hàng 5-15 = box 11 hàng) ──
+       Header CỐ ĐỊNH tách khỏi vùng scroll → luôn hiện + scrollbar chỉ bao phần data.
+       Mỗi data (kể cả header) cao đúng 1 hàng · các data cách nhau 0.5 hàng ·
+       box chừa 1 lane cho scrollbar mảnh · chữ canh giữa hàng nên không tràn */
+    #tge-section {
+      height: calc(var(--row) * 11); margin-bottom: 0;
+      display: flex; flex-direction: column;
+    }
+    /* Header cố định — chừa cùng 1 lane gutter (thin) như body để 5 cột thẳng hàng nhau */
+    #tge-head-wrap {
+      flex: none; overflow: hidden;
+      scrollbar-gutter: stable; scrollbar-width: thin;
+    }
+    #tge-head-wrap .val-table { border-collapse: collapse; }
+    /* Vùng data scroll — chừa lane scrollbar mảnh (thin ~10px), không đè lên chữ, không giật layout */
+    #tge-section .val-table-scroll {
+      flex: 1 1 auto; height: auto; max-height: none; min-height: 0;
+      scrollbar-gutter: stable;
+      scrollbar-width: thin;
+      scrollbar-color: var(--muted) transparent;
+    }
+    #tge-section .val-table-scroll::-webkit-scrollbar { width: 6px; }
+    #tge-section .val-table-scroll::-webkit-scrollbar-track { background: transparent; }
+    #tge-section .val-table-scroll::-webkit-scrollbar-thumb {
+      background: var(--muted); border-radius: 999px;
+    }
+    /* Body: các dòng cách nhau 0.5 hàng (border-spacing dọc); perimeter trên = khoảng cách header→OP */
+    #tge-section .val-table-body {
+      border-collapse: separate; border-spacing: 0 calc(var(--row) * 0.5);
+    }
+    #tge-section .val-table thead th {
+      height: var(--row); padding: 2px 16px; border-bottom: none;
+    }
+    #tge-section .val-table tbody td {
+      height: var(--row); padding: 2px 16px; border-bottom: none;
     }
 
     /* Scroll được nhưng ẩn thanh scrollbar (đỡ chiếm chỗ/xấu) — vẫn lướt chuột/chạm bình thường */
@@ -354,13 +427,18 @@
       .val-analysis { grid-template-columns: 1fr; }
     }
 
-    /* ── BOX 4-QUARTER GRID (Market / Recent / Predict / Danger) ──
-       Mọi box cùng 1 chiều cao cố định, chia 4 phần đều theo dọc:
-         q1 = tiêu đề (1/4) · q2-3 = nội dung (2/4) · q4 = kết luận (1/4)
-       Box không có kết luận: nội dung chiếm q2-3-4 (3/4). */
+    /* ── BOX 4-QUARTER GRID (Market / Recent / Danger / Narratives) ──
+       Data box + 4 box = CÙNG 1 CỤM → ngang cách 1 hàng, dọc chỉ cách 0.5 hàng.
+       Mỗi box cao đúng 6 hàng, chia dọc:
+         tiêu đề 1 hàng · nội dung 3 hàng (hàng 2-4) · chốt 2 hàng (hàng 5-6)
+       Box không có chốt: nội dung chiếm 3+2 = 5 hàng (vc-q234). */
+    .val-analysis.val-boxes {
+      gap: calc(var(--row) * 0.5);              /* ngang + dọc giữa các box đều 0.5 hàng */
+      margin-top: calc(var(--row) * 0.5);       /* cách data box 0.5 hàng (cùng cụm) */
+    }
     .val-analysis.val-boxes > .val-card {
-      height: var(--box-h); min-height: var(--box-h);
-      display: grid; grid-template-rows: 40px 80px 40px;
+      height: calc(var(--row) * 6); min-height: calc(var(--row) * 6);
+      display: grid; grid-template-rows: var(--row) calc(var(--row) * 3) calc(var(--row) * 2);
       padding: 0 12px;
     }
     .vc-q1   { grid-row: 1 / 2; display: flex; align-items: center; justify-content: center; align-self: stretch; }
@@ -390,20 +468,27 @@
       color: var(--text); margin-bottom: 12px;
     }
 
-    /* ── DANGER ZONE ────────────────────────────────── */
-    /* Scroll được (nhiều token) nhưng ẩn thanh scrollbar — không chiếm chỗ/xấu */
-    #danger-list {
-      overflow-y: auto;
-      scrollbar-width: none; -ms-overflow-style: none;
+    /* ── DANGER ZONE + TRENDING NARRATIVES ──────────────────────────
+       Đồng bộ với box "Tracking altcoins": scrollbar mảnh hiện sẵn (lane cố định,
+       không giật layout), mỗi data gọn 1 hàng, cách nhau 0.5 hàng. */
+    #danger-list, #narrative-list {
+      overflow-y: auto; overflow-x: hidden;
+      scrollbar-gutter: stable;
+      scrollbar-width: thin;
+      scrollbar-color: var(--muted) transparent;
     }
-    #danger-list::-webkit-scrollbar { display: none; }
-    .danger-row {
+    #danger-list::-webkit-scrollbar, #narrative-list::-webkit-scrollbar { width: 6px; }
+    #danger-list::-webkit-scrollbar-track, #narrative-list::-webkit-scrollbar-track { background: transparent; }
+    #danger-list::-webkit-scrollbar-thumb, #narrative-list::-webkit-scrollbar-thumb {
+      background: var(--muted); border-radius: 999px;
+    }
+    .danger-row, .narrative-row {
       display: flex; align-items: center; gap: 12px;
-      padding: 10px 14px; border-radius: 8px;
+      height: var(--row); padding: 0 14px; border-radius: 8px;
       background: rgba(255,161,17,0.08);
-      margin-bottom: 6px;
+      margin-bottom: calc(var(--row) * 0.25);
     }
-    .danger-row:last-child { margin-bottom: 0; }
+    .danger-row:last-child, .narrative-row:last-child { margin-bottom: 0; }
     .danger-row.danger-new { background: rgba(255,161,17,0.20); }
     .danger-ticker { font-size: 13px; font-weight: 700; color: var(--text); flex: 1; }
     .danger-badge-new {
@@ -414,23 +499,6 @@
     .danger-multi { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 600; color: var(--accent); }
     .danger-date  { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; font-size: 11px; color: var(--muted); width: 60px; text-align: right; }
     .danger-empty { font-size: 13px; color: var(--muted); padding: 8px 0; }
-
-    /* ── TRENDING NARRATIVES ── box 1/3 width, chiều cao cố định như row 1 ──
-       Chỉ hiện ~3 dòng, chừa spacing; scroll được nhưng ẩn thanh scrollbar
-       (giống Danger Zone + bảng "Tracking altcoins" — không dùng thanh cuộn
-       chiếm chỗ/xấu, chỉ cho phép lướt chuột/chạm để xem thêm). */
-    #narrative-list {
-      max-height: 150px; overflow-y: auto;
-      scrollbar-width: none; -ms-overflow-style: none;
-    }
-    #narrative-list::-webkit-scrollbar { display: none; }
-    .narrative-row {
-      display: flex; align-items: center; gap: 12px;
-      padding: 10px 14px; min-height: 20px; border-radius: 8px;
-      background: rgba(255,161,17,0.08);
-      margin-bottom: 6px;
-    }
-    .narrative-row:last-child { margin-bottom: 0; }
     .narrative-name { font-size: 13px; font-weight: 700; color: var(--text); flex: 1; }
     .narrative-med { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 600; color: var(--accent); }
 
@@ -497,15 +565,16 @@
     .calc-field input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     .calc-field input[type=number] { -moz-appearance: textfield; }
 
-    /* Predict TGE FDV — underline link thay vì button, nhẹ nhàng hơn trong box nhỏ */
+    /* Predict TGE FDV — nút pill cam (cùng kích cỡ nút social ở About me: padding 6/14, radius 999, font 13) */
     .predict-link {
-      background: none; border: none; padding: 0;
-      color: var(--text); font-family: 'Roboto', sans-serif;
-      font-size: 12px; font-weight: 600;
-      text-decoration: underline; text-underline-offset: 2px;
-      cursor: pointer; transition: color 0.15s;
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 6px 14px; border-radius: 999px;
+      border: 1px solid var(--accent); background: var(--accent);
+      color: #fff; font-family: 'Roboto', sans-serif;
+      font-size: 13px; font-weight: 400; white-space: nowrap;
+      cursor: pointer; transition: opacity 0.15s;
     }
-    .predict-link:hover { color: var(--accent); }
+    .predict-link:hover { opacity: 0.88; }
 
     /* ── PREDICT MODAL FORM ─────────────────────────── */
     #calc-form { display: flex; flex-direction: column; gap: 12px; }
@@ -551,7 +620,7 @@
     #airdrop-view { display: none; }
     .ard-wrap {
       max-width: 900px; margin: 0 auto;
-      padding: 0 24px 24px;
+      padding: 0 calc(var(--row) * 0.75) 24px;
     }
     .ard-subtabs {
       display: flex; gap: 8px; align-items: center;
@@ -762,7 +831,7 @@
     #personal-view { display: none; }
     .personal-wrap {
       max-width: 900px; margin: 0 auto;
-      padding: 32px 24px 60px;
+      padding: 32px calc(var(--row) * 0.75) 60px;
     }
 
     .personal-lock {
@@ -849,22 +918,10 @@
         <div class="hero-tagline">Former crypto analyst, now creating content and building community</div>
         <div class="hero-desc">I highlight promising crypto projects, explaining how they work and why they matter in a simple, easy-to-understand way.</div>
         <div class="socials">
-          <a class="social-btn" href="https://x.com/0xhieuxyz" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.91-5.622Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-            Twitter
-          </a>
-          <a class="social-btn" href="https://t.me/nguyen0xhieu" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-            Telegram
-          </a>
-          <a class="social-btn" href="https://mail.google.com/mail/?view=cm&to=kattyfury1403@gmail.com" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-            Email
-          </a>
-          <a class="social-btn" href="https://t.me/airdrop_1wallet" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-            Community
-          </a>
+          <a class="social-btn" href="https://x.com/0xhieuxyz" target="_blank" rel="noopener">Twitter</a>
+          <a class="social-btn" href="https://t.me/nguyen0xhieu" target="_blank" rel="noopener">Telegram</a>
+          <a class="social-btn" href="https://mail.google.com/mail/?view=cm&to=kattyfury1403@gmail.com" target="_blank" rel="noopener">Email</a>
+          <a class="social-btn" href="https://t.me/airdrop_1wallet" target="_blank" rel="noopener">My community</a>
         </div>
       </section>
 
@@ -955,7 +1012,8 @@
 
       <!-- TOP: TGE table -->
       <div class="val-table-section" id="tge-section">
-        <div class="val-table-scroll">
+        <!-- Header CỐ ĐỊNH (không nằm trong vùng scroll) -->
+        <div id="tge-head-wrap">
           <table class="val-table">
             <thead>
               <tr>
@@ -966,6 +1024,11 @@
                 <th>×ATM</th>
               </tr>
             </thead>
+          </table>
+        </div>
+        <!-- Body SCROLL (scrollbar chỉ bao đúng phần data từ OP trở xuống) -->
+        <div class="val-table-scroll">
+          <table class="val-table val-table-body">
             <tbody id="tge-tbody"></tbody>
           </table>
         </div>
@@ -981,12 +1044,12 @@
           <div class="split-box vc-q23" id="market-terms">
             <div class="split-col">
               <div class="split-val" id="market-short-val">—</div>
-              <div class="split-lbl">Short-term<br><span id="market-short-n"></span></div>
+              <div class="split-lbl"><span id="market-short-n"></span></div>
             </div>
             <div class="split-divider"></div>
             <div class="split-col">
               <div class="split-val" id="market-mid-val">—</div>
-              <div class="split-lbl">Mid-term<br><span id="market-mid-n"></span></div>
+              <div class="split-lbl"><span id="market-mid-n"></span></div>
             </div>
           </div>
           <div class="market-levels vc-q4" id="market-levels">
@@ -1002,12 +1065,12 @@
           <div class="split-box vc-q23">
             <div class="split-col">
               <div class="split-val" id="baseline-low">—</div>
-              <div class="split-lbl">Low FDV<br><span>Median</span></div>
+              <div class="split-lbl">Low FDV</div>
             </div>
             <div class="split-divider"></div>
             <div class="split-col">
               <div class="split-val" id="baseline-high">—</div>
-              <div class="split-lbl">High FDV<br><span>Median</span></div>
+              <div class="split-lbl">High FDV</div>
             </div>
           </div>
           <div class="vc-q4" style="display:flex; align-items:center; justify-content:center;">
@@ -1191,8 +1254,16 @@
     const closeTge = () => tgeModal.classList.remove('open');
     document.getElementById('tge-intro').addEventListener('click', () => {
       tgeModalBody.innerHTML = '';
-      const tbl = document.querySelector('#tge-section .val-table');
-      if (tbl) tgeModalBody.appendChild(tbl.cloneNode(true));
+      // Header và body giờ là 2 bảng tách rời — ghép lại thành 1 bảng đầy đủ cho popup
+      const head = document.querySelector('#tge-head-wrap .val-table thead');
+      const body = document.querySelector('#tge-section .val-table-body tbody');
+      if (head && body) {
+        const tbl = document.createElement('table');
+        tbl.className = 'val-table';
+        tbl.appendChild(head.cloneNode(true));
+        tbl.appendChild(body.cloneNode(true));
+        tgeModalBody.appendChild(tbl);
+      }
       tgeModal.classList.add('open');
     });
     tgeModal.addEventListener('click', e => { if (e.target === tgeModal) closeTge(); });
