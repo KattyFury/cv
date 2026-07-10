@@ -412,7 +412,7 @@
     .val-table th, .val-table td { width: 20%; }
     .td-ticker { font-weight: 400; color: var(--text) !important; font-size: 13px; }   /* tên ticker: regular đen */
     .td-size   { font-size: 11px; font-weight: 400; color: var(--muted); margin-left: 4px; }  /* phụ: xám nhỏ */
-    .td-multi  { font-weight: 400; color: var(--accent) !important; }                   /* số liệu ×: regular cam */
+    .td-multi  { font-weight: 700; color: var(--accent) !important; }                   /* số liệu ×: bold cam */
     .val-table td:nth-child(2), .td-multi { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; }
     /* cột TGE Date = yếu tố phụ: nhỏ + xám */
     #tge-section .val-table-body td:nth-child(2),
@@ -505,11 +505,11 @@
       color: var(--accent); background: #1a1a1a;
       padding: 1px 4px; border-radius: 4px;
     }
-    .danger-multi { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 400; color: var(--accent); }
+    .danger-multi { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 700; color: var(--accent); }
     .danger-date  { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; font-size: 11px; color: var(--muted); width: 60px; text-align: right; }
     .danger-empty { font-size: 13px; color: var(--muted); padding: 8px 0; }
     .narrative-name { font-size: 13px; font-weight: 400; color: var(--text); flex: 1; }
-    .narrative-med { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 400; color: var(--accent); }
+    .narrative-med { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 700; color: var(--accent); }
 
     /* Cả 3 card cùng hệ flex column — margin không bị gộp, 3 vùng thẳng hàng:
        Tiêu đề (label) → Box nội dung (split-box / inputs) → Chốt (levels / nút Calculate) */
@@ -547,7 +547,7 @@
     }
     .split-val {
       font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums;
-      font-size: 15px; font-weight: 400;   /* số liệu × : regular + cam (đồng bộ toàn site) */
+      font-size: 15px; font-weight: 700;   /* số liệu × : bold + cam (đồng bộ toàn site) */
       letter-spacing: -0.01em; color: var(--accent); line-height: 1;
     }
     /* yếu tố phụ: regular, xám, nhỏ, KHÔNG allcaps — đồng bộ "4 deals" và "Low FDV" */
