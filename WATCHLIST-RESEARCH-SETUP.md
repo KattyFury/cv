@@ -29,16 +29,19 @@ Trong Sheet (`1m8_nwbP...`), tạo **2 tab**, hàng 1 là tiêu đề:
 
 ---
 
-## Bước B — Cài Apps Script "cổng ghi" (làm trong chính Sheet, ~6 click)
+## Bước B — Cài Apps Script "cổng ghi" (làm trong chính Sheet)
+
+> ⚠ Sheet này ĐÃ có code Apps Script lấy giá (ATH/current price). **ĐỪNG xoá/đè.** Thêm file MỚI.
 
 1. Mở Sheet → menu **Extensions → Apps Script**.
-2. Xoá code mẫu, **dán toàn bộ** file `apps-script-webhook.gs` (trong repo) vào.
-3. Sửa dòng `const SECRET = '...'` thành 1 chuỗi bí mật tự nghĩ, vd `hieu-wl-2026-xyz`.
-4. Bấm **Deploy → New deployment** → biểu tượng ⚙ (bánh răng) chọn **Web app**:
+2. Bên trái, cạnh **Files** bấm **+** → **Script** → đặt tên `watchlist-webhook`.
+3. **Dán toàn bộ** file `apps-script-webhook.gs` (trong repo) vào file mới đó (không đụng file code giá cũ).
+4. Sửa dòng `const WL_SECRET = '...'` thành 1 chuỗi bí mật tự nghĩ, vd `hieu-wl-2026-xyz`.
+5. Bấm **Deploy → New deployment** → biểu tượng ⚙ (bánh răng) chọn **Web app**:
    - **Execute as:** Me
    - **Who has access:** Anyone
    → **Deploy** → **Authorize access** (chọn tài khoản, bấm Allow) → **copy "Web app URL"**.
-5. (Test) Mở URL đó trên trình duyệt → thấy chữ `watchlist webhook OK` là đúng.
+6. (Test) Mở URL đó trên trình duyệt → thấy chữ `watchlist webhook OK` là đúng.
 
 > Mỗi lần sửa code Apps Script phải **Deploy lại**: Manage deployments → Edit (bút chì) → Version: New version → Deploy.
 
