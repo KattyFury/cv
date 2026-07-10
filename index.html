@@ -202,7 +202,7 @@
       display: inline-flex; align-items: center; justify-content: center; gap: 6px;
       padding: 6px 14px; border-radius: 999px;
       border: 1px solid var(--border);
-      font-family: 'Roboto', sans-serif; font-size: 13px; font-weight: 700;
+      font-family: 'Roboto', sans-serif; font-size: 13px; font-weight: 400;
       color: var(--text); text-decoration: none; background: var(--white);
       white-space: nowrap;
       transition: border-color 0.15s, background 0.15s;
@@ -285,10 +285,8 @@
     /* ── FOOTER — thanh 1 dòng: handle trái · icon link phải ── */
     /* padding-top 0 → chữ cách "Available for" đúng 2 hàng (margin-top); chừa 2 hàng dưới cho thoáng */
     footer { padding: 0 calc(var(--row) * 0.75) calc(var(--row) * 2); max-width: var(--max); margin: calc(var(--row) * 2) auto 0; }
-    .footer-inner { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; }
-    .footer-brand { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; color: var(--text); text-decoration: none; }
-    .footer-brand:hover { color: var(--accent); }
-    .footer-links { display: flex; gap: 16px; align-items: center; }
+    .footer-inner { display: flex; flex-direction: row; align-items: center; justify-content: center; }
+    .footer-links { display: flex; gap: 20px; align-items: center; }
     .footer-links a { display: inline-flex; color: var(--text); transition: color 0.15s; }
     .footer-links a:hover { color: var(--accent); }
     .footer-links a svg { width: 16px; height: 16px; }
@@ -1025,7 +1023,6 @@
 
     <footer>
       <div class="footer-inner">
-        <a class="footer-brand" href="https://0xhieu.xyz">0xhieu.xyz</a>
         <div class="footer-links">
           <a href="https://x.com/0xhieuxyz" target="_blank" rel="noopener" aria-label="Twitter">
             <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path d="M44.2857 55.7143L10 10H30L55.7143 44.2857M44.2857 55.7143L70 90H90L55.7143 44.2857M44.2857 55.7143L10 90M55.7143 44.2857L90 10"/></svg>
