@@ -282,13 +282,16 @@
     }
     .avail-list li::before { content: '–'; position: absolute; left: 0; color: var(--muted); }
 
-    /* ── FOOTER ───────────────────────────────────── */
-    footer { padding: 28px calc(var(--row) * 0.75); max-width: var(--max); margin: calc(var(--row) * 2) auto 0; }
-    .footer-inner { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
-    .footer-contact { font-size: 15px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); }
-    .footer-links { display: flex; gap: 20px; }
-    .footer-links a { font-size: 15px; font-weight: 400; color: var(--text); text-decoration: none; transition: color 0.15s; }
-    .footer-links a:hover { color: var(--text); }
+    /* ── FOOTER — thanh 1 dòng: handle trái · icon link phải ── */
+    /* padding-top 0 → chữ cách "Available for" đúng 2 hàng (margin-top); chừa 2 hàng dưới cho thoáng */
+    footer { padding: 0 calc(var(--row) * 0.75) calc(var(--row) * 2); max-width: var(--max); margin: calc(var(--row) * 2) auto 0; }
+    .footer-inner { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; }
+    .footer-brand { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; color: var(--text); text-decoration: none; }
+    .footer-brand:hover { color: var(--accent); }
+    .footer-links { display: flex; gap: 16px; align-items: center; }
+    .footer-links a { display: inline-flex; color: var(--text); transition: color 0.15s; }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-links a svg { width: 16px; height: 16px; }
 
     /* ── VALUATION VIEW ───────────────────────────── */
     #valuation-view { display: none; }
@@ -1022,11 +1025,17 @@
 
     <footer>
       <div class="footer-inner">
-        <span class="footer-contact">Contact</span>
+        <a class="footer-brand" href="https://0xhieu.xyz">0xhieu.xyz</a>
         <div class="footer-links">
-          <a href="https://x.com/0xhieuxyz" target="_blank" rel="noopener">Twitter</a>
-          <a href="https://t.me/nguyen0xhieu" target="_blank" rel="noopener">Telegram</a>
-          <a href="https://mail.google.com/mail/?view=cm&to=kattyfury1403@gmail.com" target="_blank" rel="noopener">Email</a>
+          <a href="https://x.com/0xhieuxyz" target="_blank" rel="noopener" aria-label="Twitter">
+            <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path d="M44.2857 55.7143L10 10H30L55.7143 44.2857M44.2857 55.7143L70 90H90L55.7143 44.2857M44.2857 55.7143L10 90M55.7143 44.2857L90 10"/></svg>
+          </a>
+          <a href="https://t.me/nguyen0xhieu" target="_blank" rel="noopener" aria-label="Telegram">
+            <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path fill-rule="evenodd" clip-rule="evenodd" d="M30 50L80 20L40 60V80L48.8889 66.6667L80 90L90 10L10 40L30 50Z"/></svg>
+          </a>
+          <a href="https://mail.google.com/mail/?view=cm&to=kattyfury1403@gmail.com" target="_blank" rel="noopener" aria-label="Email">
+            <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="10" stroke-linejoin="round"><path d="M90 20H10V80H90V20ZM10 20L50 50L90 20"/></svg>
+          </a>
         </div>
       </div>
     </footer>
