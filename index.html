@@ -21,7 +21,7 @@
        Font-size khóa riêng: 19/15/14/13/12/11/10px (không đụng).
        Khi thêm element mới: chọn spacing trong scale, không tự chế số lẻ. */
     :root {
-      --white:  #FDFBF4;
+      --white:  #FDFCFA;   /* trắng vừa: bớt kem cho dễ đọc, vẫn còn chút ấm */
       --off:    #F6F2E4;
       --border: #EBE4CE;
       --muted:  #8A8268;
@@ -62,7 +62,7 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(253,251,244,0.88);
+      background: rgba(253,252,250,0.88);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       border-bottom: 1px solid var(--border);
@@ -105,7 +105,7 @@
       font-family: 'Roboto', sans-serif;
       font-size: 15px;
       font-weight: 400;
-      color: var(--sub);
+      color: var(--muted);   /* chưa chọn: xám thường (nhạt) cho rõ khác biệt với tab đang chọn */
       padding: 0;
       transition: color 0.15s;
       white-space: nowrap;
@@ -637,15 +637,14 @@
       height: calc(var(--row) * 2); padding: 0;
       background: var(--white);
     }
-    .ard-tabs { display: flex; align-items: center; gap: 12px; }
+    .ard-tabs { display: flex; align-items: center; gap: 16px; }
     .ard-tab {
       background: none; border: none; cursor: pointer; padding: 0;
       font-family: 'Roboto', sans-serif; font-size: 15px; font-weight: 400;
-      color: var(--sub); transition: color 0.15s; white-space: nowrap;
+      color: var(--muted); transition: color 0.15s; white-space: nowrap;  /* chưa chọn: xám thường (nhạt) */
     }
     .ard-tab:hover { color: var(--accent); }
-    .ard-tab.active { color: var(--text); font-weight: 500; }
-    .ard-tab-sep { color: var(--border); user-select: none; }
+    .ard-tab.active { color: var(--text); font-weight: 500; }  /* đang chọn: đen đậm */
 
     /* Language toggle */
     .lang-toggle {
@@ -693,18 +692,17 @@
     #rf-a.active  { background: #3B82F6; color: #fff; }
     #rf-b.active  { background: #22C55E; color: #fff; }
 
-    /* Cards wrapper — stacks rank groups vertically */
-    #wte-cards { display: flex; flex-direction: column; gap: 8px; }
+    /* Cards wrapper — mỗi rank group cách nhau 1 hàng */
+    #wte-cards { display: flex; flex-direction: column; gap: var(--row); }
 
-    /* Each rank group is its own 2-col grid */
+    /* Mỗi rank group là 1 lưới 2 cột; card CÙNG rank cách nhau 0.5 hàng */
     .wte-rank-group {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 16px;
-      margin-bottom: 32px;
+      gap: calc(var(--row) * 0.5);
+      margin-bottom: 0;
       scroll-margin-top: calc(var(--row) * 2); /* chỉ navbar sticky = 2 hàng (subtab không sticky) */
     }
-    .wte-rank-group:last-child { margin-bottom: 0; }
     @media (min-width: 768px) {
       .wte-rank-group { grid-template-columns: 1fr 1fr; }
     }
@@ -734,9 +732,10 @@
       display: flex; align-items: center; gap: 8px;
       margin-left: auto; flex-shrink: 0;
     }
+    /* Rank = yếu tố chính: size + bold NHƯ tiêu đề (13px/700), giữ nền màu theo tier */
     .wte-rank {
-      font-size: 12px; font-weight: 800;
-      letter-spacing: 0.06em;
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 0.02em;
       padding: 2px 8px; border-radius: 6px;
       flex-shrink: 0;
     }
@@ -745,8 +744,9 @@
     .rank-A { background: #3B82F6; color: #fff; }
     .rank-B { background: #22C55E; color: #fff; }
 
+    /* Tên dự án = TIÊU ĐỀ: bold, 13px (đồng bộ tiêu đề các box khác) */
     .wte-name {
-      font-size: 15px; font-weight: 700;
+      font-size: 13px; font-weight: 700;
       color: var(--text); text-decoration: none;
       flex: 1; min-width: 0;
     }
@@ -754,11 +754,10 @@
     .wte-card--A .wte-name:hover { color: #3B82F6; }
     .wte-card--B .wte-name:hover { color: #22C55E; }
 
+    /* Narrative (Stablechain...) = yếu tố phụ: nhỏ, xám, regular (bỏ pill viền) */
     .wte-type {
-      font-size: 12px; font-weight: 600;
-      color: var(--muted); letter-spacing: 0.04em;
-      padding: 2px 8px; border: 1px solid var(--border);
-      border-radius: 999px; white-space: nowrap; flex-shrink: 0;
+      font-size: 11px; font-weight: 400;
+      color: var(--muted); white-space: nowrap; flex-shrink: 0;
     }
 
 
@@ -1120,7 +1119,6 @@
       <div class="ard-subtabs" id="ard-subtabs">
         <div class="ard-tabs">
           <button class="ard-tab active" id="ard-work-btn">Work</button>
-          <span class="ard-tab-sep">|</span>
           <button class="ard-tab" id="ard-watchlist-btn">Watchlist</button>
         </div>
         <div id="ard-wte-controls" style="display:flex;align-items:center;gap:18px">
@@ -1139,7 +1137,7 @@
 
       <!-- Work to Earn -->
       <div id="ard-wte-panel">
-        <div id="wte-cards" style="margin-top:4px"></div>
+        <div id="wte-cards"></div>
       </div>
 
       <!-- Watchlist (coming soon) -->
