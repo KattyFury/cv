@@ -348,6 +348,12 @@
     #tge-section .val-table-body {
       border-collapse: separate; border-spacing: 0 calc(var(--row) * 0.5);
     }
+    /* Header bảng = tiêu đề: bold, đen, KHÔNG allcaps (đồng bộ tiêu đề các box) */
+    #tge-section .val-table thead th,
+    .tge-modal-body .val-table thead th {
+      text-transform: none; letter-spacing: 0;
+      color: var(--text); font-weight: 700;
+    }
     #tge-section .val-table thead th {
       height: var(--row); padding: 2px 16px; border-bottom: none;
     }
@@ -404,9 +410,9 @@
 
     .val-table tbody tr:last-child td { border-bottom: none; }
     .val-table th, .val-table td { width: 20%; }
-    .td-ticker { font-weight: 600; color: var(--sub) !important; font-size: 13px; }
-    .td-size   { font-size: 11px; opacity: 0.6; font-weight: 400; margin-left: 4px; }
-    .td-multi  { font-weight: 600; color: var(--text) !important; }
+    .td-ticker { font-weight: 400; color: var(--text) !important; font-size: 13px; }   /* tên ticker: regular đen */
+    .td-size   { font-size: 11px; opacity: 0.6; font-weight: 400; margin-left: 4px; }  /* phụ: xám nhỏ */
+    .td-multi  { font-weight: 400; color: var(--accent) !important; }                   /* số liệu ×: regular cam */
     .val-table td:nth-child(2), .td-multi { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; }
 
     .val-empty { padding: 40px 16px; text-align: center; font-size: 15px; color: var(--muted); }
@@ -443,7 +449,7 @@
     }
     .vc-q1   { grid-row: 1 / 2; display: flex; align-items: center; justify-content: center; align-self: stretch; }
     .vc-q1.val-card-label, .vc-q1.calc-card-label { margin: 0; }
-    .vc-q1.calc-card-label { font-family: 'Roboto', sans-serif; font-size: 13px; font-weight: 500; }
+    .vc-q1.calc-card-label { font-family: 'Roboto', sans-serif; font-size: 13px; font-weight: 700; }  /* tiêu đề bold */
     .vc-q23  { grid-row: 2 / 3; min-height: 0; }
     .vc-q234 { grid-row: 2 / 4; min-height: 0; }
     .vc-q4   { grid-row: 3 / 4; display: flex; align-items: center; justify-content: space-around; }
@@ -490,17 +496,17 @@
     }
     .danger-row:last-child, .narrative-row:last-child { margin-bottom: 0; }
     .danger-row.danger-new { background: rgba(255,161,17,0.20); }
-    .danger-ticker { font-size: 13px; font-weight: 700; color: var(--text); flex: 1; }
+    .danger-ticker { font-size: 13px; font-weight: 400; color: var(--text); flex: 1; }
     .danger-badge-new {
       font-size: 10px; font-weight: 800; letter-spacing: 0.05em;
       color: var(--accent); background: #1a1a1a;
       padding: 1px 4px; border-radius: 4px;
     }
-    .danger-multi { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 600; color: var(--accent); }
+    .danger-multi { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 400; color: var(--accent); }
     .danger-date  { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; font-size: 11px; color: var(--muted); width: 60px; text-align: right; }
     .danger-empty { font-size: 13px; color: var(--muted); padding: 8px 0; }
-    .narrative-name { font-size: 13px; font-weight: 700; color: var(--text); flex: 1; }
-    .narrative-med { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 600; color: var(--accent); }
+    .narrative-name { font-size: 13px; font-weight: 400; color: var(--text); flex: 1; }
+    .narrative-med { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 400; color: var(--accent); }
 
     /* Cả 3 card cùng hệ flex column — margin không bị gộp, 3 vùng thẳng hàng:
        Tiêu đề (label) → Box nội dung (split-box / inputs) → Chốt (levels / nút Calculate) */
@@ -511,7 +517,7 @@
     .mkt-lvl {
       flex: 1; text-align: center; padding: 0 2px;
       margin: 0; height: 26px; display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 500;
+      font-size: 13px; font-weight: 400;   /* đồng bộ với nút Predict (13px / 400) */
       color: var(--muted); opacity: 0.65;
       letter-spacing: 0.02em; line-height: 1.2;
       transition: opacity 0.2s, font-weight 0.2s, color 0.2s;
@@ -538,15 +544,15 @@
     }
     .split-val {
       font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums;
-      font-size: 15px; font-weight: 600;
-      letter-spacing: -0.01em; color: var(--text); line-height: 1;
+      font-size: 15px; font-weight: 400;   /* số liệu × : regular + cam (đồng bộ toàn site) */
+      letter-spacing: -0.01em; color: var(--accent); line-height: 1;
     }
+    /* yếu tố phụ: regular, xám, nhỏ, KHÔNG allcaps — đồng bộ "4 deals" và "Low FDV" */
     .split-lbl {
-      font-size: 11px; font-weight: 500;
-      color: var(--muted); text-transform: uppercase;
-      letter-spacing: 0.05em; line-height: 1.4;
+      font-size: 11px; font-weight: 400;
+      color: var(--muted); text-transform: none;
+      letter-spacing: 0; line-height: 1.4;
     }
-    .split-lbl span { font-weight: 400; text-transform: none; letter-spacing: 0; }
 
     /* Calculator */
     .calc-field { display: flex; flex-direction: column; gap: 2px; }
@@ -571,7 +577,7 @@
       padding: 6px 14px; border-radius: 999px;
       border: 1px solid var(--accent); background: var(--accent);
       color: #fff; font-family: 'Roboto', sans-serif;
-      font-size: 13px; font-weight: 400; white-space: nowrap;
+      font-size: 13px; font-weight: 700; white-space: nowrap;  /* đậm như mức active "Weak" */
       cursor: pointer; transition: opacity 0.15s;
     }
     .predict-link:hover { opacity: 0.88; }
