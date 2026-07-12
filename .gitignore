@@ -1,9 +1,0 @@
-.env
-.env.txt
-*.env
-.dev.vars
-service-account.json
-.claude/
-node_modules/
-.wrangler/
-.agents/
