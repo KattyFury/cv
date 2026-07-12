@@ -7,40 +7,33 @@
 
 ---
 
-## ⭐ HANDOFF mới nhất (2026-07-10) — Watchlist + auto-research
+## ⭐ HANDOFF mới nhất (2026-07-12) — Thu gọn scope: cv = CHỈ website đọc Sheet
 
-**Đã xong (chạy được, đã test):**
-1. **CV site — sub-tab Watchlist** (trong tab Airdrop): đọc Google Sheet tab `Watchlist` qua gviz,
-   render card đồng bộ lưới hàng. Cột A tên·B X·C narrative·D gọi vốn·E "có việc" YES/NO. (commit 4982a71)
-2. **`watchlist-research.js`** (repo cv, Node ≥18, không deps): quét **Surf API** (`search/airdrop` +
-   `project/detail`) + scrape **Telegram `t.me/s/crypto_fundraising`**, lọc **VC Tier-1** (`vc-tier1.json`, 38)
-   → **ChatGPT gpt-4o-mini** chấm `degen_farm YES/NO/MAYBE` + narrative (1/13) + lý do → **POST tới
-   Apps Script webhook** → tab `Danh sách chờ`. `--dry` = in không gửi; env `MAX_DETAIL`/`TG_PAGES` test nhẹ.
-3. **`apps-script-webhook.gs`**: dán vào Sheet (Extensions→Apps Script, **file MỚI**, đừng đè code lấy giá),
-   deploy Web app, dedup 2 tab rồi ghi `Danh sách chờ`. Đã pivot từ service account (Google chặn tạo SA key).
-4. **Bot `research_airdrop_bot` — lệnh `/work`** (repo riêng, commit 717a143): spawn `watchlist-research.js`
-   → đổ cả loạt vào `Danh sách chờ`, không review từng cái. `/scan` cũ vẫn còn (review nút ✅/❌).
+**Quyết định scope:** dự án `cv` từ nay **chỉ là website đọc Google Sheet để hiển thị** (Valuation · Airdrop · Watchlist).
+Phần **bot tìm kèo / research / gọi API lấy data là DỰ ÁN KHÁC** (`research_airdrop_bot`), không còn nằm trong repo này.
 
-**Env (secret, tự sync tay, KHÔNG commit):**
-- `cv/.env`: `SURF_API`, `OPENAI`, `WL_WEBHOOK_URL`, `WL_WEBHOOK_SECRET` — đã set đủ.
-- `research_airdrop_bot/.env`: cần thêm `WATCHLIST_RESEARCH_DIR=<path repo cv>` — **user CHƯA thêm**.
+**Đã làm:**
+1. **Archive toàn bộ research + tiện ích dev vào 1 file:** `C:\Users\Dell\Desktop\cv-research-archive.md`
+   (gộp nguyên văn 10 file bên dưới — backup trước khi xóa vì nhiều file untracked).
+2. **Xóa khỏi repo** (non-core): `watchlist-research.js`, `vc-tier1.json`, `apps-script-webhook.gs`,
+   `WATCHLIST-RESEARCH-SETUP.md`, `fetch-before-ath.js`, `before-ath-output.txt`,
+   `pre-tge-watchlist-archive-2026-07-06.md`, `server.js`, `export-pdf.js`, `package.json`, `node_modules/`.
+3. **Fix Watchlist đổi ngôn ngữ (Airdrop → English):** dữ liệu WL đa ngôn ngữ + `translateWL()`; badge "Có việc/Chưa có"
+   đổi thành **mũi tên** dùng icon `arrow.svg` (user tự vẽ) qua CSS mask + currentColor → sáng (accent)/mờ (border);
+   cỡ chữ meta 11→13px (`--sub`).
+4. **Dọn nhiễm chéo EZwallet:** phát hiện `fav_icon.png`, `logo.svg`, `logo_spacing.svg` và cả `icon.png` (bản working)
+   thực chất là branding **EZwallet** — lọt vào cv từ phiên 2026-07-10 (md5 khớp hệt file trong `build_on_arc/ezwallet`).
+   → `git checkout icon.png` khôi phục favicon THẬT của cv (mèo-kính mắt cam #FFA111); xóa 3 file EZ (đã có sẵn trong ezwallet).
+5. **Gỡ hẳn tab Personal + X-analysis:** cv không liên quan gì tới X/Twitter. Xóa `functions/api/x-analysis.js` (+ cả thư mục `functions/`),
+   `.dev.vars`, và toàn bộ block Personal/X trong `index.html` (view ẩn password-gate + `loadXAnalysis`) — vốn đã là code chết (không route nào tới). Giờ cv **không còn function/secret key nào**.
 
-**Việc dở (next):**
-- User thêm `WATCHLIST_RESEARCH_DIR` vào .env bot → bật `npm start` → gõ `/work` trong Telegram test live.
-- Đảm bảo Sheet có 2 tab `Watchlist` + `Danh sách chờ`; webhook đã deploy + `WL_SECRET` khớp `.env`.
-- Cadence: chạy tay 2 tuần/lần, local, khỏi VPS.
-- Luồng: `/work` (hoặc `node watchlist-research.js`) → `Danh sách chờ` → user liếc, kéo kèo ngon sang `Watchlist` → lên web.
+**Còn giữ (core):** `index.html`, `_redirects`, `highlights.json` + `highlights/`,
+`icon.png` (favicon/iPhone icon, mèo-kính), `pfp.png` (avatar Hieu), `arrow.svg`, `CLAUDE.md`, `HANDOFF.md`.
 
-**⚠ OPEN ISSUE — Surf trả ÍT dự án pre-TGE (user nói xưa ~60, nay ~22):**
-- `watchlist-research.js` `surfList()` dùng `limit=100&phase=active&sort_by=total_raise&order=desc` → list trả 100 item,
-  nhưng nhiều cái đã TGE (lọc `tge_status==='post'` bỏ) + lọc Tier-1 → còn ít.
-- Bot cũ `src/surf.ts` `fetchSurfCandidates` dùng **`limit=25`** (mặc định) → chỉ ~22 sau lọc raise. **Đây khả năng cao là nguồn "22".**
-- Cần điều tra: (a) tăng `limit` trong surf.ts của bot; (b) kiểm Surf API `phase=active` có thu hẹp data không
-  (thử bỏ param, đổi sort); (c) kiểm credit/plan Surf còn hạn (nói ~2.850 credits, hết hạn 06/2027). Chưa làm.
-
-Chi tiết cơ chế + quyết định xem Decisions Log bên dưới (các entry 2026-07-10).
+**`.env`:** giờ 100% vô dụng cho cv (không code nào đọc key). Chưa xóa (chứa secret user tự quản, gitignored) — xem Pending #2.
 
 ---
+
 
 ## Spacing System (2026-06-18) — QUY ĐỊNH BẮT BUỘC
 
@@ -62,12 +55,13 @@ Wrapper mọi tab đồng bộ: `max-width:900px; margin:0 auto; padding:0 24px 
 
 ## Stack
 
-- Static HTML (`index.html`) — toàn bộ site trong 1 file
-- Cloudflare Pages Functions (`functions/api/`) — API proxy giữ secret keys
-- Node.js `server.js` — dev server port 8080, SPA fallback (KHÔNG support Functions)
-- Google Sheets CSV — data source cho Valuation + Airdrop tabs
-- Google Apps Script — sync ATH + current price mỗi ngày lúc 2h
-- Puppeteer `export-pdf.js` — xuất toàn trang thành PDF
+- **Static HTML** (`index.html`) — toàn bộ site (HTML + CSS + JS) trong 1 file, host trên **Cloudflare Pages**.
+- **KHÔNG có backend / Cloudflare Functions / secret key** — mọi data đọc từ nguồn public.
+- Nguồn data (đều public, keyless):
+  - **Google Sheets CSV** (gviz) — Valuation (tab DATA) + Airdrop Work/Watchlist.
+  - **CoinGecko** free API — giá / ATH (fetch live trong `index.html`).
+  - **Google Translate** (gtx) — dịch VI→EN cho Airdrop.
+- **Google Apps Script** (nằm trong Sheet, chạy daily 2h) — sync ATH + current price vào DATA tab.
 
 ---
 
@@ -172,37 +166,6 @@ Logic hiện tại (2026-06-11):
 
 ---
 
-## fetch-before-ath.js — script local fill cột I (beforeATH)
-
-Chạy trên máy local (VN IP nên không bị sàn chặn):
-
-```bash
-cd C:\Users\p\Desktop\Claude\CV
-node fetch-before-ath.js
-```
-
-Cách hoạt động:
-1. Đọc sheet DATA (CSV public) → ticker + TGE date
-2. Lấy `ath_date` mới nhất từ CoinGecko `/coins/markets` (key đọc từ `.env`)
-3. Mỗi token hỏi lần lượt: **Binance → Bybit → Gate.io → MEXC** (public API, không cần key)
-4. Tính `min(low)` daily candles trong [TGE → ATH], theo các rule:
-   - ATH trước TGE hoặc cùng ngày TGE (intraday) → bỏ trống
-   - ATH trong 1–3 ngày TGE → beforeATH = close ngày TGE
-   - **Bỏ candle đầu tiên của sàn** — wick listing là giá ảo (ARB mở 0.5, SUI 0.1); rule này cũng cover case sàn list muộn hơn TGE (SUI TGE 01/05 nhưng Binance list 03/05)
-5. Output cuối: cột số (dấu phẩy thập phân) → copy paste thẳng vào ô **I2** của sheet
-
-Khi nào chạy lại: khi thêm token mới vào sheet, hoặc khi token phá ATH mới (beforeATH phụ thuộc cửa sổ TGE→ATH nên ATH đổi thì phải tính lại). Không cần daily.
-
-Đã verify khớp với số nhập tay: OP 0.396, SUI 0.362, ARB 0.739, TIA 2.13, ENA 0.703, EIGEN 2.142...
-
-Chỉ sync 2 cột:
-- Col L: ATH (`c.ath`)
-- Col N: current price (`c.current_price`)
-
-Cột J (beforeATH) **bỏ trống** — đã thử CoinGecko (401), Binance (451 geo-block), OKX (ít data), CryptoCompare (cần key, SSL issue), Gate.io (user từ chối), CoinDesk API (ít data). Chưa có giải pháp free hoạt động tốt.
-
----
-
 ## WTE Cards (Airdrop tab)
 
 - Logo: lấy từ `unavatar.io/twitter/{handle}` — extract handle từ cột Twitter
@@ -212,149 +175,33 @@ Cột J (beforeATH) **bỏ trống** — đã thử CoinGecko (401), Binance (45
 
 ---
 
-## Watchlist Tab (mục thứ 3 — giữa Valuation và Airdrop)
+## Watchlist Tab (sub-tab trong Airdrop)
 
-**Nav:** About me | Valuation | **Watchlist** | Airdrop  
-**Route:** `/watchlist`
-
-### Data sources
-
-| Source | Mục đích |
-|---|---|
-| **Cloudflare KV** (binding `WATCHLIST`, key `projects`) | **Source of truth — cross-device.** Load đầu tiên khi mở tab |
-| `watchlist-data.json` | 42 project tĩnh import từ CSV (Desktop) — chỉ fallback khi KV rỗng |
-| `vc-tier1.json` | 33 Tier-1 VC/angel — filter tiêu chuẩn |
-| `functions/api/watchlist.js` | Proxy Surf AI API + KV load/save (giữ `SURF_API` key an toàn) |
-| `localStorage wl_projects_v2` | Cache project data trên browser |
-| `localStorage wl_user_v2` | Participation chips per project |
-
-### KV persistence (cross-device) — 2026-06-18
-
-- **Binding name: `WATCHLIST`** (set trong Cloudflare Pages Dashboard → Settings → Functions → KV bindings). Code đọc `context.env.WATCHLIST`. **Tên này PHẢI khớp Dashboard** — đừng tự đổi.
-- `wlInit()` load thứ tự: KV (`?action=kv-load`) → localStorage → static JSON. KV có data thì dùng luôn, KHÔNG để wlLoadStorage() ghi đè.
-- `wlInitialFetch()` (static JSON fallback) chỉ ghi localStorage, **KHÔNG push lên KV** — tránh đè data đã sync bằng 37 project tĩnh.
-- Mọi save (sync/add/delete) → `wlSaveStorage()` → ghi localStorage + POST `kv-save`. Nút `↑` Save thủ công cũng gọi cùng endpoint.
-
-### Surf AI API
-
-- **Base:** `https://api.asksurf.ai/gateway/v1`
-- **Key:** `SURF_API` trong `.env` (local) + `.dev.vars` (wrangler) + Cloudflare Pages Dashboard (production)
-- **Credits:** ~2,879 remaining, expire 06/2027
-- **Endpoints dùng:**
-  - `GET /search/airdrop?sort_by=total_raise&limit=100&phase=active` — 2 credits, list pre-TGE projects
-  - `GET /project/detail?q=<name>` — 1 credit, full data (investors, tge_status, x_handle, logo)
-
-### Filter logic
-
-Chỉ hiện project có ít nhất 1 backer trong `vc-tier1.json`. Matching dùng substring (case-insensitive) — "a16z CSX" match "a16z".
-
-### Admin mode
-
-Password: `vi2702` (client-side only, không phải bảo mật thật).
-
-Unlock → 3 nút xuất hiện (cùng size/style, icon đồng bộ):
-- **↻ Sync** — gộp 2 phase trong 1 lần chạy:
-  - Phase 1 (clean): project không còn trong active list → check `detail`, xóa nếu `tge_status === 'post'`. **Cap tối đa 10 detail call/sync** để tiết kiệm credit.
-  - Phase 2 (thêm mới): fetch 100 từ Surf API, check Tier-1 + pre-TGE, thêm project mới. **KHÔNG filter theo raise** (Tier-1 invest seed nhỏ $3-4M bình thường).
-- **↑ Save** — push toàn bộ `wlProjects` lên KV thủ công, báo `✓ Saved N projects` hoặc lỗi cụ thể.
-- **+ Add** — mở **modal popup** (overlay giữa màn hình), thêm thủ công theo tên. Đóng bằng Cancel / click backdrop / Escape.
-
-> Nút 🧹 Clean cũ đã bỏ — logic clean gộp vào Sync (2026-06-18).
-
-### Layout notes (2026-06-18)
-- Sub-tab bar (`.ard-subtabs`) `position:sticky; top:56px` — không mất khi scroll.
-- Raise column width cố định `72px` — tránh spacing thừa giữa Project và Raise.
-- Mobile ≤640px: ẩn cột VCs, chip nhỏ hơn.
-- **Modal HTML phải nằm TRƯỚC `<script>` tag** — script chạy inline (không có DOMContentLoaded), đặt sau → `getElementById` null → crash toàn bộ JS → mất hết data hiển thị.
-
-### Scripts
-
-```bash
-node import-watchlist.js    # parse surf-table*.csv từ Desktop → watchlist-data.json
-node enrich-watchlist.js    # thêm x_handle + logo_url cho project chưa có (cần wrangler chạy)
-```
-
-### Participation chips
-
-4 options per project: **Contribute** (cam) / Point / Retroactive / Yap. Multi-select. Lưu localStorage. Luôn hiển thị đủ 4, option chưa chọn mờ hơn.
-
-### Arrow button
-
-Mũi tên SVG — **cam + bấm được** nếu project có guide trong Airdrop tab (match tên WTE card), **xám + disabled** nếu chưa có. Click → navigate sang Airdrop + scroll đến card + highlight 1.5s.
-
----
-
-## Personal Tab (mục thứ 4 cạnh About me/Valuation/Airdrop)
-
-- Nav button "Personal" → password gate client-side (`PERSONAL_PASSWORD = 'hieu1403'`, hardcoded trong `index.html`, không phải bảo mật thật — chỉ chặn người xem thường)
-- Unlock → lưu `sessionStorage.personal_unlocked = '1'`, không cần nhập lại trong session
-- 3 sub-tab:
-  - **X analysis** — xem mục riêng "X Analysis Tab" bên dưới
-  - **Watchlist** — chưa định nghĩa nội dung
-  - **Writing** — chưa định nghĩa nội dung
-- Route `/personal` đã thêm vào `routeFromPath()`, server SPA fallback đã cover
-
----
-
-## X Analysis Tab (Personal → X analysis)
-
-**Status (2026-06-15):** MVP table view xong, đã test bằng `wrangler pages dev`, **chưa commit/push**.
-
-### Đã làm
-- `functions/api/x-analysis.js` — Cloudflare Pages Function, gọi X API v2 `GET /2/users/{id}/tweets?tweet.fields=public_metrics,created_at&exclude=retweets,replies`, trả 20 tweet gần nhất
-- Secrets: `X_BEARER_TOKEN`, `X_USER_ID` (user `nguyen0xhieu`, id `1518820673581305857`) lưu trong `.env` (tham khảo) và `.dev.vars` (dùng cho `wrangler pages dev`, gitignored) — **CHƯA set trên Cloudflare Pages Dashboard** (cần làm trước khi deploy production)
-- `.gitignore` thêm `.dev.vars`
-- Frontend tab X analysis: 3 summary card (Posts / Avg engagement rate / Total impressions) + bảng tweet gần nhất (ngày, nội dung-link, impressions, eng. rate, like, RT, reply)
-- Local test: chạy `npx wrangler pages dev . --port 8788` (server.js cũ port 8080 KHÔNG hỗ trợ Functions)
-
-### X API setup — lưu ý quan trọng
-- Account "Free" project bị **deprecated**, app trong đó báo lỗi `client-not-enrolled` dù đã add payment method
-- Fix: tạo app mới trong project **"Pay Per Use"** (môi trường development/staging/production, mỗi cái cho phép tối đa 3 app) → Bearer Token từ app này hoạt động được
-- X API hiện dùng **prepaid credits** (pay-per-use), không phải subscription tier cố định
-
-### Đánh giá & hướng tiếp theo (chưa quyết định)
-- Bàn về dashboard kiểu "KOL Growth OS" (Grok gợi ý, copy template của người khác) — nhận định: nếu chỉ làm metric card + chart tĩnh thì **không hữu ích hơn X Analytics có sẵn (free)**.
-- Phần thực sự có giá trị, dựa theo phân tích x-algorithm (xai-org/x-algorithm):
-  1. Tính tỉ lệ **(reply+quote)/like** — đo "amplification", X Analytics không show trực tiếp
-  2. **Tracking theo thời gian** (followers/engagement theo tuần) — cần lưu snapshot định kỳ (vd: ghi vào Google Sheet hàng ngày, giống pattern ATH/currentPrice hiện tại), vì API chỉ trả 20 tweet gần nhất, không có lịch sử
-- Sidebar kiểu Content Pillars/Calendar/Roadmap/Task Tracker (từ template Grok) — quá lớn, để dành cho sub-tab **Writing** sau, không làm trong X analysis.
-- **User dừng ở đây vì mệt — quyết định hướng tiếp theo (amplification ratio / tracking) vào buổi sau.**
-
----
-
-## Best Roles to Grind — Spec (chưa implement)
-
-Tab Airdrop → sub-tab "Best Roles to Grind". User cung cấp danh sách project có role grinding, hệ thống tự tính rating.
-
-### Rating system
-
-| Tiêu chí | Stars | Logic |
-|----------|-------|-------|
-| Fundraising | 1–3★ | mốc cụ thể cần xác định từ data (xem bên dưới) |
-| Layer-1 / Layer-2 | +1★ | chain type ưu tiên |
-| Stable chain (Tempo, Arc...) | +2★ | established chain, ít rủi ro hơn |
-| VC quality | +1★ | **TODO** — cần bộ VC list trước khi làm |
-
-**Final rating:** tổng stars → S (cao) / A / B
-
-### Fundraising thresholds (chưa xác định)
-Cần phân tích phân phối fundraising của ~71 token trong DATA sheet để tìm breakpoint tự nhiên cho 1★ / 2★ / 3★.
+**Vị trí:** Airdrop view → 2 sub-tab **Work | Watchlist** (không phải nav riêng, không có route riêng).
 
 ### Data source
-Dự kiến: thêm tab mới trong Google Sheet (tương tự Work to Earn). User nhập: project name, twitter handle, chain type, fundraising (lấy từ DATA nếu có). Website fetch CSV → tính rating → render cards.
+- Đọc trực tiếp Google Sheet tab **`Watchlist`** qua gviz CSV (`sheet=Watchlist`) — **public, không key, không KV, không backend**.
+- Cột: **A** tên · **B** X handle · **C** narrative · **D** gọi vốn (vd `$500M`) · **E** "có việc" YES/NO.
+- Logo lấy từ `unavatar.io/twitter/{handle}`.
 
-### VC bonus (TODO)
-Cần có bộ data: danh sách VC tier-1/tier-2 → nếu project có VC trong list → +1★. Làm sau khi có data.
+### Render
+- Card gọn: tên (link X) + dòng meta `narrative · gọi vốn` (13px, màu `--sub`) + mũi tên trạng thái.
+- **Mũi tên** = icon `arrow.svg` (user tự vẽ), tô màu bằng CSS mask + `currentColor`:
+  - **Sáng** (accent) = cột E YES. Nếu tên khớp 1 card Work → **bấm được**, nhảy sang Work + highlight 1.5s (`wlGoWork`).
+  - **Mờ** (border) = cột E NO.
+
+### Ngôn ngữ (VI/EN)
+- Mặc định VI. Dropdown **English** → dịch narrative + gọi vốn qua Google Translate (`gtranslate()` — hàm dùng chung với card Work), cache trong `wlData.EN`. Text trạng thái rỗng cũng đổi theo ngôn ngữ.
 
 ---
 
 ## Pending / Known Issues
 
-1. ~~**beforeATH** — chưa có giải pháp~~ → **ĐÃ GIẢI QUYẾT 2026-06-11** bằng `fetch-before-ath.js` chạy local (xem mục riêng ở trên).
+1. **×ATH filter** — website + Apps Script đang bỏ ATH cùng ngày TGE (râu nến listing). Một số token pump ảo 1-3 ngày đầu; cân nhắc mở rộng window filter.
 
-2. **×ATH filter** — hiện filter ATH cùng ngày TGE (cả ở website lẫn Apps Script). Nhưng một số token ATH trong 1-3 ngày đầu cũng có thể là pump ảo. Cân nhắc mở rộng window filter.
+2. **`.env` còn tồn tại nhưng KHÔNG còn dùng cho cv** — chứa key của bot research (SURF_API, OPENAI, BOT_TOKEN, WL_*) + X/CoinGecko/CoinDesk cũ. cv giờ không cần key nào. Nên xóa `.env` hoặc chuyển key bot sang repo bot. (gitignored nên không ảnh hưởng repo/deploy.)
 
-3. **CoinGecko API key** — đang dùng Demo key trong `.env` (đổi từ `.env.txt`, 2026-06-11; gitignored). Key từng bị commit lên GitHub trước đây — nên regenerate nếu cần bảo mật. `.env` cũng chứa `COINDESK_API_KEY` (chưa dùng — CoinDesk API thử rồi nhưng ít data).
+3. **`pfp.png`** — `index.html` trỏ `pfp.png` (chữ thường). Đảm bảo file đúng tên thường để không 404 khi deploy Cloudflare (Linux phân biệt hoa/thường).
 
 ---
 
@@ -362,29 +209,32 @@ Cần có bộ data: danh sách VC tier-1/tier-2 → nếu project có VC trong 
 
 ```
 index.html            — toàn bộ website (HTML + CSS + JS)
-server.js             — dev server (có SPA fallback cho /valuation)
-export-pdf.js         — xuất PDF toàn trang bằng Puppeteer (cần server đang chạy)
-fetch-before-ath.js   — fill cột I beforeATH, chạy local (xem mục riêng)
-analyze-pattern.js    — script nháp phân tích pattern retention (local, không push)
-.env                  — API keys: CG_API_KEY, COINDESK_API_KEY (gitignored)
-.gitignore            — bao gồm .env, node_modules, .claude/
+_redirects            — Cloudflare Pages SPA fallback (/* → /index.html)
+icon.png              — favicon + icon iPhone home screen (mèo-kính, mắt cam)
+pfp.png               — avatar Hieu Nguyen (About me)
+arrow.svg             — icon mũi tên cho Watchlist (tô màu qua CSS mask)
+highlights.json + highlights/  — ảnh highlights ở About me
+.gitignore            — .env, node_modules, .claude/, .dev.vars, .wrangler/
 ```
+> Đã xóa khỏi repo: `functions/`, `server.js`, `export-pdf.js`, `package.json`, `.dev.vars`, toàn bộ file research/bot (archive tại `Desktop/cv-research-archive.md`).
 
 ---
 
 ## Lệnh thường dùng
 
 ```bash
-node server.js              # chạy local → http://localhost:8080
-node export-pdf.js          # xuất cv.pdf (cần server đang chạy)
-node fetch-before-ath.js    # tính beforeATH → copy output paste vào cột I sheet
-git add index.html && git commit -m "..." && git push
+# Site tĩnh — mở thẳng index.html trong browser để xem, hoặc:
+npx serve .                 # hoặc bất kỳ static server nào
+git add -A && git commit -m "..." && git push
 ```
 
 ---
 
 ## Decisions Log
 
+- 2026-07-12: Thu gọn `cv` về đúng scope "website đọc Google Sheet để hiển thị" — archive toàn bộ code research/gọi-API + tiện ích dev vào `Desktop/cv-research-archive.md` rồi xóa 10 file (watchlist-research.js, vc-tier1.json, apps-script-webhook.gs, WATCHLIST-RESEARCH-SETUP.md, fetch-before-ath.js, before-ath-output.txt, pre-tge-watchlist-archive-2026-07-06.md, server.js, export-pdf.js, package.json) + node_modules/ — reason: user tách bot tìm kèo thành dự án riêng (`research_airdrop_bot`); repo cv chỉ giữ phần hiển thị (Valuation/Airdrop/Watchlist).
+- 2026-07-12: Xóa `fav_icon.png`/`logo.svg`/`logo_spacing.svg` + khôi phục `icon.png` bằng `git checkout` — reason: phát hiện đây là branding EZwallet lọt nhầm vào cv từ phiên 2026-07-10 (md5 khớp file trong `build_on_arc/ezwallet`); bản working `icon.png` đã bị ghi đè bằng logo "EZ", favicon THẬT của cv là mèo-kính (bản committed). Không phải do `git pull` phiên này (pull chỉ đổi index.html 1 dòng).
+- 2026-07-12: Watchlist đổi được sang tiếng Anh khi bấm English — thêm `wlData={VI,EN}` + `translateWL()` (tách `gtranslate()` dùng chung với card Work), badge "Có việc/Chưa có" → mũi tên sáng(accent)/mờ(border), meta 11→13px màu `--sub` — reason: trước đó `switchLang()` không render lại Watchlist và badge hardcode tiếng Việt.
 - 2026-06-10: Cập nhật mapping cột CSV trong `index.html` (`fetchPublicData`) để khớp với cột mới của Google Sheet tab DATA — reason: Sheet đã đổi thứ tự cột (TGE DATE chuyển từ G ra A, các cột khác dồn theo), khiến `fundraising` luôn = 0 → toàn bộ data bị filter, bảng Valuation trống trên 0xhieu.xyz.
 - 2026-06-10: Đổi ngưỡng Market Condition `lvlIdx` từ `[2,4,8,15]` sang `[1,2,5,10]` (Dead/Weak/Normal/Good/Uptrend) — reason: phân tích median4 của 68 deal lịch sử cho thấy ngưỡng cũ làm Normal quá hẹp, không phải nhóm đông nhất; ngưỡng mới giữ Normal là nhóm đông nhất và Uptrend (≥10) khớp với các giai đoạn uptrend thực tế (Q1/2023, Q1/2024 có median4 ~13.5-16.5).
 - 2026-06-10: Đổi tiếp Market Condition từ 5 levels (Dead/Weak/Normal/Good/Uptrend) sang 3 levels (Weak/Normal/Strong), ngưỡng `[4.3, 13]` — reason: "Normal nhiều nhất" mâu thuẫn với cảm nhận thực tế của user, vì 2025-2026 chiếm 72% data (do thiếu data 2018-2024) khiến median tổng thể trùng với giai đoạn user coi là tệ. Calibrate lại theo giai đoạn: Strong≈chu kỳ 2023-2024 (≥13), Normal≈Q2-Q3/2022 (4.3-13), Weak≈2025-2026 (<4.3).

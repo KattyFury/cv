@@ -854,20 +854,23 @@
       text-decoration: none; flex: 1; min-width: 0;
     }
     .wl-name:hover { color: var(--accent); }
-    /* Badge trạng thái: có việc = cam, chưa có = xám */
-    .wl-badge {
-      font-size: 11px; font-weight: 700; padding: 2px 8px;
-      border-radius: 6px; flex-shrink: 0; border: none;
-      font-family: inherit; white-space: nowrap; line-height: 1.4;
+    /* Mũi tên trạng thái (icon arrow.svg): có việc = sáng (accent), chưa có = mờ (border) */
+    .wl-arrow {
+      display: inline-block; width: 18px; height: 18px; flex-shrink: 0;
+      padding: 0; border: none; appearance: none; -webkit-appearance: none;
+      background-color: currentColor;
+      -webkit-mask: url(arrow.svg) center / contain no-repeat;
+      mask: url(arrow.svg) center / contain no-repeat;
+      transition: transform 0.15s, color 0.15s;
     }
-    .wl-badge--yes { background: var(--accent); color: #fff; }
-    .wl-badge--no  { background: var(--off); color: var(--muted); }
-    .wl-badge--link { cursor: pointer; }
-    .wl-badge--link:hover { filter: brightness(0.94); }
-    /* Meta phụ: narrative · gọi vốn — regular 11px xám (không allcaps) */
+    .wl-arrow--on  { color: var(--accent); }
+    .wl-arrow--off { color: var(--border); }
+    .wl-arrow--link { cursor: pointer; }
+    .wl-arrow--link:hover { transform: translateX(3px); }
+    /* Meta phụ: narrative · gọi vốn — regular 13px (to hơn cho dễ đọc) */
     .wl-meta {
       margin-top: 8px; display: flex; align-items: center;
-      flex-wrap: wrap; font-size: 11px; color: var(--muted);
+      flex-wrap: wrap; font-size: 13px; color: var(--sub);
     }
     .wl-dot { margin: 0 8px; color: var(--border); }
     .wl-empty { padding: 60px 0; text-align: center; color: var(--muted); font-size: 14px; }
@@ -888,63 +891,6 @@
     }
     .wl-modal-title { font-size: 15px; font-weight: 600; color: var(--text); }
 
-    /* ── PERSONAL VIEW ────────────────────────────── */
-    #personal-view { display: none; }
-    .personal-wrap {
-      max-width: 900px; margin: 0 auto;
-      padding: 32px calc(var(--row) * 0.75) 60px;
-    }
-
-    .personal-lock {
-      display: flex; flex-direction: column; align-items: center;
-      justify-content: center; gap: 16px;
-      padding: 100px 20px; text-align: center;
-    }
-    .personal-lock-icon { color: var(--muted); }
-    .personal-lock-icon svg { width: 28px; height: 28px; }
-    .personal-lock input {
-      font-family: 'Roboto', sans-serif; font-size: 15px;
-      padding: 8px 12px; border: 1px solid var(--border);
-      border-radius: 8px; outline: none; width: 220px;
-      text-align: center;
-    }
-    .personal-lock input:focus { border-color: var(--accent); }
-    .personal-lock-btn {
-      font-family: 'Roboto', sans-serif; font-size: 15px; font-weight: 600;
-      padding: 8px 20px; border: none; border-radius: 8px;
-      background: var(--accent); color: #1a1a1a; cursor: pointer;
-    }
-    .personal-lock-error { font-size: 13px; color: #e0453a; min-height: 16px; }
-
-    .personal-tabs {
-      display: flex; gap: 8px; border-bottom: 1px solid var(--border);
-      margin-bottom: 24px;
-    }
-    .personal-tab-btn {
-      background: none; border: none; cursor: pointer;
-      font-family: 'Roboto', sans-serif; font-size: 15px; font-weight: 500;
-      color: var(--muted); padding: 12px 4px; margin-bottom: -1px;
-      border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s;
-    }
-    .personal-tab-btn:hover { color: var(--text); }
-    .personal-tab-btn.active { color: var(--text); border-color: var(--accent); }
-
-    .personal-tab-panel { display: none; }
-    .personal-tab-panel.active { display: block; }
-
-    #x-summary { grid-template-columns: 1fr 1fr 1fr; margin-bottom: 16px; }
-    #x-summary .val-card { text-align: center; }
-    #x-summary .x-stat-val { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
-    #x-summary .val-card-label { margin-bottom: 4px; }
-
-    .x-table th, .x-table td { width: auto; white-space: normal; }
-    .x-table th:first-child, .x-table td:first-child { width: 90px; white-space: nowrap; }
-    .x-table th:nth-child(2), .x-table td:nth-child(2) {
-      max-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    }
-    .x-table th:nth-child(n+3), .x-table td:nth-child(n+3) { width: 64px; text-align: right; white-space: nowrap; }
-    .x-table td a { color: var(--sub); text-decoration: none; }
-    .x-table td a:hover { color: var(--accent); }
 
   </style>
 </head>
@@ -1205,70 +1151,6 @@
     </div>
   </div>
 
-  <!-- ── PERSONAL VIEW ─────────────────────────────────── -->
-  <div id="personal-view" style="display:none">
-    <div class="personal-wrap">
-
-      <!-- Lock screen -->
-      <div id="personal-lock" class="personal-lock">
-        <div class="personal-lock-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        </div>
-        <input type="password" id="personal-pw-input" placeholder="Password" />
-        <button class="personal-lock-btn" id="personal-unlock-btn">Unlock</button>
-        <div class="personal-lock-error" id="personal-pw-error"></div>
-      </div>
-
-      <!-- Unlocked content -->
-      <div id="personal-content" style="display:none">
-        <div class="personal-tabs">
-          <button class="personal-tab-btn active" id="ptab-x-btn">X analysis</button>
-          <button class="personal-tab-btn" id="ptab-watchlist-btn">Watchlist</button>
-          <button class="personal-tab-btn" id="ptab-writing-btn">Writing</button>
-        </div>
-
-        <div class="personal-tab-panel active" id="ptab-x-panel">
-          <div class="val-analysis" id="x-summary"></div>
-          <div class="val-table-section">
-            <div class="val-table-scroll">
-              <table class="val-table x-table">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Post</th>
-                    <th>Impr.</th>
-                    <th>Eng. rate</th>
-                    <th>Like</th>
-                    <th>RT</th>
-                    <th>Reply</th>
-                  </tr>
-                </thead>
-                <tbody id="x-tbody"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        <div class="personal-tab-panel" id="ptab-watchlist-panel">
-          <div class="ard-coming-soon">
-            <div class="ard-cs-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-            </div>
-            <div class="ard-cs-text">Watchlist — coming soon</div>
-          </div>
-        </div>
-        <div class="personal-tab-panel" id="ptab-writing-panel">
-          <div class="ard-coming-soon">
-            <div class="ard-cs-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-            </div>
-            <div class="ard-cs-text">Writing — coming soon</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
   <!-- Lightbox -->
   <div id="lightbox">
     <button id="lightbox-close" aria-label="Close">&#x2715;</button>
@@ -1441,7 +1323,13 @@
       ardWatchPanel.style.display  = work ? 'none'  : 'block';
       document.getElementById('rank-filter-float').style.display = work ? 'block' : 'none';
       // language dropdown hiện luôn ở cả 2 tab cho đồng bộ giao diện
-      if (!work) { renderWL(); fetchWL().then(renderWL); }
+      if (!work) {
+        renderWL();
+        fetchWL().then(async () => {
+          if (wteLang === 'EN' && !wlLoaded.EN) await translateWL();
+          renderWL();
+        });
+      }
     }
     ardWorkBtn.addEventListener('click',  () => showArdTab('work'));
     ardWatchBtn.addEventListener('click', () => showArdTab('watchlist'));
@@ -1457,117 +1345,6 @@
     navValBtn.addEventListener('click', () => showValuation());
     navArdBtn.addEventListener('click', () => showAirdrop());
     window.addEventListener('popstate', routeFromPath);
-
-    // ── Personal view — password gate ────────────────
-    const PERSONAL_PASSWORD = 'hieu1403';
-    const personalLock    = document.getElementById('personal-lock');
-    const personalContent = document.getElementById('personal-content');
-    const personalPwInput = document.getElementById('personal-pw-input');
-    const personalPwError = document.getElementById('personal-pw-error');
-    const personalUnlockBtn = document.getElementById('personal-unlock-btn');
-
-    function tryUnlockPersonal() {
-      if (personalPwInput.value === PERSONAL_PASSWORD) {
-        sessionStorage.setItem('personal_unlocked', '1');
-        personalLock.style.display = 'none';
-        personalContent.style.display = '';
-        personalPwError.textContent = '';
-        loadXAnalysis();
-      } else {
-        personalPwError.textContent = 'Incorrect password';
-      }
-    }
-
-    personalUnlockBtn.addEventListener('click', tryUnlockPersonal);
-    personalPwInput.addEventListener('keydown', e => {
-      if (e.key === 'Enter') tryUnlockPersonal();
-    });
-
-    if (sessionStorage.getItem('personal_unlocked') === '1') {
-      personalLock.style.display = 'none';
-      personalContent.style.display = '';
-      loadXAnalysis();
-    }
-
-    // ── Personal view — sub-tab switching ────────────
-    const personalTabs = [
-      { btn: 'ptab-x-btn',         panel: 'ptab-x-panel' },
-      { btn: 'ptab-watchlist-btn', panel: 'ptab-watchlist-panel' },
-      { btn: 'ptab-writing-btn',   panel: 'ptab-writing-panel' },
-    ];
-    personalTabs.forEach(({ btn, panel }) => {
-      document.getElementById(btn).addEventListener('click', () => {
-        personalTabs.forEach(({ btn: b, panel: p }) => {
-          document.getElementById(b).classList.remove('active');
-          document.getElementById(p).classList.remove('active');
-        });
-        document.getElementById(btn).classList.add('active');
-        document.getElementById(panel).classList.add('active');
-      });
-    });
-
-    // ── Personal view — X analysis ───────────────────
-    let xAnalysisLoaded = false;
-
-    async function loadXAnalysis() {
-      if (xAnalysisLoaded) return;
-      xAnalysisLoaded = true;
-
-      const summary = document.getElementById('x-summary');
-      const tbody   = document.getElementById('x-tbody');
-
-      try {
-        const res = await fetch('/api/x-analysis');
-        const data = await res.json();
-        if (!data.data) throw new Error(data.title || 'API error');
-
-        const tweets = data.data;
-        const rates = tweets.map(t => {
-          const m = t.public_metrics;
-          const eng = m.like_count + m.retweet_count + m.reply_count + m.quote_count;
-          return m.impression_count > 0 ? eng / m.impression_count : 0;
-        });
-        const avgRate = rates.reduce((a, b) => a + b, 0) / rates.length;
-        const totalImpr = tweets.reduce((a, t) => a + t.public_metrics.impression_count, 0);
-
-        summary.innerHTML = `
-          <div class="val-card">
-            <div class="val-card-label calc-card-label">Posts</div>
-            <div class="x-stat-val">${tweets.length}</div>
-          </div>
-          <div class="val-card">
-            <div class="val-card-label calc-card-label">Avg engagement rate</div>
-            <div class="x-stat-val">${(avgRate * 100).toFixed(1)}%</div>
-          </div>
-          <div class="val-card">
-            <div class="val-card-label calc-card-label">Total impressions</div>
-            <div class="x-stat-val">${totalImpr.toLocaleString()}</div>
-          </div>
-        `;
-
-        tbody.innerHTML = tweets.map((t, i) => {
-          const m = t.public_metrics;
-          const eng = m.like_count + m.retweet_count + m.reply_count + m.quote_count;
-          const rate = m.impression_count > 0 ? (eng / m.impression_count * 100).toFixed(1) : '—';
-          const date = new Date(t.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
-          const text = t.text.replace(/\s+/g, ' ').trim();
-          const url = `https://x.com/0xhieuxyz/status/${t.id}`;
-          return `
-            <tr>
-              <td>${date}</td>
-              <td><a href="${url}" target="_blank" rel="noopener" title="${text.replace(/"/g, '&quot;')}">${text}</a></td>
-              <td>${m.impression_count.toLocaleString()}</td>
-              <td>${rate}%</td>
-              <td>${m.like_count}</td>
-              <td>${m.retweet_count}</td>
-              <td>${m.reply_count}</td>
-            </tr>
-          `;
-        }).join('');
-      } catch (e) {
-        tbody.innerHTML = `<tr><td colspan="7" class="val-empty">Failed to load: ${e.message}</td></tr>`;
-      }
-    }
 
     // ── Data layer — Google Sheets (read-only) ────────
     // Columns: A=tgeDate, B=ticker, C=cgId, D=type, E=fundraising($), F=vcAlloc(%), G=totalSupply, H=priceTGE, J=ath, N=currentPrice
@@ -2240,17 +2017,9 @@
       }
     }
 
-    // ── Auto-translate VI → EN ────────────────────────
-    async function translateToEN() {
-      if (wteLoaded.EN) return;
-      if (!wteData.VI.length) return;
+    // ── Auto-translate VI → EN (Google Translate, dùng chung) ─
+    async function gtranslate(texts) {
       const SEP = '\n[|||]\n';
-      const texts = [];
-      wteData.VI.forEach(p => {
-        ['getStarted','daily','weekly'].forEach(f => {
-          (p[f] || []).forEach(item => texts.push(item.text || ''));
-        });
-      });
       const BATCH = 30;
       const batches = [];
       for (let i = 0; i < texts.length; i += BATCH) batches.push(texts.slice(i, i + BATCH));
@@ -2266,7 +2035,19 @@
           return parts.slice(0, batch.length);
         } catch { return batch; }
       }));
-      const translated = results.flat();
+      return results.flat();
+    }
+
+    async function translateToEN() {
+      if (wteLoaded.EN) return;
+      if (!wteData.VI.length) return;
+      const texts = [];
+      wteData.VI.forEach(p => {
+        ['getStarted','daily','weekly'].forEach(f => {
+          (p[f] || []).forEach(item => texts.push(item.text || ''));
+        });
+      });
+      const translated = await gtranslate(texts);
       let idx = 0;
       wteData.EN = wteData.VI.map(p => {
         const en = { ...p };
@@ -2364,8 +2145,12 @@
       ({ VI: langViBtn, EN: langEnBtn })[lang]?.classList.add('active');
       langDdLabel.textContent = langLabels[lang];
       langDdMenu.style.display = 'none';
-      if (wteLang === 'EN' && !wteLoaded.EN) await translateToEN();
+      if (wteLang === 'EN') {
+        if (!wteLoaded.EN) await translateToEN();
+        if (!wlLoaded.EN && wlLoaded.VI) await translateWL();
+      }
       renderWTE();
+      renderWL();
     }
 
     langViBtn.addEventListener('click', () => switchLang('VI'));
@@ -2376,10 +2161,25 @@
     // Sheet tab "Watchlist" · cột A tên · B X · C narrative · D gọi vốn · E có việc (YES/NO)
     // ══════════════════════════════════════════════════
     const WL_URL = `https://docs.google.com/spreadsheets/d/${WTE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Watchlist`;
-    let wlData = [];
-    let wlLoaded = false;
+    let wlData = { VI: [], EN: [] };
+    let wlLoaded = { VI: false, EN: false };
 
     const wlSlug = n => n.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+    // Dịch narrative + gọi vốn của Watchlist sang EN (dùng chung gtranslate)
+    async function translateWL() {
+      if (wlLoaded.EN || !wlData.VI.length) return;
+      const texts = [];
+      wlData.VI.forEach(p => { texts.push(p.narrative || '', p.raise || ''); });
+      const translated = await gtranslate(texts);
+      let idx = 0;
+      wlData.EN = wlData.VI.map(p => ({
+        ...p,
+        narrative: translated[idx++] || p.narrative,
+        raise:     translated[idx++] || p.raise,
+      }));
+      wlLoaded.EN = true;
+    }
 
     function parseWL(csvText) {
       const rows = parseCSVFull(csvText);
@@ -2405,26 +2205,31 @@
     }
 
     async function fetchWL() {
-      if (wlLoaded) return;
+      if (wlLoaded.VI) return;
       try {
         const res  = await fetch(WL_URL);
         const text = await res.text();
-        wlData = parseWL(text);
-        wlLoaded = true;
+        wlData.VI = parseWL(text);
+        wlLoaded.VI = true;
       } catch (err) {
         console.warn('WL fetch failed:', err);
-        wlData = [];
+        wlData.VI = [];
       }
     }
 
     function renderWL() {
       const container = document.getElementById('wl-cards');
-      if (!wlLoaded) { container.innerHTML = '<div class="wl-empty">Loading…</div>'; return; }
-      if (!wlData.length) { container.innerHTML = '<div class="wl-empty">Chưa có dự án nào trong watchlist.</div>'; return; }
+      if (!wlLoaded.VI) { container.innerHTML = '<div class="wl-empty">Loading…</div>'; return; }
+      // Khi ở EN nhưng bản dịch chưa xong thì tạm hiện bản VI
+      const projects = (wteLang === 'EN' && wlLoaded.EN) ? wlData.EN : wlData.VI;
+      if (!projects.length) {
+        const msg = wteLang === 'EN' ? 'No projects in the watchlist yet.' : 'Chưa có dự án nào trong watchlist.';
+        container.innerHTML = `<div class="wl-empty">${msg}</div>`; return;
+      }
 
       const wteSlugs = new Set((wteData.VI || []).map(p => wlSlug(p.name)));
 
-      container.innerHTML = wlData.map(p => {
+      container.innerHTML = projects.map(p => {
         const handle = p.x
           ? p.x.replace(/.*twitter\.com\/|.*x\.com\/|^@/, '').split('?')[0].trim()
           : '';
@@ -2439,10 +2244,10 @@
         let badge;
         if (p.hasWork) {
           badge = wteSlugs.has(wlSlug(p.name))
-            ? `<button class="wl-badge wl-badge--yes wl-badge--link" onclick="wlGoWork('${wlSlug(p.name)}')">Có việc →</button>`
-            : `<span class="wl-badge wl-badge--yes">Có việc</span>`;
+            ? `<button class="wl-arrow wl-arrow--on wl-arrow--link" onclick="wlGoWork('${wlSlug(p.name)}')" aria-label="View tasks"></button>`
+            : `<span class="wl-arrow wl-arrow--on" aria-hidden="true"></span>`;
         } else {
-          badge = `<span class="wl-badge wl-badge--no">Chưa có</span>`;
+          badge = `<span class="wl-arrow wl-arrow--off" aria-hidden="true"></span>`;
         }
 
         const meta = [
