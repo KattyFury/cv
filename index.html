@@ -1960,13 +1960,13 @@
     }
 
     // ── Parse CSV into project list ───────────────────
-    // Tiềm năng (cột C): nhận số "1-3", "3 sao", hoặc "★★★" → trả về số 0-3
+    // Tiềm năng (cột C): đếm dấu "*" hoặc "★" (*, **, ***), hoặc số "1-3" → trả về 0-3
     function parseStars(raw) {
       const s = (raw || '').trim();
+      const stars = (s.match(/[★*]/g) || []).length;
+      if (stars) return Math.min(stars, 3);
       const d = s.match(/[1-3]/);
-      if (d) return parseInt(d[0], 10);
-      const n = (s.match(/★/g) || []).length;
-      return n ? Math.min(n, 3) : 0;
+      return d ? parseInt(d[0], 10) : 0;
     }
 
     function parseWTE(csvText) {
@@ -1982,6 +1982,9 @@
           current = null;
           continue;
         }
+
+        // Bỏ dòng header (col A = "Tên dự án"/"Name"/"Project")
+        if (/^(t[eê]n|name|project|d[uự]\s*[aá]n)/i.test(projectName)) { current = null; continue; }
 
         // New project row: col A has a value
         if (projectName) {
@@ -2189,16 +2192,20 @@
     // Dịch narrative + gọi vốn của Watchlist sang EN (dùng chung gtranslate)
     async function translateWL() {
       if (wlLoaded.EN || !wlData.VI.length) return;
-      const texts = [];
-      wlData.VI.forEach(p => { texts.push(p.narrative || '', p.raise || ''); });
+      const texts = wlData.VI.map(p => p.narrative || '');
       const translated = await gtranslate(texts);
-      let idx = 0;
-      wlData.EN = wlData.VI.map(p => ({
-        ...p,
-        narrative: translated[idx++] || p.narrative,
-        raise:     translated[idx++] || p.raise,
-      }));
+      wlData.EN = wlData.VI.map((p, i) => ({ ...p, narrative: translated[i] || p.narrative }));
       wlLoaded.EN = true;
+    }
+
+    // Gọi vốn: cột D là số triệu USD ("500,0") → "$500M". Giữ nguyên nếu đã có ký hiệu.
+    function fmtRaise(raw) {
+      const s = (raw || '').trim();
+      if (!s) return '';
+      if (/[$mMkKbB]/.test(s)) return s;
+      const n = parseFloat(s.replace(/\./g, '').replace(',', '.'));
+      if (!isFinite(n)) return s;
+      return '$' + n + 'M';
     }
 
     function parseWL(csvText) {
@@ -2213,12 +2220,14 @@
         if (!name) return;
         // Bỏ dòng header (row 1 nếu cột A là "tên"/"name"/"dự án"/"project")
         if (i === 0 && /^(t[eê]n|name|project|d[uự]\s*[aá]n)/i.test(name)) return;
+        const e = (r[4] || '').trim().toLowerCase();
         out.push({
           name,
           x:         (r[1] || '').trim(),
           narrative: (r[2] || '').trim(),
-          raise:     (r[3] || '').trim(),
-          hasWork:   /^(yes|y|có|co|1|true|✓)$/i.test((r[4] || '').trim()),
+          raise:     fmtRaise(r[3]),
+          // Sáng khi cột E = YES hoặc GIAT (give it a try); tối khi NO
+          hasWork:   /^(yes|y|có|co|1|true|✓|giat)$/.test(e) || e.includes('give it a try'),
         });
       });
       return out;
