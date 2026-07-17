@@ -928,8 +928,8 @@
             <div class="hero-location">Hanoi, Vietnam</div>
           </div>
         </div>
-        <div class="hero-tagline">Former crypto analyst, now creating content and building community</div>
-        <div class="hero-desc">I highlight promising crypto projects, explaining how they work and why they matter in a simple, easy-to-understand way.</div>
+        <div class="hero-tagline">Former crypto analyst, now creating content, building community and building products on Web3</div>
+        <div class="hero-desc">I don't sell dreams – I share what actually works in crypto, explained simply.<br />Outside crypto: boxer, husband, dad of one.</div>
         <div class="socials">
           <a class="social-btn" href="https://x.com/0xhieuxyz" target="_blank" rel="noopener">
             <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path d="M44.2857 55.7143L10 10H30L55.7143 44.2857M44.2857 55.7143L70 90H90L55.7143 44.2857M44.2857 55.7143L10 90M55.7143 44.2857L90 10"/></svg>
@@ -952,9 +952,10 @@
           <div class="tl-item">
             <div class="tl-year">2026</div>
             <div class="tl-body">
-              <div class="tl-role">Community Builder</div>
+              <div class="tl-role">Web3 Builder &amp; Community Builder</div>
               <ul class="tl-bullets">
-                <li>Built a 500+ member Telegram community in Q1/2026: <a href="https://t.me/airdrop_1wallet" target="_blank" rel="noopener" style="color:var(--text);text-underline-offset:3px;">t.me/airdrop_1wallet</a></li>
+                <li>Builder: Built <strong>EZwallet</strong> – a stablecoin wallet on Arc Testnet (Circle ecosystem)</li>
+                <li>Community: Built a 500+ member Telegram community in Q1/2026: <a href="https://t.me/airdrop_1wallet" target="_blank" rel="noopener" style="color:var(--text);text-underline-offset:3px;">t.me/airdrop_1wallet</a></li>
               </ul>
             </div>
           </div>
@@ -963,6 +964,7 @@
             <div class="tl-body">
               <div class="tl-role">Content Creator &amp; Contributor</div>
               <ul class="tl-bullets">
+                <li>Lost $53k on altcoins in early 2025 – that's when I started posting on X and rebuilt from zero through airdrops. Best tuition ever paid</li>
                 <li>Content Creator: Built a 10,000+ audience on X in 1 year (airdrop niche), Ambassador of $RECALL, top Yapper of $NEWT $RECALL $MIRA $RLS $SENT $ZAMA</li>
                 <li>Contributor: OG contributor across projects like $SOMI $RECALL $RLS $ZAMA – drives attention and onboards users</li>
               </ul>
@@ -1914,7 +1916,9 @@
             <img src="${src}" alt="${caption || ''}" loading="lazy" />
             ${caption ? `<div class="hl-caption">${caption}</div>` : ''}
           `;
-          card.querySelector('img').addEventListener('click', function() {
+          const img = card.querySelector('img');
+          img.addEventListener('error', () => card.remove());
+          img.addEventListener('click', function() {
             openLightbox(this.src, this.alt);
           });
           grid.appendChild(card);

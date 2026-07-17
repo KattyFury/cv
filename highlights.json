@@ -4,5 +4,9 @@
   { "src": "highlights/3.jpg", "caption": "Grew an account from 0 to real organic traction in 2025 and achieved quite a lot of success" },
   { "src": "highlights/7.jpg", "caption": "Former Ambassador of $RECALL" },
   { "src": "highlights/4.jpg", "caption": "Airdrop tutorial posts tend to reach a wide audience" },
-  { "src": "highlights/5.jpg", "caption": "Experience-sharing posts often reach an even larger audience" }
+  { "src": "highlights/5.jpg", "caption": "Experience-sharing posts often reach an even larger audience" },
+  { "src": "highlights/eli5.jpg", "caption": "Project explainers – breaking projects down in plain language for newbies" },
+  { "src": "highlights/build-tooling.jpg", "caption": "Teaching my audience to build with AI (Claude Code)" },
+  { "src": "highlights/anti-scam.jpg", "caption": "Anti-scam education – helping the community stay safe" },
+  { "src": "highlights/ezwallet.jpg", "caption": "Built EZwallet – a stablecoin wallet on Arc Testnet with AI" }
 ]
