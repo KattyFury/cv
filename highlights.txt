@@ -1,0 +1,18 @@
+# HƯỚNG DẪN (dòng bắt đầu bằng # là ghi chú, web bỏ qua):
+#
+# - Mỗi dòng 1 highlight, format:   tên-file-ảnh | caption
+# - Ảnh bỏ vào thư mục highlights/ (PNG hay JPG đều được)
+# - Thứ tự dòng = thứ tự hiển thị trên web (trên → dưới). Muốn đổi thứ tự: di chuyển dòng.
+# - Ảnh chưa có trong thư mục → card tự ẩn, không lo web bị ảnh vỡ.
+# - Xong thì commit + push là web tự cập nhật.
+
+1.png | Former graphic designer specializing in branding and layout
+2.png | Working alongside an OG trader, top-ranked on Binance Vietnam
+3.jpg | Grew an account from 0 to real organic traction in 2025 and achieved quite a lot of success
+7.jpg | Former Ambassador of $RECALL
+4.jpg | Airdrop tutorial posts tend to reach a wide audience
+5.jpg | Experience-sharing posts often reach an even larger audience
+eli5.png | Project explainers – breaking projects down in plain language for newbies
+build-tooling.png | Teaching my audience to build with AI (Claude Code)
+anti-scam.png | Anti-scam education – helping the community stay safe
+ezwallet.png | Built EZwallet – a stablecoin wallet on Arc Testnet with AI

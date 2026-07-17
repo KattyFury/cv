@@ -213,7 +213,7 @@ _redirects            — Cloudflare Pages SPA fallback (/* → /index.html)
 icon.png              — favicon + icon iPhone home screen (mèo-kính, mắt cam)
 pfp.png               — avatar Hieu Nguyen (About me)
 arrow.svg             — icon mũi tên cho Watchlist (tô màu qua CSS mask)
-highlights.json + highlights/  — ảnh highlights ở About me
+highlights.txt + highlights/  — ảnh highlights ở About me (mỗi dòng "tên-ảnh | caption", thứ tự dòng = thứ tự hiển thị)
 .gitignore            — .env, node_modules, .claude/, .dev.vars, .wrangler/
 ```
 > Đã xóa khỏi repo: `functions/`, `server.js`, `export-pdf.js`, `package.json`, `.dev.vars`, toàn bộ file research/bot (archive tại `Desktop/cv-research-archive.md`).
@@ -232,6 +232,7 @@ git add -A && git commit -m "..." && git push
 
 ## Decisions Log
 
+- 2026-07-18: **Highlights chuyển từ `highlights.json` sang `highlights.txt`** — format mỗi dòng `tên-ảnh | caption`, dòng `#` là ghi chú, thứ tự dòng = thứ tự hiển thị (dòng thời gian), tên ảnh tự prefix `highlights/` — reason: user muốn tự thêm ảnh (thường PNG) + viết caption + sắp thứ tự mà không phải đụng JSON (dễ vỡ vì dấu phẩy/ngoặc kép). Card thiếu ảnh vẫn tự ẩn (img error → remove). `highlights.json` đã xóa khỏi repo. Cùng session: tagline đổi thành "I share what I really think and what I actually do", dòng loss đổi "$53k" → ">$50K" (bớt cụ thể) + bỏ "Best tuition ever paid".
 - 2026-07-18: **About/Experience/Highlights update theo brand DNA (about-me.md)** — user chọn qua checklist Desktop: (1) hero tagline mới "I don't sell dreams – I share what actually works in crypto, explained simply." + dòng đời thường "Outside crypto: boxer, husband, dad of one." (gộp trong `.hero-desc`, giữ nguyên lưới 11 hàng); (2) hero-tagline thêm "building products on Web3"; (3) mục 2026 thành "Web3 Builder & Community Builder" thêm bullet EZwallet (Arc Testnet); (4) mục 2025 thêm dòng đầu "Lost $53k on altcoins in early 2025..." (trung thực về loss = brand); (5) `highlights.json` thêm 4 entry placeholder (`eli5.jpg`, `build-tooling.jpg`, `anti-scam.jpg`, `ezwallet.jpg` trong `highlights/`) — render JS thêm `img error → card.remove()` nên **card thiếu ảnh tự ẩn, user chỉ cần thả ảnh đúng tên file vào là card hiện**. Lưu ý: dùng en-dash " – " thay em-dash theo luật trong about-me.md. Từng nghi "caption trùng lặp" trong Highlights → không phải bug, chỉ là artifact copy text (alt + caption).
 
 - 2026-07-12: Thu gọn `cv` về đúng scope "website đọc Google Sheet để hiển thị" — archive toàn bộ code research/gọi-API + tiện ích dev vào `Desktop/cv-research-archive.md` rồi xóa 10 file (watchlist-research.js, vc-tier1.json, apps-script-webhook.gs, WATCHLIST-RESEARCH-SETUP.md, fetch-before-ath.js, before-ath-output.txt, pre-tge-watchlist-archive-2026-07-06.md, server.js, export-pdf.js, package.json) + node_modules/ — reason: user tách bot tìm kèo thành dự án riêng (`research_airdrop_bot`); repo cv chỉ giữ phần hiển thị (Valuation/Airdrop/Watchlist).

@@ -929,7 +929,7 @@
           </div>
         </div>
         <div class="hero-tagline">Former crypto analyst, now creating content, building community and building products on Web3</div>
-        <div class="hero-desc">I don't sell dreams – I share what actually works in crypto, explained simply.<br />Outside crypto: boxer, husband, dad of one.</div>
+        <div class="hero-desc">I don't sell dreams – I share what I really think and what I actually do, explained simply.<br />Outside crypto: boxer, husband, dad of one.</div>
         <div class="socials">
           <a class="social-btn" href="https://x.com/0xhieuxyz" target="_blank" rel="noopener">
             <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path d="M44.2857 55.7143L10 10H30L55.7143 44.2857M44.2857 55.7143L70 90H90L55.7143 44.2857M44.2857 55.7143L10 90M55.7143 44.2857L90 10"/></svg>
@@ -964,7 +964,7 @@
             <div class="tl-body">
               <div class="tl-role">Content Creator &amp; Contributor</div>
               <ul class="tl-bullets">
-                <li>Lost $53k on altcoins in early 2025 – that's when I started posting on X and rebuilt from zero through airdrops. Best tuition ever paid</li>
+                <li>Lost &gt;$50K on altcoins in early 2025 – that's when I started posting on X and rebuilt from zero through airdrops</li>
                 <li>Content Creator: Built a 10,000+ audience on X in 1 year (airdrop niche), Ambassador of $RECALL, top Yapper of $NEWT $RECALL $MIRA $RLS $SENT $ZAMA</li>
                 <li>Contributor: OG contributor across projects like $SOMI $RECALL $RLS $ZAMA – drives attention and onboards users</li>
               </ul>
@@ -1905,10 +1905,21 @@
     (async () => {
       const grid = document.getElementById('highlights-grid');
       try {
-        const res = await fetch('highlights.json');
+        const res = await fetch('highlights.txt');
         if (!res.ok) throw new Error();
-        const items = await res.json();
-        if (!Array.isArray(items) || !items.length) throw new Error();
+        const text = await res.text();
+        // Mỗi dòng "tên-ảnh | caption"; dòng trống hoặc bắt đầu bằng # bị bỏ qua
+        const items = text.split('\n')
+          .map(l => l.trim())
+          .filter(l => l && !l.startsWith('#'))
+          .map(l => {
+            const sep = l.indexOf('|');
+            return {
+              src: 'highlights/' + (sep === -1 ? l : l.slice(0, sep)).trim(),
+              caption: sep === -1 ? '' : l.slice(sep + 1).trim()
+            };
+          });
+        if (!items.length) throw new Error();
         items.forEach(({ src, caption }) => {
           const card = document.createElement('div');
           card.className = 'hl-card';
