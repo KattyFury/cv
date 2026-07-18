@@ -6,8 +6,8 @@
 # - Ảnh chưa có trong thư mục → card tự ẩn, không lo web bị ảnh vỡ.
 # - Xong thì commit + push là web tự cập nhật.
 
-1.png | Building EZwallet – a stablecoin wallet on Arc Testnet, part of the Circle ecosystem
-2.png | Grew a 500+ member Telegram community in Q1/2026: t.me/airdrop_1wallet
-3.png | OG contributor across $SOMI $RECALL $RLS $ZAMA – driving attention and onboarding users
-4.png | Built a 10,000+ audience on X in 1 year (airdrop niche) – Ambassador of $RECALL, top Yapper of $NEWT $RECALL $MIRA $RLS $SENT $ZAMA
-5.png | Lost over $50K on altcoins in early 2025 – started posting on X and rebuilt from zero through airdrops
+1.png | Built EZwallet on Arc Testnet
+2.png | Built a 500+ member Telegram community
+3.png | OG across Zama and other Web3 projects
+4.png | Recall Ambassador & top Yapper of many projects
+5.png | Started from 0 in Feb 2025, 10K followers a year later
