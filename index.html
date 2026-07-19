@@ -418,8 +418,11 @@
     .val-table th:nth-child(5), .val-table td:nth-child(5),
     .val-table th:nth-child(6), .val-table td:nth-child(6) { width: calc(40% / 3); }
     .td-ticker { font-weight: 700; color: var(--text) !important; font-size: 11px; }  /* tên ticker: BOLD đen, cỡ nhỏ đồng bộ (suffix ($$$) giữ regular qua .td-size) */
-    /* CĂN TRÁI ticker — selector đủ mạnh để thắng .val-table tbody td{text-align:center} (mọi ticker thẳng mép, đủ chỗ AIGENSYN/SAHARA) */
-    .val-table tbody td.td-ticker { text-align: left; }
+    /* Cột ticker: cả KHỐI căn giữa theo ticker dài nhất, các ticker vẫn thẳng mép trái với nhau.
+       Mỗi ticker nằm trong span.tk rộng bằng nhau (--tk-w = bề rộng ticker dài nhất, JS đo trong renderTable),
+       span đó căn giữa trong cell → mép trái mọi ticker trùng nhau, khối nằm giữa cột. */
+    .val-table tbody td.td-ticker { text-align: center; }
+    .td-ticker .tk { display: inline-block; text-align: left; min-width: var(--tk-w, 0px); }
     .td-narrative { font-size: 11px; color: var(--muted); }                            /* narrative: yếu tố phụ, xám nhỏ */
     .td-size   { font-size: 11px; font-weight: 400; color: var(--muted); margin-left: 4px; }  /* phụ: xám nhỏ */
     .td-multi  { font-weight: 700; color: var(--accent) !important; font-size: 11px; }  /* số liệu ×: bold cam, cỡ nhỏ đồng bộ */
@@ -1597,7 +1600,7 @@
                      vcFDV < 200e6  ? '$$' :
                      vcFDV < 500e6  ? '$$$' : '$$$$';
         return `<tr>
-          <td class="td-ticker">${e.ticker}${size ? ` <span class="td-size">(${size})</span>` : ''}</td>
+          <td class="td-ticker"><span class="tk">${e.ticker}${size ? ` <span class="td-size">(${size})</span>` : ''}</span></td>
           <td class="td-narrative">${e.type || '—'}</td>
           <td>${fmtDate(e.tgeDate)}</td>
           <td class="td-multi">${xTGE > 0 ? '×' + xTGE.toFixed(2) : '—'}</td>
@@ -1605,6 +1608,18 @@
           <td class="td-multi">${xATM > 0 ? '×' + xATM.toFixed(2) : '—'}</td>
         </tr>`;
       }).join('');
+
+      // Đo ticker dài nhất → --tk-w (đo qua probe ẩn vì bảng có thể đang display:none)
+      const probe = document.createElement('div');
+      probe.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;white-space:nowrap;';
+      probe.style.setProperty('--tk-w', '0px');
+      probe.innerHTML = [...tbody.querySelectorAll('.td-ticker')]
+        .map(td => `<span class="td-ticker">${td.innerHTML}</span>`).join('');
+      document.body.appendChild(probe);
+      let tkW = 0;
+      probe.querySelectorAll('.tk').forEach(s => { tkW = Math.max(tkW, s.getBoundingClientRect().width); });
+      probe.remove();
+      document.documentElement.style.setProperty('--tk-w', Math.ceil(tkW) + 'px');
     }
 
     // ── Render analysis ───────────────────────────────
