@@ -137,20 +137,17 @@
     }
 
     /* ── HERO — 1 CỤM "About", cao vừa đủ nội dung (KHÔNG lấp đầy màn hình) ──
-       Lưới 11 hàng, mỗi hàng cao đúng var(--row); mọi yếu tố cách nhau 1 hàng.
+       Lưới 6 hàng cao var(--row) + 1 hàng auto cho socials.
        Hero kết thúc ngay ở socials → Experience nằm 2 hàng dưới (luật cụm-cách-cụm):
          hàng 1-2  : trống  ← cách navbar 2 hàng (cụm khác)
          hàng 3-4  : PFP + tên/nơi ở
          hàng 5    : trống (1 hàng)
-         hàng 6    : tagline
-         hàng 7    : trống (1 hàng)
-         hàng 8-9  : desc
-         hàng 10   : trống (1 hàng)
-         hàng 11   : socials  ← đáy Hero */
+         hàng 6    : tagline (canh ĐÁY hàng)
+         hàng 7    : socials (auto, ngay dưới tagline — cách đúng 1/30 hàng) */
     .hero {
       padding: 0;
       display: grid;
-      grid-template-rows: repeat(11, var(--row));
+      grid-template-rows: repeat(6, var(--row)) auto;
       text-align: left;
     }
 
@@ -159,9 +156,9 @@
       align-self: center;
       display: flex; flex-direction: row; align-items: center; gap: 20px;
     }
-    .hero-tagline { grid-row: 6; align-self: center; }
-    .hero-desc    { grid-row: 8 / span 2; align-self: center; }
-    .socials      { grid-row: 11; align-self: center; }
+    .hero-tagline { grid-row: 6; align-self: end; }
+    .hero-desc    { grid-row: 8 / span 2; align-self: center; }   /* DEAD: hero-desc đã bỏ khỏi HTML */
+    .socials      { grid-row: 7; align-self: start; margin-top: calc(var(--row) / 30); }
 
     .pfp {
       width: 72px; height: 72px;
