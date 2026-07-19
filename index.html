@@ -353,6 +353,7 @@
     .tge-modal-body .val-table thead th {
       text-transform: none; letter-spacing: 0;
       color: var(--text); font-weight: 700;
+      background: var(--off);   /* nền cam nhạt (như box Market condition) → tiêu đề khác biệt với nội dung */
     }
     #tge-section .val-table thead th {
       height: var(--row); padding: 2px 16px; border-bottom: none;
@@ -409,14 +410,23 @@
     }
 
     .val-table tbody tr:last-child td { border-bottom: none; }
-    .val-table th, .val-table td { width: 20%; }
-    .td-ticker { font-weight: 400; color: var(--text) !important; font-size: 13px; }   /* tên ticker: regular đen */
+    /* 6 cột: Ticker / Narrative / TGE Date = 1/5 mỗi cột · ×TGE ×ATH ×ATM chung 2/5 (đều nhau, xích gần) */
+    .val-table th:nth-child(1), .val-table td:nth-child(1),
+    .val-table th:nth-child(2), .val-table td:nth-child(2),
+    .val-table th:nth-child(3), .val-table td:nth-child(3) { width: 20%; }
+    .val-table th:nth-child(4), .val-table td:nth-child(4),
+    .val-table th:nth-child(5), .val-table td:nth-child(5),
+    .val-table th:nth-child(6), .val-table td:nth-child(6) { width: calc(40% / 3); }
+    .td-ticker { font-weight: 700; color: var(--text) !important; font-size: 11px; }  /* tên ticker: BOLD đen, cỡ nhỏ đồng bộ (suffix ($$$) giữ regular qua .td-size) */
+    /* CĂN TRÁI ticker — selector đủ mạnh để thắng .val-table tbody td{text-align:center} (mọi ticker thẳng mép, đủ chỗ AIGENSYN/SAHARA) */
+    .val-table tbody td.td-ticker { text-align: left; }
+    .td-narrative { font-size: 11px; color: var(--muted); }                            /* narrative: yếu tố phụ, xám nhỏ */
     .td-size   { font-size: 11px; font-weight: 400; color: var(--muted); margin-left: 4px; }  /* phụ: xám nhỏ */
-    .td-multi  { font-weight: 700; color: var(--accent) !important; }                   /* số liệu ×: bold cam */
-    .val-table td:nth-child(2), .td-multi { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; }
-    /* cột TGE Date = yếu tố phụ: nhỏ + xám */
-    #tge-section .val-table-body td:nth-child(2),
-    .tge-modal-body .val-table tbody td:nth-child(2) { font-size: 11px; color: var(--muted); }
+    .td-multi  { font-weight: 700; color: var(--accent) !important; font-size: 11px; }  /* số liệu ×: bold cam, cỡ nhỏ đồng bộ */
+    .val-table td:nth-child(3), .td-multi { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; }
+    /* cột TGE Date (cột 3) = yếu tố phụ: nhỏ + xám */
+    #tge-section .val-table-body td:nth-child(3),
+    .tge-modal-body .val-table tbody td:nth-child(3) { font-size: 11px; color: var(--muted); }
 
     .val-empty { padding: 40px 16px; text-align: center; font-size: 15px; color: var(--muted); }
 
@@ -1042,6 +1052,7 @@
             <thead>
               <tr>
                 <th>Ticker</th>
+                <th>Narrative</th>
                 <th>TGE Date</th>
                 <th>×TGE</th>
                 <th>×ATH</th>
@@ -1567,7 +1578,7 @@
       const tbody = document.getElementById('tge-tbody');
 
       if (!entries.length) {
-        tbody.innerHTML = '<tr><td colspan="5"><div class="val-empty">Loading data…</div></td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6"><div class="val-empty">Loading data…</div></td></tr>';
         return;
       }
 
@@ -1587,6 +1598,7 @@
                      vcFDV < 500e6  ? '$$$' : '$$$$';
         return `<tr>
           <td class="td-ticker">${e.ticker}${size ? ` <span class="td-size">(${size})</span>` : ''}</td>
+          <td class="td-narrative">${e.type || '—'}</td>
           <td>${fmtDate(e.tgeDate)}</td>
           <td class="td-multi">${xTGE > 0 ? '×' + xTGE.toFixed(2) : '—'}</td>
           <td class="td-multi">${xATH > 0 ? '×' + xATH.toFixed(2) : '—'}</td>
