@@ -137,17 +137,18 @@
     }
 
     /* ── HERO — 1 CỤM "About" (pfp/tên + tagline + socials), mọi yếu tố cách nhau 1 hàng ──
-       Lưới 8 hàng cao đúng var(--row). Hero kết thúc ở socials → Experience 2 hàng dưới (cụm≠cụm):
+       Hero kết thúc ở socials → Experience 2 hàng dưới (cụm≠cụm):
          hàng 1-2  : trống  ← cách navbar 2 hàng (cụm khác)
          hàng 3-4  : PFP + tên/nơi ở
          hàng 5    : trống (1 hàng — trong cụm)
-         hàng 6    : tagline
-         hàng 7    : trống (1 hàng — trong cụm)
-         hàng 8    : socials  ← đáy Hero */
+         hàng 6    : tagline   ← AUTO cao (mobile xuống nhiều dòng → cao hơn 1 hàng, phải tự giãn)
+         hàng 7    : trống (1 hàng — trong cụm, luôn = --row dù tagline dài)
+         hàng 8    : socials   ← đáy Hero (AUTO)
+       ⚠️ Hàng tagline/socials để AUTO, KHÔNG ghim var(--row) — nếu ghim, text dài tràn ô đè hàng dưới. */
     .hero {
       padding: 0;
       display: grid;
-      grid-template-rows: repeat(8, var(--row));
+      grid-template-rows: repeat(5, var(--row)) auto var(--row) auto;
       text-align: left;
     }
 
