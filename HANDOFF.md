@@ -1,36 +1,31 @@
 # HANDOFF — CV / Portfolio (0xhieu.xyz)
 
-**Date:** 2026-06-18  
-**Repo:** https://github.com/KattyFury/CV  
+**Date:** 2026-07-19  
+**Repo:** https://github.com/KattyFury/cv  
 **Live:** Cloudflare Pages (auto-deploy từ main branch)  
-**Local dev:** `npx wrangler pages dev . --port 8788` (cần Cloudflare Functions)
+**Local dev:** site tĩnh — mở thẳng `index.html`, hoặc chạy static server bất kỳ (route `/valuation` cần SPA fallback về `index.html` giống `_redirects`)  
+**Local path:** `D:\Files\Claude\build_for_me\cv` (đường dẫn mới, trước là `D:\Files\Claude\cv`)
 
 ---
 
-## ⭐ HANDOFF mới nhất (2026-07-12) — Thu gọn scope: cv = CHỈ website đọc Sheet
+## ⭐ HANDOFF mới nhất (2026-07-19) — About refresh theo brand DNA + Highlights tự quản + căn cột Valuation
 
-**Quyết định scope:** dự án `cv` từ nay **chỉ là website đọc Google Sheet để hiển thị** (Valuation · Airdrop · Watchlist).
-Phần **bot tìm kèo / research / gọi API lấy data là DỰ ÁN KHÁC** (`research_airdrop_bot`), không còn nằm trong repo này.
+**Scope không đổi** (chốt 2026-07-12, chi tiết ở Decisions Log): cv **chỉ là website tĩnh đọc Google Sheet để hiển thị** (About · Valuation · Airdrop). Không backend, không function, không secret. Bot research là dự án khác (`research_airdrop_bot`).
 
-**Đã làm:**
-1. **Archive toàn bộ research + tiện ích dev vào 1 file:** `C:\Users\Dell\Desktop\cv-research-archive.md`
-   (gộp nguyên văn 10 file bên dưới — backup trước khi xóa vì nhiều file untracked).
-2. **Xóa khỏi repo** (non-core): `watchlist-research.js`, `vc-tier1.json`, `apps-script-webhook.gs`,
-   `WATCHLIST-RESEARCH-SETUP.md`, `fetch-before-ath.js`, `before-ath-output.txt`,
-   `pre-tge-watchlist-archive-2026-07-06.md`, `server.js`, `export-pdf.js`, `package.json`, `node_modules/`.
-3. **Fix Watchlist đổi ngôn ngữ (Airdrop → English):** dữ liệu WL đa ngôn ngữ + `translateWL()`; badge "Có việc/Chưa có"
-   đổi thành **mũi tên** dùng icon `arrow.svg` (user tự vẽ) qua CSS mask + currentColor → sáng (accent)/mờ (border);
-   cỡ chữ meta 11→13px (`--sub`).
-4. **Dọn nhiễm chéo EZwallet:** phát hiện `fav_icon.png`, `logo.svg`, `logo_spacing.svg` và cả `icon.png` (bản working)
-   thực chất là branding **EZwallet** — lọt vào cv từ phiên 2026-07-10 (md5 khớp hệt file trong `build_on_arc/ezwallet`).
-   → `git checkout icon.png` khôi phục favicon THẬT của cv (mèo-kính mắt cam #FFA111); xóa 3 file EZ (đã có sẵn trong ezwallet).
-5. **Gỡ hẳn tab Personal + X-analysis:** cv không liên quan gì tới X/Twitter. Xóa `functions/api/x-analysis.js` (+ cả thư mục `functions/`),
-   `.dev.vars`, và toàn bộ block Personal/X trong `index.html` (view ẩn password-gate + `loadXAnalysis`) — vốn đã là code chết (không route nào tới). Giờ cv **không còn function/secret key nào**.
+**Trạng thái hiện tại sau 2 session 18-19/07:**
+1. **About tab refresh theo brand DNA** (file `about-me.md` user đưa, chọn qua checklist Desktop `cv-checklist.md`):
+   hero tagline hiện là "Former crypto analyst. Now a Web3 builder focused on creating content, building communities, and shipping small products.";
+   Experience 2026 = "Web3 Builder & Community Builder" (bullet EZwallet Arc Testnet + Telegram community);
+   2025 mở đầu bằng dòng loss trung thực "Lost >$50K on altcoins in early 2025..." (trung thực về loss = brand, không giấu).
+2. **Highlights user TỰ quản lý bằng `highlights.txt`** (thay `highlights.json` đã xóa): mỗi dòng `tên-ảnh | caption`,
+   dòng `#` = ghi chú, thứ tự dòng = thứ tự hiển thị, ảnh bỏ vào `highlights/`, thiếu ảnh → card tự ẩn (img error → remove).
+   Hiện 5 ảnh thật `1.png`-`5.png` caption user tự chốt.
+3. **Bảng Valuation: cả 6 cột căn giữa theo KHỐI** — trong mỗi cột mọi giá trị thẳng mép trái với nhau, khối căn giữa theo
+   giá trị dài nhất cột đó (`span.ck` + `--ck1..--ck6`, JS đo bằng probe ẩn trong `renderTable`). Chi tiết ở Decisions Log 2026-07-19.
 
-**Còn giữ (core):** `index.html`, `_redirects`, `highlights.json` + `highlights/`,
-`icon.png` (favicon/iPhone icon, mèo-kính), `pfp.png` (avatar Hieu), `arrow.svg`, `CLAUDE.md`, `HANDOFF.md`.
+**Core files:** `index.html`, `_redirects`, `highlights.txt` + `highlights/`, `icon.png` (mèo-kính), `pfp.png`, `arrow.svg`, `CLAUDE.md`, `HANDOFF.md`.
 
-**`.env`:** giờ 100% vô dụng cho cv (không code nào đọc key). Chưa xóa (chứa secret user tự quản, gitignored) — xem Pending #2.
+**`.env`:** vô dụng cho cv (không code nào đọc key), gitignored, user tự quản — xem Pending #2.
 
 ---
 
@@ -238,6 +233,7 @@ git add -A && git commit -m "..." && git push
 - 2026-07-18: **About/Experience/Highlights update theo brand DNA (about-me.md)** — user chọn qua checklist Desktop: (1) hero tagline mới "I don't sell dreams – I share what actually works in crypto, explained simply." + dòng đời thường "Outside crypto: boxer, husband, dad of one." (gộp trong `.hero-desc`, giữ nguyên lưới 11 hàng); (2) hero-tagline thêm "building products on Web3"; (3) mục 2026 thành "Web3 Builder & Community Builder" thêm bullet EZwallet (Arc Testnet); (4) mục 2025 thêm dòng đầu "Lost $53k on altcoins in early 2025..." (trung thực về loss = brand); (5) `highlights.json` thêm 4 entry placeholder (`eli5.jpg`, `build-tooling.jpg`, `anti-scam.jpg`, `ezwallet.jpg` trong `highlights/`) — render JS thêm `img error → card.remove()` nên **card thiếu ảnh tự ẩn, user chỉ cần thả ảnh đúng tên file vào là card hiện**. Lưu ý: dùng en-dash " – " thay em-dash theo luật trong about-me.md. Từng nghi "caption trùng lặp" trong Highlights → không phải bug, chỉ là artifact copy text (alt + caption).
 
 - 2026-07-12: Thu gọn `cv` về đúng scope "website đọc Google Sheet để hiển thị" — archive toàn bộ code research/gọi-API + tiện ích dev vào `Desktop/cv-research-archive.md` rồi xóa 10 file (watchlist-research.js, vc-tier1.json, apps-script-webhook.gs, WATCHLIST-RESEARCH-SETUP.md, fetch-before-ath.js, before-ath-output.txt, pre-tge-watchlist-archive-2026-07-06.md, server.js, export-pdf.js, package.json) + node_modules/ — reason: user tách bot tìm kèo thành dự án riêng (`research_airdrop_bot`); repo cv chỉ giữ phần hiển thị (Valuation/Airdrop/Watchlist).
+- 2026-07-12: Gỡ hẳn tab Personal + X-analysis — xóa `functions/api/x-analysis.js` (+ thư mục `functions/`), `.dev.vars`, block Personal/X trong `index.html` (view password-gate + `loadXAnalysis`, vốn là code chết không route nào tới) — reason: cv không liên quan X/Twitter, sau bước này cv không còn function/secret key nào.
 - 2026-07-12: Xóa `fav_icon.png`/`logo.svg`/`logo_spacing.svg` + khôi phục `icon.png` bằng `git checkout` — reason: phát hiện đây là branding EZwallet lọt nhầm vào cv từ phiên 2026-07-10 (md5 khớp file trong `build_on_arc/ezwallet`); bản working `icon.png` đã bị ghi đè bằng logo "EZ", favicon THẬT của cv là mèo-kính (bản committed). Không phải do `git pull` phiên này (pull chỉ đổi index.html 1 dòng).
 - 2026-07-12: Watchlist đổi được sang tiếng Anh khi bấm English — thêm `wlData={VI,EN}` + `translateWL()` (tách `gtranslate()` dùng chung với card Work), badge "Có việc/Chưa có" → mũi tên sáng(accent)/mờ(border), meta 11→13px màu `--sub` — reason: trước đó `switchLang()` không render lại Watchlist và badge hardcode tiếng Việt.
 - 2026-06-10: Cập nhật mapping cột CSV trong `index.html` (`fetchPublicData`) để khớp với cột mới của Google Sheet tab DATA — reason: Sheet đã đổi thứ tự cột (TGE DATE chuyển từ G ra A, các cột khác dồn theo), khiến `fundraising` luôn = 0 → toàn bộ data bị filter, bảng Valuation trống trên 0xhieu.xyz.
