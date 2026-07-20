@@ -6,8 +6,8 @@
 # - Ảnh chưa có trong thư mục → card tự ẩn, không lo web bị ảnh vỡ.
 # - Xong thì commit + push là web tự cập nhật.
 
-1.png | Built EZwallet on Arc Testnet
-2.png | Built a 500+ member Telegram community
-3.png | OG across Zama and other Web3 projects
-4.png | Recall Ambassador & top Yapper of many projects
 5.png | Started from 0 in Feb 2025, 10K followers a year later
+4.png | Recall Ambassador & top Yapper of many projects
+3.png | OG across Zama and other Web3 projects
+2.png | Built a 500+ member Telegram community
+1.png | Built EZwallet on Arc Testnet

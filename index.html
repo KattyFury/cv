@@ -28,7 +28,11 @@
       --muted:  #8A8268;
       --sub:    #6B6354;
       --text:   #38342A;
-      --accent: #FFA111;
+      --accent: #5C4B63;  /* tím đậm — điểm đầu gradient thương hiệu, dùng cho text/border/hover (đặc, không gradient) */
+      --accent-rgb: 92, 75, 99;
+      --brand-1: #5C4B63;
+      --brand-2: #FDE9A8;
+      --accent-gradient: linear-gradient(45deg, var(--brand-1) 0%, var(--brand-2) 100%);
       --max:    900px;
       --box-h:  160px;   /* chiều cao cố định của box 4-quarter (Valuation) */
       --modal-w: 340px;  /* popup nhỏ; popup lớn = 2× giá trị này */
@@ -512,11 +516,11 @@
     .danger-row, .narrative-row {
       display: flex; align-items: center; gap: 12px;
       height: var(--row); padding: 0 14px; border-radius: 8px;
-      background: rgba(255,161,17,0.08);
+      background: rgba(var(--accent-rgb), 0.08);
       margin-bottom: calc(var(--row) * 0.25);
     }
     .danger-row:last-child, .narrative-row:last-child { margin-bottom: 0; }
-    .danger-row.danger-new { background: rgba(255,161,17,0.20); }
+    .danger-row.danger-new { background: rgba(var(--accent-rgb), 0.20); }
     .danger-ticker { font-size: 13px; font-weight: 400; color: var(--text); flex: 1; }
     .danger-badge-new {
       font-size: 10px; font-weight: 800; letter-spacing: 0.05em;
@@ -592,11 +596,11 @@
     .calc-field input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     .calc-field input[type=number] { -moz-appearance: textfield; }
 
-    /* Predict TGE FDV — nút pill cam (cùng kích cỡ nút social ở About me: padding 6/14, radius 999, font 13) */
+    /* Predict TGE FDV — nút pill gradient thương hiệu (cùng kích cỡ nút social ở About me: padding 6/14, radius 999, font 13) */
     .predict-link {
       display: inline-flex; align-items: center; justify-content: center;
       padding: 6px 14px; border-radius: 999px;
-      border: 1px solid var(--accent); background: var(--accent);
+      border: none; background: var(--accent-gradient);
       color: #fff; font-family: 'Roboto', sans-serif;
       font-size: 13px; font-weight: 700; white-space: nowrap;  /* đậm như mức active "Weak" */
       cursor: pointer; transition: opacity 0.15s;
@@ -611,7 +615,7 @@
       font-family: 'Roboto', sans-serif; font-size: 13px; font-weight: 500;
       transition: opacity 0.15s, border-color 0.15s, color 0.15s;
     }
-    .predict-btn-primary { background: var(--accent); color: #1a1a1a; border: none; }
+    .predict-btn-primary { background: var(--accent-gradient); color: #fff; border: none; }
     .predict-btn-primary:hover { opacity: 0.85; }
     .predict-btn-secondary { background: var(--white); color: var(--sub); border: 1px solid var(--border); }
     .predict-btn-secondary:hover { border-color: var(--accent); color: var(--text); }
@@ -620,8 +624,8 @@
     #calc-result {
       position: relative;
       margin-top: 8px;
-      background: linear-gradient(135deg, rgba(255,161,17,0.12), rgba(255,161,17,0.02));
-      border: 1px solid rgba(255,161,17,0.25);
+      background: linear-gradient(135deg, rgba(var(--accent-rgb),0.12), rgba(var(--accent-rgb),0.02));
+      border: 1px solid rgba(var(--accent-rgb),0.25);
       border-radius: 8px;
       padding: 12px;
       box-sizing: border-box;
@@ -678,7 +682,7 @@
       display: inline-flex; align-items: center; justify-content: center;
       transition: background 0.15s, color 0.15s;
     }
-    .lang-btn.active { background: var(--accent); color: #1a1a1a; }
+    .lang-btn.active { background: var(--accent-gradient); color: #fff; }
     /* Language dropdown */
     .lang-dropdown { position: relative; }
     .lang-dd-btn {
@@ -706,7 +710,7 @@
     .lang-dd-item:hover { background: var(--off); color: var(--text); }
     .lang-dd-item.active { color: var(--text); font-weight: 600; }
     /* Rank filter màu theo tier */
-    #rf-ss.active { background: #FFA111; color: #fff; }
+    #rf-ss.active { background: var(--accent-gradient); color: #fff; }
     #rf-s.active  { background: #8B5CF6; color: #fff; }
     #rf-a.active  { background: #3B82F6; color: #fff; }
     #rf-b.active  { background: #22C55E; color: #fff; }
@@ -758,7 +762,7 @@
       padding: 2px 8px; border-radius: 6px;
       flex-shrink: 0;
     }
-    .rank-SS { background: #FFA111; color: #fff; }
+    .rank-SS { background: var(--accent-gradient); color: #fff; }
     .rank-S { background: #8B5CF6; color: #fff; }
     .rank-A { background: #3B82F6; color: #fff; }
     .rank-B { background: #22C55E; color: #fff; }
@@ -786,7 +790,7 @@
 
 
     /* Section labels follow rank */
-    .wte-card--SS .wte-section-label { color: #FFA111; }
+    .wte-card--SS .wte-section-label { color: var(--accent); }
     .wte-card--S .wte-section-label { color: #8B5CF6; }
     .wte-card--A .wte-section-label { color: #3B82F6; }
     .wte-card--B .wte-section-label { color: #22C55E; }
@@ -811,7 +815,7 @@
     .wte-section--daily .wte-task-text { color: var(--text); font-weight: 500; }
 
     /* Daily — xám nhạt chữ đen, border-left giữ màu rank */
-    .wte-card--SS .wte-section--daily { background: rgba(255,161,17,0.12); border-left-color: #FFA111; }
+    .wte-card--SS .wte-section--daily { background: rgba(var(--accent-rgb),0.12); border-left-color: var(--accent); }
     .wte-card--S .wte-section--daily { background: rgba(139,92,246,0.12);  border-left-color: #8B5CF6; }
     .wte-card--A .wte-section--daily { background: rgba(59,130,246,0.12); border-left-color: #3B82F6; }
     .wte-card--B .wte-section--daily { background: rgba(34,197,94,0.12); border-left-color: #22C55E; }
@@ -943,7 +947,7 @@
             <div class="hero-location">Hanoi, Vietnam</div>
           </div>
         </div>
-        <div class="hero-tagline">Former crypto analyst. Now a Web3 builder focused on creating content, building communities, and shipping small products.</div>
+        <div class="hero-tagline">Web3 builder focused on shipping practical products, growing communities, and creating educational content.</div>
         <div class="socials">
           <a class="social-btn" href="https://x.com/0xhieuxyz" target="_blank" rel="noopener">
             <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path d="M44.2857 55.7143L10 10H30L55.7143 44.2857M44.2857 55.7143L70 90H90L55.7143 44.2857M44.2857 55.7143L10 90M55.7143 44.2857L90 10"/></svg>
@@ -966,10 +970,10 @@
           <div class="tl-item">
             <div class="tl-year">2026</div>
             <div class="tl-body">
-              <div class="tl-role">Web3 Builder &amp; Community Builder</div>
+              <div class="tl-role">Community Builder &amp; Web3 Builder</div>
               <ul class="tl-bullets">
-                <li>Builder: Built <strong>EZwallet</strong> – a stablecoin wallet on Arc Testnet (Circle ecosystem)</li>
-                <li>Community: Built a 500+ member Telegram community in Q1/2026: <a href="https://t.me/airdrop_1wallet" target="_blank" rel="noopener" style="color:var(--text);text-underline-offset:3px;">t.me/airdrop_1wallet</a></li>
+                <li>Grew airdrop Telegram community to 500+ members in Q1: <a href="https://t.me/airdrop_1wallet" target="_blank" rel="noopener" style="color:var(--text);text-underline-offset:3px;">t.me/airdrop_1wallet</a></li>
+                <li>Built <strong>EZwallet</strong>, a stablecoin wallet on Arc Testnet since Q2: <a href="https://ezwallet.pages.dev/" target="_blank" rel="noopener" style="color:var(--text);text-underline-offset:3px;">ezwallet.pages.dev</a></li>
               </ul>
             </div>
           </div>
@@ -978,25 +982,25 @@
             <div class="tl-body">
               <div class="tl-role">Content Creator &amp; Contributor</div>
               <ul class="tl-bullets">
-                <li>Lost &gt;$50K on altcoins in early 2025 – that's when I started posting on X and rebuilt from zero through airdrops</li>
-                <li>Content Creator: Built a 10,000+ audience on X in 1 year (airdrop niche), Ambassador of $RECALL, top Yapper of $NEWT $RECALL $MIRA $RLS $SENT $ZAMA</li>
-                <li>Contributor: OG contributor across projects like $SOMI $RECALL $RLS $ZAMA – drives attention and onboards users</li>
+                <li>Grew X audience to 10,000+ followers in 12 months (airdrop niche)</li>
+                <li>Ambassador: $RECALL – Top Yapper: $NEWT $RECALL $MIRA $RLS $SENT $ZAMA</li>
+                <li>OG Contributor: $SOMI $RECALL $RLS $ZAMA — user acquisition &amp; attention</li>
               </ul>
             </div>
           </div>
           <div class="tl-item">
             <div class="tl-year">2023 – 2024</div>
             <div class="tl-body">
-              <div class="tl-role">Investment Analyst</div>
+              <div class="tl-role">Investment Analyst, VHG</div>
               <ul class="tl-bullets">
-                <li>Analyzed Bitcoin and altcoins at <strong>VHG</strong>, supporting spot investment decisions</li>
+                <li>Analyzed crypto markets to support spot investment decisions</li>
               </ul>
             </div>
           </div>
           <div class="tl-item">
             <div class="tl-year">2022</div>
             <div class="tl-body">
-              <div class="tl-role">Join Crypto Market</div>
+              <div class="tl-role">Entered Crypto Markets</div>
               <ul class="tl-bullets">
                 <li>Learned from a 10+ year crypto OG, ranked among top traders on Binance Vietnam</li>
               </ul>
