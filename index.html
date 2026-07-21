@@ -191,12 +191,6 @@
       color: var(--text); line-height: 1.5;
     }
 
-    .hero-desc {
-      font-size: 15px; font-weight: 400;
-      color: var(--text); line-height: 1.65;
-      max-width: 560px;
-    }
-
     /* ── SOCIALS — nút gọn, có icon (3 nút vừa 1 hàng cả trên mobile) ── */
     .socials { display: flex; flex-wrap: nowrap; justify-content: flex-start; gap: 8px; }
 
@@ -543,7 +537,7 @@
     .mkt-lvl {
       flex: 1; text-align: center; padding: 0 2px;
       margin: 0; height: 26px; display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 400;   /* đồng bộ với nút Predict (13px / 400) */
+      font-size: 13px; font-weight: 400;
       color: var(--muted); opacity: 0.65;
       letter-spacing: 0.02em; line-height: 1.2;
       transition: opacity 0.2s, font-weight 0.2s, color 0.2s;
@@ -563,11 +557,6 @@
       gap: 2px; text-align: center;
     }
     .split-divider { width: 1px; background: var(--border); flex-shrink: 0; }
-    /* Box chỉ 1 số liệu (Danger Zone dùng riêng list, không cần split) */
-    .stat-single {
-      display: flex; flex-direction: column; align-items: center;
-      justify-content: center; gap: 2px; text-align: center;
-    }
     .split-val {
       font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums;
       font-size: 15px; font-weight: 700;   /* số liệu × : bold + cam (đồng bộ toàn site) */
@@ -603,7 +592,7 @@
       padding: 6px 14px; border-radius: 999px;
       border: none; background: var(--accent-gradient);
       color: #fff; font-family: 'Roboto', sans-serif;
-      font-size: 13px; font-weight: 700; white-space: nowrap;  /* đậm như mức active "Weak" */
+      font-size: 13px; font-weight: 500; white-space: nowrap;  /* đồng bộ weight với các nút CTA khác (Calculate, lang-btn, nav-btn.active) */
       cursor: pointer; transition: opacity 0.15s;
     }
     .predict-link:hover { opacity: 0.88; }
@@ -848,16 +837,6 @@
     .wte-task-row--link:hover .wte-task-text { color: var(--text); }
     .wte-task-text { flex: 1; }
     .wte-task-icon { font-size: 12px; flex-shrink: 0; opacity: 0.5; margin-top: 2px; }
-
-    /* Coming soon */
-    .ard-coming-soon {
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 80px 20px; gap: 12px;
-    }
-    .ard-cs-icon { color: var(--muted); }
-    .ard-cs-icon svg { width: 32px; height: 32px; }
-    .ard-cs-text { font-size: 15px; color: var(--muted); }
 
     /* ── Watchlist cards (Pre-TGE tracker) ─────────── */
     #wl-cards {
@@ -1443,51 +1422,6 @@
       }
     }
 
-    // ── CoinGecko: bulk ATH + current price, auto-fill priceTGE if missing ──
-    async function fetchCoinGeckoData() {
-      const entries = publicData.filter(e => e.cgId);
-      if (!entries.length) return;
-
-      // 1 request → ATH + current price for ALL coins
-      try {
-        const ids = entries.map(e => e.cgId).join(',');
-        const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&per_page=250&page=1&sparkline=false`;
-        const res  = await fetch(url);
-        const data = await res.json();
-        const map  = {};
-        data.forEach(c => { map[c.id] = { ath: c.ath, athDate: c.ath_date, currentPrice: c.current_price }; });
-        entries.forEach(e => {
-          if (map[e.cgId]) {
-            e.ath          = map[e.cgId].ath;
-            e.athDate      = map[e.cgId].athDate;
-            e.currentPrice = map[e.cgId].currentPrice;
-          }
-        });
-      } catch (err) {
-        console.warn('CoinGecko markets fetch failed:', err);
-      }
-
-      // History: only entries with priceTGE missing
-      const needHistory = entries.filter(e => !e.priceTGE && e.tgeDate);
-      if (!needHistory.length) return;
-
-      const BATCH = 5;
-      for (let i = 0; i < needHistory.length; i += BATCH) {
-        const batch = needHistory.slice(i, i + BATCH);
-        await Promise.all(batch.map(async e => {
-          try {
-            const [y, m, d] = e.tgeDate.split('-');
-            const date = `${d}-${m}-${y}`; // CoinGecko expects DD-MM-YYYY
-            const url  = `https://api.coingecko.com/api/v3/coins/${e.cgId}/history?date=${date}&localization=false`;
-            const res  = await fetch(url);
-            const data = await res.json();
-            e.priceTGE = data?.market_data?.current_price?.usd || 0;
-          } catch {}
-        }));
-        if (i + BATCH < needHistory.length) await new Promise(r => setTimeout(r, 2200));
-      }
-    }
-
     function allEntries() { return publicData; }
 
     // ── Helpers ───────────────────────────────────────
@@ -1502,15 +1436,6 @@
       if (!s) return '—';
       const [y, m, d] = s.split('-');
       return `${d}/${m}/${y.slice(2)}`;
-    }
-
-    function fmtPrice(p) {
-      if (!p || p <= 0) return '—';
-      if (p >= 100)    return '$' + p.toFixed(2);
-      if (p >= 1)      return '$' + p.toFixed(2);
-      if (p >= 0.001)  return '$' + p.toFixed(4);
-      if (p >= 0.00001)return '$' + p.toFixed(6);
-      return '$' + p.toExponential(3);
     }
 
     function entryFDV(e) {

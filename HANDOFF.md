@@ -1,31 +1,29 @@
 # HANDOFF — CV / Portfolio (0xhieu.xyz)
 
-**Date:** 2026-07-19  
+**Date:** 2026-07-21  
 **Repo:** https://github.com/KattyFury/cv  
-**Live:** Cloudflare Pages (auto-deploy từ main branch)  
-**Local dev:** site tĩnh — mở thẳng `index.html`, hoặc chạy static server bất kỳ (route `/valuation` cần SPA fallback về `index.html` giống `_redirects`)  
-**Local path:** `D:\Files\Claude\build_for_me\cv` (đường dẫn mới, trước là `D:\Files\Claude\cv`)
+**Live:** Cloudflare Pages, project `0xhieu-xyz` (git-integration auto-deploy từ main — **hiện đang KHÔNG trigger được**, xem Pending #4; deploy tay bằng `wrangler pages deploy` cho tới khi fix)  
+**Local dev:** site tĩnh — mở thẳng `index.html`, hoặc `python -m http.server` bất kỳ port nào (route `/valuation` cần SPA fallback về `index.html` giống `_redirects`)  
+**Local path:** `D:\Files\Claude\build_for_me\cv`
 
 ---
 
-## ⭐ HANDOFF mới nhất (2026-07-19) — About refresh theo brand DNA + Highlights tự quản + căn cột Valuation
+## ⭐ HANDOFF mới nhất (2026-07-21) — Rebrand màu + đọc chữ + dọn dead code
 
 **Scope không đổi** (chốt 2026-07-12, chi tiết ở Decisions Log): cv **chỉ là website tĩnh đọc Google Sheet để hiển thị** (About · Valuation · Airdrop). Không backend, không function, không secret. Bot research là dự án khác (`research_airdrop_bot`).
 
-**Trạng thái hiện tại sau 2 session 18-19/07:**
-1. **About tab refresh theo brand DNA** (file `about-me.md` user đưa, chọn qua checklist Desktop `cv-checklist.md`):
-   hero tagline hiện là "Former crypto analyst. Now a Web3 builder focused on creating content, building communities, and shipping small products.";
-   Experience 2026 = "Web3 Builder & Community Builder" (bullet EZwallet Arc Testnet + Telegram community);
-   2025 mở đầu bằng dòng loss trung thực "Lost >$50K on altcoins in early 2025..." (trung thực về loss = brand, không giấu).
-2. **Highlights user TỰ quản lý bằng `highlights.txt`** (thay `highlights.json` đã xóa): mỗi dòng `tên-ảnh | caption`,
-   dòng `#` = ghi chú, thứ tự dòng = thứ tự hiển thị, ảnh bỏ vào `highlights/`, thiếu ảnh → card tự ẩn (img error → remove).
-   Hiện 5 ảnh thật `1.png`-`5.png` caption user tự chốt.
-3. **Bảng Valuation: cả 6 cột căn giữa theo KHỐI** — trong mỗi cột mọi giá trị thẳng mép trái với nhau, khối căn giữa theo
-   giá trị dài nhất cột đó (`span.ck` + `--ck1..--ck6`, JS đo bằng probe ẩn trong `renderTable`). Chi tiết ở Decisions Log 2026-07-19.
+**Trạng thái hiện tại sau session 21/07:**
+1. **Bảng màu thương hiệu đổi hẳn** — gradient chính `linear-gradient(45deg, #6155F5 0% → #34C759 100%)` (tím đậm → xanh lá, chéo dưới-trái lên trên-phải), dùng cho nút CTA (`Predict TGE FDV`, `Calculate`, `lang-btn.active`) + badge rank **S+/SS**. Rank tier còn lại: **S**=`#6155F5` (tím), **A**=`#0088FF` (xanh dương, KHÔNG nằm trong gradient — user giữ riêng), **B**=`#34C759` (xanh lá). Biến CSS: `--accent`/`--accent-gradient`/`--brand-1`/`--brand-2` ở đầu `:root`.
+2. **Bảng màu trung tính đổi sang xám/đen/trắng thật** (bỏ hẳn tông kem/nâu ấm cũ) — `--white:#FFF`, `--text:#171717` (gần đen), `--sub:#525252` (chữ phụ, xám vừa-đậm), `--muted:#8A8A8A` (xám nhạt hơn), `--off`/`--border` cũng chuyển xám trung tính. Lý do: bản màu ấm cũ đọc khó, user phàn nàn "dark dark khó đọc".
+3. **About/Experience content viết lại toàn bộ** — tagline, cả 5 mốc Experience (2026/2025/2023-24/2022/Pre-2022) đổi wording theo bản user chốt. **Bỏ hẳn câu chuyện "học từ 1 OG 10 năm kinh nghiệm"** ở mốc 2022 (đồng bộ với việc bỏ highlight 2022B).
+4. **Highlights đổi hẳn sang naming theo năm Experience**: `<year><A/B/C...>.png` (nhiều ảnh cùng năm thì tăng chữ cái) thay vì số thứ tự 1-5 cũ. Hiện có: `2022A`, `2025A/B/C`, `2026A/B` (đã xoá `2022B` theo yêu cầu user — ảnh + caption "em trai ăn tối CZ" bị coi là khoe khoang không cần thiết). `2023-2024` chưa có ảnh, để trống có chủ đích (comment `#` trong `highlights.txt`).
+5. **Bảng Valuation — header giờ cũng nằm trong cơ chế căn khối** (trước đó chỉ áp cho data row): `th` dùng chung `span.ck` + `--ck1..--ck6`, JS đo bề rộng tính cả text header khi tìm giá trị dài nhất mỗi cột — tránh trường hợp tên cột dài hơn mọi giá trị thật mà không được tính.
+6. **Dead-code sweep session này**: xoá CSS orphan `.hero-desc` (tàn dư hero nhiều dòng cũ), `.stat-single` (định nghĩa cho Danger Zone nhưng cuối cùng dùng list riêng), `.ard-coming-soon`/`.ard-cs-icon`/`.ard-cs-text` (placeholder "Coming soon" cũ của Airdrop, giờ có nội dung thật); xoá JS orphan `fetchCoinGeckoData()` (~43 dòng, code fetch ATH/price client-side từ thời trước khi chuyển qua Google Apps Script sync) và `fmtPrice()` (duplicate cũ, bản đang dùng thật là `fmtTokenPrice()`).
+7. Nút "Predict TGE FDV" (`.predict-link`) đổi `font-weight: 700 → 500` — 2 comment cũ trong code tự mâu thuẫn nhau về weight "chuẩn" (1 nói 400, 1 nói 700/bold); chốt lại 500 cho khớp các nút CTA khác (`Calculate`, `lang-btn`, `nav-btn.active` đều 500).
 
 **Core files:** `index.html`, `_redirects`, `highlights.txt` + `highlights/`, `icon.png` (mèo-kính), `pfp.png`, `arrow.svg`, `CLAUDE.md`, `HANDOFF.md`.
 
-**`.env`:** vô dụng cho cv (không code nào đọc key), gitignored, user tự quản — xem Pending #2.
+**`.env` / `.dev.vars`:** vô dụng cho cv (không code nào đọc key), gitignored/untracked, user tự quản — xem Pending #2.
 
 ---
 
@@ -165,7 +163,7 @@ Logic hiện tại (2026-06-11):
 
 - Logo: lấy từ `unavatar.io/twitter/{handle}` — extract handle từ cột Twitter
 - Rank badge (SS/S/A/B) nằm góc phải card, đứng sau Type
-- Colors: SS=#8B5CF6 (purple, ★★★★), S=#FF5A36 (★★★), A=#FFA111 (★★), B=#FFD447 (★)
+- Colors (2026-07-21): SS/S+=gradient `#6155F5→#34C759`, S=#6155F5 (tím), A=#0088FF (xanh dương), B=#34C759 (xanh lá)
 - CSS classes dùng rank trực tiếp: `.wte-card--SS`, `.rank-SS` — valid vì SS là alphanumeric
 
 ---
@@ -197,6 +195,10 @@ Logic hiện tại (2026-06-11):
 2. **`.env` còn tồn tại nhưng KHÔNG còn dùng cho cv** — chứa key của bot research (SURF_API, OPENAI, BOT_TOKEN, WL_*) + X/CoinGecko/CoinDesk cũ. cv giờ không cần key nào. Nên xóa `.env` hoặc chuyển key bot sang repo bot. (gitignored nên không ảnh hưởng repo/deploy.)
 
 3. **`pfp.png`** — `index.html` trỏ `pfp.png` (chữ thường). Đảm bảo file đúng tên thường để không 404 khi deploy Cloudflare (Linux phân biệt hoa/thường).
+
+4. **Cloudflare Pages git-integration không tự deploy** (phát hiện 2026-07-21) — push commit `1225c55` lên `main` nhưng ~12 tiếng sau dashboard vẫn hiện "No deployment available" cho commit đó (không phải build fail, mà build KHÔNG được trigger). Đã deploy tay bằng `wrangler pages deploy <thư mục chỉ chứa file public> --project-name=0xhieu-xyz --branch=main` (máy có sẵn `wrangler login` với account `kattyfury1403@gmail.com`) để đưa bản mới lên production ngay. **Chưa xác định nguyên nhân gốc** — cần user vào Cloudflare dashboard → Pages → `0xhieu-xyz` → Settings → Builds & deployments kiểm tra webhook GitHub↔Cloudflare còn sống không. Cho tới khi fix, mỗi lần push nên deploy tay kèm theo (đừng chỉ trông cậy auto-deploy).
+
+5. **`.claude/worktrees/` có rác** (phát hiện 2026-07-21) — 3 worktree cũ (`admiring-saha-abe3fb`, `airdrop-role-safety`, `keen-elgamal-80ad7a`), tổng ~20MB, KHÔNG nằm trong git repo (untracked, không ảnh hưởng deploy). 2 cái đầu trỏ path máy khác (`C:/Users/p/Desktop/Claude/CV/...`), đã "prunable". Đáng chú ý: branch remote `airdrop-role-safety` có 5 commit chưa merge vào main (nhắc tới Supabase/admin-panel/PORT 8081 — kiến trúc có backend, mâu thuẫn với scope hiện tại "cv không backend" → nhiều khả năng là hướng đi đã bỏ). Chưa xoá gì — cần user xác nhận trước khi dọn (branch remote là shared state, xoá cần cẩn thận).
 
 ---
 
