@@ -23,7 +23,7 @@
 
 **Core files:** `index.html`, `_redirects`, `highlights.txt` + `highlights/`, `icon.png` (mèo-kính), `pfp.png`, `arrow.svg`, `CLAUDE.md`, `HANDOFF.md`.
 
-**`.env` / `.dev.vars`:** vô dụng cho cv (không code nào đọc key), gitignored/untracked, user tự quản — xem Pending #2.
+**`.env` / `.dev.vars`:** đã xoá 2026-07-21 (key bot research cũ, không code nào trong cv dùng). Đã xoá luôn `.claude/worktrees/` (3 worktree rác ~20MB) + 3 branch không còn dùng (`airdrop-role-safety`, `feature/airdrop-work-to-earn`, `claude/admiring-saha-abe3fb`, cả local lẫn remote) theo yêu cầu "dự án chỉ là dự án, không rác".
 
 ---
 
@@ -192,13 +192,11 @@ Logic hiện tại (2026-06-11):
 
 1. **×ATH filter** — website + Apps Script đang bỏ ATH cùng ngày TGE (râu nến listing). Một số token pump ảo 1-3 ngày đầu; cân nhắc mở rộng window filter.
 
-2. **`.env` còn tồn tại nhưng KHÔNG còn dùng cho cv** — chứa key của bot research (SURF_API, OPENAI, BOT_TOKEN, WL_*) + X/CoinGecko/CoinDesk cũ. cv giờ không cần key nào. Nên xóa `.env` hoặc chuyển key bot sang repo bot. (gitignored nên không ảnh hưởng repo/deploy.)
+2. **`pfp.png`** — `index.html` trỏ `pfp.png` (chữ thường). Đảm bảo file đúng tên thường để không 404 khi deploy Cloudflare (Linux phân biệt hoa/thường).
 
-3. **`pfp.png`** — `index.html` trỏ `pfp.png` (chữ thường). Đảm bảo file đúng tên thường để không 404 khi deploy Cloudflare (Linux phân biệt hoa/thường).
+3. **Cloudflare Pages git-integration không tự deploy** (phát hiện 2026-07-21) — push commit `1225c55` lên `main` nhưng ~12 tiếng sau dashboard vẫn hiện "No deployment available" cho commit đó (không phải build fail, mà build KHÔNG được trigger). Đã deploy tay bằng `wrangler pages deploy <thư mục chỉ chứa file public> --project-name=0xhieu-xyz --branch=main` (máy có sẵn `wrangler login` với account `kattyfury1403@gmail.com`) để đưa bản mới lên production ngay. **Chưa xác định nguyên nhân gốc** — cần user vào Cloudflare dashboard → Pages → `0xhieu-xyz` → Settings → Builds & deployments kiểm tra webhook GitHub↔Cloudflare còn sống không. Cho tới khi fix, mỗi lần push nên deploy tay kèm theo (đừng chỉ trông cậy auto-deploy).
 
-4. **Cloudflare Pages git-integration không tự deploy** (phát hiện 2026-07-21) — push commit `1225c55` lên `main` nhưng ~12 tiếng sau dashboard vẫn hiện "No deployment available" cho commit đó (không phải build fail, mà build KHÔNG được trigger). Đã deploy tay bằng `wrangler pages deploy <thư mục chỉ chứa file public> --project-name=0xhieu-xyz --branch=main` (máy có sẵn `wrangler login` với account `kattyfury1403@gmail.com`) để đưa bản mới lên production ngay. **Chưa xác định nguyên nhân gốc** — cần user vào Cloudflare dashboard → Pages → `0xhieu-xyz` → Settings → Builds & deployments kiểm tra webhook GitHub↔Cloudflare còn sống không. Cho tới khi fix, mỗi lần push nên deploy tay kèm theo (đừng chỉ trông cậy auto-deploy).
-
-5. **`.claude/worktrees/` có rác** (phát hiện 2026-07-21) — 3 worktree cũ (`admiring-saha-abe3fb`, `airdrop-role-safety`, `keen-elgamal-80ad7a`), tổng ~20MB, KHÔNG nằm trong git repo (untracked, không ảnh hưởng deploy). 2 cái đầu trỏ path máy khác (`C:/Users/p/Desktop/Claude/CV/...`), đã "prunable". Đáng chú ý: branch remote `airdrop-role-safety` có 5 commit chưa merge vào main (nhắc tới Supabase/admin-panel/PORT 8081 — kiến trúc có backend, mâu thuẫn với scope hiện tại "cv không backend" → nhiều khả năng là hướng đi đã bỏ). Chưa xoá gì — cần user xác nhận trước khi dọn (branch remote là shared state, xoá cần cẩn thận).
+4. **`highlights/2022A.png` + `highlights/2026B.png` bị đổi trên đĩa ngoài ý muốn** (phát hiện 2026-07-21) — 2 file này hiện `git status` báo modified dù không ai chủ động sửa; kích thước lệch nhẹ (~vài trăm byte), vẫn là PNG hợp lệ 750×500 (không vỡ ảnh). Nghi do 1 trong các worktree rác (mục đã dọn ở trên) từng chạm vào. Chưa commit — user tự xem lại (`git diff` không đọc được ảnh, mở file so sánh trực tiếp) rồi quyết giữ bản mới hay `git checkout -- highlights/2022A.png highlights/2026B.png` để về bản cũ.
 
 ---
 
