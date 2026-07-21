@@ -8,7 +8,6 @@
 # - Đặt tên ảnh theo năm trong Experience: <year><A/B/C...>.png (nhiều ảnh cùng năm thì tăng chữ cái)
 
 2022A.png | Before 2022, I was a Graphic Designer specializing in Branding and Layout
-2022B.png | My brother, a veteran trader, ranked among the top on Binance Vietnam at the time
 # 2023-2024: chưa có ảnh, bổ sung sau
 2025A.png | Started from 0 in Feb 2025, 10K followers a year later
 2025B.png | Recall Ambassador & top Yapper of many projects
