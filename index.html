@@ -422,16 +422,17 @@
     .val-table th:nth-child(5), .val-table td:nth-child(5),
     .val-table th:nth-child(6), .val-table td:nth-child(6) { width: calc(40% / 3); }
     .td-ticker { font-weight: 700; color: var(--text) !important; font-size: 11px; }  /* tên ticker: BOLD đen, cỡ nhỏ đồng bộ (suffix ($$$) giữ regular qua .td-size) */
-    /* Mọi cột: cả KHỐI căn giữa theo giá trị dài nhất của cột đó, các giá trị vẫn thẳng mép trái với nhau.
-       Mỗi giá trị nằm trong span.ck rộng bằng nhau theo cột (--ck1..--ck6 = bề rộng giá trị dài nhất mỗi cột,
-       JS đo bằng probe ẩn trong renderTable), span căn giữa trong cell → mép trái trùng nhau, khối nằm giữa cột. */
+    /* Mọi cột: cả KHỐI căn giữa theo yếu tố dài nhất của cột đó (kể cả header), các yếu tố vẫn thẳng mép trái với nhau.
+       Mỗi giá trị (kể cả header) nằm trong span.ck rộng bằng nhau theo cột (--ck1..--ck6 = bề rộng yếu tố dài nhất mỗi cột,
+       JS đo bằng probe ẩn trong renderTable, tính cả header), span căn giữa trong cell → mép trái trùng nhau, khối nằm giữa cột. */
+    .val-table thead th .ck,
     .val-table tbody td .ck { display: inline-block; text-align: left; }
-    .val-table tbody td:nth-child(1) .ck { min-width: var(--ck1, 0px); }
-    .val-table tbody td:nth-child(2) .ck { min-width: var(--ck2, 0px); }
-    .val-table tbody td:nth-child(3) .ck { min-width: var(--ck3, 0px); }
-    .val-table tbody td:nth-child(4) .ck { min-width: var(--ck4, 0px); }
-    .val-table tbody td:nth-child(5) .ck { min-width: var(--ck5, 0px); }
-    .val-table tbody td:nth-child(6) .ck { min-width: var(--ck6, 0px); }
+    .val-table thead th:nth-child(1) .ck, .val-table tbody td:nth-child(1) .ck { min-width: var(--ck1, 0px); }
+    .val-table thead th:nth-child(2) .ck, .val-table tbody td:nth-child(2) .ck { min-width: var(--ck2, 0px); }
+    .val-table thead th:nth-child(3) .ck, .val-table tbody td:nth-child(3) .ck { min-width: var(--ck3, 0px); }
+    .val-table thead th:nth-child(4) .ck, .val-table tbody td:nth-child(4) .ck { min-width: var(--ck4, 0px); }
+    .val-table thead th:nth-child(5) .ck, .val-table tbody td:nth-child(5) .ck { min-width: var(--ck5, 0px); }
+    .val-table thead th:nth-child(6) .ck, .val-table tbody td:nth-child(6) .ck { min-width: var(--ck6, 0px); }
     .td-narrative { font-size: 11px; color: var(--muted); }                            /* narrative: yếu tố phụ, xám nhỏ */
     .td-size   { font-size: 11px; font-weight: 400; color: var(--muted); margin-left: 4px; }  /* phụ: xám nhỏ */
     .td-multi  { font-weight: 700; color: var(--accent) !important; font-size: 11px; }  /* số liệu ×: bold cam, cỡ nhỏ đồng bộ */
@@ -1064,12 +1065,12 @@
           <table class="val-table">
             <thead>
               <tr>
-                <th>Ticker</th>
-                <th>Narrative</th>
-                <th>TGE Date</th>
-                <th>×TGE</th>
-                <th>×ATH</th>
-                <th>×ATM</th>
+                <th><span class="ck">Ticker</span></th>
+                <th><span class="ck">Narrative</span></th>
+                <th><span class="ck">TGE Date</span></th>
+                <th><span class="ck">×TGE</span></th>
+                <th><span class="ck">×ATH</span></th>
+                <th><span class="ck">×ATM</span></th>
               </tr>
             </thead>
           </table>
@@ -1619,16 +1620,26 @@
         </tr>`;
       }).join('');
 
-      // Đo giá trị dài nhất TỪNG CỘT → --ck1..--ck6 (probe ẩn tái tạo đúng cấu trúc bảng
+      // Đo yếu tố dài nhất TỪNG CỘT (kể cả header) → --ck1..--ck6 (probe ẩn tái tạo đúng cấu trúc bảng
       // để CSS theo cột áp dụng đúng font; không đo bảng thật vì có thể đang display:none)
       const probe = document.createElement('div');
       probe.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;width:2000px;';
       for (let i = 1; i <= 6; i++) probe.style.setProperty('--ck' + i, '0px');
-      probe.innerHTML = `<section id="tge-section"><table class="val-table val-table-body"><tbody>${tbody.innerHTML}</tbody></table></section>`;
+      probe.innerHTML = `<section id="tge-section"><table class="val-table val-table-body">
+        <thead><tr>
+          <th><span class="ck">Ticker</span></th>
+          <th><span class="ck">Narrative</span></th>
+          <th><span class="ck">TGE Date</span></th>
+          <th><span class="ck">×TGE</span></th>
+          <th><span class="ck">×ATH</span></th>
+          <th><span class="ck">×ATM</span></th>
+        </tr></thead>
+        <tbody>${tbody.innerHTML}</tbody>
+      </table></section>`;
       document.body.appendChild(probe);
       for (let i = 1; i <= 6; i++) {
         let w = 0;
-        probe.querySelectorAll(`td:nth-child(${i}) .ck`).forEach(s => { w = Math.max(w, s.getBoundingClientRect().width); });
+        probe.querySelectorAll(`th:nth-child(${i}) .ck, td:nth-child(${i}) .ck`).forEach(s => { w = Math.max(w, s.getBoundingClientRect().width); });
         document.documentElement.style.setProperty('--ck' + i, Math.ceil(w) + 'px');
       }
       probe.remove();
