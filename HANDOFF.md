@@ -196,7 +196,6 @@ Logic hiện tại (2026-06-11):
 
 3. **Cloudflare Pages git-integration không tự deploy** (phát hiện 2026-07-21) — push commit `1225c55` lên `main` nhưng ~12 tiếng sau dashboard vẫn hiện "No deployment available" cho commit đó (không phải build fail, mà build KHÔNG được trigger). Đã deploy tay bằng `wrangler pages deploy <thư mục chỉ chứa file public> --project-name=0xhieu-xyz --branch=main` (máy có sẵn `wrangler login` với account `kattyfury1403@gmail.com`) để đưa bản mới lên production ngay. **Chưa xác định nguyên nhân gốc** — cần user vào Cloudflare dashboard → Pages → `0xhieu-xyz` → Settings → Builds & deployments kiểm tra webhook GitHub↔Cloudflare còn sống không. Cho tới khi fix, mỗi lần push nên deploy tay kèm theo (đừng chỉ trông cậy auto-deploy).
 
-4. **`highlights/2022A.png` + `highlights/2026B.png` bị đổi trên đĩa ngoài ý muốn** (phát hiện 2026-07-21) — 2 file này hiện `git status` báo modified dù không ai chủ động sửa; kích thước lệch nhẹ (~vài trăm byte), vẫn là PNG hợp lệ 750×500 (không vỡ ảnh). Nghi do 1 trong các worktree rác (mục đã dọn ở trên) từng chạm vào. Chưa commit — user tự xem lại (`git diff` không đọc được ảnh, mở file so sánh trực tiếp) rồi quyết giữ bản mới hay `git checkout -- highlights/2022A.png highlights/2026B.png` để về bản cũ.
 
 ---
 
