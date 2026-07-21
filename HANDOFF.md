@@ -2,7 +2,7 @@
 
 **Date:** 2026-07-21  
 **Repo:** https://github.com/KattyFury/cv  
-**Live:** Cloudflare Pages, project `0xhieu-xyz` (git-integration auto-deploy từ main — **hiện đang KHÔNG trigger được**, xem Pending #4; deploy tay bằng `wrangler pages deploy` cho tới khi fix)  
+**Live:** Cloudflare Pages, project `0xhieu-xyz` (git-integration auto-deploy từ main — **hiện đang KHÔNG trigger được**, xem Pending #3; deploy tay bằng `wrangler pages deploy` cho tới khi fix)  
 **Local dev:** site tĩnh — mở thẳng `index.html`, hoặc `python -m http.server` bất kỳ port nào (route `/valuation` cần SPA fallback về `index.html` giống `_redirects`)  
 **Local path:** `D:\Files\Claude\build_for_me\cv`
 
@@ -195,7 +195,6 @@ Logic hiện tại (2026-06-11):
 2. **`pfp.png`** — `index.html` trỏ `pfp.png` (chữ thường). Đảm bảo file đúng tên thường để không 404 khi deploy Cloudflare (Linux phân biệt hoa/thường).
 
 3. **Cloudflare Pages git-integration không tự deploy** (phát hiện 2026-07-21) — push commit `1225c55` lên `main` nhưng ~12 tiếng sau dashboard vẫn hiện "No deployment available" cho commit đó (không phải build fail, mà build KHÔNG được trigger). Đã deploy tay bằng `wrangler pages deploy <thư mục chỉ chứa file public> --project-name=0xhieu-xyz --branch=main` (máy có sẵn `wrangler login` với account `kattyfury1403@gmail.com`) để đưa bản mới lên production ngay. **Chưa xác định nguyên nhân gốc** — cần user vào Cloudflare dashboard → Pages → `0xhieu-xyz` → Settings → Builds & deployments kiểm tra webhook GitHub↔Cloudflare còn sống không. Cho tới khi fix, mỗi lần push nên deploy tay kèm theo (đừng chỉ trông cậy auto-deploy).
-
 
 ---
 
