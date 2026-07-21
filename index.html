@@ -22,17 +22,18 @@
        Font-size khóa riêng: 19/15/14/13/12/11/10px (không đụng).
        Khi thêm element mới: chọn spacing trong scale, không tự chế số lẻ. */
     :root {
-      --white:  #FDFCFA;   /* trắng vừa: bớt kem cho dễ đọc, vẫn còn chút ấm */
-      --off:    #F6F2E4;
-      --border: #EBE4CE;
-      --muted:  #8A8268;
-      --sub:    #6B6354;
-      --text:   #38342A;
-      --accent: #5C4B63;  /* tím đậm — điểm đầu gradient thương hiệu, dùng cho text/border/hover (đặc, không gradient) */
-      --accent-rgb: 92, 75, 99;
-      --brand-1: #5C4B63;
-      --brand-2: #FDE9A8;
-      --accent-gradient: linear-gradient(45deg, var(--brand-1) 0%, var(--brand-2) 100%);
+      --white:  #FFFFFF;   /* trắng thật, không ngả kem — ưu tiên dễ đọc */
+      --off:    #F5F5F5;
+      --border: #E5E5E5;
+      --muted:  #8A8A8A;
+      --sub:    #525252;   /* chữ phụ: xám vừa-đậm, phân biệt rõ với --text */
+      --text:   #171717;   /* chữ chính: gần đen */
+      --accent: #6155F5;  /* tím đậm — điểm chính gradient thương hiệu, dùng cho text/border/hover (đặc, không gradient) */
+      --accent-rgb: 97, 85, 245;
+      --brand-1: #6155F5;
+      --brand-2: #0088FF;
+      --brand-3: #34C759;
+      --accent-gradient: linear-gradient(45deg, var(--brand-1) 25%, var(--brand-2) 50%, var(--brand-3) 100%);
       --max:    900px;
       --box-h:  160px;   /* chiều cao cố định của box 4-quarter (Valuation) */
       --modal-w: 340px;  /* popup nhỏ; popup lớn = 2× giá trị này */
@@ -712,9 +713,9 @@
     .lang-dd-item.active { color: var(--text); font-weight: 600; }
     /* Rank filter màu theo tier */
     #rf-ss.active { background: var(--accent-gradient); color: #fff; }
-    #rf-s.active  { background: #8B5CF6; color: #fff; }
-    #rf-a.active  { background: #3B82F6; color: #fff; }
-    #rf-b.active  { background: #22C55E; color: #fff; }
+    #rf-s.active  { background: #6155F5; color: #fff; }
+    #rf-a.active  { background: #0088FF; color: #fff; }
+    #rf-b.active  { background: #34C759; color: #fff; }
 
     /* Cards wrapper — mỗi rank group cách nhau 1 hàng */
     #wte-cards { display: flex; flex-direction: column; gap: var(--row); }
@@ -764,9 +765,9 @@
       flex-shrink: 0;
     }
     .rank-SS { background: var(--accent-gradient); color: #fff; }
-    .rank-S { background: #8B5CF6; color: #fff; }
-    .rank-A { background: #3B82F6; color: #fff; }
-    .rank-B { background: #22C55E; color: #fff; }
+    .rank-S { background: #6155F5; color: #fff; }
+    .rank-A { background: #0088FF; color: #fff; }
+    .rank-B { background: #34C759; color: #fff; }
 
     /* Tên dự án = TIÊU ĐỀ: bold, 13px (đồng bộ tiêu đề các box khác) */
     .wte-name {
@@ -774,9 +775,9 @@
       color: var(--text); text-decoration: none;
       flex: 1; min-width: 0;
     }
-    .wte-card--S .wte-name:hover { color: #8B5CF6; }
-    .wte-card--A .wte-name:hover { color: #3B82F6; }
-    .wte-card--B .wte-name:hover { color: #22C55E; }
+    .wte-card--S .wte-name:hover { color: #6155F5; }
+    .wte-card--A .wte-name:hover { color: #0088FF; }
+    .wte-card--B .wte-name:hover { color: #34C759; }
 
     /* Narrative (Stablechain...) = yếu tố phụ: nhỏ, xám, regular (bỏ pill viền) */
     .wte-type {
@@ -792,9 +793,9 @@
 
     /* Section labels follow rank */
     .wte-card--SS .wte-section-label { color: var(--accent); }
-    .wte-card--S .wte-section-label { color: #8B5CF6; }
-    .wte-card--A .wte-section-label { color: #3B82F6; }
-    .wte-card--B .wte-section-label { color: #22C55E; }
+    .wte-card--S .wte-section-label { color: #6155F5; }
+    .wte-card--A .wte-section-label { color: #0088FF; }
+    .wte-card--B .wte-section-label { color: #34C759; }
 
 
     /* Sections */
@@ -817,12 +818,12 @@
 
     /* Daily — xám nhạt chữ đen, border-left giữ màu rank */
     .wte-card--SS .wte-section--daily { background: rgba(var(--accent-rgb),0.12); border-left-color: var(--accent); }
-    .wte-card--S .wte-section--daily { background: rgba(139,92,246,0.12);  border-left-color: #8B5CF6; }
-    .wte-card--A .wte-section--daily { background: rgba(59,130,246,0.12); border-left-color: #3B82F6; }
-    .wte-card--B .wte-section--daily { background: rgba(34,197,94,0.12); border-left-color: #22C55E; }
-    .wte-card--S .wte-section--daily .wte-section-label { color: #8B5CF6; }
-    .wte-card--A .wte-section--daily .wte-section-label { color: #3B82F6; }
-    .wte-card--B .wte-section--daily .wte-section-label { color: #22C55E; }
+    .wte-card--S .wte-section--daily { background: rgba(97,85,245,0.12);  border-left-color: #6155F5; }
+    .wte-card--A .wte-section--daily { background: rgba(0,136,255,0.12); border-left-color: #0088FF; }
+    .wte-card--B .wte-section--daily { background: rgba(52,199,89,0.12); border-left-color: #34C759; }
+    .wte-card--S .wte-section--daily .wte-section-label { color: #6155F5; }
+    .wte-card--A .wte-section--daily .wte-section-label { color: #0088FF; }
+    .wte-card--B .wte-section--daily .wte-section-label { color: #34C759; }
     .wte-tasks {
       list-style: none; margin: 0; padding: 0;
       display: flex; flex-direction: column; gap: 4px;
@@ -832,9 +833,9 @@
       font-size: 13px; color: var(--text); line-height: 1.5;   /* nội dung task: đen (chữ quan trọng) */
     }
     .wte-task-item::before { content: '•'; flex-shrink: 0; }
-    .wte-card--S .wte-task-item::before { color: #8B5CF6; }
-    .wte-card--A .wte-task-item::before { color: #3B82F6; }
-    .wte-card--B .wte-task-item::before { color: #22C55E; }
+    .wte-card--S .wte-task-item::before { color: #6155F5; }
+    .wte-card--A .wte-task-item::before { color: #0088FF; }
+    .wte-card--B .wte-task-item::before { color: #34C759; }
     .wte-task-row {
       display: flex; align-items: flex-start; gap: 8px;
       flex: 1; color: inherit; text-decoration: none;
