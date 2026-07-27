@@ -1658,15 +1658,15 @@
       }).join('');
     }
 
-    // ── Trending Narratives: narrative nào đang là meta của market ──
+    // ── Trending Narratives: xếp hạng TẤT CẢ narrative từ 02/2025 tới nay ──
     // Xếp theo median ×TGE (giá lúc list, phản ánh niềm tin thị trường ngay
     // từ đầu) thay vì ×ATH — tránh bị 1 coin pump đơn lẻ về sau kéo cả nhóm
     // trông như "trending" dù ban đầu thị trường không tin (vd Identity: H
     // ×0.76, BILL ×0.9 lúc TGE — đều bị chê — nhưng H pump ×16.9 sau đó kéo
     // median ATH lên ảo). Dùng median (không phải trung bình) để 1 dự án dị
-    // (kiểu MYX ×380) không kéo lệch cả nhóm. Chỉ tính narrative có ≥2 dự án
-    // từ 02/2025 tới nay — 1 dự án chưa đủ để gọi là "meta". Gate median
-    // ×TGE ≥ 1 vẫn giữ làm ngưỡng loại narrative bị thị trường chê thẳng từ đầu.
+    // (kiểu MYX ×380) không kéo lệch cả nhóm. Không lọc theo số dự án hay
+    // ngưỡng ×TGE — hiện đủ mọi narrative có data, kể cả 1 dự án hoặc bị
+    // thị trường chê lúc TGE, để không ẩn thông tin.
     const NARRATIVE_SINCE = '2025-02-01';
 
     function renderNarratives() {
@@ -1689,7 +1689,6 @@
             medTGE: median(list.map(e => e.xTGEm)),
           };
         })
-        .filter(g => g.count >= 2 && g.medTGE >= 1)
         .sort((a, b) => b.medTGE - a.medTGE);
 
       if (!ranked.length) {
@@ -1699,7 +1698,7 @@
 
       listEl.innerHTML = ranked.map(g => `
         <div class="narrative-row">
-          <span class="narrative-name">${g.name}</span>
+          <span class="narrative-name">${g.name}<span class="td-size">(${g.count})</span></span>
           <span class="narrative-med">×${g.medTGE.toFixed(1)}</span>
         </div>
       `).join('');
