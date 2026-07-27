@@ -344,7 +344,7 @@
     }
     /* Body: các dòng cách nhau 0.5 hàng (border-spacing dọc); perimeter trên = khoảng cách header→OP */
     #tge-section .val-table-body {
-      border-collapse: separate; border-spacing: 0 calc(var(--row) * 0.5);
+      border-collapse: separate; border-spacing: 0 calc(var(--row) * 0.25);
     }
     /* Header bảng = tiêu đề: bold, đen, KHÔNG allcaps (đồng bộ tiêu đề các box) */
     #tge-section .val-table thead th,
@@ -357,8 +357,9 @@
       height: var(--row); padding: 2px 16px; border-bottom: none;
     }
     #tge-section .val-table tbody td {
-      height: var(--row); padding: 2px 16px; border-bottom: none;
+      height: var(--row); padding: 2px 16px calc(var(--row) * 0.25); border-bottom: 1px solid rgba(0,0,0,0.15);
     }
+    #tge-section .val-table tbody tr:last-child td { border-bottom: none; }
 
     /* Scroll được nhưng ẩn thanh scrollbar (đỡ chiếm chỗ/xấu) — vẫn lướt chuột/chạm bình thường */
     .val-table-scroll {
@@ -1077,13 +1078,8 @@
           <div class="val-card-label calc-card-label vc-q1">Market condition</div>
           <div class="split-box vc-q23" id="market-terms">
             <div class="split-col">
-              <div class="split-val" id="market-short-val">—</div>
-              <div class="split-lbl"><span id="market-short-n"></span></div>
-            </div>
-            <div class="split-divider"></div>
-            <div class="split-col">
-              <div class="split-val" id="market-mid-val">—</div>
-              <div class="split-lbl"><span id="market-mid-n"></span></div>
+              <div class="split-val" id="market-val">—</div>
+              <div class="split-lbl"><span id="market-n"></span></div>
             </div>
           </div>
           <div class="market-levels vc-q4" id="market-levels">
@@ -1581,44 +1577,29 @@
       const entries  = allEntries();
       const sorted   = [...entries].sort((a, b) => new Date(b.tgeDate) - new Date(a.tgeDate));
 
-      // 1. Market condition — short-term (4) + mid-term (8, reduce to 6 if span >60d)
-      const splitBox   = document.getElementById('market-terms');
-      const shortValEl = document.getElementById('market-short-val');
-      const shortNEl   = document.getElementById('market-short-n');
-      const midValEl   = document.getElementById('market-mid-val');
-      const midNEl     = document.getElementById('market-mid-n');
+      // 1. Market condition — median của 6 deal TGE gần nhất (backtest 2026-07-27:
+      // flicker rate N=6 thấp ngang N=4 nhưng mượt hơn, không trễ như N=8 → gộp short+mid làm 1)
+      const valEl = document.getElementById('market-val');
+      const nEl   = document.getElementById('market-n');
 
       // Valid multiples sorted newest → oldest
       const validM = sorted
         .map(e => ({ m: multiple(e), date: e.tgeDate }))
         .filter(x => isFinite(x.m) && x.m > 0);
 
-      // Short-term: 4 most recent, no outlier removal
-      const short4    = validM.slice(0, 4).map(x => x.m);
-      const shortMed  = median(short4);
-
-      // Mid-term: 8 most recent; if 8th entry is >60 days older than 1st → use 6
-      let midN = Math.min(8, validM.length);
-      if (validM.length >= 8) {
-        const spanDays = (new Date(validM[0].date) - new Date(validM[7].date))
-          / (1000 * 60 * 60 * 24);
-        if (spanDays > 60) midN = 6;
-      }
-      const midValues = validM.slice(0, midN).map(x => x.m);
-      const midMed    = median(midValues);
+      const recent6 = validM.slice(0, 6).map(x => x.m);
+      const med     = median(recent6);
 
       // Set active segment on the 3-level indicator
       // Thresholds calibrated from era-based reference periods:
       // Strong (2023-2024 cycle) >=13, Normal (2022 baseline) 4.3-13, Weak (2025-2026) <4.3
-      const lvlIdx = shortMed >= 13 ? 0 : shortMed >= 4.3 ? 1 : 2;
+      const lvlIdx = med >= 13 ? 0 : med >= 4.3 ? 1 : 2;
       document.querySelectorAll('#market-levels .mkt-lvl').forEach((el, i) => {
         el.classList.toggle('mkt-active', i === lvlIdx);
       });
 
-      shortValEl.textContent = short4.length ? `×${shortMed.toFixed(2)}` : '—';
-      shortNEl.textContent   = short4.length ? `${short4.length} deals` : '';
-      midValEl.textContent   = midValues.length >= 2 ? `×${midMed.toFixed(2)}` : '—';
-      midNEl.textContent     = midValues.length >= 2 ? `${midN} deals` : '';
+      valEl.textContent = recent6.length ? `×${med.toFixed(2)}` : '—';
+      nEl.textContent    = recent6.length ? `${recent6.length} deals` : '';
 
       // 2. Recent TGE multiples — split Low FDV (<$300M entry) vs High FDV (≥$300M entry)
       const FDV_SPLIT = 300e6;
@@ -1678,13 +1659,14 @@
     }
 
     // ── Trending Narratives: narrative nào đang là meta của market ──
-    // Xếp theo median ×ATH (không dùng trung bình) vì median không bị 1 con
-    // bơm thổi đơn lẻ (kiểu MYX ×380) kéo lệch cả nhóm. Chỉ tính narrative có
-    // ≥2 dự án từ 02/2025 tới nay — 1 dự án chưa đủ để gọi là "meta".
-    // Gate thêm median ×TGE ≥ 1: nếu thị trường trả giá TGE THẤP HƠN giá VC
-    // (×TGE <1) thì đây không phải narrative được tin ngay từ đầu — chỉ là
-    // 1 coin ăn may pump sau (vd Identity: H ×0.76, BILL ×0.9 lúc TGE, H pump
-    // ×16.9 sau đó kéo median ATH lên dù cả nhóm bị chê lúc launch).
+    // Xếp theo median ×TGE (giá lúc list, phản ánh niềm tin thị trường ngay
+    // từ đầu) thay vì ×ATH — tránh bị 1 coin pump đơn lẻ về sau kéo cả nhóm
+    // trông như "trending" dù ban đầu thị trường không tin (vd Identity: H
+    // ×0.76, BILL ×0.9 lúc TGE — đều bị chê — nhưng H pump ×16.9 sau đó kéo
+    // median ATH lên ảo). Dùng median (không phải trung bình) để 1 dự án dị
+    // (kiểu MYX ×380) không kéo lệch cả nhóm. Chỉ tính narrative có ≥2 dự án
+    // từ 02/2025 tới nay — 1 dự án chưa đủ để gọi là "meta". Gate median
+    // ×TGE ≥ 1 vẫn giữ làm ngưỡng loại narrative bị thị trường chê thẳng từ đầu.
     const NARRATIVE_SINCE = '2025-02-01';
 
     function renderNarratives() {
@@ -1693,7 +1675,7 @@
       const groups = {};
       allEntries().forEach(e => {
         if (!e.type || !e.tgeDate || e.tgeDate < NARRATIVE_SINCE) return;
-        if (!e.xATHm || e.xATHm <= 0 || !e.xTGEm || e.xTGEm <= 0) return;
+        if (!e.xTGEm || e.xTGEm <= 0) return;
         if (!groups[e.type]) groups[e.type] = [];
         groups[e.type].push(e);
       });
@@ -1704,12 +1686,11 @@
           return {
             name,
             count: list.length,
-            medATH: median(list.map(e => e.xATHm)),
             medTGE: median(list.map(e => e.xTGEm)),
           };
         })
         .filter(g => g.count >= 2 && g.medTGE >= 1)
-        .sort((a, b) => b.medATH - a.medATH);
+        .sort((a, b) => b.medTGE - a.medTGE);
 
       if (!ranked.length) {
         listEl.innerHTML = '<div class="danger-empty">Not enough data yet</div>';
@@ -1719,7 +1700,7 @@
       listEl.innerHTML = ranked.map(g => `
         <div class="narrative-row">
           <span class="narrative-name">${g.name}</span>
-          <span class="narrative-med">×${g.medATH.toFixed(1)}</span>
+          <span class="narrative-med">×${g.medTGE.toFixed(1)}</span>
         </div>
       `).join('');
     }
