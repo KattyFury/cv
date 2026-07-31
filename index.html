@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Hieu Nguyen — Web3 Builder · Reading the market, working to earn</title>
+  <title>0xhieu.xyz</title>
   <meta name="description" content="Hieu Nguyen (0xhieu.xyz) — Web3 Builder in Hanoi. Two threads of work: reading the market through TGE/FDV valuation data, and working to earn through airdrop work-to-earn and community building." />
   <meta name="author" content="Hieu Nguyen" />
   <link rel="canonical" href="https://0xhieu.xyz/" />
@@ -606,7 +606,7 @@
 
     /* Calculator */
     .calc-field { display: flex; flex-direction: column; gap: 2px; }
-    .calc-field label {
+    .calc-field label, .pt-group > label {
       font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
       text-transform: uppercase; color: var(--muted);
     }
@@ -978,6 +978,28 @@
     #ptask-form::-webkit-scrollbar { display: none; }
     .ptask-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
+    /* Get started / Daily / Weekly — mỗi mục nhiều dòng (việc + link), nút + thêm dòng */
+    .pt-group { display: flex; flex-direction: column; gap: 4px; }
+    .pt-items { display: flex; flex-direction: column; gap: 8px; }
+    .pt-item-head { display: flex; align-items: center; gap: 8px; }
+    .pt-item-head input { flex: 1; }
+    .pt-item-del {
+      width: 16px; padding: 0; border: none; background: none;
+      color: var(--muted); font-family: 'Roboto', sans-serif;
+      font-size: 12px; line-height: 1; cursor: pointer; transition: color 0.15s;
+    }
+    .pt-item-del:hover { color: var(--text); }
+    /* còn đúng 1 dòng thì không cho xoá (form luôn giữ ít nhất 1 dòng trống) */
+    .pt-item:only-child .pt-item-del { visibility: hidden; }
+    .pt-row-add {
+      align-self: flex-start; width: 24px; height: 24px; padding: 0;
+      border: 1px dashed var(--border); border-radius: 6px;
+      background: var(--white); color: var(--muted);
+      font-family: 'Roboto', sans-serif; font-size: 14px; line-height: 1;
+      cursor: pointer; transition: border-color 0.15s, color 0.15s;
+    }
+    .pt-row-add:hover { border-color: var(--accent); color: var(--accent); }
+
   </style>
 </head>
 <body>
@@ -1337,29 +1359,20 @@
           <label>Rank</label>
           <input type="text" id="pt-rank" value="S+" disabled />
         </div>
-        <div class="calc-field">
+        <div class="pt-group">
           <label>Get started</label>
-          <input type="text" id="pt-gs" placeholder="Việc cần làm để bắt đầu" />
+          <div class="pt-items" id="pt-gs-items"></div>
+          <button type="button" class="pt-row-add" id="pt-gs-add" title="Thêm dòng">+</button>
         </div>
-        <div class="calc-field">
-          <label>Link</label>
-          <input type="text" id="pt-gs-link" placeholder="https://..." />
-        </div>
-        <div class="calc-field">
+        <div class="pt-group">
           <label>Daily task</label>
-          <input type="text" id="pt-daily" placeholder="Việc làm mỗi ngày" />
+          <div class="pt-items" id="pt-daily-items"></div>
+          <button type="button" class="pt-row-add" id="pt-daily-add" title="Thêm dòng">+</button>
         </div>
-        <div class="calc-field">
-          <label>Link</label>
-          <input type="text" id="pt-daily-link" placeholder="https://..." />
-        </div>
-        <div class="calc-field">
-          <label>Weekly</label>
-          <input type="text" id="pt-weekly" placeholder="Việc làm mỗi tuần" />
-        </div>
-        <div class="calc-field">
-          <label>Link</label>
-          <input type="text" id="pt-weekly-link" placeholder="https://..." />
+        <div class="pt-group">
+          <label>Weekly task</label>
+          <div class="pt-items" id="pt-weekly-items"></div>
+          <button type="button" class="pt-row-add" id="pt-weekly-add" title="Thêm dòng">+</button>
         </div>
       </div>
       <div class="admin-msg" id="pt-error" style="display:none"></div>
@@ -2402,11 +2415,37 @@
     adminInput.addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
 
     // ── Form thêm task ────────────────────────────────
-    const PT_FIELDS = ['pt-name','pt-twitter','pt-gs','pt-gs-link','pt-daily',
-                       'pt-daily-link','pt-weekly','pt-weekly-link','pt-potential','pt-type'];
+    const PT_FIELDS = ['pt-name','pt-twitter','pt-potential','pt-type'];
+    // 3 nhóm nhiều dòng: mỗi dòng = việc + link, bấm + để thêm dòng
+    const PT_GROUPS = { gs: 'Việc cần làm để bắt đầu', daily: 'Việc làm mỗi ngày', weekly: 'Việc làm mỗi tuần' };
+
+    function ptAddRow(key) {
+      const row = document.createElement('div');
+      row.className = 'pt-item calc-field';
+      row.innerHTML = `<div class="pt-item-head">
+          <input type="text" class="pt-item-text" placeholder="${PT_GROUPS[key]}" />
+          <button type="button" class="pt-item-del" title="Xoá dòng">✕</button>
+        </div>
+        <input type="text" class="pt-item-link" placeholder="https://..." />`;
+      row.querySelector('.pt-item-del').addEventListener('click', () => row.remove());
+      $('pt-' + key + '-items').appendChild(row);
+      return row;
+    }
+
+    // Dòng trống bị bỏ qua — chỉ gửi lên dòng có nội dung
+    const ptItems = key => [...$('pt-' + key + '-items').querySelectorAll('.pt-item')]
+      .map(r => ({ text: r.querySelector('.pt-item-text').value, link: r.querySelector('.pt-item-link').value }))
+      .filter(it => it.text.trim());
+
+    Object.keys(PT_GROUPS).forEach(key => {
+      $('pt-' + key + '-add').addEventListener('click', () => {
+        ptAddRow(key).querySelector('.pt-item-text').focus();
+      });
+    });
 
     function openPtaskForm() {
       PT_FIELDS.forEach(id => { $(id).value = ''; });
+      Object.keys(PT_GROUPS).forEach(key => { $('pt-' + key + '-items').innerHTML = ''; ptAddRow(key); });
       ptError.style.display = 'none';
       ptaskModal.classList.add('open');
       setTimeout(() => $('pt-name').focus(), 50);
@@ -2418,9 +2457,9 @@
         twitter:    $('pt-twitter').value,
         potential:  $('pt-potential').value,
         type:       $('pt-type').value,
-        getStarted: $('pt-gs').value,     getStartedLink: $('pt-gs-link').value,
-        daily:      $('pt-daily').value,  dailyLink:      $('pt-daily-link').value,
-        weekly:     $('pt-weekly').value, weeklyLink:     $('pt-weekly-link').value,
+        getStarted: ptItems('gs'),
+        daily:      ptItems('daily'),
+        weekly:     ptItems('weekly'),
       };
       $('pt-add').disabled = true;
       const r = await apiPrivate('add', { task });
@@ -2454,8 +2493,9 @@
       if (r.ok) { personalTasks = r.tasks || []; renderWTE(); }
     });
 
-    // Bấm ra ngoài popup = đóng
-    [adminModal, ptaskModal, pdelModal].forEach(m => {
+    // Bấm ra ngoài popup = đóng. TRỪ form thêm task (ptaskModal) — bấm nhầm ra ngoài
+    // là mất hết nội dung đang gõ, nên chỉ nút Cancel mới đóng được.
+    [adminModal, pdelModal].forEach(m => {
       m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
     });
 
