@@ -7,3 +7,6 @@ node_modules/
 # Secret không bao giờ commit (mật khẩu admin nằm trên Cloudflare Dashboard, không nằm trong repo)
 .env
 .env.*
+
+# Cấu hình/lịch sử của Claude Code trên máy — không phải code của dự án
+.claude/
