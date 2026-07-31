@@ -1,7 +1,7 @@
 // Cổng riêng tư cho Airdrop → Work: task cá nhân lưu trong Cloudflare KV.
 // Mật khẩu được kiểm tra Ở SERVER — không nằm trong index.html, không dò được bằng F12.
 //
-//   KV binding : WATCHLIST     (Cloudflare Pages → Settings → Bindings)
+//   KV binding : WORK          (Cloudflare Pages → Settings → Bindings)
 //   Secret     : ADMIN_PASS    (Cloudflare Pages → Settings → Environment variables, chọn "Encrypt")
 //
 // Sai mật khẩu → trả 401 và KHÔNG trả về bất kỳ dữ liệu nào.
@@ -36,7 +36,7 @@ const writeTasks = (kv, tasks) => kv.put(KEY, JSON.stringify(tasks));
 
 export async function onRequestPost({ request, env }) {
   if (!env.ADMIN_PASS) return json({ ok: false, error: 'Chưa cấu hình biến ADMIN_PASS trên Cloudflare' }, 500);
-  if (!env.WATCHLIST)  return json({ ok: false, error: 'Chưa gắn KV binding WATCHLIST trên Cloudflare' }, 500);
+  if (!env.WORK)       return json({ ok: false, error: 'Chưa gắn KV binding WORK trên Cloudflare' }, 500);
 
   let body;
   try { body = await request.json(); } catch { return json({ ok: false, error: 'bad-json' }, 400); }
@@ -46,7 +46,7 @@ export async function onRequestPost({ request, env }) {
     return json({ ok: false, error: 'wrong-pass' }, 401);
   }
 
-  const kv = env.WATCHLIST;
+  const kv = env.WORK;
 
   if (body.action === 'list') {
     return json({ ok: true, tasks: await readTasks(kv) });
