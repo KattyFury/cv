@@ -1,0 +1,9 @@
+# Trạng thái local của `wrangler pages dev` (KV giả lập khi test máy nhà) — không đẩy lên
+.wrangler/
+
+# Nếu sau này có cài package để test
+node_modules/
+
+# Secret không bao giờ commit (mật khẩu admin nằm trên Cloudflare Dashboard, không nằm trong repo)
+.env
+.env.*
