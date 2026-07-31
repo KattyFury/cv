@@ -22,7 +22,9 @@ I'm a **Vietnamese vibecoder** — I have ideas, not a programming background. I
 
 ## This Project — `cv` (0xhieu.xyz)
 
-**Bản chất:** một **website tĩnh 1 file** để hiển thị data. **KHÔNG có backend, KHÔNG smart contract, KHÔNG secret/API key.**
+**Bản chất:** một **website tĩnh 1 file** để hiển thị data. **KHÔNG smart contract.** Phần công khai không có backend, không API key.
+
+> **Ngoại lệ duy nhất (2026-07-31):** `functions/api/private.js` — Cloudflare Pages Function cho **task cá nhân** ở Airdrop → Work (lưu KV `WATCHLIST`, mở bằng mật khẩu `ADMIN_PASS` đặt trong Cloudflare Dashboard). Đây là phần **riêng tư của mình tôi**, khách không thấy. Mật khẩu **không nằm trong repo**.
 
 - **Toàn bộ site nằm trong `index.html`** (HTML + CSS + JS inline). Host trên **Cloudflare Pages** (auto-deploy từ nhánh `main`).
 - **Data đọc từ nguồn PUBLIC (không key):**
@@ -33,7 +35,7 @@ I'm a **Vietnamese vibecoder** — I have ideas, not a programming background. I
 - **Assets:** `icon.png` (favicon + iPhone icon), `pfp.png` (avatar), `arrow.svg`, `highlights/`.
 - **Local:** `D:\Files\Claude\cv` · **GitHub:** `KattyFury/cv`
 
-> ⚠️ Nếu thấy mình cần một API key / backend / Cloudflare Function cho `cv` → **gần như chắc chắn là hiểu sai**. cv chỉ đọc data public.
+> ⚠️ Nếu thấy mình cần một API key / backend / Cloudflare Function cho phần **công khai** của `cv` (About me / Valuation / Airdrop đọc từ Sheet) → **gần như chắc chắn là hiểu sai**. Phần công khai chỉ đọc data public. Backend duy nhất được phép tồn tại là `functions/api/private.js` cho task cá nhân.
 
 > ⚠️ **Luôn kiểm tra cột thật trong Google Sheet trước khi viết code parse** (kéo CSV về xem). Đừng đoán thứ tự/định dạng cột — nhiều lỗi đến từ đoán sai (vd sao tiềm năng dùng dấu `*`, không phải số).
 

@@ -903,6 +903,34 @@
     }
     .wl-modal-title { font-size: 15px; font-weight: 600; color: var(--text); }
 
+    /* ── ADMIN: task cá nhân (chỉ hiện sau khi mở khoá bằng mật khẩu) ── */
+    .wte-group-label {
+      font-size: 13px; font-weight: 700; color: var(--text);
+      margin-bottom: calc(var(--row) * 0.5);
+    }
+    .wte-del {
+      border: none; background: none; cursor: pointer; padding: 0 2px;
+      font-size: 12px; line-height: 1; color: var(--muted);
+      transition: color 0.15s;
+    }
+    .wte-del:hover { color: var(--text); }
+    .admin-msg { font-size: 12px; font-weight: 500; color: var(--text); }
+    .calc-field select {
+      padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px;
+      font-family: 'Roboto', sans-serif; font-size: 13px; color: var(--text);
+      background: var(--white); outline: none; cursor: pointer;
+      width: 100%; min-width: 0; box-sizing: border-box;
+    }
+    .calc-field select:focus { border-color: var(--accent); }
+    .calc-field input:disabled { color: var(--muted); background: var(--off); cursor: default; }
+    /* form dài hơn màn → cuộn trong popup, ẩn thanh scrollbar (đồng bộ các box khác) */
+    #ptask-form {
+      display: flex; flex-direction: column; gap: 10px;
+      max-height: 62vh; overflow-y: auto;
+      scrollbar-width: none; -ms-overflow-style: none;
+    }
+    #ptask-form::-webkit-scrollbar { display: none; }
+    .ptask-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
   </style>
 </head>
@@ -1135,6 +1163,7 @@
           <button class="ard-tab" id="ard-watchlist-btn">Watchlist</button>
         </div>
         <div id="ard-wte-controls" style="display:flex;align-items:center;gap:18px">
+          <button class="lang-dd-btn" id="admin-btn" title="Task cá nhân">admin</button>
           <div class="lang-dropdown" id="lang-dropdown">
             <button class="lang-dd-btn" id="lang-dd-trigger">
               <span id="lang-dd-label">Vietnamese</span>
@@ -1210,6 +1239,99 @@
       <div id="calc-result" style="display:none">
         <div id="calc-res-sub"></div>
         <button class="calc-reset-btn" id="calc-reset-btn" title="New calculation">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin: nhập mật khẩu để mở task cá nhân -->
+  <div class="wl-modal-backdrop" id="admin-modal">
+    <div class="wl-modal">
+      <div class="wl-modal-title">Task cá nhân</div>
+      <div class="calc-field">
+        <label>Mật khẩu</label>
+        <input type="password" id="admin-pass" autocomplete="current-password" placeholder="••••••••" />
+      </div>
+      <div class="admin-msg" id="admin-error" style="display:none"></div>
+      <div class="predict-actions">
+        <button class="predict-btn-secondary" id="admin-cancel">Cancel</button>
+        <button class="predict-btn-primary" id="admin-ok">Mở khoá</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin: form thêm task cá nhân (tất cả các ô đều optional) -->
+  <div class="wl-modal-backdrop" id="ptask-modal">
+    <div class="wl-modal">
+      <div class="wl-modal-title">Thêm task cá nhân</div>
+      <div id="ptask-form">
+        <div class="calc-field">
+          <label>Tên dự án / tiêu đề</label>
+          <input type="text" id="pt-name" placeholder="vd: Viết bài cho 0xhieu.xyz" />
+        </div>
+        <div class="calc-field">
+          <label>Twitter</label>
+          <input type="text" id="pt-twitter" placeholder="https://x.com/..." />
+        </div>
+        <div class="ptask-row">
+          <div class="calc-field">
+            <label>Tiềm năng</label>
+            <select id="pt-potential">
+              <option value="">—</option>
+              <option value="1">★</option>
+              <option value="2">★★</option>
+              <option value="3">★★★</option>
+            </select>
+          </div>
+          <div class="calc-field">
+            <label>Phân loại</label>
+            <select id="pt-type"></select>
+          </div>
+        </div>
+        <div class="calc-field">
+          <label>Rank</label>
+          <input type="text" id="pt-rank" value="S+" disabled />
+        </div>
+        <div class="calc-field">
+          <label>Get started</label>
+          <input type="text" id="pt-gs" placeholder="Việc cần làm để bắt đầu" />
+        </div>
+        <div class="calc-field">
+          <label>Link</label>
+          <input type="text" id="pt-gs-link" placeholder="https://..." />
+        </div>
+        <div class="calc-field">
+          <label>Daily task</label>
+          <input type="text" id="pt-daily" placeholder="Việc làm mỗi ngày" />
+        </div>
+        <div class="calc-field">
+          <label>Link</label>
+          <input type="text" id="pt-daily-link" placeholder="https://..." />
+        </div>
+        <div class="calc-field">
+          <label>Weekly</label>
+          <input type="text" id="pt-weekly" placeholder="Việc làm mỗi tuần" />
+        </div>
+        <div class="calc-field">
+          <label>Link</label>
+          <input type="text" id="pt-weekly-link" placeholder="https://..." />
+        </div>
+      </div>
+      <div class="admin-msg" id="pt-error" style="display:none"></div>
+      <div class="predict-actions">
+        <button class="predict-btn-secondary" id="pt-cancel">Cancel</button>
+        <button class="predict-btn-primary" id="pt-add">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin: xác nhận trước khi xoá task cá nhân -->
+  <div class="wl-modal-backdrop" id="pdel-modal">
+    <div class="wl-modal">
+      <div class="wl-modal-title">Xoá task này?</div>
+      <div class="admin-msg" id="pdel-name"></div>
+      <div class="predict-actions">
+        <button class="predict-btn-secondary" id="pdel-cancel">Cancel</button>
+        <button class="predict-btn-primary" id="pdel-ok">Xoá</button>
       </div>
     </div>
   </div>
@@ -2075,12 +2197,13 @@
       const container = document.getElementById('wte-cards');
       const projects  = wteData[wteLang];
 
-      if (!projects.length) {
+      // vẫn render nếu sheet chưa về nhưng đã có task cá nhân trong KV
+      if (!projects.length && !(adminUnlocked && personalTasks.length)) {
         container.innerHTML = '<div style="padding:60px 0;text-align:center;color:var(--muted);font-size:14px;">Loading…</div>';
         return;
       }
 
-      const cardHtml = p => {
+      const cardHtml = (p, personal = false) => {
         const handle   = p.twitter
           ? p.twitter.replace(/.*twitter\.com\/|.*x\.com\/|^@/, '').split('?')[0].trim()
           : '';
@@ -2090,7 +2213,9 @@
         const nameHtml = p.twitter
           ? `<a class="wte-name" href="${p.twitter}" target="_blank" rel="noopener">${p.name}</a>`
           : `<span class="wte-name">${p.name}</span>`;
-        const cardId = 'wte-card-' + p.name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+        const cardId = personal
+          ? 'wte-personal-' + p.id
+          : 'wte-card-' + p.name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
         const potentialLabel = wteLang === 'EN' ? 'Potential:' : 'Tiềm năng:';
         const potentialHtml = p.potential > 0
           ? `<span class="wte-potential" title="${potentialLabel} ${p.potential}/3">${potentialLabel} <span class="wte-stars">${'★'.repeat(p.potential)}</span></span>`
@@ -2103,6 +2228,7 @@
               ${potentialHtml}
               ${p.type ? `<span class="wte-type">${p.type}</span>` : ''}
               <span class="wte-rank rank-${p.rank}">${{SS:'S+',S:'S',A:'A',B:'B'}[p.rank]||p.rank}</span>
+              ${personal ? `<button class="wte-del" data-id="${p.id}" data-name="${p.name.replace(/"/g,'&quot;')}" title="Xoá task">✕</button>` : ''}
             </div>
           </div>
           ${section('Get Started', p.getStarted, 'getStarted')}
@@ -2113,12 +2239,168 @@
 
       const groups = { SS: [], S: [], A: [], B: [] };
       projects.forEach(p => { if (groups[p.rank]) groups[p.rank].push(p); });
-      container.innerHTML = ['SS','S','A','B']
+
+      // Nhóm "Cá nhân" nằm TRÊN S+. Id cố tình KHÔNG bắt đầu bằng "wte-rank-"
+      // để scroll-spy của thanh lọc S+/S/A/B không nhận nhầm nhóm này.
+      const personalHtml = (adminUnlocked && personalTasks.length)
+        ? `<div id="wte-personal">
+             <div class="wte-group-label">${wteLang === 'EN' ? 'Personal' : 'Cá nhân'}</div>
+             <div class="wte-rank-group wte-rank-group--SS">${personalTasks.map(p => cardHtml(p, true)).join('')}</div>
+           </div>`
+        : '';
+
+      container.innerHTML = personalHtml + ['SS','S','A','B']
         .filter(r => groups[r].length)
-        .map(r => `<div id="wte-rank-${r}" class="wte-rank-group wte-rank-group--${r}">${groups[r].map(cardHtml).join('')}</div>`)
+        .map(r => `<div id="wte-rank-${r}" class="wte-rank-group wte-rank-group--${r}">${groups[r].map(p => cardHtml(p)).join('')}</div>`)
         .join('');
       observeRankSections();
     }
+
+    // ══════════════════════════════════════════════════
+    // ADMIN — task cá nhân (lưu Cloudflare KV, mở bằng mật khẩu)
+    // Mật khẩu kiểm tra ở server (functions/api/private.js), không nằm trong file này.
+    // ══════════════════════════════════════════════════
+
+    // 14 thẻ phân loại — khớp dropdown trong Google Sheet
+    const WTE_TYPES = ['Stablechain','Trading','Layer-1','Infra','AI','Layer-2','Prediction',
+                       'Bitcoin','Payment','DeFi','Identity','Privacy','Game','Others'];
+
+    let adminPass     = sessionStorage.getItem('cvAdminPass') || '';
+    let adminUnlocked = false;
+    let personalTasks = [];
+    let pendingDelId  = null;
+
+    const $ = id => document.getElementById(id);
+    const adminBtn   = $('admin-btn');
+    const adminModal = $('admin-modal');
+    const adminInput = $('admin-pass');
+    const adminError = $('admin-error');
+    const ptaskModal = $('ptask-modal');
+    const ptError    = $('pt-error');
+    const pdelModal  = $('pdel-modal');
+
+    // Đổ 14 thẻ vào dropdown Phân loại
+    $('pt-type').innerHTML = '<option value="">—</option>' +
+      WTE_TYPES.map(t => `<option value="${t}">${t}</option>`).join('');
+
+    async function apiPrivate(action, extra = {}) {
+      try {
+        const res  = await fetch('/api/private', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ pass: adminPass, action, ...extra }),
+        });
+        const data = await res.json().catch(() => ({ ok: false }));
+        return { status: res.status, ...data };
+      } catch {
+        return { status: 0, ok: false, error: 'Không gọi được /api/private' };
+      }
+    }
+
+    function setAdminUnlocked(on) {
+      adminUnlocked = on;
+      adminBtn.textContent = on ? '+' : 'admin';
+      adminBtn.title       = on ? 'Thêm task cá nhân' : 'Task cá nhân';
+    }
+
+    function showMsg(el, text) { el.textContent = text; el.style.display = ''; }
+
+    // ── Mở khoá ───────────────────────────────────────
+    async function tryUnlock() {
+      const pass = adminInput.value.trim();
+      if (!pass) return;
+      adminPass = pass;
+      $('admin-ok').disabled = true;
+      const r = await apiPrivate('list');
+      $('admin-ok').disabled = false;
+      if (!r.ok) {
+        adminPass = '';
+        showMsg(adminError, r.status === 401 ? 'Sai mật khẩu' : (r.error || 'Không kết nối được'));
+        return;
+      }
+      sessionStorage.setItem('cvAdminPass', adminPass);
+      personalTasks = r.tasks || [];
+      setAdminUnlocked(true);
+      adminModal.classList.remove('open');
+      renderWTE();
+    }
+
+    adminBtn.addEventListener('click', () => {
+      if (adminUnlocked) { openPtaskForm(); return; }
+      adminInput.value = '';
+      adminError.style.display = 'none';
+      adminModal.classList.add('open');
+      setTimeout(() => adminInput.focus(), 50);
+    });
+    $('admin-ok').addEventListener('click', tryUnlock);
+    $('admin-cancel').addEventListener('click', () => adminModal.classList.remove('open'));
+    adminInput.addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
+
+    // ── Form thêm task ────────────────────────────────
+    const PT_FIELDS = ['pt-name','pt-twitter','pt-gs','pt-gs-link','pt-daily',
+                       'pt-daily-link','pt-weekly','pt-weekly-link','pt-potential','pt-type'];
+
+    function openPtaskForm() {
+      PT_FIELDS.forEach(id => { $(id).value = ''; });
+      ptError.style.display = 'none';
+      ptaskModal.classList.add('open');
+      setTimeout(() => $('pt-name').focus(), 50);
+    }
+
+    async function submitPtask() {
+      const task = {
+        name:       $('pt-name').value,
+        twitter:    $('pt-twitter').value,
+        potential:  $('pt-potential').value,
+        type:       $('pt-type').value,
+        getStarted: $('pt-gs').value,     getStartedLink: $('pt-gs-link').value,
+        daily:      $('pt-daily').value,  dailyLink:      $('pt-daily-link').value,
+        weekly:     $('pt-weekly').value, weeklyLink:     $('pt-weekly-link').value,
+      };
+      $('pt-add').disabled = true;
+      const r = await apiPrivate('add', { task });
+      $('pt-add').disabled = false;
+      if (!r.ok) { showMsg(ptError, r.error || ('Không lưu được (' + r.status + ')')); return; }
+      personalTasks = r.tasks || [];
+      ptaskModal.classList.remove('open');
+      renderWTE();
+    }
+
+    $('pt-add').addEventListener('click', submitPtask);
+    $('pt-cancel').addEventListener('click', () => ptaskModal.classList.remove('open'));
+
+    // ── Xoá task (bấm ✕ → hỏi xác nhận) ───────────────
+    document.getElementById('wte-cards').addEventListener('click', e => {
+      const btn = e.target.closest('.wte-del');
+      if (!btn) return;
+      pendingDelId = btn.dataset.id;
+      $('pdel-name').textContent = btn.dataset.name || '';
+      pdelModal.classList.add('open');
+    });
+
+    $('pdel-cancel').addEventListener('click', () => { pendingDelId = null; pdelModal.classList.remove('open'); });
+    $('pdel-ok').addEventListener('click', async () => {
+      if (!pendingDelId) return;
+      $('pdel-ok').disabled = true;
+      const r = await apiPrivate('delete', { id: pendingDelId });
+      $('pdel-ok').disabled = false;
+      pendingDelId = null;
+      pdelModal.classList.remove('open');
+      if (r.ok) { personalTasks = r.tasks || []; renderWTE(); }
+    });
+
+    // Bấm ra ngoài popup = đóng
+    [adminModal, ptaskModal, pdelModal].forEach(m => {
+      m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+    });
+
+    // Đã mở khoá ở phiên này → tự lấy lại task, không phải gõ mật khẩu lần nữa
+    (async () => {
+      if (!adminPass) return;
+      const r = await apiPrivate('list');
+      if (r.ok) { personalTasks = r.tasks || []; setAdminUnlocked(true); renderWTE(); }
+      else { adminPass = ''; sessionStorage.removeItem('cvAdminPass'); }
+    })();
 
     // ── Language dropdown ─────────────────────────────
     const langEnBtn     = document.getElementById('lang-en-btn');
