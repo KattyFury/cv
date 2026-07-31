@@ -3,9 +3,43 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>0xhieu.xyz</title>
+
+  <title>Hieu Nguyen — Web3 Builder · Reading the market, working to earn</title>
+  <meta name="description" content="Hieu Nguyen (0xhieu.xyz) — Web3 Builder in Hanoi. Two threads of work: reading the market through TGE/FDV valuation data, and working to earn through airdrop work-to-earn and community building." />
+  <meta name="author" content="Hieu Nguyen" />
+  <link rel="canonical" href="https://0xhieu.xyz/" />
+  <meta name="theme-color" content="#6155F5" />
+
   <link rel="icon" type="image/png" href="icon.png?v=2" />
   <link rel="apple-touch-icon" href="icon.png?v=2" />
+
+  <!-- Preview khi share link lên X / Telegram / Facebook -->
+  <meta property="og:type" content="profile" />
+  <meta property="og:site_name" content="0xhieu.xyz" />
+  <meta property="og:url" content="https://0xhieu.xyz/" />
+  <meta property="og:title" content="Hieu Nguyen — Web3 Builder" />
+  <meta property="og:description" content="Reading the market. Working to earn. TGE/FDV valuation data · Airdrop work-to-earn · Web3 community." />
+  <meta property="og:image" content="https://0xhieu.xyz/og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Hieu Nguyen — Reading the market. Working to earn. 0xhieu.xyz" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@0xhieuxyz" />
+  <meta name="twitter:creator" content="@0xhieuxyz" />
+
+  <!-- Để Google hiểu đây là trang cá nhân của một người, không phải blog vô danh -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Hieu Nguyen",
+    "url": "https://0xhieu.xyz/",
+    "image": "https://0xhieu.xyz/og.png",
+    "jobTitle": "Web3 Builder",
+    "address": { "@type": "PostalAddress", "addressLocality": "Hanoi", "addressCountry": "VN" },
+    "sameAs": ["https://x.com/0xhieuxyz", "https://t.me/nguyen0xhieu", "https://github.com/KattyFury"]
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
@@ -903,6 +937,18 @@
     }
     .wl-modal-title { font-size: 15px; font-weight: 600; color: var(--text); }
 
+    /* ── Báo lỗi tải data: thà nói thật là hỏng còn hơn kẹt "Loading…" mãi ── */
+    .data-error { padding: 24px 0; text-align: center; font-size: 13px; color: var(--sub); }
+    .retry-btn {
+      margin-left: 8px; padding: 4px 12px;
+      border: 1px solid var(--border); border-radius: 999px;
+      background: var(--white); color: var(--text);
+      font-family: 'Roboto', sans-serif; font-size: 12px; font-weight: 500;
+      cursor: pointer; transition: border-color 0.15s, color 0.15s;
+    }
+    .retry-btn:hover { border-color: var(--accent); }
+    .retry-btn:disabled { color: var(--muted); cursor: default; border-color: var(--border); }
+
     /* ── ADMIN: task cá nhân (chỉ hiện sau khi mở khoá bằng mật khẩu) ── */
     .wte-group-label {
       font-size: 13px; font-weight: 700; color: var(--text);
@@ -955,7 +1001,7 @@
       <section class="hero" id="about">
         <div class="hero-top">
           <div class="pfp">
-            <img src="pfp.png" alt="Hieu Nguyen" onerror="this.parentNode.innerHTML='<div class=pfp-fallback>HN</div>'" />
+            <img src="pfp.webp" width="72" height="72" alt="Hieu Nguyen" onerror="this.parentNode.innerHTML='<div class=pfp-fallback>HN</div>'" />
           </div>
           <div class="hero-info">
             <div class="hero-handle">Hieu Nguyen</div>
@@ -1483,6 +1529,16 @@
     const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1m8_nwbP_Apw43Y8iNxOoGFYy8YA-OpchGnVRfTMBUAo/gviz/tq?tqx=out:csv&sheet=DATA';
 
     let publicData = [];
+    let publicDataError = false;   // tải Sheet hỏng → hiện lỗi thật, không kẹt "Loading…"
+
+    // ── Khối báo lỗi + nút thử lại, dùng chung cho Valuation / Work / Watchlist ──
+    function errBox(retryFn, en) {
+      return `<div class="data-error">${en ? 'Could not load data.' : 'Không tải được dữ liệu.'}
+        <button class="retry-btn" onclick="${retryFn}(this)">${en ? 'Retry' : 'Thử lại'}</button></div>`;
+    }
+    async function retryValuation(btn) { if (btn) btn.disabled = true; await fetchPublicData(); renderAll(); }
+    async function retryWTE(btn)       { if (btn) btn.disabled = true; await fetchWTE();       renderWTE(); }
+    async function retryWL(btn)        { if (btn) btn.disabled = true; await fetchWL();        renderWL(); }
 
     // Robust single-line CSV parser (handles quoted fields with embedded commas)
     function parseCSVLine(line) {
@@ -1541,8 +1597,10 @@
             };
           })
           .filter(e => e.ticker && e.tgeDate && e.fundraising > 0);
+        publicDataError = false;
       } catch (err) {
         console.warn('Could not load sheet data:', err);
+        publicDataError = true;
       }
     }
 
@@ -1641,7 +1699,9 @@
       const tbody = document.getElementById('tge-tbody');
 
       if (!entries.length) {
-        tbody.innerHTML = '<tr><td colspan="6"><div class="val-empty">Loading data…</div></td></tr>';
+        tbody.innerHTML = publicDataError
+          ? `<tr><td colspan="6">${errBox('retryValuation', true)}</td></tr>`
+          : '<tr><td colspan="6"><div class="val-empty">Loading data…</div></td></tr>';
         return;
       }
 
@@ -2028,6 +2088,7 @@
     let wteData   = { VI: [], EN: [] };
     let wteLang   = 'VI';
     let wteLoaded = { VI: false, EN: false };
+    let wteError  = false;
 
     // ── Full CSV parser (handles quoted multi-line cells) ─
     function parseCSVFull(text) {
@@ -2124,9 +2185,11 @@
         const text = await res.text();
         wteData.VI = parseWTE(text);
         wteLoaded.VI = true;
+        wteError = false;
       } catch (err) {
         console.warn('WTE fetch failed:', err);
         wteData.VI = [];
+        wteError = true;
       }
     }
 
@@ -2199,7 +2262,9 @@
 
       // vẫn render nếu sheet chưa về nhưng đã có task cá nhân trong KV
       if (!projects.length && !(adminUnlocked && personalTasks.length)) {
-        container.innerHTML = '<div style="padding:60px 0;text-align:center;color:var(--muted);font-size:14px;">Loading…</div>';
+        container.innerHTML = wteError
+          ? errBox('retryWTE', wteLang === 'EN')
+          : '<div style="padding:60px 0;text-align:center;color:var(--muted);font-size:14px;">Loading…</div>';
         return;
       }
 
@@ -2441,6 +2506,7 @@
     const WL_URL = `https://docs.google.com/spreadsheets/d/${WTE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Watchlist`;
     let wlData = { VI: [], EN: [] };
     let wlLoaded = { VI: false, EN: false };
+    let wlError = false;
 
     const wlSlug = n => n.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
@@ -2495,14 +2561,17 @@
         const text = await res.text();
         wlData.VI = parseWL(text);
         wlLoaded.VI = true;
+        wlError = false;
       } catch (err) {
         console.warn('WL fetch failed:', err);
         wlData.VI = [];
+        wlError = true;
       }
     }
 
     function renderWL() {
       const container = document.getElementById('wl-cards');
+      if (wlError)      { container.innerHTML = errBox('retryWL', wteLang === 'EN'); return; }
       if (!wlLoaded.VI) { container.innerHTML = '<div class="wl-empty">Loading…</div>'; return; }
       // Khi ở EN nhưng bản dịch chưa xong thì tạm hiện bản VI
       const projects = (wteLang === 'EN' && wlLoaded.EN) ? wlData.EN : wlData.VI;

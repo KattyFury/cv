@@ -1,16 +1,17 @@
 # HƯỚNG DẪN (dòng bắt đầu bằng # là ghi chú, web bỏ qua):
 #
 # - Mỗi dòng 1 highlight, format:   tên-file-ảnh | caption
-# - Ảnh bỏ vào thư mục highlights/ (PNG hay JPG đều được)
+# - Ảnh bỏ vào thư mục highlights/ (PNG, JPG hay WebP đều được — cứ ghi đúng đuôi file vào đây)
 # - Thứ tự dòng = thứ tự hiển thị trên web (trên → dưới). Muốn đổi thứ tự: di chuyển dòng.
 # - Ảnh chưa có trong thư mục → card tự ẩn, không lo web bị ảnh vỡ.
 # - Xong thì commit + push là web tự cập nhật.
-# - Đặt tên ảnh theo năm trong Experience: <year><A/B/C...>.png (nhiều ảnh cùng năm thì tăng chữ cái)
+# - Đặt tên ảnh theo năm trong Experience: <year><A/B/C...> (nhiều ảnh cùng năm thì tăng chữ cái)
+# - Ảnh nên để 750x500. Nếu ảnh nặng hơn ~150KB thì bảo Claude nén sang WebP cho nhẹ trang.
 
-2022A.png | Before 2022, I was a Graphic Designer specializing in Branding and Layout
+2022A.webp | Before 2022, I was a Graphic Designer specializing in Branding and Layout
 # 2023-2024: chưa có ảnh, bổ sung sau
-2025A.png | Started from 0 in Feb 2025, 10K followers a year later
-2025B.png | Recall Ambassador & top Yapper of many projects
-2025C.png | OG across Zama and other Web3 projects
-2026A.png | Built a 500+ member Telegram community in Q1/2026
-2026B.png | Building product on Arc Testnet since Q2/2026 til now
+2025A.webp | Started from 0 in Feb 2025, 10K followers a year later
+2025B.webp | Recall Ambassador & top Yapper of many projects
+2025C.webp | OG across Zama and other Web3 projects
+2026A.webp | Built a 500+ member Telegram community in Q1/2026
+2026B.webp | Building product on Arc Testnet since Q2/2026 til now
