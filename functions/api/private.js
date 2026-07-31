@@ -25,11 +25,12 @@ function safeEqual(a, b) {
 const clean = (v, max) => String(v ?? '').replace(/[<>]/g, '').trim().slice(0, max);
 // Chỉ nhận link http/https — chặn javascript: nhét vào thuộc tính href
 const cleanLink = v => { const s = clean(v, 500); return /^https?:\/\//i.test(s) ? s : ''; };
-// Mỗi mục Get Started / Daily / Weekly là 1 dòng (form chỉ cho nhập 1), giữ dạng mảng cho khớp renderer
-const oneItem = (text, link) => {
-  const t = clean(text, 500);
-  return t ? [{ text: t, link: cleanLink(link) }] : [];
-};
+// Mỗi mục Get Started / Daily / Weekly là danh sách {text, link} — form cho thêm dòng bằng nút +.
+// Dòng không có chữ thì bỏ; cắt tối đa 20 dòng để 1 request không nhồi được data khổng lồ vào KV.
+const itemList = v => (Array.isArray(v) ? v : [])
+  .slice(0, 20)
+  .map(it => ({ text: clean(it?.text, 500), link: cleanLink(it?.link) }))
+  .filter(it => it.text);
 
 const readTasks  = async kv => { try { return JSON.parse(await kv.get(KEY) || '[]'); } catch { return []; } };
 const writeTasks = (kv, tasks) => kv.put(KEY, JSON.stringify(tasks));
@@ -61,9 +62,9 @@ export async function onRequestPost({ request, env }) {
       potential:  Math.max(0, Math.min(3, parseInt(t.potential, 10) || 0)),
       type:       clean(t.type, 60),
       rank:       'SS',                                    // task cá nhân luôn là S+
-      getStarted: oneItem(t.getStarted, t.getStartedLink),
-      daily:      oneItem(t.daily,      t.dailyLink),
-      weekly:     oneItem(t.weekly,     t.weeklyLink),
+      getStarted: itemList(t.getStarted),
+      daily:      itemList(t.daily),
+      weekly:     itemList(t.weekly),
     };
     const tasks = await readTasks(kv);
     tasks.push(task);
