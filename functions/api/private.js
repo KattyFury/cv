@@ -32,6 +32,17 @@ const itemList = v => (Array.isArray(v) ? v : [])
   .map(it => ({ text: clean(it?.text, 500), link: cleanLink(it?.link) }))
   .filter(it => it.text);
 
+// Làm sạch các ô người dùng nhập — dùng chung cho add và update (id + rank không lấy từ client)
+const sanitize = t => ({
+  name:       clean(t.name, 120) || 'Không tên',
+  twitter:    cleanLink(t.twitter),
+  potential:  Math.max(0, Math.min(3, parseInt(t.potential, 10) || 0)),
+  type:       clean(t.type, 60),
+  getStarted: itemList(t.getStarted),
+  daily:      itemList(t.daily),
+  weekly:     itemList(t.weekly),
+});
+
 const readTasks  = async kv => { try { return JSON.parse(await kv.get(KEY) || '[]'); } catch { return []; } };
 const writeTasks = (kv, tasks) => kv.put(KEY, JSON.stringify(tasks));
 
@@ -54,20 +65,22 @@ export async function onRequestPost({ request, env }) {
   }
 
   if (body.action === 'add') {
-    const t = body.task || {};
-    const task = {
-      id:         crypto.randomUUID(),
-      name:       clean(t.name, 120) || 'Không tên',
-      twitter:    cleanLink(t.twitter),
-      potential:  Math.max(0, Math.min(3, parseInt(t.potential, 10) || 0)),
-      type:       clean(t.type, 60),
-      rank:       'SS',                                    // task cá nhân luôn là S+
-      getStarted: itemList(t.getStarted),
-      daily:      itemList(t.daily),
-      weekly:     itemList(t.weekly),
-    };
     const tasks = await readTasks(kv);
-    tasks.push(task);
+    tasks.push({
+      id:   crypto.randomUUID(),
+      rank: 'SS',                                          // task cá nhân luôn là S+
+      ...sanitize(body.task || {}),
+    });
+    await writeTasks(kv, tasks);
+    return json({ ok: true, tasks });
+  }
+
+  if (body.action === 'update') {
+    const id = String(body.id ?? '');
+    const tasks = await readTasks(kv);
+    const i = tasks.findIndex(t => t.id === id);
+    if (i < 0) return json({ ok: false, error: 'not-found' }, 404);
+    tasks[i] = { ...tasks[i], ...sanitize(body.task || {}) };   // giữ nguyên id + rank
     await writeTasks(kv, tasks);
     return json({ ok: true, tasks });
   }

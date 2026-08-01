@@ -954,12 +954,13 @@
       font-size: 13px; font-weight: 700; color: var(--text);
       margin-bottom: calc(var(--row) * 0.5);
     }
-    .wte-del {
+    /* nút ⋮ trên card task cá nhân — mở form sửa (xoá nằm trong form đó) */
+    .wte-opt {
       border: none; background: none; cursor: pointer; padding: 0 2px;
-      font-size: 12px; line-height: 1; color: var(--muted);
+      font-size: 14px; line-height: 1; color: var(--muted);
       transition: color 0.15s;
     }
-    .wte-del:hover { color: var(--text); }
+    .wte-opt:hover { color: var(--text); }
     .admin-msg { font-size: 12px; font-weight: 500; color: var(--text); }
     .calc-field select {
       padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px;
@@ -999,6 +1000,13 @@
       cursor: pointer; transition: border-color 0.15s, color 0.15s;
     }
     .pt-row-add:hover { border-color: var(--accent); color: var(--accent); }
+    /* chữ xoá đỏ, nằm ngay trên hàng nút Cancel / Save */
+    .pt-delete {
+      align-self: center; padding: 0; border: none; background: none;
+      color: #E5484D; font-family: 'Roboto', sans-serif;
+      font-size: 13px; font-weight: 500; cursor: pointer; transition: opacity 0.15s;
+    }
+    .pt-delete:hover { opacity: 0.7; }
 
   </style>
 </head>
@@ -1327,10 +1335,10 @@
     </div>
   </div>
 
-  <!-- Admin: form thêm task cá nhân (tất cả các ô đều optional) -->
+  <!-- Admin: form thêm/sửa task cá nhân (tất cả các ô đều optional) -->
   <div class="wl-modal-backdrop" id="ptask-modal">
     <div class="wl-modal">
-      <div class="wl-modal-title">Thêm task cá nhân</div>
+      <div class="wl-modal-title" id="pt-title">Thêm task cá nhân</div>
       <div id="ptask-form">
         <div class="calc-field">
           <label>Tên dự án / tiêu đề</label>
@@ -1376,6 +1384,8 @@
         </div>
       </div>
       <div class="admin-msg" id="pt-error" style="display:none"></div>
+      <!-- chỉ hiện khi đang sửa task có sẵn -->
+      <button type="button" class="pt-delete" id="pt-delete" style="display:none">Xoá task này</button>
       <div class="predict-actions">
         <button class="predict-btn-secondary" id="pt-cancel">Cancel</button>
         <button class="predict-btn-primary" id="pt-add">Add</button>
@@ -2306,7 +2316,7 @@
               ${potentialHtml}
               ${p.type ? `<span class="wte-type">${p.type}</span>` : ''}
               <span class="wte-rank rank-${p.rank}">${{SS:'S+',S:'S',A:'A',B:'B'}[p.rank]||p.rank}</span>
-              ${personal ? `<button class="wte-del" data-id="${p.id}" data-name="${p.name.replace(/"/g,'&quot;')}" title="Xoá task">✕</button>` : ''}
+              ${personal ? `<button class="wte-opt" data-id="${p.id}" title="Sửa task">⋮</button>` : ''}
             </div>
           </div>
           ${section('Get Started', p.getStarted, 'getStarted')}
@@ -2347,6 +2357,7 @@
     let adminUnlocked = false;
     let personalTasks = [];
     let pendingDelId  = null;
+    let ptEditId      = null;   // null = form đang thêm mới · có id = đang sửa task đó
 
     const $ = id => document.getElementById(id);
     const adminBtn   = $('admin-btn');
@@ -2414,8 +2425,7 @@
     $('admin-cancel').addEventListener('click', () => adminModal.classList.remove('open'));
     adminInput.addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
 
-    // ── Form thêm task ────────────────────────────────
-    const PT_FIELDS = ['pt-name','pt-twitter','pt-potential','pt-type'];
+    // ── Form thêm / sửa task ──────────────────────────
     // 3 nhóm nhiều dòng: mỗi dòng = việc + link, bấm + để thêm dòng
     const PT_GROUPS = { gs: 'Việc cần làm để bắt đầu', daily: 'Việc làm mỗi ngày', weekly: 'Việc làm mỗi tuần' };
 
@@ -2443,12 +2453,37 @@
       });
     });
 
-    function openPtaskForm() {
-      PT_FIELDS.forEach(id => { $(id).value = ''; });
-      Object.keys(PT_GROUPS).forEach(key => { $('pt-' + key + '-items').innerHTML = ''; ptAddRow(key); });
+    // Đổ nội dung task có sẵn vào 1 nhóm; không có dòng nào thì để 1 dòng trống
+    function ptFillRows(key, items) {
+      const wrap = $('pt-' + key + '-items');
+      wrap.innerHTML = '';
+      (items || []).forEach(it => {
+        const row = ptAddRow(key);
+        row.querySelector('.pt-item-text').value = it.text || '';
+        row.querySelector('.pt-item-link').value = it.link || '';
+      });
+      if (!wrap.children.length) ptAddRow(key);
+    }
+
+    // task = undefined → thêm mới · task = object → sửa task đó
+    function openPtaskForm(task) {
+      ptEditId = task ? task.id : null;
+      $('pt-name').value      = task?.name || '';
+      $('pt-twitter').value   = task?.twitter || '';
+      $('pt-potential').value = task?.potential ? String(task.potential) : '';
+      $('pt-type').value      = task?.type || '';
+      ptFillRows('gs',     task?.getStarted);
+      ptFillRows('daily',  task?.daily);
+      ptFillRows('weekly', task?.weekly);
+      $('pt-title').textContent = task ? 'Sửa task cá nhân' : 'Thêm task cá nhân';
+      $('pt-add').textContent   = task ? 'Save' : 'Add';
+      $('pt-delete').style.display = task ? '' : 'none';
       ptError.style.display = 'none';
       ptaskModal.classList.add('open');
-      setTimeout(() => $('pt-name').focus(), 50);
+      // focus ngay, KHÔNG setTimeout: popup đã display:flex ở dòng trên rồi.
+      // Bản cũ hoãn 50ms nên nếu gõ sớm hơn thì focus nhảy về ô Tên giữa chừng,
+      // chữ đang gõ ở ô khác rơi hết vào ô Tên.
+      $('pt-name').focus();
     }
 
     async function submitPtask() {
@@ -2462,7 +2497,9 @@
         weekly:     ptItems('weekly'),
       };
       $('pt-add').disabled = true;
-      const r = await apiPrivate('add', { task });
+      const r = ptEditId
+        ? await apiPrivate('update', { id: ptEditId, task })
+        : await apiPrivate('add', { task });
       $('pt-add').disabled = false;
       if (!r.ok) { showMsg(ptError, r.error || ('Không lưu được (' + r.status + ')')); return; }
       personalTasks = r.tasks || [];
@@ -2473,12 +2510,19 @@
     $('pt-add').addEventListener('click', submitPtask);
     $('pt-cancel').addEventListener('click', () => ptaskModal.classList.remove('open'));
 
-    // ── Xoá task (bấm ✕ → hỏi xác nhận) ───────────────
+    // ── Bấm ⋮ trên card → mở form sửa ─────────────────
     document.getElementById('wte-cards').addEventListener('click', e => {
-      const btn = e.target.closest('.wte-del');
+      const btn = e.target.closest('.wte-opt');
       if (!btn) return;
-      pendingDelId = btn.dataset.id;
-      $('pdel-name').textContent = btn.dataset.name || '';
+      const task = personalTasks.find(t => t.id === btn.dataset.id);
+      if (task) openPtaskForm(task);
+    });
+
+    // ── Xoá: chữ đỏ trong form sửa → hỏi xác nhận ─────
+    $('pt-delete').addEventListener('click', () => {
+      if (!ptEditId) return;
+      pendingDelId = ptEditId;
+      $('pdel-name').textContent = $('pt-name').value;
       pdelModal.classList.add('open');
     });
 
@@ -2490,6 +2534,7 @@
       $('pdel-ok').disabled = false;
       pendingDelId = null;
       pdelModal.classList.remove('open');
+      ptaskModal.classList.remove('open');       // xoá xong thì đóng luôn form sửa
       if (r.ok) { personalTasks = r.tasks || []; renderWTE(); }
     });
 
