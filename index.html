@@ -443,13 +443,8 @@
     }
 
     .val-table tbody tr:last-child td { border-bottom: none; }
-    /* 6 cột: Ticker / Narrative / TGE Date = 1/5 mỗi cột · ×TGE ×ATH ×ATM chung 2/5 (đều nhau, xích gần) */
-    .val-table th:nth-child(1), .val-table td:nth-child(1),
-    .val-table th:nth-child(2), .val-table td:nth-child(2),
-    .val-table th:nth-child(3), .val-table td:nth-child(3) { width: 20%; }
-    .val-table th:nth-child(4), .val-table td:nth-child(4),
-    .val-table th:nth-child(5), .val-table td:nth-child(5),
-    .val-table th:nth-child(6), .val-table td:nth-child(6) { width: calc(40% / 3); }
+    /* 6 cột chia đều bằng nhau, canh giữa cả tiêu đề lẫn nội dung */
+    .val-table th, .val-table td { width: calc(100% / 6); }
     .td-ticker { font-weight: 700; color: var(--text) !important; font-size: 11px; }  /* tên ticker: BOLD đen, cỡ nhỏ đồng bộ (suffix ($$$) giữ regular qua .td-size) */
     /* Mọi cột: cả KHỐI căn giữa theo yếu tố dài nhất của cột đó (kể cả header), các yếu tố vẫn thẳng mép trái với nhau.
        Mỗi giá trị (kể cả header) nằm trong span.ck rộng bằng nhau theo cột (--ck1..--ck6 = bề rộng yếu tố dài nhất mỗi cột,
@@ -488,11 +483,9 @@
       .val-analysis { grid-template-columns: 1fr; }
     }
 
-    /* ── BOX 4-QUARTER GRID (Market / Recent / Danger / Narratives) ──
-       Data box + 4 box = CÙNG 1 CỤM → ngang cách 1 hàng, dọc chỉ cách 0.5 hàng.
-       Mỗi box cao đúng 6 hàng, chia dọc:
-         tiêu đề 1 hàng · nội dung 3 hàng (hàng 2-4) · chốt 2 hàng (hàng 5-6)
-       Box không có chốt: nội dung chiếm 3+2 = 5 hàng (vc-q234). */
+    /* ── BOX 4-QUARTER GRID (Danger Zone / Trending Narratives) ──
+       Data box + box nhỏ = CÙNG 1 CỤM → ngang cách 1 hàng, dọc chỉ cách 0.5 hàng.
+       Mỗi box cao đúng 6 hàng, chia dọc: tiêu đề 1 hàng · nội dung 5 hàng (vc-q234). */
     .val-analysis.val-boxes {
       gap: calc(var(--row) * 0.5);              /* giữa 4 box nhỏ: 0.5 hàng (ngang + dọc) */
       margin-top: var(--row);                   /* data box → cụm 4 box: 1 hàng */
@@ -505,11 +498,17 @@
     .vc-q1   { grid-row: 1 / 2; display: flex; align-items: center; justify-content: center; align-self: stretch; }
     .vc-q1.val-card-label, .vc-q1.calc-card-label { margin: 0; }
     .vc-q1.calc-card-label { font-family: 'Roboto', sans-serif; font-size: 13px; font-weight: 700; }  /* tiêu đề bold */
-    .vc-q23  { grid-row: 2 / 3; min-height: 0; }
     .vc-q234 { grid-row: 2 / 4; min-height: 0; }
-    .vc-q4   { grid-row: 3 / 4; display: flex; align-items: center; justify-content: space-around; }
-    .val-boxes > .val-card > .vc-q234,
-    .val-boxes > .val-card > .vc-q23 { overflow: hidden; align-self: stretch; }
+    .val-boxes > .val-card > .vc-q234 { overflow: hidden; align-self: stretch; }
+
+    /* Recent TGE Multiples — box gộp Market Condition, chia đúng 6 hàng bằng nhau:
+       1 tiêu đề · 2 trống · 3 Low/High FDV · 4 trống · 5 Market condition · 6 Predict TGE FDV */
+    .val-analysis.val-boxes > .val-card.rt6-grid { grid-template-rows: repeat(6, var(--row)); }
+    .rt6-row { display: flex; align-items: center; justify-content: center; text-align: center; gap: 10px; min-height: 0; overflow: hidden; }
+    .rt6-title { font-family: 'Roboto', sans-serif; font-size: 13px; font-weight: 700; color: var(--text); }
+    .rt6-split, .rt6-cond { font-size: 13px; color: var(--muted); }
+    .rt6-split b, .rt6-cond b { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; font-weight: 700; color: var(--accent); }
+    .rt6-divider { color: var(--border); }
 
     .val-card {
       border: 1px solid var(--border);
@@ -563,46 +562,8 @@
     .narrative-name { font-size: 13px; font-weight: 400; color: var(--text); flex: 1; }
     .narrative-med { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 700; color: var(--accent); }
 
-    /* Cả 3 card cùng hệ flex column — margin không bị gộp, 3 vùng thẳng hàng:
-       Tiêu đề (label) → Box nội dung (split-box / inputs) → Chốt (levels / nút Calculate) */
+    /* Danger Zone / Trending Narratives cùng hệ flex column — margin không bị gộp */
     .val-analysis > .val-card { display: flex; flex-direction: column; }
-    .market-levels {
-      display: flex; gap: 4px; align-items: center; justify-content: space-around; padding: 0;
-    }
-    .mkt-lvl {
-      flex: 1; text-align: center; padding: 0 2px;
-      margin: 0; height: 26px; display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 400;
-      color: var(--muted); opacity: 0.65;
-      letter-spacing: 0.02em; line-height: 1.2;
-      transition: opacity 0.2s, font-weight 0.2s, color 0.2s;
-      white-space: nowrap;
-    }
-    .mkt-lvl.mkt-active { opacity: 1; font-weight: 700; color: var(--accent); }
-
-    .split-box {
-      display: flex; align-items: stretch; height: 100%; box-sizing: border-box;
-      border: 1px solid var(--border);
-      border-radius: 8px; overflow: hidden;
-      background: var(--white);
-    }
-    .split-col {
-      flex: 1; padding: 8px 8px;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 2px; text-align: center;
-    }
-    .split-divider { width: 1px; background: var(--border); flex-shrink: 0; }
-    .split-val {
-      font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums;
-      font-size: 15px; font-weight: 700;   /* số liệu × : bold + cam (đồng bộ toàn site) */
-      letter-spacing: -0.01em; color: var(--accent); line-height: 1;
-    }
-    /* yếu tố phụ: regular, xám, nhỏ, KHÔNG allcaps — đồng bộ "4 deals" và "Low FDV" */
-    .split-lbl {
-      font-size: 11px; font-weight: 400;
-      color: var(--muted); text-transform: none;
-      letter-spacing: 0; line-height: 1.4;
-    }
 
     /* Calculator */
     .calc-field { display: flex; flex-direction: column; gap: 2px; }
@@ -621,16 +582,15 @@
     .calc-field input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     .calc-field input[type=number] { -moz-appearance: textfield; }
 
-    /* Predict TGE FDV — nút pill gradient thương hiệu (cùng kích cỡ nút social ở About me: padding 6/14, radius 999, font 13) */
+    /* Predict TGE FDV — chữ gạch chân, không dùng nút pill nữa */
     .predict-link {
-      display: inline-flex; align-items: center; justify-content: center;
-      padding: 6px 14px; border-radius: 999px;
-      border: none; background: var(--accent-gradient);
-      color: #fff; font-family: 'Roboto', sans-serif;
-      font-size: 13px; font-weight: 500; white-space: nowrap;  /* đồng bộ weight với các nút CTA khác (Calculate, lang-btn, nav-btn.active) */
+      background: none; border: none; padding: 0;
+      color: var(--accent); font-family: 'Roboto', sans-serif;
+      font-size: 13px; font-weight: 500; white-space: nowrap;
+      text-decoration: underline; text-underline-offset: 3px;
       cursor: pointer; transition: opacity 0.15s;
     }
-    .predict-link:hover { opacity: 0.88; }
+    .predict-link:hover { opacity: 0.75; }
 
     /* ── PREDICT MODAL FORM ─────────────────────────── */
     #calc-form { display: flex; flex-direction: column; gap: 12px; }
@@ -1177,37 +1137,18 @@
            gộp chung 1 lưới 6-slot (3 cột) để tất cả tự động bằng nhau; slot 5-6 dành cho box tương lai -->
       <div class="val-analysis val-boxes" id="val-metrics">
 
-        <!-- 1. Market condition -->
-        <div class="val-card">
-          <div class="val-card-label calc-card-label vc-q1">Market condition</div>
-          <div class="split-box vc-q23" id="market-terms">
-            <div class="split-col">
-              <div class="split-val" id="market-val">—</div>
-              <div class="split-lbl"><span id="market-n"></span></div>
-            </div>
+        <!-- 1. Recent TGE multiples (đã gộp Market condition, chia đúng 6 hàng bằng nhau) -->
+        <div class="val-card rt6-grid">
+          <div class="rt6-row rt6-title">Recent TGE multiples</div>
+          <div class="rt6-row"></div>
+          <div class="rt6-row rt6-split">
+            <span>Low FDV <b id="baseline-low">—</b></span>
+            <span class="rt6-divider">|</span>
+            <span>High FDV <b id="baseline-high">—</b></span>
           </div>
-          <div class="market-levels vc-q4" id="market-levels">
-            <div class="mkt-lvl" data-lvl="0">Strong</div>
-            <div class="mkt-lvl" data-lvl="1">Normal</div>
-            <div class="mkt-lvl" data-lvl="2">Weak</div>
-          </div>
-        </div>
-
-        <!-- 2. Recent TGE multiples -->
-        <div class="val-card">
-          <div class="val-card-label calc-card-label vc-q1">Recent TGE multiples</div>
-          <div class="split-box vc-q23">
-            <div class="split-col">
-              <div class="split-val" id="baseline-low">—</div>
-              <div class="split-lbl">Low FDV</div>
-            </div>
-            <div class="split-divider"></div>
-            <div class="split-col">
-              <div class="split-val" id="baseline-high">—</div>
-              <div class="split-lbl">High FDV</div>
-            </div>
-          </div>
-          <div class="vc-q4" style="display:flex; align-items:center; justify-content:center;">
+          <div class="rt6-row"></div>
+          <div class="rt6-row rt6-cond">Market condition: <b id="market-condition-lvl">—</b></div>
+          <div class="rt6-row">
             <button class="predict-link" id="predict-open-btn">Predict TGE FDV</button>
           </div>
         </div>
@@ -1738,10 +1679,7 @@
         const xATH  = athIntraday ? 0 : xMult(e.ath, e);
         const xATM  = xMult(e.currentPrice, e);
         const vcFDV = e.vcAlloc > 0 ? e.fundraising / (e.vcAlloc / 100) : 0;
-        const size = vcFDV <= 0 ? '' :
-                     vcFDV < 100e6  ? '$' :
-                     vcFDV < 200e6  ? '$$' :
-                     vcFDV < 500e6  ? '$$$' : '$$$$';
+        const size = vcFDV <= 0 ? '' : vcFDV < 300e6 ? 'low' : 'high';
         return `<tr>
           <td class="td-ticker"><span class="ck">${e.ticker}${size ? ` <span class="td-size">(${size})</span>` : ''}</span></td>
           <td class="td-narrative"><span class="ck">${e.type || '—'}</span></td>
@@ -1784,8 +1722,7 @@
 
       // 1. Market condition — median của 6 deal TGE gần nhất (backtest 2026-07-27:
       // flicker rate N=6 thấp ngang N=4 nhưng mượt hơn, không trễ như N=8 → gộp short+mid làm 1)
-      const valEl = document.getElementById('market-val');
-      const nEl   = document.getElementById('market-n');
+      const condEl = document.getElementById('market-condition-lvl');
 
       // Valid multiples sorted newest → oldest
       const validM = sorted
@@ -1795,16 +1732,11 @@
       const recent6 = validM.slice(0, 6).map(x => x.m);
       const med     = median(recent6);
 
-      // Set active segment on the 3-level indicator
       // Thresholds calibrated from era-based reference periods:
       // Strong (2023-2024 cycle) >=13, Normal (2022 baseline) 4.3-13, Weak (2025-2026) <4.3
       const lvlIdx = med >= 13 ? 0 : med >= 4.3 ? 1 : 2;
-      document.querySelectorAll('#market-levels .mkt-lvl').forEach((el, i) => {
-        el.classList.toggle('mkt-active', i === lvlIdx);
-      });
-
-      valEl.textContent = recent6.length ? `×${med.toFixed(2)}` : '—';
-      nEl.textContent    = recent6.length ? `${recent6.length} deals` : '';
+      const LEVELS = ['Strong', 'Normal', 'Weak'];
+      condEl.textContent = recent6.length ? LEVELS[lvlIdx] : '—';
 
       // 2. Recent TGE multiples — split Low FDV (<$300M entry) vs High FDV (≥$300M entry)
       const FDV_SPLIT = 300e6;

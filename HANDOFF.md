@@ -105,19 +105,19 @@ Lý do: CoinGecko lấy absolute high kể cả râu nến listing day, không p
 
 ```
 vcFDV = fundraising / (vcAlloc / 100)
-< $100M  → $
-< $200M  → $$
-< $500M  → $$$
-≥ $500M  → $$$$
+< $300M  → (low)
+≥ $300M  → (high)
 ```
+(Đổi 2026-08-03 từ 4 mức `$/$$/$$$/$$$$` sang nhị phân `(low)/(high)`, dùng chung ngưỡng $300M với Recent TGE Multiples — trước đó 2 chỗ dùng 2 quy tắc khác nhau.)
 
-### Recent TGE Multiples
+### Recent TGE Multiples (box đã gộp Market Condition, 2026-08-03)
 
 - Split theo $300M FDV threshold: Low FDV / High FDV
 - Window: **6 token gần nhất** mỗi bucket; nếu token thứ 6 cách token mới nhất >60 ngày → giảm còn **4** (giống logic mid-term của Market Condition)
 - Hiển thị median
+- **Box UI chia đúng 6 hàng bằng nhau** (`.rt6-grid`, `grid-template-rows: repeat(6, var(--row))`): 1 tiêu đề · 2 trống · 3 "Low FDV ×.. | High FDV ×.." · 4 trống · 5 "Market condition: <Strong/Normal/Weak>" · 6 "Predict TGE FDV" (chữ gạch chân, không còn nút pill). Market Condition không còn là box riêng — xem mục dưới.
 
-### Danger Zone (box 4, thêm 2026-06-11)
+### Danger Zone (thêm 2026-06-11)
 
 - Lọc token đang có **×ATM ≥ 15** — VC lãi 15×+, sell pressure cực đại
 - Backtest: 17 token từng ở vùng ≥15× (ACE ×69, SAGA ×97, ENA ×142, XPL ×131, HOOK, MIRA, ERA, VANA...) → 100% về đáy, không con nào giữ giá
@@ -137,6 +137,8 @@ Metric chính: `retention = ×ATM / ×TGE` — tách các nhóm nhãn tay sạch
 Box ý tưởng chưa build (user chỉ duyệt Danger Zone): Token Health (retention-based, khớp 85% label tay), Dip Zone (median dip trước ATH — cần cột beforeATH).
 
 ### Market Condition
+
+> **2026-08-03: không còn là box riêng** — đã gộp vào box Recent TGE Multiples (hàng 5, xem mục trên). Logic tính toán bên dưới KHÔNG đổi, chỉ đổi nơi hiển thị: trước hiện `×median (N deals)` + 3 nút Strong/Normal/Weak (nút active tô đậm), giờ chỉ hiện đúng 1 dòng text "Market condition: `<Level>`" (JS: `document.getElementById('market-condition-lvl').textContent = LEVELS[lvlIdx]`).
 
 - `shortMed` = median của 4 ×TGE gần nhất
 - 3 levels: Weak (<4.3×) / Normal (4.3-13×) / Strong (≥13×)
@@ -192,9 +194,11 @@ Logic hiện tại (2026-06-11):
 
 1. **×ATH filter** — website + Apps Script đang bỏ ATH cùng ngày TGE (râu nến listing). Một số token pump ảo 1-3 ngày đầu; cân nhắc mở rộng window filter.
 
-2. **Làm cho số đông HIỂU tab Valuation là gì** (user chốt hướng 2026-08-01, CHƯA làm) — hiện các box (Market condition · Recent TGE multiples · Danger Zone · Trending Narratives) chỉ bày số cho người đã biết đọc. Người lạ vào không hiểu đây là **cách user đọc thị trường**, đúc kết từ kinh nghiệm quan sát market. **Hướng: làm chính các BOX dễ hiểu hơn** — không đổi tên tab, không thêm khối mới ở About me, không đụng tagline (user đã bác 3 phương án đó). Việc cần làm nằm bên trong từng box: diễn giải con số đang nói lên điều gì, ngưỡng nào là tốt/xấu, vì sao user nhìn chỉ số đó. Cùng tinh thần cho tab Airdrop (mạch "làm việc kiếm tiền").
+2. **Làm cho số đông HIỂU tab Valuation là gì** (user chốt hướng 2026-08-01, CHƯA làm) — hiện các box (Recent TGE multiples · Danger Zone · Trending Narratives) chỉ bày số cho người đã biết đọc. Người lạ vào không hiểu đây là **cách user đọc thị trường**, đúc kết từ kinh nghiệm quan sát market. **Hướng: làm chính các BOX dễ hiểu hơn** — không đổi tên tab, không thêm khối mới ở About me, không đụng tagline (user đã bác 3 phương án đó). Việc cần làm nằm bên trong từng box: diễn giải con số đang nói lên điều gì, ngưỡng nào là tốt/xấu, vì sao user nhìn chỉ số đó. Cùng tinh thần cho tab Airdrop (mạch "làm việc kiếm tiền").
 
 3. **`highlights/` và ảnh** — từ 2026-08-01 ảnh dùng WebP (`pfp.webp`, `highlights/*.webp`). Tên file trong `highlights.txt` phải khớp đuôi thật. Thêm ảnh mới nên nén WebP (~750x500, dưới ~150KB) để không kéo trang nặng lại.
+
+4. **CHƯA verify bằng mắt thay đổi Valuation ngày 2026-08-03** (xem Decisions Log) — session đó không có browser/screenshot tool nên chỉ verify được: JS không lỗi cú pháp, HTTP 200 qua serve tĩnh local, grep xác nhận cấu trúc HTML/id/class đúng như code. **Việc cần làm trước tiên của session sau**: mở `index.html` thật (hoặc `npx serve .`) xem tab Valuation — kiểm tra (a) bảng "Tracking altcoins" 6 cột có đều & canh giữa đúng như mong muốn, (b) box "Recent TGE Multiples" mới (6 hàng, đã gộp Market Condition) không bị tràn chữ/lệch spacing ở cả desktop lẫn mobile, (c) dòng "Market condition: Weak" và link gạch chân "Predict TGE FDV" hiện đúng vị trí hàng 5/6.
 
 ---
 
@@ -320,6 +324,7 @@ git add -A && git commit -m "..." && git push
 - 2026-08-01: **Card task cá nhân: nút `✕` → nút `⋮`, mở form SỬA; xoá chuyển vào trong form** — trước đó card chỉ xoá được, muốn đổi 1 chữ phải xoá rồi gõ lại từ đầu. Giờ `⋮` (`.wte-opt`, thay `.wte-del`) mở lại đúng form thêm task nhưng ở chế độ sửa: tiêu đề "Sửa task cá nhân", nút chính đổi `Add` → `Save`, mọi ô điền sẵn (nhóm rỗng vẫn để 1 dòng trống). Chữ **"Xoá task này"** màu đỏ `#E5484D` (`.pt-delete`) nằm ngay trên hàng Cancel/Save, chỉ hiện ở chế độ sửa; bấm vào vẫn qua popup xác nhận cũ (`pdel-modal`), huỷ thì form sửa còn nguyên, xoá thật thì đóng cả hai. Biến `ptEditId` (null = thêm mới) quyết định gọi `add` hay `update`. Server thêm action `update` + tách `sanitize()` dùng chung với `add` — **`id` và `rank` không bao giờ lấy từ client**, update chỉ ghi đè các trường người dùng nhập. Bỏ `PT_FIELDS` (thành thừa vì `openPtaskForm` giờ set từng ô).
 - 2026-08-01: **BUG có sẵn: `setTimeout(() => $('pt-name').focus(), 50)` trong `openPtaskForm` cướp focus giữa lúc đang gõ** — mở form rồi gõ vào ô khác trong vòng 50ms thì focus nhảy về ô Tên, chữ đang gõ rơi hết vào đó (tái hiện: `name="AAAhttps://x.com/bbb"`, `twitter=""`). Phát hiện nhờ test Playwright fail chập chờn 1/3 lần — suýt bỏ qua vì tưởng test flaky. Sửa: gọi `focus()` thẳng, không hoãn (popup đã `display:flex` ở dòng ngay trên). **Bài học: test chập chờn thường là bug thật, đừng chạy lại cho tới khi xanh.**
 - 2026-08-01: **Có agent khác (`Cowork Agent <cowork-agent@auto.run>`) làm việc song song trên repo này** — commit `fca9388` của nó `git add` gộp luôn phần `index.html` mà session khác đang sửa dở rồi push. Không rewrite history (đã push + là commit của agent khác), chỉ commit riêng phần còn lại. **Bài học: trước khi commit phải `git status` xem có ai vừa chen vào không, và đừng `git add -A` khi chưa soi diff.** Commit đó cũng đổi `<title>` về `0xhieu.xyz` (user xác nhận cố ý) — lưu ý `og:title` vẫn là bản dài, nên preview khi share link không bị cụt.
+- 2026-08-03: **3 thay đổi bảng/box Valuation theo yêu cầu user:** (1) Cột Ticker trong "Tracking altcoins to read market conditions": suffix 4 mức `$/$$/$$$/$$$$` → nhị phân `(low)/(high)` tại ngưỡng $300M — đồng bộ ngưỡng với Recent TGE Multiples (trước đó 2 nơi dùng 2 ngưỡng khác nhau: 100M/200M/500M vs 300M). (2) Bảng đó: 6 cột trước chia lệch (Ticker/Narrative/TGE Date = 20% mỗi cột, ×TGE/×ATH/×ATM = 13.3% mỗi cột) → đổi thành `width: calc(100% / 6)` cho tất cả — 6 cột đều thật, giữ nguyên cơ chế canh-giữa-theo-khối (`span.ck` + `--ck1..--ck6` đo bề rộng giá trị dài nhất mỗi cột, thêm từ 2026-07-19). (3) **Xoá hẳn box "Market Condition" riêng**, gộp vào box "Recent TGE Multiples" — box mới chia đúng 6 hàng bằng nhau (`grid-template-rows: repeat(6, var(--row))`, class `.rt6-grid`/`.rt6-row`): 1 tiêu đề · 2 trống · 3 "Low FDV ×.. \| High FDV ×.." · 4 trống · 5 "Market condition: `<Level>`" · 6 "Predict TGE FDV" (đổi từ nút pill gradient `.predict-link` sang chữ gạch chân, giữ nguyên id nên listener JS không đổi). Dọn CSS mồ côi sau khi xoá: `.market-levels`, `.mkt-lvl`/`.mkt-lvl.mkt-active`, `.split-box`/`.split-col`/`.split-divider`/`.split-val`/`.split-lbl`, `.vc-q23`, `.vc-q4`. JS `renderAnalysis()`: bỏ toggle 3 nút Strong/Normal/Weak, gán thẳng `LEVELS[lvlIdx]` vào 1 span — **logic tính median/ngưỡng calibrate giữ nguyên 100%, chỉ đổi DOM target**. Verify: `node --check` JS không lỗi cú pháp, serve tĩnh local trả HTTP 200, grep xác nhận không còn tham chiếu tới id/class đã xoá. **CHƯA verify bằng mắt** (session đó không có browser/screenshot tool) — xem Pending.
 
 ## Failed Approaches
 
