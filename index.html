@@ -501,19 +501,21 @@
     .vc-q234 { grid-row: 2 / 4; min-height: 0; }
     .val-boxes > .val-card > .vc-q234 { overflow: hidden; align-self: stretch; }
 
-    /* Recent TGE Multiples — box chia đúng 5 hàng bằng nhau:
-       1 tiêu đề · 2 Low FDV (box tím nhạt) · 3 High FDV (box tím nhạt) · 4 Market condition (không box) · 5 nút Predict TGE FDV */
-    .val-analysis.val-boxes > .val-card.rt5-grid { grid-template-rows: repeat(5, 1fr); }
-    .rt5-row { display: flex; align-items: center; justify-content: center; text-align: center; gap: 10px; min-height: 0; overflow: hidden; }
-    .rt5-title { font-family: 'Roboto', sans-serif; font-size: 13px; font-weight: 700; color: var(--text); }
-    .rt5-cond { font-size: 13px; color: var(--muted); }
-    .rt5-cond b { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; font-weight: 700; color: var(--accent); }
-    .rt5-box {
+    /* Recent TGE Multiples — dùng chung tiêu đề vc-q1 + vùng nội dung vc-q234 với Danger Zone/
+       Trending Narratives để header và item thẳng hàng nhau; item xếp từ trên xuống, mỗi item
+       cao đúng var(--row) + cách 0.25 hàng, giống hệt nhịp danger-row/narrative-row. */
+    .rt-items { display: flex; flex-direction: column; }
+    .rt-item { height: var(--row); margin-bottom: calc(var(--row) * 0.25); display: flex; align-items: center; }
+    .rt-item:last-child { margin-bottom: 0; }
+    .rt-box {
       justify-content: space-between; padding: 0 14px; border-radius: 8px;
       background: rgba(var(--accent-rgb), 0.08);
     }
-    .rt5-box-lbl { font-size: 13px; color: var(--muted); }
-    .rt5-box-val { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 700; color: var(--accent); }
+    .rt-item-lbl { font-size: 13px; color: var(--muted); }
+    .rt-item-val { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 700; color: var(--accent); }
+    .rt-cond { justify-content: center; gap: 4px; font-size: 13px; color: var(--muted); }
+    .rt-cond b { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; font-weight: 700; color: var(--accent); }
+    .rt-btn-row { justify-content: center; }
 
     .val-card {
       border: 1px solid var(--border);
@@ -1143,20 +1145,22 @@
            gộp chung 1 lưới 6-slot (3 cột) để tất cả tự động bằng nhau; slot 5-6 dành cho box tương lai -->
       <div class="val-analysis val-boxes" id="val-metrics">
 
-        <!-- 1. Recent TGE multiples (chia đúng 5 hàng bằng nhau) -->
-        <div class="val-card rt5-grid">
-          <div class="rt5-row rt5-title">Recent TGE multiples</div>
-          <div class="rt5-row rt5-box">
-            <span class="rt5-box-lbl">Low FDV</span>
-            <span class="rt5-box-val" id="baseline-low">—</span>
-          </div>
-          <div class="rt5-row rt5-box">
-            <span class="rt5-box-lbl">High FDV</span>
-            <span class="rt5-box-val" id="baseline-high">—</span>
-          </div>
-          <div class="rt5-row rt5-cond">Market condition: <b id="market-condition-lvl">—</b></div>
-          <div class="rt5-row">
-            <button class="predict-link" id="predict-open-btn">Predict TGE FDV</button>
+        <!-- 1. Recent TGE multiples (tiêu đề vc-q1 + item vc-q234, thẳng hàng với Danger Zone/Trending) -->
+        <div class="val-card">
+          <div class="val-card-label calc-card-label vc-q1">Recent TGE multiples</div>
+          <div class="vc-q234 rt-items">
+            <div class="rt-item rt-box">
+              <span class="rt-item-lbl">Low FDV</span>
+              <span class="rt-item-val" id="baseline-low">—</span>
+            </div>
+            <div class="rt-item rt-box">
+              <span class="rt-item-lbl">High FDV</span>
+              <span class="rt-item-val" id="baseline-high">—</span>
+            </div>
+            <div class="rt-item rt-cond">Market condition: <b id="market-condition-lvl">—</b></div>
+            <div class="rt-item rt-btn-row">
+              <button class="predict-link" id="predict-open-btn">Predict TGE FDV</button>
+            </div>
           </div>
         </div>
 
