@@ -538,15 +538,19 @@
     /* ── DANGER ZONE + TRENDING NARRATIVES ──────────────────────────
        Đồng bộ với box "Tracking altcoins": scrollbar mảnh hiện sẵn (lane cố định,
        không giật layout), mỗi data gọn 1 hàng, cách nhau 0.5 hàng. */
-    #danger-list, #narrative-list {
+    #danger-list, #narrative-list,
+    #surf-tokens-list, #surf-vc-list, #surf-fundraising-list {
       overflow-y: auto; overflow-x: hidden;
       scrollbar-gutter: stable;
       scrollbar-width: thin;
       scrollbar-color: var(--muted) transparent;
     }
-    #danger-list::-webkit-scrollbar, #narrative-list::-webkit-scrollbar { width: 6px; }
-    #danger-list::-webkit-scrollbar-track, #narrative-list::-webkit-scrollbar-track { background: transparent; }
-    #danger-list::-webkit-scrollbar-thumb, #narrative-list::-webkit-scrollbar-thumb {
+    #danger-list::-webkit-scrollbar, #narrative-list::-webkit-scrollbar,
+    #surf-tokens-list::-webkit-scrollbar, #surf-vc-list::-webkit-scrollbar, #surf-fundraising-list::-webkit-scrollbar { width: 6px; }
+    #danger-list::-webkit-scrollbar-track, #narrative-list::-webkit-scrollbar-track,
+    #surf-tokens-list::-webkit-scrollbar-track, #surf-vc-list::-webkit-scrollbar-track, #surf-fundraising-list::-webkit-scrollbar-track { background: transparent; }
+    #danger-list::-webkit-scrollbar-thumb, #narrative-list::-webkit-scrollbar-thumb,
+    #surf-tokens-list::-webkit-scrollbar-thumb, #surf-vc-list::-webkit-scrollbar-thumb, #surf-fundraising-list::-webkit-scrollbar-thumb {
       background: var(--muted); border-radius: 999px;
     }
     .danger-row, .narrative-row {
@@ -568,6 +572,18 @@
     .danger-empty { font-size: 13px; color: var(--muted); padding: 8px 0; }
     .narrative-name { font-size: 13px; font-weight: 400; color: var(--text); flex: 1; }
     .narrative-med { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 700; color: var(--accent); }
+
+    /* Token of the Week / Recent VC Investments / Notable Fundraising — cùng pattern hàng
+       với danger-row/narrative-row (đồng bộ vị trí item với 3 box gốc) */
+    .surf-row {
+      display: flex; align-items: center; gap: 12px;
+      height: var(--row); padding: 0 14px; border-radius: 8px;
+      background: rgba(var(--accent-rgb), 0.08);
+      margin-bottom: calc(var(--row) * 0.25);
+    }
+    .surf-row:last-child { margin-bottom: 0; }
+    .surf-row-label { font-size: 13px; font-weight: 400; color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .surf-row-value { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 700; color: var(--accent); white-space: nowrap; }
 
     /* Danger Zone / Trending Narratives cùng hệ flex column — margin không bị gộp */
     .val-analysis > .val-card { display: flex; flex-direction: column; }
@@ -1176,6 +1192,24 @@
           <div id="narrative-list" class="vc-q234"></div>
         </div>
 
+        <!-- 5. Token of the Week (Surf API, refresh thủ công) -->
+        <div class="val-card">
+          <div class="val-card-label calc-card-label vc-q1">Token of the Week</div>
+          <div id="surf-tokens-list" class="vc-q234"></div>
+        </div>
+
+        <!-- 6. Recent VC Investments (Surf API, refresh thủ công) -->
+        <div class="val-card">
+          <div class="val-card-label calc-card-label vc-q1">Recent VC Investments</div>
+          <div id="surf-vc-list" class="vc-q234"></div>
+        </div>
+
+        <!-- 7. Notable Fundraising (Surf API, refresh thủ công) -->
+        <div class="val-card">
+          <div class="val-card-label calc-card-label vc-q1">Notable Fundraising</div>
+          <div id="surf-fundraising-list" class="vc-q234"></div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -1506,12 +1540,17 @@
     let publicData = [];
     let publicDataError = false;   // tải Sheet hỏng → hiện lỗi thật, không kẹt "Loading…"
 
+    // surf-content.json: refresh thủ công (script fetch-content.mjs ở repo surf-dashboard), không cron
+    const SURF_CONTENT_URL = './surf-content.json';
+    let surfContent = null;
+    let surfContentError = false;
+
     // ── Khối báo lỗi + nút thử lại, dùng chung cho Valuation / Work / Watchlist ──
     function errBox(retryFn, en) {
       return `<div class="data-error">${en ? 'Could not load data.' : 'Không tải được dữ liệu.'}
         <button class="retry-btn" onclick="${retryFn}(this)">${en ? 'Retry' : 'Thử lại'}</button></div>`;
     }
-    async function retryValuation(btn) { if (btn) btn.disabled = true; await fetchPublicData(); renderAll(); }
+    async function retryValuation(btn) { if (btn) btn.disabled = true; await Promise.all([fetchPublicData(), fetchSurfContent()]); renderAll(); }
     async function retryWTE(btn)       { if (btn) btn.disabled = true; await fetchWTE();       renderWTE(); }
     async function retryWL(btn)        { if (btn) btn.disabled = true; await fetchWL();        renderWL(); }
 
@@ -1580,6 +1619,19 @@
     }
 
     function allEntries() { return publicData; }
+
+    async function fetchSurfContent() {
+      try {
+        const res = await fetch(SURF_CONTENT_URL);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        surfContent = await res.json();
+        surfContentError = false;
+      } catch (err) {
+        console.warn('Could not load surf-content.json:', err);
+        surfContent = null;
+        surfContentError = true;
+      }
+    }
 
     // ── Helpers ───────────────────────────────────────
     function fmtFDV(n) {
@@ -1852,7 +1904,49 @@
       `).join('');
     }
 
-    function renderAll() { renderTable(); renderAnalysis(); renderDanger(); renderNarratives(); }
+    // ── Token of the Week / Recent VC Investments / Notable Fundraising ──
+    // Nguồn: surf-content.json (SURF API, script fetch-content.mjs ở repo surf-dashboard,
+    // refresh thủ công ~2 lần/tuần — KHÔNG cron). Field text từ 3rd-party API → escape trước khi chèn HTML.
+    function escSurf(s) {
+      return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+    }
+    function fmtUnixDate(sec) {
+      if (!sec) return '—';
+      return fmtDate(new Date(sec * 1000).toISOString().slice(0, 10));
+    }
+    function surfRow(label, value) {
+      return `<div class="surf-row"><span class="surf-row-label">${label}</span><span class="surf-row-value">${value}</span></div>`;
+    }
+    function renderSurfContent() {
+      const tokEl = document.getElementById('surf-tokens-list');
+      const vcEl  = document.getElementById('surf-vc-list');
+      const frEl  = document.getElementById('surf-fundraising-list');
+      const empty = '<div class="danger-empty">Not enough data yet</div>';
+
+      if (surfContentError || !surfContent) {
+        tokEl.innerHTML = vcEl.innerHTML = frEl.innerHTML = empty;
+        return;
+      }
+
+      const tokens = surfContent.tokens_of_week || [];
+      tokEl.innerHTML = tokens.length ? tokens.map(t => surfRow(
+        escSurf(t.symbol) + (t.name ? ' — ' + escSurf(t.name) : ''),
+        t.change_7d != null ? (t.change_7d >= 0 ? '+' : '') + t.change_7d.toFixed(1) + '%' : '—'
+      )).join('') : empty;
+
+      const vc = surfContent.vc_recent || [];
+      vcEl.innerHTML = vc.length ? vc.map(v => surfRow(
+        escSurf(v.project) + (v.fund ? ' (' + escSurf(v.fund) + ')' : ''),
+        v.recent_raise ? fmtFDV(v.recent_raise) : '—'
+      )).join('') : empty;
+
+      const fr = surfContent.fundraising_headlines || [];
+      frEl.innerHTML = fr.length ? fr.map(h => surfRow(
+        escSurf(h.title), fmtUnixDate(h.event_at)
+      )).join('') : empty;
+    }
+
+    function renderAll() { renderTable(); renderAnalysis(); renderDanger(); renderNarratives(); renderSurfContent(); }
 
     // ── Weighted median ───────────────────────────────
     function weightedMedian(items) {
@@ -2658,7 +2752,7 @@
     // ── Init ─────────────────────────────────────────
     routeFromPath(); // tất cả biến đã khai báo xong, an toàn để gọi
     (async () => {
-      await Promise.all([fetchPublicData(), fetchWTE()]);
+      await Promise.all([fetchPublicData(), fetchSurfContent(), fetchWTE()]);
       renderAll();
       renderWTE();
       translateToEN();
