@@ -125,19 +125,6 @@ vcFDV = fundraising / (vcAlloc / 100)
 - TGE < 30 ngày mà đã vào vùng → badge **⚠ FAKE PUMP** đỏ + nền đậm (pump láo sắp về 0)
 - Nằm ở hàng card thứ 2 (`.val-analysis` row 2), render bởi `renderDanger()`
 
-### Token of the Week / Recent VC Investments / Notable Fundraising (thêm 2026-08-03)
-
-Lấp 3 slot còn trống trong grid 3×2 của `.val-analysis.val-boxes` (grid vốn đã thiết kế sẵn cho 6 box, trước đó chỉ dùng 3/6). Cùng khung `vc-q1`/`vc-q234`, cùng style hàng với Danger Zone/Trending Narratives (class dùng chung mới: `.surf-row`/`.surf-row-label`/`.surf-row-value`).
-
-- **Nguồn data:** `surf-content.json` (file tĩnh commit thẳng vào repo `cv`, KHÔNG phải secret — chỉ là data công khai đã tổng hợp sẵn). Site fetch bằng `fetchSurfContent()` → cache vào biến `surfContent`, render bằng `renderSurfContent()` (hook vào `renderAll()` + `retryValuation()` y hệt pattern `publicData`/`fetchPublicData`).
-- **Cách refresh (THỦ CÔNG, không cron/VPS — theo yêu cầu user):** chạy `node fetch-content.mjs` tại `D:\Files\Claude\build_for_me\small_tool\surf-dashboard\` (đọc key SURF từ `.env.txt` cùng thư mục — key KHÔNG bao giờ vào repo `cv`), script ghi đè `cv/surf-content.json`, rồi `git add/commit/push` repo `cv` như bình thường để publish. Tần suất dự kiến ~2 lần/tuần (đủ để có content đăng X 2 bài/tuần).
-- **3 nguồn SURF API** (base `https://api.asksurf.ai/gateway/v1`, field đã verify thật ở `small_tool/surf-dashboard/phase1-api-survey-report.md`):
-  1. `tokens_of_week` ← `GET /heatscore/token-of-week?limit=5` — symbol/name/heat_score/%7d.
-  2. `vc_recent` ← với mỗi quỹ trong watchlist cố định (**a16z, Coinbase Ventures, Paradigm, Multicoin Capital, Framework Ventures** — API không có feed toàn thị trường, phải biết trước fund nào để query), resolve `id` qua `search/fund?q=<tên>&limit=1` rồi gọi `fund/portfolio?id=<id>&sort_by=invested_at&order=desc&limit=3`, gộp + sort lấy top 6.
-  3. `fundraising_headlines` ← `GET /search/fundraising?min_importance=4&sort_by=importance&limit=6` — chỉ có `title`/`summary` dạng text (endpoint này KHÔNG có field số tiền sạch, số nằm trong câu chữ title).
-- Text từ 3rd-party API (title/name/project) được escape qua `escSurf()` trước khi chèn HTML (site không có helper escape chung, nhưng data box này lấy từ nguồn ngoài nhiều hơn Sheet nội bộ nên thêm riêng cho chắc).
-- Empty/lỗi (thiếu file hoặc fetch fail) → hiện `"Not enough data yet"` (tái dùng class `.danger-empty`), không vỡ trang.
-
 ### Pattern analysis (phân tích 2026-06-11, làm nền cho các box sau)
 
 Metric chính: `retention = ×ATM / ×TGE` — tách các nhóm nhãn tay sạch:
@@ -211,11 +198,7 @@ Logic hiện tại (2026-06-11):
 
 3. **`highlights/` và ảnh** — từ 2026-08-01 ảnh dùng WebP (`pfp.webp`, `highlights/*.webp`). Tên file trong `highlights.txt` phải khớp đuôi thật. Thêm ảnh mới nên nén WebP (~750x500, dưới ~150KB) để không kéo trang nặng lại.
 
-4. ~~CHƯA verify bằng mắt thay đổi Valuation ngày 2026-08-03~~ — **đã verify bằng headless screenshot (Edge `--headless=new --screenshot`) trong session cùng ngày**: bảng 6 cột đều, box Recent TGE Multiples + 3 box SURF mới thẳng hàng header/item với Danger Zone/Trending Narratives, layout 3×2 desktop / 2×3 mobile (420px) đều ổn, không tràn chữ.
-
-5. **`fetch-content.mjs` (surf-dashboard) refresh thủ công** — không có gì tự động nhắc; nếu lâu không đăng X, `surf-content.json` sẽ cũ. Muốn cập nhật: chạy script rồi push `cv` (xem mục "Token of the Week..." ở trên).
-
-6. **Repo `surf-dashboard` (`D:\Files\Claude\build_for_me\small_tool\surf-dashboard\`) chưa có git remote** — theo quy tắc global "mọi project phải có GitHub remote", nên init + push khi có dịp (chứa `fetch-content.mjs`, `.env.txt` phải vào `.gitignore` trước khi push).
+4. ~~CHƯA verify bằng mắt thay đổi Valuation ngày 2026-08-03~~ — **đã verify bằng headless screenshot (Edge `--headless=new --screenshot`) trong session cùng ngày**: bảng 6 cột đều, box Recent TGE Multiples thẳng hàng header/item với Danger Zone/Trending Narratives, layout 3×2 desktop / 2×3 mobile (420px) đều ổn, không tràn chữ.
 
 ---
 
@@ -223,8 +206,6 @@ Logic hiện tại (2026-06-11):
 
 ```
 index.html            — toàn bộ website (HTML + CSS + JS)
-surf-content.json     — data 3 box Token of the Week/Recent VC Investments/Notable Fundraising, sinh bởi
-                         fetch-content.mjs ở repo surf-dashboard (refresh thủ công, không phải secret)
 _redirects            — Cloudflare Pages SPA fallback (/* → /index.html)
 icon.png              — favicon + icon iPhone home screen (mèo-kính, mắt cam)
 pfp.png               — avatar Hieu Nguyen (About me)
@@ -346,8 +327,6 @@ git add -A && git commit -m "..." && git push
 - 2026-08-03: **3 thay đổi bảng/box Valuation theo yêu cầu user:** (1) Cột Ticker trong "Tracking altcoins to read market conditions": suffix 4 mức `$/$$/$$$/$$$$` → nhị phân `(low)/(high)` tại ngưỡng $300M — đồng bộ ngưỡng với Recent TGE Multiples (trước đó 2 nơi dùng 2 ngưỡng khác nhau: 100M/200M/500M vs 300M). (2) Bảng đó: 6 cột trước chia lệch (Ticker/Narrative/TGE Date = 20% mỗi cột, ×TGE/×ATH/×ATM = 13.3% mỗi cột) → đổi thành `width: calc(100% / 6)` cho tất cả — 6 cột đều thật, giữ nguyên cơ chế canh-giữa-theo-khối (`span.ck` + `--ck1..--ck6` đo bề rộng giá trị dài nhất mỗi cột, thêm từ 2026-07-19). (3) **Xoá hẳn box "Market Condition" riêng**, gộp vào box "Recent TGE Multiples" — box mới chia đúng 6 hàng bằng nhau (`grid-template-rows: repeat(6, var(--row))`, class `.rt6-grid`/`.rt6-row`): 1 tiêu đề · 2 trống · 3 "Low FDV ×.. \| High FDV ×.." · 4 trống · 5 "Market condition: `<Level>`" · 6 "Predict TGE FDV" (đổi từ nút pill gradient `.predict-link` sang chữ gạch chân, giữ nguyên id nên listener JS không đổi). Dọn CSS mồ côi sau khi xoá: `.market-levels`, `.mkt-lvl`/`.mkt-lvl.mkt-active`, `.split-box`/`.split-col`/`.split-divider`/`.split-val`/`.split-lbl`, `.vc-q23`, `.vc-q4`. JS `renderAnalysis()`: bỏ toggle 3 nút Strong/Normal/Weak, gán thẳng `LEVELS[lvlIdx]` vào 1 span — **logic tính median/ngưỡng calibrate giữ nguyên 100%, chỉ đổi DOM target**. Verify: `node --check` JS không lỗi cú pháp, serve tĩnh local trả HTTP 200, grep xác nhận không còn tham chiếu tới id/class đã xoá. **CHƯA verify bằng mắt** (session đó không có browser/screenshot tool) — xem Pending.
 
 - 2026-08-03 (session 2, cùng ngày): **Recent TGE Multiples — sửa lại vị trí header/item 2 lần theo phản hồi user.** Lần 1: đổi từ layout 6-hàng-đều-có-2-hàng-trống sang chia đúng 5 phần bằng nhau (`grid-template-rows: repeat(5,1fr)`, class `.rt5-*`), Low/High FDV thành box tím nhạt, nút Predict TGE FDV trở lại pill gradient (bỏ underline, theo yêu cầu "như cũ"). Lần 2 (user chỉ ra "vị trí chưa tương đồng với Danger Zone", đưa ví dụ hàng STABLE/ENA): nhận ra self-made `.rt5-grid` có tỉ lệ tiêu đề khác `.vc-q1` chuẩn (1/5 vs 1/6 chiều cao box) nên header/item lệch so với Danger Zone/Trending Narratives dù cùng 1 hàng lưới. Bỏ hẳn grid riêng, đổi sang dùng lại đúng khung `vc-q1`(title)+`vc-q234`(content) + class `.rt-item`/`.rt-box` xếp dọc height `var(--row)` — giờ mọi box tự thẳng hàng vì cùng 1 pattern, không phải tự tính tỉ lệ riêng cho từng box.
-- 2026-08-03 (session 2): **Thêm 3 box SURF API (Token of the Week / Recent VC Investments / Notable Fundraising)** — xem chi tiết mục "Token of the Week..." trong Valuation Section — Logic ở trên. Tóm tắt quyết định qua thảo luận (dùng `EnterPlanMode` để chốt trước khi build, vì đụng 2 repo): (a) **không dùng VPS/cron** — user chỉ muốn refresh thủ công ~2 lần/tuần; (b) **lưu data dạng file JSON tĩnh commit vào repo `cv`** thay vì ghi Google Sheet qua Apps Script webhook — lý do thực tế: repo `research_airdrop_bot` (nơi có sẵn hạ tầng ghi Sheet) **không tồn tại trên máy local** (chỉ chạy trên VPS), dựa vào nó sẽ block; JSON tĩnh + git push đơn giản hơn và không cần đụng repo khác; (c) watchlist quỹ cho box VC dùng list mặc định top-tier do assistant đề xuất, user duyệt thẳng không đổi. Verify: chạy `fetch-content.mjs` thật (không mock), console log xác nhận cả 5 quỹ resolve đúng tên (không nhầm quỹ, vd "a16z" không bị match nhầm "a16z CSX"), rồi headless screenshot xác nhận layout + data thật hiển thị đúng ở cả desktop (1400px, 3×2) và mobile (420px, 2×3).
-
 ## Failed Approaches
 
 - 2026-06-11: Apps Script + CoinGecko `market_chart/range` và `market_chart?days=max` → 401 (Demo key không có quyền) → bỏ.
@@ -358,3 +337,4 @@ git add -A && git commit -m "..." && git push
 - 2026-06-18: Tự đổi KV binding name `WATCHLIST` → `KV_BINDING` vì tưởng config sai → Dashboard thực tế là `WATCHLIST` → waste 2 commit. **Bài học: không đoán mò config/binding name, hỏi user hoặc xem Dashboard.**
 - 2026-06-18: Filter Sync bỏ qua project raise < $5M → sai, Tier-1 (Coinbase Ventures, a16z CSX) invest seed $3-4M đầy → bỏ filter.
 - 2026-06-18: Đặt modal HTML sau `</script>` → `getElementById` null → `null.addEventListener` crash toàn bộ JS → mất hết data hiển thị → fix dời modal lên trước script.
+- 2026-08-03: **Thêm 3 box SURF API (Token of the Week / Recent VC Investments / Notable Fundraising)** lấp 3 slot trống trong grid Valuation, data từ `surf-content.json` (script `fetch-content.mjs` ở repo `surf-dashboard`, refresh thủ công). Build xong, verify layout/data đúng bằng headless screenshot → **user thấy 3 box không mang lại giá trị gì, yêu cầu gỡ hẳn**. Đã revert sạch: xoá 3 box HTML + CSS (`.surf-row*`) + JS (`fetchSurfContent`/`renderSurfContent`/`escSurf`/`fmtUnixDate`/hooks trong `renderAll`/`retryValuation`/init) + file `surf-content.json` khỏi repo `cv`. Script `fetch-content.mjs` vẫn còn ở repo `surf-dashboard` (không xoá, không thuộc phạm vi yêu cầu) nhưng **không còn được `cv` dùng tới**. Bài học: nên hỏi trước "nội dung này có thật sự hữu ích để đăng X không" bằng ví dụ cụ thể (data thật) trước khi build full UI, thay vì build xong mới cho xem.
