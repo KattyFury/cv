@@ -408,12 +408,10 @@
     /* 2 size popup chuẩn: nhỏ .wl-modal (--modal-w, form) · lớn = ĐÚNG 2× popup nhỏ (nội dung nhiều)
        Dùng .wl-modal.wl-modal--wide (specificity cao hơn) để thắng .wl-modal{width:340px} định nghĩa sau. */
     .wl-modal.wl-modal--wide { width: calc(var(--modal-w) * 2); max-width: 92vw; }
-    .wl-modal--wide .wl-modal-title { font-size: 14px; line-height: 1.3; text-align: center; }
     .tge-modal-body { overflow: auto; max-height: 78vh; }
     /* mobile: thu nhỏ font bảng trong popup để nội dung không lồng nhau */
     @media (max-width: 640px) {
       .wl-modal--wide { padding: 16px; }
-      .wl-modal--wide .wl-modal-title { font-size: 13px; }
       .tge-modal-body .val-table { font-size: 11px; }
       .tge-modal-body .val-table thead th,
       .tge-modal-body .val-table tbody td { padding: 6px 4px; }
@@ -488,14 +486,14 @@
        Mỗi box cao đúng 6 hàng, chia dọc: tiêu đề 1 hàng · nội dung 5 hàng (vc-q234). */
     .val-analysis.val-boxes {
       gap: calc(var(--row) * 0.5);              /* giữa 4 box nhỏ: 0.5 hàng (ngang + dọc) */
-      margin-top: var(--row);                   /* data box → cụm 4 box: 1 hàng */
+      margin-top: calc(var(--row) * 0.5);       /* data box → cụm 4 box: bằng khoảng cách giữa 3 box */
     }
     .val-analysis.val-boxes > .val-card {
       height: calc(var(--row) * 6); min-height: calc(var(--row) * 6);
       display: grid; grid-template-rows: var(--row) calc(var(--row) * 3) calc(var(--row) * 2);
       padding: 0 12px;
     }
-    .vc-q1   { grid-row: 1 / 2; display: flex; align-items: center; justify-content: center; align-self: stretch; }
+    .vc-q1   { grid-row: 1 / 2; display: flex; align-items: center; justify-content: center; gap: 6px; align-self: stretch; }
     .vc-q1.val-card-label, .vc-q1.calc-card-label { margin: 0; }
     .vc-q1.calc-card-label { font-family: 'Roboto', sans-serif; font-size: 13px; font-weight: 700; }  /* tiêu đề bold */
     .vc-q234 { grid-row: 2 / 4; min-height: 0; }
@@ -592,7 +590,7 @@
     /* Predict TGE FDV — nút pill gradient thương hiệu (như cũ, không underline nữa) */
     .predict-link {
       display: inline-flex; align-items: center; justify-content: center;
-      padding: 6px 14px; border-radius: 999px;
+      height: var(--row); padding: 0 14px; border-radius: 8px;
       border: none; background: var(--accent-gradient);
       color: #fff; font-family: 'Roboto', sans-serif;
       font-size: 13px; font-weight: 500; white-space: nowrap;
@@ -676,8 +674,7 @@
       transition: background 0.15s, color 0.15s;
     }
     .lang-btn.active { background: var(--accent-gradient); color: #fff; }
-    /* Language dropdown */
-    .lang-dropdown { position: relative; }
+    /* admin-btn dùng chung style nút viền (chỉ còn 1 nút dùng class này sau khi bỏ dropdown ngôn ngữ) */
     .lang-dd-btn {
       display: inline-flex; align-items: center;
       height: 30px; padding: 0 12px;
@@ -688,20 +685,6 @@
       transition: border-color 0.15s, color 0.15s;
     }
     .lang-dd-btn:hover { border-color: var(--accent); color: var(--text); }
-    .lang-dd-menu {
-      position: absolute; top: calc(100% + 4px); right: 0;
-      background: var(--white); border: 1px solid var(--border);
-      border-radius: 8px; overflow: hidden;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.10); z-index: 50; min-width: 100%;
-    }
-    .lang-dd-item {
-      display: block; width: 100%; text-align: left;
-      padding: 10px 16px; border: none; background: none; cursor: pointer;
-      font-family: 'Roboto', sans-serif; font-size: 13px; color: var(--sub);
-      transition: background 0.1s;
-    }
-    .lang-dd-item:hover { background: var(--off); color: var(--text); }
-    .lang-dd-item.active { color: var(--text); font-weight: 600; }
     /* Rank filter màu theo tier */
     #rf-ss.active { background: var(--accent-gradient); color: #fff; }
     #rf-s.active  { background: #6155F5; color: #fff; }
@@ -881,6 +864,17 @@
     .wl-arrow--off { color: var(--border); }
     .wl-arrow--link { cursor: pointer; }
     .wl-arrow--link:hover { transform: translateX(3px); }
+
+    /* Icon "i" giải thích số liệu — cạnh tiêu đề box, mở popup (icon info.svg, cùng kỹ thuật mask như wl-arrow) */
+    .info-icon {
+      display: inline-block; width: 14px; height: 14px; flex-shrink: 0;
+      margin: 0; padding: 0; border: none; appearance: none; -webkit-appearance: none;
+      background-color: currentColor;
+      -webkit-mask: url(info.svg) center / contain no-repeat;
+      mask: url(info.svg) center / contain no-repeat;
+      color: var(--muted); cursor: pointer; transition: color 0.15s;
+    }
+    .info-icon:hover { color: var(--accent); }
     /* Meta phụ: narrative · gọi vốn — regular 13px (to hơn cho dễ đọc) */
     .wl-meta {
       margin-top: 8px; display: flex; align-items: center;
@@ -904,6 +898,9 @@
       display: flex; flex-direction: column; gap: 12px;
     }
     .wl-modal-title { font-size: 15px; font-weight: 600; color: var(--text); }
+    .info-modal-body { font-size: 13px; line-height: 1.6; color: var(--sub); white-space: pre-line; }
+    .info-modal-link { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; font-weight: 500; cursor: pointer; }
+    .info-modal-link:hover { opacity: 0.8; }
 
     /* ── Báo lỗi tải data: thà nói thật là hỏng còn hơn kẹt "Loading…" mãi ── */
     .data-error { padding: 24px 0; text-align: center; font-size: 13px; color: var(--sub); }
@@ -1114,7 +1111,13 @@
   <!-- ── VALUATION VIEW ────────────────────────────── -->
   <div id="valuation-view">
     <div class="val-wrap">
-      <div class="val-intro val-intro-clickable" id="tge-intro" title="Mở rộng">Tracking altcoins to read market conditions</div>
+      <div style="position:relative">
+        <div class="val-intro val-intro-clickable" id="tge-intro" title="Mở rộng"><span id="val-headline-text">Tracking altcoins to read market conditions</span></div>
+        <div class="lang-toggle" style="position:absolute; right:0; top:50%; transform:translateY(-50%)">
+          <button class="lang-btn" id="val-lang-en-btn">EN</button>
+          <button class="lang-btn active" id="val-lang-vi-btn">VI</button>
+        </div>
+      </div>
 
       <!-- TOP: TGE table -->
       <div class="val-table-section" id="tge-section">
@@ -1125,7 +1128,7 @@
               <tr>
                 <th><span class="ck">Ticker</span></th>
                 <th><span class="ck">Narrative</span></th>
-                <th><span class="ck">TGE Date</span></th>
+                <th><span class="ck" id="tge-date-th">TGE Date</span></th>
                 <th><span class="ck">×TGE</span></th>
                 <th><span class="ck">×ATH</span></th>
                 <th><span class="ck">×ATM</span></th>
@@ -1147,17 +1150,17 @@
 
         <!-- 1. Recent TGE multiples (tiêu đề vc-q1 + item vc-q234, thẳng hàng với Danger Zone/Trending) -->
         <div class="val-card">
-          <div class="val-card-label calc-card-label vc-q1">Recent TGE multiples</div>
+          <div class="val-card-label calc-card-label vc-q1"><span id="tge-title-text">Recent TGE multiples</span><button class="info-icon" id="info-tge-btn" title="Giải thích" aria-label="Giải thích"></button></div>
           <div class="vc-q234 rt-items">
             <div class="rt-item rt-box">
-              <span class="rt-item-lbl">Low FDV</span>
+              <span class="rt-item-lbl" id="tge-lowfdv-label">Low FDV</span>
               <span class="rt-item-val" id="baseline-low">—</span>
             </div>
             <div class="rt-item rt-box">
-              <span class="rt-item-lbl">High FDV</span>
+              <span class="rt-item-lbl" id="tge-highfdv-label">High FDV</span>
               <span class="rt-item-val" id="baseline-high">—</span>
             </div>
-            <div class="rt-item rt-cond">Market condition: <b id="market-condition-lvl">—</b></div>
+            <div class="rt-item rt-cond"><span id="tge-cond-label">Market condition:</span> <b id="market-condition-lvl">—</b></div>
             <div class="rt-item rt-btn-row">
               <button class="predict-link" id="predict-open-btn">Predict TGE FDV</button>
             </div>
@@ -1166,13 +1169,13 @@
 
         <!-- 3. Danger Zone -->
         <div class="val-card">
-          <div class="val-card-label calc-card-label vc-q1">Danger Zone</div>
+          <div class="val-card-label calc-card-label vc-q1"><span id="danger-title-text">Danger Zone</span><button class="info-icon" id="info-danger-btn" title="Giải thích" aria-label="Giải thích"></button></div>
           <div id="danger-list" class="vc-q234"></div>
         </div>
 
         <!-- 4. Trending Narratives -->
         <div class="val-card">
-          <div class="val-card-label calc-card-label vc-q1">Trending Narratives</div>
+          <div class="val-card-label calc-card-label vc-q1"><span id="narr-title-text">Trending Narratives</span><button class="info-icon" id="info-narratives-btn" title="Giải thích" aria-label="Giải thích"></button></div>
           <div id="narrative-list" class="vc-q234"></div>
         </div>
 
@@ -1190,17 +1193,11 @@
           <button class="ard-tab active" id="ard-work-btn">Work</button>
           <button class="ard-tab" id="ard-watchlist-btn">Watchlist</button>
         </div>
-        <div id="ard-wte-controls" style="display:flex;align-items:center;gap:18px">
-          <button class="lang-dd-btn" id="admin-btn" title="Task cá nhân">admin</button>
-          <div class="lang-dropdown" id="lang-dropdown">
-            <button class="lang-dd-btn" id="lang-dd-trigger">
-              <span id="lang-dd-label">Vietnamese</span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:4px"><path d="m6 9 6 6 6-6"/></svg>
-            </button>
-            <div class="lang-dd-menu" id="lang-dd-menu" style="display:none">
-              <button class="lang-dd-item" id="lang-vi-btn">Vietnamese</button>
-              <button class="lang-dd-item" id="lang-en-btn">English</button>
-            </div>
+        <div id="ard-wte-controls" style="display:flex;align-items:center;gap:8px">
+          <button class="lang-dd-btn" id="admin-btn" title="Task cá nhân">Admin</button>
+          <div class="lang-toggle">
+            <button class="lang-btn" id="lang-en-btn">EN</button>
+            <button class="lang-btn active" id="lang-vi-btn">VI</button>
           </div>
         </div>
       </div>
@@ -1237,7 +1234,6 @@
   <!-- TGE table modal -->
   <div class="wl-modal-backdrop" id="tge-modal">
     <div class="wl-modal wl-modal--wide">
-      <div class="wl-modal-title">Tracking altcoins to read market conditions</div>
       <div class="tge-modal-body" id="tge-modal-body"></div>
     </div>
   </div>
@@ -1268,6 +1264,30 @@
         <div id="calc-res-sub"></div>
         <button class="calc-reset-btn" id="calc-reset-btn" title="New calculation">✕</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Info popup: Recent TGE multiples -->
+  <div class="wl-modal-backdrop" id="info-tge-modal">
+    <div class="wl-modal">
+      <div class="wl-modal-title">Recent TGE multiples</div>
+      <div class="info-modal-body" id="info-tge-body"></div>
+    </div>
+  </div>
+
+  <!-- Info popup: Danger Zone -->
+  <div class="wl-modal-backdrop" id="info-danger-modal">
+    <div class="wl-modal">
+      <div class="wl-modal-title">Danger Zone</div>
+      <div class="info-modal-body" id="info-danger-body"></div>
+    </div>
+  </div>
+
+  <!-- Info popup: Trending Narratives -->
+  <div class="wl-modal-backdrop" id="info-narratives-modal">
+    <div class="wl-modal">
+      <div class="wl-modal-title">Trending Narratives</div>
+      <div class="info-modal-body" id="info-narratives-body"></div>
     </div>
   </div>
 
@@ -1394,6 +1414,116 @@
     document.getElementById('predict-cancel').addEventListener('click', closePredict);
     predictModal.addEventListener('click', e => { if (e.target === predictModal) closePredict(); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closePredict(); });
+
+    // ── Info popups (giải thích số liệu 3 box Valuation) + toggle EN|VI ──
+    let valLang = 'VI';
+    const valLangEnBtn = document.getElementById('val-lang-en-btn');
+    const valLangViBtn = document.getElementById('val-lang-vi-btn');
+
+    // Chỉ dịch tên headline + tiêu đề 3 box — KHÔNG dịch nội dung lấy từ data (ticker, narrative
+    // như "Trading"/"Stablechain", tên narrative, v.v.)
+    const VAL_HEAD_LABELS = {
+      'val-headline-text': { EN: 'Tracking altcoins to read market conditions', VI: 'Theo dõi altcoin để đọc tình hình thị trường' },
+      'tge-title-text':    { EN: 'Recent TGE multiples', VI: 'Hệ số TGE gần đây' },
+      'danger-title-text': { EN: 'Danger Zone', VI: 'Vùng nguy hiểm' },
+      'narr-title-text':   { EN: 'Trending Narratives', VI: 'Narrative đang hot' },
+      'tge-lowfdv-label':  { EN: 'Low FDV <span class="td-size">(&lt;$300M)</span>', VI: 'FDV thấp <span class="td-size">(&lt;$300M)</span>' },
+      'tge-highfdv-label': { EN: 'High FDV <span class="td-size">(&gt;$300M)</span>', VI: 'FDV cao <span class="td-size">(&gt;$300M)</span>' },
+      'tge-cond-label':    { EN: 'Market condition:', VI: 'Điều kiện thị trường:' },
+      'predict-open-btn':  { EN: 'Predict TGE FDV', VI: 'Dự đoán FDV TGE' },
+      'tge-date-th':       { EN: 'TGE Date', VI: 'Ngày TGE' },
+    };
+    function applyValHeadLabels() {
+      for (const [id, labels] of Object.entries(VAL_HEAD_LABELS)) {
+        document.getElementById(id).innerHTML = labels[valLang];
+      }
+    }
+    applyValHeadLabels();
+
+    const DANGER_INFO = {
+      VI: `Những dự án lên mức FDV gấp 15 lần FDV mà VC đầu tư trở lên, thường rơi vào 2 trường hợp: pump để tạo đỉnh hoặc là tính chất dự án quá mạnh nên lên vùng giá này.
+Dù ở trường hợp nào thì các dự án như này cũng rất rủi ro khi mua vào.`,
+      EN: `Projects trading at ×15 the FDV VCs invested at (or higher) usually fall into one of two cases: a pump forming a top, or the project is simply strong enough to justify that price.
+Either way, buying in at this level is very risky.`,
+    };
+    const NARRATIVES_INFO = {
+      VI: `Trung vị FDV khi TGE của các narrative, cho thấy trong điều kiện thị trường hiện tại, narrative nào đang mạnh và narrative nào đang yếu.`,
+      EN: `Median FDV multiple at TGE for each narrative — shows which narratives are strong and which are weak under current market conditions.`,
+    };
+    const TGE_MARKET_LINE = {
+      VI: {
+        Weak:   '👉 Thị trường đang rất yếu (hiếm khi altcoin TGE tệ đến vậy).',
+        Normal: '👉 Thị trường đang ở mức bình thường (ngang mặt bằng chung các đợt TGE altcoin).',
+        Strong: '👉 Thị trường đang mạnh (altcoin TGE cao vượt xa giá vốn VC).',
+      },
+      EN: {
+        Weak:   '👉 Market is super weak right now (altcoins rarely TGE this poorly).',
+        Normal: '👉 Market is at a normal level (a typical condition for altcoin TGEs).',
+        Strong: '👉 Market is strong right now (altcoins are TGE-ing far above VC cost).',
+      },
+    };
+
+    function tgeInfoHTML(low, high, level) {
+      const line = TGE_MARKET_LINE[valLang][level]
+        || (valLang === 'VI' ? '👉 Chưa đủ dữ liệu để đọc thị trường.' : '👉 Not enough data yet to read the market.');
+      return valLang === 'VI'
+        ? `Các dự án Low FDV thường TGE ở mức ${low} so với FDV lúc VC rót vốn.
+Các dự án High FDV thường TGE ở mức ${high} so với FDV lúc VC rót vốn.
+${line}
+<span class="info-modal-link" id="info-tge-predict-link">Bấm vào đây</span> để nhập vài thông tin, mình sẽ dự đoán FDV và giá TGE giúp bạn.`
+        : `Low FDV projects TGE at ${low} the FDV VCs invested at.
+High FDV projects TGE at ${high} the FDV VCs invested at.
+${line}
+<span class="info-modal-link" id="info-tge-predict-link">Click here</span> to enter a few details so I can predict a project's TGE FDV and price for you.`;
+    }
+
+    const infoTgeModal = document.getElementById('info-tge-modal');
+    const closeInfoTge = () => infoTgeModal.classList.remove('open');
+    function renderTgeInfo() {
+      const low   = document.getElementById('baseline-low').textContent;
+      const high  = document.getElementById('baseline-high').textContent;
+      const level = document.getElementById('market-condition-lvl').dataset.level;   // luôn key tiếng Anh (Weak/Normal/Strong), không phải chữ đang hiển thị
+      document.getElementById('info-tge-body').innerHTML = tgeInfoHTML(low, high, level);
+      document.getElementById('info-tge-predict-link').addEventListener('click', () => {
+        closeInfoTge();
+        predictModal.classList.add('open');
+      });
+    }
+    document.getElementById('info-tge-btn').addEventListener('click', () => { renderTgeInfo(); infoTgeModal.classList.add('open'); });
+    infoTgeModal.addEventListener('click', e => { if (e.target === infoTgeModal) closeInfoTge(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeInfoTge(); });
+
+    const infoDangerModal = document.getElementById('info-danger-modal');
+    const closeInfoDanger = () => infoDangerModal.classList.remove('open');
+    document.getElementById('info-danger-btn').addEventListener('click', () => {
+      document.getElementById('info-danger-body').textContent = DANGER_INFO[valLang];
+      infoDangerModal.classList.add('open');
+    });
+    infoDangerModal.addEventListener('click', e => { if (e.target === infoDangerModal) closeInfoDanger(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeInfoDanger(); });
+
+    const infoNarrModal = document.getElementById('info-narratives-modal');
+    const closeInfoNarr = () => infoNarrModal.classList.remove('open');
+    document.getElementById('info-narratives-btn').addEventListener('click', () => {
+      document.getElementById('info-narratives-body').textContent = NARRATIVES_INFO[valLang];
+      infoNarrModal.classList.add('open');
+    });
+    infoNarrModal.addEventListener('click', e => { if (e.target === infoNarrModal) closeInfoNarr(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeInfoNarr(); });
+
+    function switchValLang(lang) {
+      if (valLang === lang) return;
+      valLang = lang;
+      [valLangViBtn, valLangEnBtn].forEach(b => b.classList.remove('active'));
+      ({ VI: valLangViBtn, EN: valLangEnBtn })[lang]?.classList.add('active');
+      applyValHeadLabels();
+      renderAnalysis(); renderDanger(); renderNarratives();   // Weak/Normal/Strong, empty-state, badge "PUMP LÁO" đều phụ thuộc valLang
+      if (infoTgeModal.classList.contains('open')) renderTgeInfo();
+      if (infoDangerModal.classList.contains('open')) document.getElementById('info-danger-body').textContent = DANGER_INFO[valLang];
+      if (infoNarrModal.classList.contains('open')) document.getElementById('info-narratives-body').textContent = NARRATIVES_INFO[valLang];
+    }
+    valLangViBtn.addEventListener('click', () => switchValLang('VI'));
+    valLangEnBtn.addEventListener('click', () => switchValLang('EN'));
 
     function hideAllViews() {
       cvView.style.display = 'none';
@@ -1690,7 +1820,7 @@
         const xATH  = athIntraday ? 0 : xMult(e.ath, e);
         const xATM  = xMult(e.currentPrice, e);
         const vcFDV = e.vcAlloc > 0 ? e.fundraising / (e.vcAlloc / 100) : 0;
-        const size = vcFDV <= 0 ? '' : vcFDV < 300e6 ? 'low' : 'high';
+        const size = vcFDV <= 0 ? '' : vcFDV < 300e6 ? '&lt;$300M' : '&gt;$300M';   // HTML-escape < > vì chèn thẳng vào template string
         return `<tr>
           <td class="td-ticker"><span class="ck">${e.ticker}${size ? ` <span class="td-size">(${size})</span>` : ''}</span></td>
           <td class="td-narrative"><span class="ck">${e.type || '—'}</span></td>
@@ -1710,7 +1840,7 @@
         <thead><tr>
           <th><span class="ck">Ticker</span></th>
           <th><span class="ck">Narrative</span></th>
-          <th><span class="ck">TGE Date</span></th>
+          <th><span class="ck">${document.getElementById('tge-date-th').textContent}</span></th>
           <th><span class="ck">×TGE</span></th>
           <th><span class="ck">×ATH</span></th>
           <th><span class="ck">×ATM</span></th>
@@ -1747,7 +1877,10 @@
       // Strong (2023-2024 cycle) >=13, Normal (2022 baseline) 4.3-13, Weak (2025-2026) <4.3
       const lvlIdx = med >= 13 ? 0 : med >= 4.3 ? 1 : 2;
       const LEVELS = ['Strong', 'Normal', 'Weak'];
-      condEl.textContent = recent6.length ? LEVELS[lvlIdx] : '—';
+      const LEVELS_VI = { Strong: 'Mạnh', Normal: 'Bình thường', Weak: 'Yếu' };
+      const levelEN = recent6.length ? LEVELS[lvlIdx] : null;
+      condEl.dataset.level = levelEN || '';   // luôn giữ key tiếng Anh gốc (Weak/Normal/Strong) cho info popup dùng, bất kể đang hiện ngôn ngữ nào
+      condEl.textContent = levelEN ? (valLang === 'VI' ? LEVELS_VI[levelEN] : levelEN) : '—';
 
       // 2. Recent TGE multiples — split Low FDV (<$300M entry) vs High FDV (≥$300M entry)
       const FDV_SPLIT = 300e6;
@@ -1791,7 +1924,7 @@
         .sort((a, b) => new Date(b.e.tgeDate) - new Date(a.e.tgeDate)); // mới nhất lên đầu
 
       if (!danger.length) {
-        listEl.innerHTML = '<div class="danger-empty">No tokens in danger zone</div>';
+        listEl.innerHTML = `<div class="danger-empty">${valLang === 'VI' ? 'Chưa có token nào trong vùng nguy hiểm' : 'No tokens in danger zone'}</div>`;
         return;
       }
 
@@ -1799,7 +1932,7 @@
         const isAlert = now - new Date(e.tgeDate) < ALERT_DAYS;
         return `<div class="danger-row${isAlert ? ' danger-new' : ''}">
           <span class="danger-ticker">${e.ticker}</span>
-          ${isAlert ? '<span class="danger-badge-new">⚠ FAKE PUMP</span>' : ''}
+          ${isAlert ? `<span class="danger-badge-new">⚠ ${valLang === 'VI' ? 'PUMP LÁO' : 'FAKE PUMP'}</span>` : ''}
           <span class="danger-multi">×${xATM.toFixed(1)}</span>
           <span class="danger-date">${fmtDate(e.tgeDate)}</span>
         </div>`;
@@ -1840,7 +1973,7 @@
         .sort((a, b) => b.medTGE - a.medTGE);
 
       if (!ranked.length) {
-        listEl.innerHTML = '<div class="danger-empty">Not enough data yet</div>';
+        listEl.innerHTML = `<div class="danger-empty">${valLang === 'VI' ? 'Chưa đủ dữ liệu' : 'Not enough data yet'}</div>`;
         return;
       }
 
@@ -2495,27 +2628,15 @@
       else { adminPass = ''; sessionStorage.removeItem('cvAdminPass'); }
     })();
 
-    // ── Language dropdown ─────────────────────────────
+    // ── Language toggle (EN|VI) ────────────────────────
     const langEnBtn     = document.getElementById('lang-en-btn');
     const langViBtn     = document.getElementById('lang-vi-btn');
-    const langDdMenu    = document.getElementById('lang-dd-menu');
-    const langDdTrigger = document.getElementById('lang-dd-trigger');
-    const langDdLabel   = document.getElementById('lang-dd-label');
-    const langLabels    = { VI: 'Vietnamese', EN: 'English' };
-
-    langDdTrigger.addEventListener('click', e => {
-      e.stopPropagation();
-      langDdMenu.style.display = langDdMenu.style.display === 'none' ? 'block' : 'none';
-    });
-    document.addEventListener('click', () => { langDdMenu.style.display = 'none'; });
 
     async function switchLang(lang) {
-      if (wteLang === lang) { langDdMenu.style.display = 'none'; return; }
+      if (wteLang === lang) return;
       wteLang = lang;
       [langViBtn, langEnBtn].forEach(b => b.classList.remove('active'));
       ({ VI: langViBtn, EN: langEnBtn })[lang]?.classList.add('active');
-      langDdLabel.textContent = langLabels[lang];
-      langDdMenu.style.display = 'none';
       if (wteLang === 'EN') {
         if (!wteLoaded.EN) await translateToEN();
         if (!wlLoaded.EN && wlLoaded.VI) await translateWL();
