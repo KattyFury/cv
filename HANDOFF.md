@@ -257,6 +257,22 @@ npx serve .                 # hoặc bất kỳ static server nào
 git add -A && git commit -m "..." && git push
 ```
 
+**Lưu ý dev local:** `python -m http.server` KHÔNG có SPA fallback → vào `/valuation` sẽ 404
+(chỉ mở được qua nav từ trang chủ). Dùng static server có fallback về `index.html` nếu cần test route thẳng.
+
+**Verify bằng mắt (bắt buộc trước khi chốt việc động vào layout/màu):** chụp ảnh trang thật bằng
+Edge/Chrome headless thay vì đoán —
+
+```bash
+msedge --headless=new --disable-gpu --force-device-scale-factor=2 \
+       --window-size=1100,900 --virtual-time-budget=12000 \
+       --user-data-dir=<thư mục tạm> --screenshot=<file.png> "http://localhost:<port>/valuation"
+```
+
+(`--user-data-dir` là bắt buộc, thiếu nó Edge báo "Access is denied" khi ghi file ảnh.
+Muốn chụp trạng thái cần click — vd popup bảng — thì inject `document.getElementById('tge-intro').click()`
+qua server dev, đừng sửa `index.html`.)
+
 ---
 
 ## Decisions Log

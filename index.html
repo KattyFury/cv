@@ -381,8 +381,9 @@
     #tge-section .val-table-scroll {
       flex: 1 1 auto; height: auto; max-height: none; min-height: 0;
     }
-    /* Body: các dòng cách nhau 0.5 hàng, tạo bằng padding-top/bottom 0.25 hàng mỗi ô (không dùng border-spacing
-       nữa vì gap đó nằm ngoài <td> nên hover background không tô được — xem #tge-section .val-table tbody td) */
+    /* Khoảng cách 0.5 hàng giữa các dòng nằm ở padding của <td> (xem tbody td bên dưới), KHÔNG
+       dùng border-spacing: gap của border-spacing nằm NGOÀI ô nên nền hover không tô tới, hàng bị
+       tô hụt 1/5. `separate` giữ lại để bảng này không rơi về `collapse` của .val-table. */
     #tge-section .val-table-body {
       border-collapse: separate; border-spacing: 0;
     }
@@ -391,7 +392,7 @@
     .tge-modal-body .val-table thead th {
       text-transform: none; letter-spacing: 0;
       color: var(--text); font-weight: 700;
-      background: var(--off);   /* nền cam nhạt (như box Market condition) → tiêu đề khác biệt với nội dung */
+      background: var(--off);   /* nền xám nhạt (cùng tông nền các box) → tách bạch header với data */
     }
     #tge-section .val-table thead th {
       height: var(--row); padding: 2px 16px; border-bottom: none;
@@ -401,6 +402,9 @@
     }
     #tge-section .val-table tbody tr:last-child td { border-bottom: none; }
 
+    /* Class này hiện chỉ dùng đúng 1 chỗ (body bảng trong #tge-section) và cặp max/min-height
+       bên dưới đã bị `#tge-section .val-table-scroll` ghi đè hết — giữ lại làm mặc định phòng khi
+       bảng được tái dùng ngoài #tge-section. Phần còn sống ở đây chỉ là 2 dòng overflow. */
     .val-table-scroll {
       max-height: calc(50vh - 120px); min-height: 160px; overflow-y: auto; overflow-x: auto;
     }
@@ -440,6 +444,9 @@
       background: var(--white); position: sticky; top: 0; z-index: 2; white-space: nowrap;
     }
 
+    /* Hover hàng = tím nhạt (gốc brand #6155F5 @10%), KHÔNG dùng xám --off — xem quy định
+       "Hover / màu tương tác" trong HANDOFF.md. Muốn nền phủ TRỌN hàng thì khoảng cách giữa
+       các hàng phải nằm trong padding của <td>, không phải border-spacing. */
     .val-table tbody tr:hover { background: rgba(97, 85, 245, 0.1); }
 
     .val-table tbody td {
@@ -638,6 +645,8 @@
       font-size: 19px; color: var(--muted); cursor: pointer; padding: 0;
     }
     .calc-reset-btn:hover { color: var(--text); }
+    /* 2 nút ✕ khác nhau, đừng nhầm: .calc-reset-btn nằm TRONG ô kết quả = "tính lại"
+       (quay về form, modal vẫn mở) · .modal-corner-close ở góc phải-trên modal = "thoát" */
     #predict-modal .wl-modal { position: relative; }
     .modal-corner-close {
       position: absolute; top: 12px; right: 12px;
@@ -1430,9 +1439,11 @@
 
     // ── Predict TGE FDV modal ────────────────────────
     const predictModal = document.getElementById('predict-modal');
+    // 4 đường đóng modal (nút ✕ góc, nút Đóng, click nền, phím Esc) đều đi qua closePredict()
+    // → luôn reset về form trống. Trước 2026-08-05 chỉ có nút ✕ "tính lại" TRONG ô kết quả nên
+    // đóng bằng cách khác rồi mở lại vẫn thấy kết quả của lần tính trước.
     const closePredict = () => {
       predictModal.classList.remove('open');
-      // đóng modal (bất kể cách nào) → reset về form trống, tránh lần mở sau còn dính kết quả tính cũ
       document.getElementById('calc-result').style.display = 'none';
       document.getElementById('calc-form').style.display   = 'flex';
       document.getElementById('calc-raise').value  = '';
@@ -1450,28 +1461,36 @@
     const valLangEnBtn = document.getElementById('val-lang-en-btn');
     const valLangViBtn = document.getElementById('val-lang-vi-btn');
 
-    // Chỉ dịch tên headline + tiêu đề 3 box — KHÔNG dịch nội dung lấy từ data (ticker, narrative
-    // như "Trading"/"Stablechain", tên narrative, v.v.)
+    // ĐÍCH DANH mọi nhãn UI TĨNH của tab Valuation (id → bản EN/VI), áp bằng innerHTML nên
+    // được phép nhúng thẻ (vd <span class="td-size"> cho chú thích nhỏ).
+    // LUẬT: chỉ dịch nhãn UI. KHÔNG dịch nội dung đến từ Google Sheet (ticker, tên narrative
+    // như "Trading"/"Stablechain", ngày tháng, số) — xem mục quy tắc dịch trong HANDOFF.md.
+    // Thêm nhãn tĩnh mới ở đâu thì PHẢI khai báo ở đây, nếu không nó sẽ kẹt tiếng Anh khi ở mode VI.
     const VAL_HEAD_LABELS = {
-      'val-headline-text': { EN: 'Tracking altcoins to read market conditions', VI: 'Theo dõi altcoin để đọc tình hình thị trường' },
-      'tge-title-text':    { EN: 'Recent TGE multiples', VI: 'Hệ số TGE gần đây' },
-      'danger-title-text': { EN: 'Danger Zone', VI: 'Vùng nguy hiểm' },
-      'narr-title-text':   { EN: 'Trending Narratives', VI: 'Narrative đang hot' },
-      'tge-lowfdv-label':  { EN: 'Low FDV <span class="td-size">(&lt;$300M)</span>', VI: 'FDV thấp <span class="td-size">(&lt;$300M)</span>' },
-      'tge-highfdv-label': { EN: 'High FDV <span class="td-size">(&gt;$300M)</span>', VI: 'FDV cao <span class="td-size">(&gt;$300M)</span>' },
-      'tge-cond-label':    { EN: 'Market condition:', VI: 'Điều kiện thị trường:' },
-      'predict-open-btn':  { EN: 'Predict TGE FDV', VI: 'Dự đoán FDV TGE' },
-      'tge-date-th':       { EN: 'TGE Date', VI: 'Ngày TGE' },
-      'predict-modal-title':   { EN: 'Predict TGE FDV', VI: 'Dự đoán FDV TGE' },
-      'info-tge-modal-title':  { EN: 'Recent TGE multiples', VI: 'Hệ số TGE gần đây' },
+      // headline + 3 tiêu đề box
+      'val-headline-text':       { EN: 'Tracking altcoins to read market conditions', VI: 'Theo dõi altcoin để đọc tình hình thị trường' },
+      'tge-title-text':          { EN: 'Recent TGE multiples', VI: 'Hệ số TGE gần đây' },
+      'danger-title-text':       { EN: 'Danger Zone', VI: 'Vùng nguy hiểm' },
+      'narr-title-text':         { EN: 'Trending Narratives', VI: 'Narrative đang hot' },
+      // nội dung box Recent TGE multiples + header bảng
+      'tge-lowfdv-label':        { EN: 'Low FDV <span class="td-size">(&lt;$300M)</span>', VI: 'FDV thấp <span class="td-size">(&lt;$300M)</span>' },
+      'tge-highfdv-label':       { EN: 'High FDV <span class="td-size">(&gt;$300M)</span>', VI: 'FDV cao <span class="td-size">(&gt;$300M)</span>' },
+      'tge-cond-label':          { EN: 'Market condition:', VI: 'Điều kiện thị trường:' },
+      'tge-date-th':             { EN: 'TGE Date', VI: 'Ngày TGE' },
+      // tiêu đề 4 popup (3 info + predict) — tiêu đề nằm trong HTML tĩnh nên dễ bị quên
+      'info-tge-modal-title':    { EN: 'Recent TGE multiples', VI: 'Hệ số TGE gần đây' },
       'info-danger-modal-title': { EN: 'Danger Zone', VI: 'Vùng nguy hiểm' },
-      'info-narr-modal-title': { EN: 'Trending Narratives', VI: 'Narrative đang hot' },
-      'calc-raise-label':  { EN: 'Fundraising ($M)', VI: 'Số tiền gọi vốn ($M)' },
-      'calc-alloc-label':  { EN: 'VC Alloc (%)', VI: '% phân bổ cho VC' },
-      'calc-supply-label': { EN: 'Total Supply', VI: 'Tổng cung' },
-      'predict-cancel':    { EN: 'Close', VI: 'Đóng' },
-      'calc-btn':          { EN: 'Calculate', VI: 'Tính toán' },
+      'info-narr-modal-title':   { EN: 'Trending Narratives', VI: 'Narrative đang hot' },
+      'predict-modal-title':     { EN: 'Predict TGE FDV', VI: 'Dự đoán FDV TGE' },
+      // form Predict TGE FDV (nút mở + 3 label + 2 nút hành động)
+      'predict-open-btn':        { EN: 'Predict TGE FDV', VI: 'Dự đoán FDV TGE' },
+      'calc-raise-label':        { EN: 'Fundraising ($M)', VI: 'Số tiền gọi vốn ($M)' },
+      'calc-alloc-label':        { EN: 'VC Alloc (%)', VI: '% phân bổ cho VC' },
+      'calc-supply-label':       { EN: 'Total Supply', VI: 'Tổng cung' },
+      'predict-cancel':          { EN: 'Close', VI: 'Đóng' },
+      'calc-btn':                { EN: 'Calculate', VI: 'Tính toán' },
     };
+    // placeholder không phải nội dung element nên phải set riêng, không gộp vào VAL_HEAD_LABELS được
     const VAL_PLACEHOLDERS = {
       'calc-raise':  { EN: 'e.g. 30', VI: 'vd: 30' },
       'calc-alloc':  { EN: 'e.g. 20', VI: 'vd: 20' },
@@ -1487,6 +1506,12 @@
     }
     applyValHeadLabels();
 
+    /* ── Nội dung info popup (icon "i" cạnh tiêu đề mỗi box) ──────────────────────
+       QUY ĐỊNH TRÌNH BÀY (chốt 2026-08-05, user yêu cầu "thiếu khoảng trống, chưa hấp dẫn"):
+       mỗi ý một dòng đánh số 1️⃣ 2️⃣ · giữa các ý cách nhau ĐÚNG 1 dòng trống ·
+       chốt lại bằng một dòng mở đầu bằng 👉. Viết cho người KHÔNG rành đọc số.
+       Xuống dòng trong template literal là xuống dòng thật vì .info-modal-body
+       dùng `white-space: pre-line` (đừng thay bằng <br>). */
     const DANGER_INFO = {
       VI: `Những dự án lên mức FDV gấp 15 lần FDV mà VC đầu tư trở lên thường rơi vào 2 trường hợp:
 
@@ -1507,7 +1532,9 @@
       VI: `Trung vị của [FDV khi TGE] / [FDV mà VC đầu tư] của các dự án cùng một Narrative, cho thấy trong điều kiện thị trường hiện tại, Narrative nào đang mạnh và Narrative nào đang yếu.`,
       EN: `Median of [FDV at TGE] / [FDV VCs invested at] for projects sharing the same Narrative — shows which Narratives are strong and which are weak under current market conditions.`,
     };
+    // dùng bởi calculator Predict TGE FDV ở cuối file (khi data không đủ để chạy predictFDV)
     const NOT_ENOUGH_DATA = { VI: 'Không đủ dữ liệu để dự đoán', EN: 'Not enough data to predict' };
+    // dòng 👉 của popup Recent TGE multiples — chọn theo Market condition đang hiện
     const TGE_MARKET_LINE = {
       VI: {
         Weak:   '👉 Thị trường đang rất yếu (hiếm khi altcoin TGE tệ đến vậy).',
@@ -1521,6 +1548,8 @@
       },
     };
 
+    // low/high/level là số ĐANG hiển thị trên box (renderTgeInfo đọc thẳng từ DOM lúc mở popup,
+    // không tính lại) → popup luôn khớp với con số user đang nhìn thấy
     function tgeInfoHTML(low, high, level) {
       const line = TGE_MARKET_LINE[valLang][level]
         || (valLang === 'VI' ? '👉 Chưa đủ dữ liệu để đọc thị trường.' : '👉 Not enough data yet to read the market.');
