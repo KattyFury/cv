@@ -76,15 +76,31 @@
       --row: calc(100vh / 30);
     }
 
-    html {
-      scroll-behavior: smooth; overflow-y: scroll;
-      /* scrollbar trang mảnh, đồng bộ với scrollbar các box */
-      scrollbar-width: thin;
-      scrollbar-color: var(--muted) transparent;
+    html { scroll-behavior: smooth; overflow-y: scroll; }
+
+    /* ── SCROLLBAR CHUẨN — dùng chung cho MỌI vùng cuộn (class .thin-scroll) ──
+       Quy định: lane chừa sẵn (không giật layout) · thanh 6px màu --muted bo tròn ·
+       track trong suốt · KHÔNG nút mũi tên.
+       CHỈ style bằng ::-webkit-scrollbar. TUYỆT ĐỐI không set scrollbar-width /
+       scrollbar-color cho Chromium: từ Chromium 121, 2 thuộc tính chuẩn đó (khi khác
+       `auto`) VÔ HIỆU HOÁ toàn bộ ::-webkit-scrollbar → vùng cuộn rơi về scrollbar hệ
+       thống (dày hơn, có mũi tên, track xám). Trước 2026-08-05 code set cả 2 kiểu ở mọi
+       chỗ nên bảng/popup/box mỗi nơi render một đường → ra 3 kiểu scrollbar khác nhau. */
+    html, .thin-scroll { scrollbar-gutter: stable; }
+    html::-webkit-scrollbar,
+    .thin-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+    html::-webkit-scrollbar-track,
+    .thin-scroll::-webkit-scrollbar-track { background: transparent; }
+    html::-webkit-scrollbar-thumb,
+    .thin-scroll::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 999px; }
+    html::-webkit-scrollbar-button,
+    .thin-scroll::-webkit-scrollbar-button { display: none; }
+    html::-webkit-scrollbar-corner,
+    .thin-scroll::-webkit-scrollbar-corner { background: transparent; }
+    /* Firefox không có ::-webkit-scrollbar → chỉ ở đó mới dùng thuộc tính chuẩn */
+    @supports not selector(::-webkit-scrollbar) {
+      html, .thin-scroll { scrollbar-width: thin; scrollbar-color: var(--muted) transparent; }
     }
-    html::-webkit-scrollbar { width: 6px; }
-    html::-webkit-scrollbar-track { background: transparent; }
-    html::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 999px; }
 
     body {
       font-family: 'Roboto', sans-serif;
@@ -358,27 +374,17 @@
       height: calc(var(--row) * 11); margin-bottom: 0;
       display: flex; flex-direction: column;
     }
-    /* Header cố định — chừa cùng 1 lane gutter (thin) như body để 5 cột thẳng hàng nhau */
-    #tge-head-wrap {
-      flex: none; overflow: hidden;
-      scrollbar-gutter: stable; scrollbar-width: thin;
-    }
+    /* Header cố định — chừa cùng 1 lane gutter (.thin-scroll) như body để 6 cột thẳng hàng nhau */
+    #tge-head-wrap { flex: none; overflow: hidden; }
     #tge-head-wrap .val-table { border-collapse: collapse; }
-    /* Vùng data scroll — chừa lane scrollbar mảnh (thin ~10px), không đè lên chữ, không giật layout */
+    /* Vùng data scroll — lane scrollbar do .thin-scroll lo (xem quy định scrollbar ở đầu file) */
     #tge-section .val-table-scroll {
       flex: 1 1 auto; height: auto; max-height: none; min-height: 0;
-      scrollbar-gutter: stable;
-      scrollbar-width: thin;
-      scrollbar-color: var(--muted) transparent;
     }
-    #tge-section .val-table-scroll::-webkit-scrollbar { width: 6px; }
-    #tge-section .val-table-scroll::-webkit-scrollbar-track { background: transparent; }
-    #tge-section .val-table-scroll::-webkit-scrollbar-thumb {
-      background: var(--muted); border-radius: 999px;
-    }
-    /* Body: các dòng cách nhau 0.5 hàng (border-spacing dọc); perimeter trên = khoảng cách header→OP */
+    /* Body: các dòng cách nhau 0.5 hàng, tạo bằng padding-top/bottom 0.25 hàng mỗi ô (không dùng border-spacing
+       nữa vì gap đó nằm ngoài <td> nên hover background không tô được — xem #tge-section .val-table tbody td) */
     #tge-section .val-table-body {
-      border-collapse: separate; border-spacing: 0 calc(var(--row) * 0.25);
+      border-collapse: separate; border-spacing: 0;
     }
     /* Header bảng = tiêu đề: bold, đen, KHÔNG allcaps (đồng bộ tiêu đề các box) */
     #tge-section .val-table thead th,
@@ -391,16 +397,13 @@
       height: var(--row); padding: 2px 16px; border-bottom: none;
     }
     #tge-section .val-table tbody td {
-      height: var(--row); padding: 2px 16px calc(var(--row) * 0.25); border-bottom: 1px solid rgba(0,0,0,0.15);
+      height: var(--row); padding: calc(var(--row) * 0.25) 16px; border-bottom: 1px solid rgba(0,0,0,0.15);
     }
     #tge-section .val-table tbody tr:last-child td { border-bottom: none; }
 
-    /* Scroll được nhưng ẩn thanh scrollbar (đỡ chiếm chỗ/xấu) — vẫn lướt chuột/chạm bình thường */
     .val-table-scroll {
       max-height: calc(50vh - 120px); min-height: 160px; overflow-y: auto; overflow-x: auto;
-      scrollbar-width: none; -ms-overflow-style: none;
     }
-    .val-table-scroll::-webkit-scrollbar { display: none; }
 
     /* ── Bảng mở popup ───────────────────────────────── */
     .val-intro-clickable { cursor: pointer; }
@@ -408,7 +411,14 @@
     /* 2 size popup chuẩn: nhỏ .wl-modal (--modal-w, form) · lớn = ĐÚNG 2× popup nhỏ (nội dung nhiều)
        Dùng .wl-modal.wl-modal--wide (specificity cao hơn) để thắng .wl-modal{width:340px} định nghĩa sau. */
     .wl-modal.wl-modal--wide { width: calc(var(--modal-w) * 2); max-width: 92vw; }
-    .tge-modal-body { overflow: auto; max-height: 78vh; }
+    /* Popup dùng ĐÚNG cấu trúc bảng inline: header cố định tách khỏi vùng scroll
+       → scrollbar chỉ bao phần data, không chạy dọc qua cả header (2026-08-05) */
+    .tge-modal-body {
+      display: flex; flex-direction: column;
+      max-height: 78vh; overflow: hidden;
+    }
+    .tge-modal-head { flex: none; overflow: hidden; }
+    .tge-modal-scroll { flex: 1 1 auto; min-height: 0; overflow: auto; }
     /* mobile: thu nhỏ font bảng trong popup để nội dung không lồng nhau */
     @media (max-width: 640px) {
       .wl-modal--wide { padding: 16px; }
@@ -430,7 +440,7 @@
       background: var(--white); position: sticky; top: 0; z-index: 2; white-space: nowrap;
     }
 
-    .val-table tbody tr:hover { background: var(--off); }
+    .val-table tbody tr:hover { background: rgba(97, 85, 245, 0.1); }
 
     .val-table tbody td {
       padding: 12px 16px;
@@ -534,18 +544,9 @@
     }
 
     /* ── DANGER ZONE + TRENDING NARRATIVES ──────────────────────────
-       Đồng bộ với box "Tracking altcoins": scrollbar mảnh hiện sẵn (lane cố định,
-       không giật layout), mỗi data gọn 1 hàng, cách nhau 0.5 hàng. */
+       Scrollbar do .thin-scroll lo (quy định chung ở đầu file), mỗi data gọn 1 hàng, cách nhau 0.5 hàng. */
     #danger-list, #narrative-list {
       overflow-y: auto; overflow-x: hidden;
-      scrollbar-gutter: stable;
-      scrollbar-width: thin;
-      scrollbar-color: var(--muted) transparent;
-    }
-    #danger-list::-webkit-scrollbar, #narrative-list::-webkit-scrollbar { width: 6px; }
-    #danger-list::-webkit-scrollbar-track, #narrative-list::-webkit-scrollbar-track { background: transparent; }
-    #danger-list::-webkit-scrollbar-thumb, #narrative-list::-webkit-scrollbar-thumb {
-      background: var(--muted); border-radius: 999px;
     }
     .danger-row, .narrative-row {
       display: flex; align-items: center; gap: 12px;
@@ -637,6 +638,14 @@
       font-size: 19px; color: var(--muted); cursor: pointer; padding: 0;
     }
     .calc-reset-btn:hover { color: var(--text); }
+    #predict-modal .wl-modal { position: relative; }
+    .modal-corner-close {
+      position: absolute; top: 12px; right: 12px;
+      width: 24px; height: 24px; line-height: 24px; text-align: center;
+      background: none; border: none; font-family: inherit;
+      font-size: 16px; color: var(--muted); cursor: pointer; padding: 0;
+    }
+    .modal-corner-close:hover { color: var(--text); }
 
     /* ── AIRDROP VIEW ─────────────────────────────── */
     #airdrop-view { display: none; }
@@ -1122,7 +1131,7 @@
       <!-- TOP: TGE table -->
       <div class="val-table-section" id="tge-section">
         <!-- Header CỐ ĐỊNH (không nằm trong vùng scroll) -->
-        <div id="tge-head-wrap">
+        <div id="tge-head-wrap" class="thin-scroll">
           <table class="val-table">
             <thead>
               <tr>
@@ -1137,7 +1146,7 @@
           </table>
         </div>
         <!-- Body SCROLL (scrollbar chỉ bao đúng phần data từ OP trở xuống) -->
-        <div class="val-table-scroll">
+        <div class="val-table-scroll thin-scroll">
           <table class="val-table val-table-body">
             <tbody id="tge-tbody"></tbody>
           </table>
@@ -1170,13 +1179,13 @@
         <!-- 3. Danger Zone -->
         <div class="val-card">
           <div class="val-card-label calc-card-label vc-q1"><span id="danger-title-text">Danger Zone</span><button class="info-icon" id="info-danger-btn" title="Giải thích" aria-label="Giải thích"></button></div>
-          <div id="danger-list" class="vc-q234"></div>
+          <div id="danger-list" class="vc-q234 thin-scroll"></div>
         </div>
 
         <!-- 4. Trending Narratives -->
         <div class="val-card">
           <div class="val-card-label calc-card-label vc-q1"><span id="narr-title-text">Trending Narratives</span><button class="info-icon" id="info-narratives-btn" title="Giải thích" aria-label="Giải thích"></button></div>
-          <div id="narrative-list" class="vc-q234"></div>
+          <div id="narrative-list" class="vc-q234 thin-scroll"></div>
         </div>
 
       </div>
@@ -1241,18 +1250,19 @@
   <!-- Predict TGE FDV modal -->
   <div class="wl-modal-backdrop" id="predict-modal">
     <div class="wl-modal">
-      <div class="wl-modal-title">Predict TGE FDV</div>
+      <button class="modal-corner-close" id="predict-modal-close" aria-label="Đóng">✕</button>
+      <div class="wl-modal-title" id="predict-modal-title">Predict TGE FDV</div>
       <div id="calc-form">
         <div class="calc-field">
-          <label>Fundraising ($M)</label>
+          <label id="calc-raise-label">Fundraising ($M)</label>
           <input type="number" id="calc-raise" step="0.1" placeholder="e.g. 30" />
         </div>
         <div class="calc-field">
-          <label>VC Alloc (%)</label>
+          <label id="calc-alloc-label">VC Alloc (%)</label>
           <input type="number" id="calc-alloc" step="0.1" placeholder="e.g. 20" />
         </div>
         <div class="calc-field">
-          <label>Total Supply</label>
+          <label id="calc-supply-label">Total Supply</label>
           <input type="text" id="calc-supply" placeholder="e.g. 21M, 10B" />
         </div>
         <div class="predict-actions">
@@ -1270,7 +1280,7 @@
   <!-- Info popup: Recent TGE multiples -->
   <div class="wl-modal-backdrop" id="info-tge-modal">
     <div class="wl-modal">
-      <div class="wl-modal-title">Recent TGE multiples</div>
+      <div class="wl-modal-title" id="info-tge-modal-title">Recent TGE multiples</div>
       <div class="info-modal-body" id="info-tge-body"></div>
     </div>
   </div>
@@ -1278,7 +1288,7 @@
   <!-- Info popup: Danger Zone -->
   <div class="wl-modal-backdrop" id="info-danger-modal">
     <div class="wl-modal">
-      <div class="wl-modal-title">Danger Zone</div>
+      <div class="wl-modal-title" id="info-danger-modal-title">Danger Zone</div>
       <div class="info-modal-body" id="info-danger-body"></div>
     </div>
   </div>
@@ -1286,7 +1296,7 @@
   <!-- Info popup: Trending Narratives -->
   <div class="wl-modal-backdrop" id="info-narratives-modal">
     <div class="wl-modal">
-      <div class="wl-modal-title">Trending Narratives</div>
+      <div class="wl-modal-title" id="info-narr-modal-title">Trending Narratives</div>
       <div class="info-modal-body" id="info-narratives-body"></div>
     </div>
   </div>
@@ -1392,15 +1402,26 @@
     const closeTge = () => tgeModal.classList.remove('open');
     document.getElementById('tge-intro').addEventListener('click', () => {
       tgeModalBody.innerHTML = '';
-      // Header và body giờ là 2 bảng tách rời — ghép lại thành 1 bảng đầy đủ cho popup
+      // Giữ nguyên cấu trúc "header tách khỏi vùng scroll" như bảng inline (2 bảng rời,
+      // cùng lane .thin-scroll nên 6 cột vẫn thẳng hàng) → scrollbar popup giống hệt inline
       const head = document.querySelector('#tge-head-wrap .val-table thead');
       const body = document.querySelector('#tge-section .val-table-body tbody');
       if (head && body) {
-        const tbl = document.createElement('table');
-        tbl.className = 'val-table';
-        tbl.appendChild(head.cloneNode(true));
-        tbl.appendChild(body.cloneNode(true));
-        tgeModalBody.appendChild(tbl);
+        const mkTable = (part) => {
+          const tbl = document.createElement('table');
+          tbl.className = 'val-table';
+          tbl.appendChild(part.cloneNode(true));
+          return tbl;
+        };
+        const headWrap = document.createElement('div');
+        headWrap.className = 'tge-modal-head thin-scroll';
+        headWrap.appendChild(mkTable(head));
+
+        const scrollWrap = document.createElement('div');
+        scrollWrap.className = 'tge-modal-scroll thin-scroll';
+        scrollWrap.appendChild(mkTable(body));
+
+        tgeModalBody.append(headWrap, scrollWrap);
       }
       tgeModal.classList.add('open');
     });
@@ -1409,9 +1430,18 @@
 
     // ── Predict TGE FDV modal ────────────────────────
     const predictModal = document.getElementById('predict-modal');
-    const closePredict = () => predictModal.classList.remove('open');
+    const closePredict = () => {
+      predictModal.classList.remove('open');
+      // đóng modal (bất kể cách nào) → reset về form trống, tránh lần mở sau còn dính kết quả tính cũ
+      document.getElementById('calc-result').style.display = 'none';
+      document.getElementById('calc-form').style.display   = 'flex';
+      document.getElementById('calc-raise').value  = '';
+      document.getElementById('calc-alloc').value  = '';
+      document.getElementById('calc-supply').value = '';
+    };
     document.getElementById('predict-open-btn').addEventListener('click', () => predictModal.classList.add('open'));
     document.getElementById('predict-cancel').addEventListener('click', closePredict);
+    document.getElementById('predict-modal-close').addEventListener('click', closePredict);
     predictModal.addEventListener('click', e => { if (e.target === predictModal) closePredict(); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closePredict(); });
 
@@ -1432,24 +1462,52 @@
       'tge-cond-label':    { EN: 'Market condition:', VI: 'Điều kiện thị trường:' },
       'predict-open-btn':  { EN: 'Predict TGE FDV', VI: 'Dự đoán FDV TGE' },
       'tge-date-th':       { EN: 'TGE Date', VI: 'Ngày TGE' },
+      'predict-modal-title':   { EN: 'Predict TGE FDV', VI: 'Dự đoán FDV TGE' },
+      'info-tge-modal-title':  { EN: 'Recent TGE multiples', VI: 'Hệ số TGE gần đây' },
+      'info-danger-modal-title': { EN: 'Danger Zone', VI: 'Vùng nguy hiểm' },
+      'info-narr-modal-title': { EN: 'Trending Narratives', VI: 'Narrative đang hot' },
+      'calc-raise-label':  { EN: 'Fundraising ($M)', VI: 'Số tiền gọi vốn ($M)' },
+      'calc-alloc-label':  { EN: 'VC Alloc (%)', VI: '% phân bổ cho VC' },
+      'calc-supply-label': { EN: 'Total Supply', VI: 'Tổng cung' },
+      'predict-cancel':    { EN: 'Close', VI: 'Đóng' },
+      'calc-btn':          { EN: 'Calculate', VI: 'Tính toán' },
+    };
+    const VAL_PLACEHOLDERS = {
+      'calc-raise':  { EN: 'e.g. 30', VI: 'vd: 30' },
+      'calc-alloc':  { EN: 'e.g. 20', VI: 'vd: 20' },
+      'calc-supply': { EN: 'e.g. 21M, 10B', VI: 'vd: 21M, 10B' },
     };
     function applyValHeadLabels() {
       for (const [id, labels] of Object.entries(VAL_HEAD_LABELS)) {
         document.getElementById(id).innerHTML = labels[valLang];
       }
+      for (const [id, labels] of Object.entries(VAL_PLACEHOLDERS)) {
+        document.getElementById(id).placeholder = labels[valLang];
+      }
     }
     applyValHeadLabels();
 
     const DANGER_INFO = {
-      VI: `Những dự án lên mức FDV gấp 15 lần FDV mà VC đầu tư trở lên, thường rơi vào 2 trường hợp: pump để tạo đỉnh hoặc là tính chất dự án quá mạnh nên lên vùng giá này.
-Dù ở trường hợp nào thì các dự án như này cũng rất rủi ro khi mua vào.`,
-      EN: `Projects trading at ×15 the FDV VCs invested at (or higher) usually fall into one of two cases: a pump forming a top, or the project is simply strong enough to justify that price.
-Either way, buying in at this level is very risky.`,
+      VI: `Những dự án lên mức FDV gấp 15 lần FDV mà VC đầu tư trở lên thường rơi vào 2 trường hợp:
+
+1️⃣ Pump mạnh để tạo đỉnh, hoặc là TGE ở vùng đỉnh để rồi nuke về 0
+
+2️⃣ Tính chất dự án quá mạnh, nên giữ vững FDV ở mức cao so với định giá ban đầu VC định ra
+
+👉 Dù ở trường hợp nào thì các dự án như này cũng rất rủi ro khi mua vào.`,
+      EN: `Projects trading at ×15 the FDV VCs invested at (or higher) usually fall into one of two cases:
+
+1️⃣ A strong pump forming a top — or TGE-ing straight into the top before nuking to zero
+
+2️⃣ The project is genuinely strong, holding FDV well above what VCs originally priced it at
+
+👉 Either way, buying in at this level is very risky.`,
     };
     const NARRATIVES_INFO = {
-      VI: `Trung vị FDV khi TGE của các narrative, cho thấy trong điều kiện thị trường hiện tại, narrative nào đang mạnh và narrative nào đang yếu.`,
-      EN: `Median FDV multiple at TGE for each narrative — shows which narratives are strong and which are weak under current market conditions.`,
+      VI: `Trung vị của [FDV khi TGE] / [FDV mà VC đầu tư] của các dự án cùng một Narrative, cho thấy trong điều kiện thị trường hiện tại, Narrative nào đang mạnh và Narrative nào đang yếu.`,
+      EN: `Median of [FDV at TGE] / [FDV VCs invested at] for projects sharing the same Narrative — shows which Narratives are strong and which are weak under current market conditions.`,
     };
+    const NOT_ENOUGH_DATA = { VI: 'Không đủ dữ liệu để dự đoán', EN: 'Not enough data to predict' };
     const TGE_MARKET_LINE = {
       VI: {
         Weak:   '👉 Thị trường đang rất yếu (hiếm khi altcoin TGE tệ đến vậy).',
@@ -1467,14 +1525,20 @@ Either way, buying in at this level is very risky.`,
       const line = TGE_MARKET_LINE[valLang][level]
         || (valLang === 'VI' ? '👉 Chưa đủ dữ liệu để đọc thị trường.' : '👉 Not enough data yet to read the market.');
       return valLang === 'VI'
-        ? `Các dự án Low FDV thường TGE ở mức ${low} so với FDV lúc VC rót vốn.
-Các dự án High FDV thường TGE ở mức ${high} so với FDV lúc VC rót vốn.
+        ? `1️⃣ Các dự án Low FDV thường TGE ở mức ${low} so với FDV lúc VC rót vốn.
+
+2️⃣ Các dự án High FDV thường TGE ở mức ${high} so với FDV lúc VC rót vốn.
+
 ${line}
-<span class="info-modal-link" id="info-tge-predict-link">Bấm vào đây</span> để nhập vài thông tin, mình sẽ dự đoán FDV và giá TGE giúp bạn.`
-        : `Low FDV projects TGE at ${low} the FDV VCs invested at.
-High FDV projects TGE at ${high} the FDV VCs invested at.
+
+<span class="info-modal-link" id="info-tge-predict-link">Bấm vào đây</span> để nhập vài thông tin, mình sẽ dự đoán FDV và giá TGE của dự án bạn đang quan tâm.`
+        : `1️⃣ Low FDV projects typically TGE at ${low} the FDV VCs invested at.
+
+2️⃣ High FDV projects typically TGE at ${high} the FDV VCs invested at.
+
 ${line}
-<span class="info-modal-link" id="info-tge-predict-link">Click here</span> to enter a few details so I can predict a project's TGE FDV and price for you.`;
+
+<span class="info-modal-link" id="info-tge-predict-link">Click here</span> to enter a few details and I'll predict the TGE FDV and price for the project you're looking at.`;
     }
 
     const infoTgeModal = document.getElementById('info-tge-modal');
@@ -2104,7 +2168,7 @@ ${line}
 
       if (!result) {
         const vcFDV = raise / (alloc / 100);
-        subEl.innerHTML = `<span class="res-expected">${fmtFDV(vcFDV)}</span><span class="res-price">Not enough data to predict</span>`;
+        subEl.innerHTML = `<span class="res-expected">${fmtFDV(vcFDV)}</span><span class="res-price">${NOT_ENOUGH_DATA[valLang]}</span>`;
       } else {
         const { exp } = result;
         const pricePart = supply > 0 ? ` <span class="res-price">≈ ${fmtTokenPrice(exp / supply)}/token</span>` : '';

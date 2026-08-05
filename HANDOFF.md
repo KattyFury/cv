@@ -46,6 +46,27 @@ Wrapper mọi tab đồng bộ: `max-width:900px; margin:0 auto; padding:0 24px 
 
 ---
 
+## Scrollbar System (2026-08-05) — QUY ĐỊNH BẮT BUỘC
+
+**MỌI vùng cuộn dùng chung đúng 1 class `.thin-scroll`** (định nghĩa 1 chỗ duy nhất, ngay sau `html` ở đầu `<style>`). Không viết CSS scrollbar riêng cho từng vùng.
+
+Hình thức chuẩn: lane chừa sẵn (`scrollbar-gutter: stable`, không giật layout) · thanh **6px** màu `--muted` bo tròn · track trong suốt · **không nút mũi tên**.
+
+**LUẬT SỐNG CÒN — không được set `scrollbar-width` / `scrollbar-color` cho Chromium.** Từ **Chromium 121**, chỉ cần 1 trong 2 thuộc tính chuẩn đó khác `auto` là trình duyệt **vô hiệu hoá toàn bộ `::-webkit-scrollbar`** của phần tử → vùng đó rơi về scrollbar hệ thống (dày hơn, có mũi tên, track xám). Trước 2026-08-05 code set **cả 2 kiểu** ở mọi vùng cuộn nên mỗi nơi render một đường → bảng / popup / box ra **3 kiểu scrollbar khác nhau**. Firefox (không có `::-webkit-scrollbar`) được phục vụ riêng trong `@supports not selector(::-webkit-scrollbar)`.
+
+**Cấu trúc vùng cuộn có header cũng phải đồng bộ:** header đặt **ngoài** vùng cuộn (div riêng `overflow:hidden` + `.thin-scroll` để chừa cùng lane) → thanh cuộn chỉ bao phần data, không chạy dọc qua header. Áp cho cả bảng inline (`#tge-head-wrap` + `.val-table-scroll`) lẫn popup (`.tge-modal-head` + `.tge-modal-scroll`). Cùng lane = 6 cột header/data tự thẳng hàng.
+
+Ngoại lệ có chủ đích: `#ptask-form` (form task cá nhân) cố tình **ẩn hẳn** scrollbar.
+
+---
+
+## Hover / màu tương tác (2026-08-05) — QUY ĐỊNH
+
+- Hover hàng bảng: `rgba(97,85,245,0.1)` (tím nhạt, gốc brand `#6155F5`) — **không** dùng xám `--off`.
+- Khoảng cách giữa các hàng bảng phải tạo bằng **`padding` trong `<td>`**, KHÔNG dùng `border-spacing`: gap của `border-spacing` nằm **ngoài** ô nên `background` hover không tô tới → hàng bị tô hụt (đúng 1/1.25 = 4/5 chiều cao). Chia đều `padding: calc(var(--row)*0.25)` trên/dưới để chữ vẫn nằm giữa hàng.
+
+---
+
 ## Stack
 
 - **Static HTML** (`index.html`) — toàn bộ site (HTML + CSS + JS) trong 1 file, host trên **Cloudflare Pages**.
@@ -240,6 +261,12 @@ git add -A && git commit -m "..." && git push
 
 ## Decisions Log
 
+- 2026-08-05: **Scrollbar: chốt 1 class dùng chung `.thin-scroll`, bỏ sạch `scrollbar-width`/`scrollbar-color`** — xem mục "Scrollbar System" ở đầu file. Reason: user thấy 3 vùng cuộn (bảng inline · popup bảng · box Narrative/Danger) ra 3 kiểu khác nhau. Root cause: từ Chromium 121, `scrollbar-width`/`scrollbar-color` khác `auto` sẽ vô hiệu hoá `::-webkit-scrollbar`; code cũ set cả 2 kiểu ở mọi nơi nên mỗi vùng render một đường. **2 lần sửa đầu (thêm `display:block`, thêm webkit rules cho popup) đều vô nghĩa** vì webkit đang bị tắt sẵn — bài học: không phán "do cache", phải render thật ra ảnh mà đối chiếu.
+- 2026-08-05: **Popup bảng TGE đổi sang cấu trúc "header tách khỏi vùng cuộn"** (`.tge-modal-head` + `.tge-modal-scroll`, JS `mkTable()` dựng 2 bảng rời thay vì clone gộp head+body vào 1 bảng) — reason: popup gộp chung nên thanh cuộn chạy dọc qua cả hàng header, khác hẳn bảng inline (header nằm ngoài vùng cuộn). Verify bằng headless Edge screenshot trên route thật `/valuation`.
+- 2026-08-05: **Hover hàng bảng đổi xám `--off` → tím nhạt `rgba(97,85,245,0.1)`, và tô trọn hàng** — reason: user thấy vùng hover chỉ tô ~4/5 hàng và quá mờ. Root cause: khoảng cách giữa hàng làm bằng `border-spacing: 0 calc(var(--row)*0.25)` nằm NGOÀI `<td>` nên background không tô tới. Chuyển gap vào `padding` của `<td>` (chia đều trên/dưới để chữ vẫn giữa hàng), giữ nguyên tổng khoảng cách.
+- 2026-08-05: **Modal "Dự đoán FDV TGE" nối vào toggle VI/EN + reset khi đóng + thêm nút ✕ góc phải-trên** — reason: modal này trước đây hoàn toàn không nối với `valLang` (label/placeholder/nút Close·Calculate/dòng "Not enough data" đều hardcode tiếng Anh dù đang ở mode VI), và chỉ có nút ✕ "tính mới" trong ô kết quả chứ không có nút thoát, nên đóng rồi mở lại vẫn thấy kết quả cũ. Thêm `predict-modal-title`/`calc-*-label`/`predict-cancel`/`calc-btn` vào `VAL_HEAD_LABELS`, thêm `VAL_PLACEHOLDERS`, và `closePredict()` giờ reset form + xoá input.
+- 2026-08-05: **Viết lại nội dung 3 info popup Valuation** — tách ý bằng `1️⃣2️⃣` + dòng trống giữa các ý (bản cũ dồn 1 khối chữ, user thấy "chưa hấp dẫn vì thiếu khoảng trống"); Danger Zone tách 2 trường hợp (pump tạo đỉnh/TGE vùng đỉnh rồi nuke · dự án mạnh thật giữ FDV cao) + dòng 👉 kết luận; Trending Narratives đổi thành công thức rõ ràng "Trung vị của [FDV khi TGE] / [FDV mà VC đầu tư]"; câu cuối box TGE thành "...của dự án bạn đang quan tâm". Tiêu đề 3 popup + popup Predict trước đây hardcode tiếng Anh → nay dịch theo `valLang`.
+- 2026-08-05: **Ngôn ngữ theo tab: About me luôn full English, Valuation/Airdrop có toggle EN|VI mặc định VI** — reason: About me dùng để đi xin việc, mục tiêu là global nên phải tiếng Anh cố định, không toggle. Valuation/Airdrop khán giả chính là người Việt nên mặc định VI, có toggle cho ai cần EN.
 - 2026-07-27: **Trending Narratives: bỏ hẳn 2 điều kiện lọc (`count >= 2`, `medTGE >= 1`)** — user muốn xếp hạng TẤT CẢ narrative có data, không ẩn cái nào. Kiểm tra data thật (54 deal từ 02/2025, 12 narrative): trước đây 5 narrative bị ẩn — Trading/Bitcoin/Payment (mỗi cái chỉ 1 deal, fail `count>=2`), Identity/Privacy (medTGE 0.83/0.60, fail `medTGE>=1`). Giờ hiện đủ 12, kèm số lượng deal `(n)` màu mờ cạnh tên narrative (class `.td-size` có sẵn) để người xem tự đánh giá độ tin cậy — vì thiếu filter, 1 narrative chỉ có 1 deal (n=1) giờ hiển thị ngang hàng narrative có 11-12 deal nên cần tín hiệu để phân biệt độ tin cậy mẫu.
 - 2026-07-27: **Trending Narratives: đổi tiêu chí xếp hạng + hiển thị từ median ×ATH sang median ×TGE** — reason: ×ATH dễ bị 1 coin pump đơn lẻ về sau (đỉnh giá) kéo cả narrative trông "hot" dù ban đầu thị trường không tin (case Identity: H ×0.76, BILL ×0.9 lúc TGE — đều bị chê — nhưng H pump ×16.9 sau đó kéo median ATH lên ảo). ×TGE phản ánh niềm tin thị trường ngay lúc list, đáng tin hơn cho việc "narrative nào đang hot". Xoá field `medATH` không còn dùng; đồng thời bỏ luôn điều kiện lọc `e.xATHm > 0` trong `renderNarratives` (dead dependency sau khi bỏ medATH — trước đó vô tình loại các deal chưa có ATH data dù chỉ cần ×TGE). List thay đổi hẳn: trước (theo ATH) top là Stablechain ×106.6/DeFi ×9.6/Layer-2 ×7.7/Prediction ×7.5 → sau (theo TGE) là Stablechain ×75.3/Layer-1 ×4.1/Infra ×3.5/AI ×3.5 (Infra là narrative mới xuất hiện nhờ bỏ gate ATH thừa).
 - 2026-07-27: **Market Condition: gộp short-term + mid-term thành 1 median duy nhất (N=6)**, bỏ hẳn split-box 2 cột (Ngắn hạn/Trung hạn) — reason: user thấy 2 mốc không khác biệt đáng kể là dư thừa. Backtest bằng data thật (75 deal từ Sheet DATA, gviz CSV) cho từng N: đo % lần label Weak/Normal/Strong đổi giữa deal liền kề (flicker rate) — N=3:23.6%, N=4:15.5%, N=5:21.4% (số đang dùng trước đó — tệ hơn cả N=4/N=6), N=6:15.9%, N=7:10.3%, N=8:10.4%. Chọn N=6: ổn định ngang N=4 nhưng biên độ swing nhỏ hơn (mean ×2.21 vs ×2.33), và test riêng giai đoạn chuyển pha Strong→Weak (2025 Q1-Q2) cho thấy N=8 quá trễ (còn báo Normal 2 tháng sau khi thị trường đã rõ yếu) trong khi N=6 bắt kịp mà không bị flicker-back như N=5. Ngưỡng phân loại giữ nguyên `>=13 Strong / >=4.3 Normal / <4.3 Weak`. Rule cũ "8 rút còn 6 nếu span >60 ngày" (từ commit `d758e5e`, 2026-05-05) không có backtest gốc — đã kiểm chứng lại: tiền đề đúng (63% thời gian window 8-deal thật sự trải >60 ngày, có lúc tới 442 ngày) nhưng số N cụ thể (4/5/6/8) ảnh hưởng kết quả rõ rệt, không phải chi tiết vặt.
