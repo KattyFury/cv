@@ -1,6 +1,6 @@
 # HANDOFF — CV / Portfolio (0xhieu.xyz)
 
-**Date:** 2026-08-01  
+**Date:** 2026-08-06  
 **Repo:** https://github.com/KattyFury/cv  
 **Live:** Cloudflare Pages, project `0xhieu-xyz` (git-integration auto-deploy từ `main` — **chạy bình thường**, đã kiểm chứng 2026-08-01)  
 **Local dev:** site tĩnh — mở thẳng `index.html`, hoặc `python -m http.server` bất kỳ port nào (route `/valuation` cần SPA fallback về `index.html` giống `_redirects`)  
@@ -72,7 +72,7 @@ Ngoại lệ có chủ đích: `#ptask-form` (form task cá nhân) cố tình **
 - **Static HTML** (`index.html`) — toàn bộ site (HTML + CSS + JS) trong 1 file, host trên **Cloudflare Pages**.
 - **KHÔNG có backend / Cloudflare Functions / secret key** — mọi data đọc từ nguồn public.
 - Nguồn data (đều public, keyless):
-  - **Google Sheets CSV** (gviz) — Valuation (tab DATA) + Airdrop Work/Watchlist.
+  - **Google Sheets CSV** (gviz) — Valuation (tab DATA + tab Watchlist cho box "Watchlist theo narrative") + Airdrop Work (tab Work).
   - **CoinGecko** free API — giá / ATH (fetch live trong `index.html`).
   - **Google Translate** (gtx) — dịch VI→EN cho Airdrop.
 - **Google Apps Script** (nằm trong Sheet, chạy daily 2h) — sync ATH + current price vào DATA tab.
@@ -202,23 +202,31 @@ Logic hiện tại (2026-06-11):
 
 ---
 
-## Watchlist Tab (sub-tab trong Airdrop)
+## Box "Watchlist theo narrative" (Valuation, box thứ 4) — từ 2026-08-06
 
-**Vị trí:** Airdrop view → 2 sub-tab **Work | Watchlist** (không phải nav riêng, không có route riêng).
+**Vị trí:** Valuation → lưới `val-boxes`, slot 4 (hàng 2 cột 1). **Sub-tab Watchlist bên Airdrop đã bị xoá hẳn** — box này thay thế nó. Airdrop giờ chỉ còn Work to Earn, chữ "Work" ở hàng 3-4 là **nhãn tĩnh** (`<span class="ard-tab active">`), không bấm được, không còn cơ chế `showArdTab`.
 
 ### Data source
-- Đọc trực tiếp Google Sheet tab **`Watchlist`** qua gviz CSV (`sheet=Watchlist`) — **public, không key, không KV, không backend**.
-- Cột: **A** tên · **B** X handle · **C** narrative · **D** gọi vốn (vd `$500M`) · **E** "có việc" YES/NO.
-- Logo lấy từ `unavatar.io/twitter/{handle}`.
+- Vẫn đọc Google Sheet tab **`Watchlist`** qua gviz CSV (`sheet=Watchlist`) — public, không key, không KV, không backend.
+- Cột: **A** tên · **B** X handle · **C** narrative · **D** gọi vốn (số triệu USD kiểu Việt, `"2.879,0"` = 2879 — `parseRaise` đổi ra số) · **E** "Thing to do yet?" **KHÔNG còn dùng**.
+- Fetch cùng đợt init với DATA + Work (`Promise.all([fetchPublicData(), fetchWTE(), fetchWL()])`) vì box nằm trong Valuation và tam giác cần `wteData` để biết dự án nào đã có bài hướng dẫn.
 
-### Render
-- Card gọn: tên (link X) + dòng meta `narrative · gọi vốn` (13px, màu `--sub`) + mũi tên trạng thái.
-- **Mũi tên** = icon `arrow.svg` (user tự vẽ), tô màu bằng CSS mask + `currentColor`:
-  - **Sáng** (accent) = cột E YES. Nếu tên khớp 1 card Work → **bấm được**, nhảy sang Work + highlight 1.5s (`wlGoWork`).
-  - **Mờ** (border) = cột E NO.
+### Cấu trúc box (giống hệt Danger Zone / Trending Narratives)
+- Khung chuẩn `vc-q1` (tiêu đề, 1 hàng) + `vc-q234` (nội dung, 5 hàng) → mọi box tự thẳng hàng nhau; danh sách dài thì cuộn trong `.thin-scroll`.
+- Mỗi hàng `.wlb-row` cao đúng `var(--row)`, cách nhau 0.25 hàng (dùng chung rule với `.danger-row`/`.narrative-row`): **tên dự án** (link X, cắt `…` nếu dài) · **narrative** (11px xám) · **tam giác**.
+- **Tam giác** = icon `right2.svg` (user tự vẽ), tô màu bằng CSS mask + `currentColor`:
+  - **Sáng** (accent) = dự án ĐÃ có card hướng dẫn bên Airdrop/Work (khớp slug tên) → **bấm được**, nhảy sang Airdrop + cuộn tới card + flash 1.5s (`valGoWork`).
+  - **Mờ** (border) = chưa có bài hướng dẫn.
+
+### Thứ tự sắp xếp (đây là điểm chính của box)
+1. **Narrative** xếp theo ĐÚNG thứ tự box "Narrative đang hot" — dùng chung hàm `narrativeRanking()` (median ×TGE, tách ra từ `renderNarratives` để 2 box không lệch nhau).
+2. Narrative **không có** trong bảng xếp hạng (chưa có deal TGE nào sau `NARRATIVE_SINCE`) xếp sau, nhóm nào có dự án gọi vốn to nhất thì lên trước.
+3. Dự án **chưa điền narrative** xuống cuối cùng.
+4. Trong cùng 1 narrative: **gọi vốn nhiều → ít** (nên Tempo $500M nằm trên Arc $222M).
 
 ### Ngôn ngữ (VI/EN)
-- Mặc định VI. Dropdown **English** → dịch narrative + gọi vốn qua Google Translate (`gtranslate()` — hàm dùng chung với card Work), cache trong `wlData.EN`. Text trạng thái rỗng cũng đổi theo ngôn ngữ.
+- Theo `valLang` của Valuation (không phải `wteLang` của Airdrop). Chỉ dịch **nhãn UI**: tiêu đề box (`VAL_HEAD_LABELS['wlb-title-text']`), trạng thái loading/rỗng, `aria-label` của tam giác.
+- **Narrative KHÔNG dịch** (là data từ Sheet — đúng luật chung của Valuation). Cơ chế `translateWL()`/`wlData.EN` cũ đã xoá.
 
 ---
 
@@ -241,7 +249,9 @@ index.html            — toàn bộ website (HTML + CSS + JS)
 _redirects            — Cloudflare Pages SPA fallback (/* → /index.html)
 icon.png              — favicon + icon iPhone home screen (mèo-kính, mắt cam)
 pfp.png               — avatar Hieu Nguyen (About me)
-arrow.svg             — icon mũi tên cho Watchlist (tô màu qua CSS mask)
+info.svg              — icon "i" giải thích 3 box Valuation (tô màu qua CSS mask)
+right2.svg            — tam giác của box "Watchlist theo narrative" (tô màu qua CSS mask)
+arrow.svg             — KHÔNG còn code nào dùng từ 2026-08-06 (icon mũi tên của Watchlist cũ); giữ lại phòng khi cần
 highlights.txt + highlights/  — ảnh highlights ở About me (mỗi dòng "tên-ảnh | caption", thứ tự dòng = thứ tự hiển thị)
 .gitignore            — .env, node_modules, .claude/, .dev.vars, .wrangler/
 ```
@@ -277,6 +287,7 @@ qua server dev, đừng sửa `index.html`.)
 
 ## Decisions Log
 
+- 2026-08-06: **Thêm box "Watchlist theo narrative" ở Valuation, XOÁ HẲN sub-tab Airdrop/Watchlist** — reason: xem watchlist theo narrative (narrative nào đang hot thì soi dự án nào nằm trong đó) hữu ích hơn một danh sách card rời bên Airdrop. Box dùng đúng khung `vc-q1`/`vc-q234` của Danger Zone/Trending Narratives nên tự thẳng hàng; cấu trúc + thứ tự sắp xếp xem mục riêng ở trên. Hai lựa chọn user chốt trong lúc làm: (1) narrative không có trong bảng xếp hạng vẫn **hiện, xếp cuối**, nhóm nào có dự án gọi vốn to nhất lên trước, dự án chưa điền narrative xuống cuối cùng (không ẩn ai — cùng tinh thần với quyết định 27/07 bỏ filter của Trending Narratives); (2) bên Airdrop **giữ chữ "Work" làm nhãn** thay vì bỏ trống hàng. Đổi kèm theo: `narrativeRanking()` tách khỏi `renderNarratives()` để 2 box dùng chung 1 nguồn thứ tự; cột E "Thing to do yet?" của Sheet Watchlist **hết tác dụng** (tam giác giờ do "có card bên Work hay không" quyết định) nên bỏ `hasWork`; `translateWL()`/`fmtRaise()`/`renderWL()`/`wlGoWork()`/`showArdTab()` + CSS `.wl-card/.wl-logo/.wl-name/.wl-arrow/.wl-meta/.wl-dot/.wl-empty` xoá theo vì không còn ai gọi (`arrow.svg` thành file mồ côi, giữ lại). **Verify:** `node --check` JS sạch; headless Edge trên route thật `/valuation` (desktop 1100px + mobile 420px) thấy box thẳng hàng với 3 box kia và xếp 1 cột đúng trên mobile; `--dump-dom` đếm đủ **65 hàng**, thứ tự đúng (Stablechain → Layer-1 → Infra → AI → … → Game/Others → nhóm chưa điền narrative; trong Stablechain: Tempo $500M > Arc $222M > KAST $90M > STRATO $52M); probe click tam giác Tempo trong DOM thật → `airdrop-view` hiện, URL `/airdrop`, tìm thấy `#wte-card-tempo`, thanh lọc rank hiện; bản EN ra "Watchlist by narrative" và giữ nguyên narrative gốc.
 - 2026-08-05: **Scrollbar: chốt 1 class dùng chung `.thin-scroll`, bỏ sạch `scrollbar-width`/`scrollbar-color`** — xem mục "Scrollbar System" ở đầu file. Reason: user thấy 3 vùng cuộn (bảng inline · popup bảng · box Narrative/Danger) ra 3 kiểu khác nhau. Root cause: từ Chromium 121, `scrollbar-width`/`scrollbar-color` khác `auto` sẽ vô hiệu hoá `::-webkit-scrollbar`; code cũ set cả 2 kiểu ở mọi nơi nên mỗi vùng render một đường. **2 lần sửa đầu (thêm `display:block`, thêm webkit rules cho popup) đều vô nghĩa** vì webkit đang bị tắt sẵn — bài học: không phán "do cache", phải render thật ra ảnh mà đối chiếu.
 - 2026-08-05: **Popup bảng TGE đổi sang cấu trúc "header tách khỏi vùng cuộn"** (`.tge-modal-head` + `.tge-modal-scroll`, JS `mkTable()` dựng 2 bảng rời thay vì clone gộp head+body vào 1 bảng) — reason: popup gộp chung nên thanh cuộn chạy dọc qua cả hàng header, khác hẳn bảng inline (header nằm ngoài vùng cuộn). Verify bằng headless Edge screenshot trên route thật `/valuation`.
 - 2026-08-05: **Hover hàng bảng đổi xám `--off` → tím nhạt `rgba(97,85,245,0.1)`, và tô trọn hàng** — reason: user thấy vùng hover chỉ tô ~4/5 hàng và quá mờ. Root cause: khoảng cách giữa hàng làm bằng `border-spacing: 0 calc(var(--row)*0.25)` nằm NGOÀI `<td>` nên background không tô tới. Chuyển gap vào `padding` của `<td>` (chia đều trên/dưới để chữ vẫn giữa hàng), giữ nguyên tổng khoảng cách.

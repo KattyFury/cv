@@ -550,18 +550,18 @@
       color: var(--text); margin-bottom: 12px;
     }
 
-    /* ── DANGER ZONE + TRENDING NARRATIVES ──────────────────────────
+    /* ── DANGER ZONE + TRENDING NARRATIVES + WATCHLIST THEO NARRATIVE ─────
        Scrollbar do .thin-scroll lo (quy định chung ở đầu file), mỗi data gọn 1 hàng, cách nhau 0.5 hàng. */
-    #danger-list, #narrative-list {
+    #danger-list, #narrative-list, #wlb-list {
       overflow-y: auto; overflow-x: hidden;
     }
-    .danger-row, .narrative-row {
+    .danger-row, .narrative-row, .wlb-row {
       display: flex; align-items: center; gap: 12px;
       height: var(--row); padding: 0 14px; border-radius: 8px;
       background: rgba(var(--accent-rgb), 0.08);
       margin-bottom: calc(var(--row) * 0.25);
     }
-    .danger-row:last-child, .narrative-row:last-child { margin-bottom: 0; }
+    .danger-row:last-child, .narrative-row:last-child, .wlb-row:last-child { margin-bottom: 0; }
     .danger-row.danger-new { background: rgba(var(--accent-rgb), 0.20); }
     .danger-ticker { font-size: 13px; font-weight: 400; color: var(--text); flex: 1; }
     .danger-badge-new {
@@ -574,6 +574,26 @@
     .danger-empty { font-size: 13px; color: var(--muted); padding: 8px 0; }
     .narrative-name { font-size: 13px; font-weight: 400; color: var(--text); flex: 1; }
     .narrative-med { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 700; color: var(--accent); }
+
+    /* Watchlist theo narrative — mỗi hàng: tên dự án (trái) · narrative (phải) · tam giác.
+       Tam giác SÁNG = dự án đã có bài hướng dẫn bên Airdrop/Work → bấm được để nhảy sang. */
+    .wlb-name {
+      font-size: 13px; font-weight: 400; color: var(--text); text-decoration: none;
+      flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    a.wlb-name:hover { color: var(--accent); }
+    .wlb-narr { font-size: 11px; color: var(--muted); flex-shrink: 0; }
+    .wlb-arrow {
+      display: inline-block; width: 14px; height: 14px; flex-shrink: 0;
+      padding: 0; border: none; appearance: none; -webkit-appearance: none;
+      background-color: currentColor;
+      -webkit-mask: url(right2.svg) center / contain no-repeat;
+      mask: url(right2.svg) center / contain no-repeat;
+      transition: transform 0.15s, color 0.15s;
+    }
+    .wlb-arrow--on  { color: var(--accent); cursor: pointer; }
+    .wlb-arrow--on:hover { transform: translateX(3px); }
+    .wlb-arrow--off { color: var(--border); }
 
     /* Danger Zone / Trending Narratives cùng hệ flex column — margin không bị gộp */
     .val-analysis > .val-card { display: flex; flex-direction: column; }
@@ -662,7 +682,9 @@
       max-width: 900px; margin: 0 auto;
       padding: 0 calc(var(--row) * 0.75) 24px;
     }
-    /* Sub-tabs nằm gọn hàng 3-4 (cao 2 hàng), yếu tố căn giữa dọc, Work|Watchlist trái · lang phải */
+    /* Hàng 3-4 của Airdrop (cao 2 hàng, căn giữa dọc): nhãn "Work" trái · Admin + EN|VI phải.
+       Từ 2026-08-06 chỉ còn 1 nội dung (Watchlist đã chuyển thành box bên Valuation) nên
+       "Work" là NHÃN tĩnh, không bấm được — bỏ cursor/hover để không mời bấm nhầm. */
     .ard-subtabs {
       display: flex; align-items: center; justify-content: space-between;
       height: calc(var(--row) * 2); padding: 0;
@@ -670,13 +692,12 @@
     }
     .ard-tabs { display: flex; align-items: center; gap: 16px; }
     .ard-tab {
-      background: none; border: none; cursor: pointer; padding: 0;
+      background: none; border: none; padding: 0;
       font-family: 'Roboto', sans-serif; font-size: 15px; font-weight: 400;
-      color: var(--muted); opacity: 0.55;   /* chưa chọn: xám thường + mờ rõ rệt */
-      transition: color 0.15s, opacity 0.15s; white-space: nowrap;
+      color: var(--muted); opacity: 0.55;
+      white-space: nowrap;
     }
-    .ard-tab:hover { color: var(--accent); opacity: 1; }
-    .ard-tab.active { color: var(--text); opacity: 1; font-weight: 500; }  /* đang chọn: đen đậm */
+    .ard-tab.active { color: var(--text); opacity: 1; font-weight: 500; }  /* nhãn đang hiển thị: đen đậm */
 
     /* Language toggle */
     .lang-toggle {
@@ -848,42 +869,7 @@
     .wte-task-text { flex: 1; }
     .wte-task-icon { font-size: 12px; flex-shrink: 0; opacity: 0.5; margin-top: 2px; }
 
-    /* ── Watchlist cards (Pre-TGE tracker) ─────────── */
-    #wl-cards {
-      display: grid; grid-template-columns: 1fr;
-      gap: calc(var(--row) * 0.5);
-    }
-    @media (min-width: 768px) { #wl-cards { grid-template-columns: 1fr 1fr; } }
-    .wl-card {
-      background: var(--white); border: 1px solid var(--border);
-      border-radius: 14px; padding: 16px 20px;
-    }
-    .wl-card-head { display: flex; align-items: center; gap: 12px; }
-    .wl-logo {
-      width: 22px; height: 22px; border-radius: 50%;
-      object-fit: cover; flex-shrink: 0; background: var(--border);
-    }
-    /* Tên = tiêu đề: bold 13px đen (đồng bộ toàn site) */
-    .wl-name {
-      font-size: 13px; font-weight: 700; color: var(--text);
-      text-decoration: none; flex: 1; min-width: 0;
-    }
-    .wl-name:hover { color: var(--accent); }
-    /* Mũi tên trạng thái (icon arrow.svg): có việc = sáng (accent), chưa có = mờ (border) */
-    .wl-arrow {
-      display: inline-block; width: 18px; height: 18px; flex-shrink: 0;
-      padding: 0; border: none; appearance: none; -webkit-appearance: none;
-      background-color: currentColor;
-      -webkit-mask: url(arrow.svg) center / contain no-repeat;
-      mask: url(arrow.svg) center / contain no-repeat;
-      transition: transform 0.15s, color 0.15s;
-    }
-    .wl-arrow--on  { color: var(--accent); }
-    .wl-arrow--off { color: var(--border); }
-    .wl-arrow--link { cursor: pointer; }
-    .wl-arrow--link:hover { transform: translateX(3px); }
-
-    /* Icon "i" giải thích số liệu — cạnh tiêu đề box, mở popup (icon info.svg, cùng kỹ thuật mask như wl-arrow) */
+    /* Icon "i" giải thích số liệu — cạnh tiêu đề box, mở popup (icon info.svg, cùng kỹ thuật mask như .wlb-arrow) */
     .info-icon {
       display: inline-block; width: 14px; height: 14px; flex-shrink: 0;
       margin: 0; padding: 0; border: none; appearance: none; -webkit-appearance: none;
@@ -893,14 +879,7 @@
       color: var(--muted); cursor: pointer; transition: color 0.15s;
     }
     .info-icon:hover { color: var(--accent); }
-    /* Meta phụ: narrative · gọi vốn — regular 13px (to hơn cho dễ đọc) */
-    .wl-meta {
-      margin-top: 8px; display: flex; align-items: center;
-      flex-wrap: wrap; font-size: 13px; color: var(--sub);
-    }
-    .wl-dot { margin: 0 8px; color: var(--border); }
-    .wl-empty { padding: 60px 0; text-align: center; color: var(--muted); font-size: 14px; }
-    /* Flash khi nhảy từ Watchlist sang card Work tương ứng */
+    /* Flash khi nhảy từ box "Watchlist theo narrative" (Valuation) sang card Work tương ứng */
     .wte-card--flash { box-shadow: 0 0 0 2px var(--accent); transition: box-shadow 0.2s; }
 
     .wl-modal-backdrop {
@@ -1162,7 +1141,7 @@
         </div>
       </div>
 
-      <!-- 4 box nội dung gốc (Market condition / Recent TGE multiples / Danger Zone / Trending Narratives),
+      <!-- 4 box nội dung (Recent TGE multiples / Danger Zone / Trending Narratives / Watchlist theo narrative),
            gộp chung 1 lưới 6-slot (3 cột) để tất cả tự động bằng nhau; slot 5-6 dành cho box tương lai -->
       <div class="val-analysis val-boxes" id="val-metrics">
 
@@ -1197,6 +1176,12 @@
           <div id="narrative-list" class="vc-q234 thin-scroll"></div>
         </div>
 
+        <!-- 5. Watchlist theo narrative — thứ tự narrative lấy đúng từ box Trending Narratives ở trên -->
+        <div class="val-card">
+          <div class="val-card-label calc-card-label vc-q1"><span id="wlb-title-text">Watchlist theo narrative</span></div>
+          <div id="wlb-list" class="vc-q234 thin-scroll"></div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -1205,11 +1190,10 @@
   <div id="airdrop-view" style="display:none">
     <div class="ard-wrap">
 
-      <!-- Sub-tabs (hàng 3-4): Work | Watchlist  ·············  Vietnamese -->
+      <!-- Hàng 3-4: nhãn "Work"  ·············  Admin · EN|VI -->
       <div class="ard-subtabs" id="ard-subtabs">
         <div class="ard-tabs">
-          <button class="ard-tab active" id="ard-work-btn">Work</button>
-          <button class="ard-tab" id="ard-watchlist-btn">Watchlist</button>
+          <span class="ard-tab active">Work</span>
         </div>
         <div id="ard-wte-controls" style="display:flex;align-items:center;gap:8px">
           <button class="lang-dd-btn" id="admin-btn" title="Task cá nhân">Admin</button>
@@ -1223,11 +1207,6 @@
       <!-- Work to Earn -->
       <div id="ard-wte-panel">
         <div id="wte-cards"></div>
-      </div>
-
-      <!-- Watchlist -->
-      <div id="ard-watchlist-panel" style="display:none">
-        <div id="wl-cards"></div>
       </div>
 
     </div>
@@ -1472,6 +1451,7 @@
       'tge-title-text':          { EN: 'Recent TGE multiples', VI: 'Hệ số TGE gần đây' },
       'danger-title-text':       { EN: 'Danger Zone', VI: 'Vùng nguy hiểm' },
       'narr-title-text':         { EN: 'Trending Narratives', VI: 'Narrative đang hot' },
+      'wlb-title-text':          { EN: 'Watchlist by narrative', VI: 'Watchlist theo narrative' },
       // nội dung box Recent TGE multiples + header bảng
       'tge-lowfdv-label':        { EN: 'Low FDV <span class="td-size">(&lt;$300M)</span>', VI: 'FDV thấp <span class="td-size">(&lt;$300M)</span>' },
       'tge-highfdv-label':       { EN: 'High FDV <span class="td-size">(&gt;$300M)</span>', VI: 'FDV cao <span class="td-size">(&gt;$300M)</span>' },
@@ -1610,7 +1590,7 @@ ${line}
       [valLangViBtn, valLangEnBtn].forEach(b => b.classList.remove('active'));
       ({ VI: valLangViBtn, EN: valLangEnBtn })[lang]?.classList.add('active');
       applyValHeadLabels();
-      renderAnalysis(); renderDanger(); renderNarratives();   // Weak/Normal/Strong, empty-state, badge "PUMP LÁO" đều phụ thuộc valLang
+      renderAnalysis(); renderDanger(); renderNarratives(); renderWLBox();   // Weak/Normal/Strong, empty-state, badge "PUMP LÁO" đều phụ thuộc valLang
       if (infoTgeModal.classList.contains('open')) renderTgeInfo();
       if (infoDangerModal.classList.contains('open')) document.getElementById('info-danger-body').textContent = DANGER_INFO[valLang];
       if (infoNarrModal.classList.contains('open')) document.getElementById('info-narratives-body').textContent = NARRATIVES_INFO[valLang];
@@ -1676,39 +1656,16 @@ ${line}
       if (push) history.pushState({}, '', '/valuation');
     }
 
+    // Airdrop chỉ còn 1 nội dung (Work to Earn) từ 2026-08-06 nên không còn cơ chế
+    // chuyển sub-tab: vào tab là hiện luôn card Work + thanh lọc rank.
     function showAirdrop(push = true) {
       hideAllViews();
       ardView.style.display = 'block';
       navArdBtn.classList.add('active');
+      document.getElementById('rank-filter-float').style.display = 'block';
       if (push) history.pushState({}, '', '/airdrop');
-      showArdTab('work');
       renderWTE();
     }
-
-    // ── Airdrop sub-tabs: Work | Watchlist ───────────
-    const ardWorkBtn     = document.getElementById('ard-work-btn');
-    const ardWatchBtn    = document.getElementById('ard-watchlist-btn');
-    const ardWtePanel    = document.getElementById('ard-wte-panel');
-    const ardWatchPanel  = document.getElementById('ard-watchlist-panel');
-
-    function showArdTab(tab) {
-      const work = tab !== 'watchlist';
-      ardWorkBtn.classList.toggle('active', work);
-      ardWatchBtn.classList.toggle('active', !work);
-      ardWtePanel.style.display    = work ? 'block' : 'none';
-      ardWatchPanel.style.display  = work ? 'none'  : 'block';
-      document.getElementById('rank-filter-float').style.display = work ? 'block' : 'none';
-      // language dropdown hiện luôn ở cả 2 tab cho đồng bộ giao diện
-      if (!work) {
-        renderWL();
-        fetchWL().then(async () => {
-          if (wteLang === 'EN' && !wlLoaded.EN) await translateWL();
-          renderWL();
-        });
-      }
-    }
-    ardWorkBtn.addEventListener('click',  () => showArdTab('work'));
-    ardWatchBtn.addEventListener('click', () => showArdTab('watchlist'));
 
     function routeFromPath() {
       const p = window.location.pathname;
@@ -1729,14 +1686,14 @@ ${line}
     let publicData = [];
     let publicDataError = false;   // tải Sheet hỏng → hiện lỗi thật, không kẹt "Loading…"
 
-    // ── Khối báo lỗi + nút thử lại, dùng chung cho Valuation / Work / Watchlist ──
+    // ── Khối báo lỗi + nút thử lại, dùng chung cho Valuation / Work / box Watchlist ──
     function errBox(retryFn, en) {
       return `<div class="data-error">${en ? 'Could not load data.' : 'Không tải được dữ liệu.'}
         <button class="retry-btn" onclick="${retryFn}(this)">${en ? 'Retry' : 'Thử lại'}</button></div>`;
     }
     async function retryValuation(btn) { if (btn) btn.disabled = true; await fetchPublicData(); renderAll(); }
     async function retryWTE(btn)       { if (btn) btn.disabled = true; await fetchWTE();       renderWTE(); }
-    async function retryWL(btn)        { if (btn) btn.disabled = true; await fetchWL();        renderWL(); }
+    async function retryWL(btn)        { if (btn) btn.disabled = true; await fetchWL();        renderWLBox(); }
 
     // Robust single-line CSV parser (handles quoted fields with embedded commas)
     function parseCSVLine(line) {
@@ -2043,9 +2000,10 @@ ${line}
     // thị trường chê lúc TGE, để không ẩn thông tin.
     const NARRATIVE_SINCE = '2025-02-01';
 
-    function renderNarratives() {
-      const listEl = document.getElementById('narrative-list');
-
+    // Xếp hạng narrative theo median ×TGE — dùng cho CẢ box Trending Narratives lẫn
+    // thứ tự hiển thị của box "Watchlist theo narrative" (đúng yêu cầu: thứ tự narrative
+    // của watchlist do box narrative đang hot quy định).
+    function narrativeRanking() {
       const groups = {};
       allEntries().forEach(e => {
         if (!e.type || !e.tgeDate || e.tgeDate < NARRATIVE_SINCE) return;
@@ -2054,7 +2012,7 @@ ${line}
         groups[e.type].push(e);
       });
 
-      const ranked = Object.keys(groups)
+      return Object.keys(groups)
         .map(name => {
           const list = groups[name];
           return {
@@ -2064,6 +2022,11 @@ ${line}
           };
         })
         .sort((a, b) => b.medTGE - a.medTGE);
+    }
+
+    function renderNarratives() {
+      const listEl = document.getElementById('narrative-list');
+      const ranked = narrativeRanking();
 
       if (!ranked.length) {
         listEl.innerHTML = `<div class="danger-empty">${valLang === 'VI' ? 'Chưa đủ dữ liệu' : 'Not enough data yet'}</div>`;
@@ -2078,7 +2041,7 @@ ${line}
       `).join('');
     }
 
-    function renderAll() { renderTable(); renderAnalysis(); renderDanger(); renderNarratives(); }
+    function renderAll() { renderTable(); renderAnalysis(); renderDanger(); renderNarratives(); renderWLBox(); }
 
     // ── Weighted median ───────────────────────────────
     function weightedMedian(items) {
@@ -2730,45 +2693,32 @@ ${line}
       wteLang = lang;
       [langViBtn, langEnBtn].forEach(b => b.classList.remove('active'));
       ({ VI: langViBtn, EN: langEnBtn })[lang]?.classList.add('active');
-      if (wteLang === 'EN') {
-        if (!wteLoaded.EN) await translateToEN();
-        if (!wlLoaded.EN && wlLoaded.VI) await translateWL();
-      }
+      if (wteLang === 'EN' && !wteLoaded.EN) await translateToEN();
       renderWTE();
-      renderWL();
     }
 
     langViBtn.addEventListener('click', () => switchLang('VI'));
     langEnBtn.addEventListener('click', () => switchLang('EN'));
 
     // ══════════════════════════════════════════════════
-    // AIRDROP — Watchlist (Pre-TGE tracker)
-    // Sheet tab "Watchlist" · cột A tên · B X · C narrative · D gọi vốn · E có việc (YES/NO)
+    // VALUATION — box "Watchlist theo narrative"
+    // Sheet tab "Watchlist" · cột A tên · B X · C narrative · D gọi vốn (số triệu USD)
+    // (cột E "Thing to do yet?" KHÔNG còn được dùng: tam giác sáng/mờ giờ do bên
+    //  Airdrop/Work có card hướng dẫn hay không quyết định, không phải do cột E)
+    // Narrative là data từ Sheet → KHÔNG dịch khi bật EN (đúng luật chung của Valuation).
     // ══════════════════════════════════════════════════
     const WL_URL = `https://docs.google.com/spreadsheets/d/${WTE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Watchlist`;
-    let wlData = { VI: [], EN: [] };
-    let wlLoaded = { VI: false, EN: false };
+    let wlData = [];
+    let wlLoaded = false;
     let wlError = false;
 
     const wlSlug = n => n.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-    // Dịch narrative + gọi vốn của Watchlist sang EN (dùng chung gtranslate)
-    async function translateWL() {
-      if (wlLoaded.EN || !wlData.VI.length) return;
-      const texts = wlData.VI.map(p => p.narrative || '');
-      const translated = await gtranslate(texts);
-      wlData.EN = wlData.VI.map((p, i) => ({ ...p, narrative: translated[i] || p.narrative }));
-      wlLoaded.EN = true;
-    }
-
-    // Gọi vốn: cột D là số triệu USD ("500,0") → "$500M". Giữ nguyên nếu đã có ký hiệu.
-    function fmtRaise(raw) {
-      const s = (raw || '').trim();
-      if (!s) return '';
-      if (/[$mMkKbB]/.test(s)) return s;
-      const n = parseFloat(s.replace(/\./g, '').replace(',', '.'));
-      if (!isFinite(n)) return s;
-      return '$' + n + 'M';
+    // Cột D là số triệu USD viết kiểu Việt ("2.879,0" = 2879) → số thật để sắp xếp.
+    // Chỉ dùng để xếp thứ tự, không hiển thị.
+    function parseRaise(raw) {
+      const n = parseFloat((raw || '').trim().replace(/\./g, '').replace(',', '.'));
+      return isFinite(n) ? n : 0;
     }
 
     function parseWL(csvText) {
@@ -2783,83 +2733,93 @@ ${line}
         if (!name) return;
         // Bỏ dòng header (row 1 nếu cột A là "tên"/"name"/"dự án"/"project")
         if (i === 0 && /^(t[eê]n|name|project|d[uự]\s*[aá]n)/i.test(name)) return;
-        const e = (r[4] || '').trim().toLowerCase();
         out.push({
           name,
           x:         (r[1] || '').trim(),
           narrative: (r[2] || '').trim(),
-          raise:     fmtRaise(r[3]),
-          // Sáng khi cột E = YES hoặc GIAT (give it a try); tối khi NO
-          hasWork:   /^(yes|y|có|co|1|true|✓|giat)$/.test(e) || e.includes('give it a try'),
+          raise:     parseRaise(r[3]),
         });
       });
       return out;
     }
 
     async function fetchWL() {
-      if (wlLoaded.VI) return;
+      if (wlLoaded) return;
       try {
         const res  = await fetch(WL_URL);
         const text = await res.text();
-        wlData.VI = parseWL(text);
-        wlLoaded.VI = true;
+        wlData = parseWL(text);
+        wlLoaded = true;
         wlError = false;
       } catch (err) {
         console.warn('WL fetch failed:', err);
-        wlData.VI = [];
+        wlData = [];
         wlError = true;
       }
     }
 
-    function renderWL() {
-      const container = document.getElementById('wl-cards');
-      if (wlError)      { container.innerHTML = errBox('retryWL', wteLang === 'EN'); return; }
-      if (!wlLoaded.VI) { container.innerHTML = '<div class="wl-empty">Loading…</div>'; return; }
-      // Khi ở EN nhưng bản dịch chưa xong thì tạm hiện bản VI
-      const projects = (wteLang === 'EN' && wlLoaded.EN) ? wlData.EN : wlData.VI;
-      if (!projects.length) {
-        const msg = wteLang === 'EN' ? 'No projects in the watchlist yet.' : 'Chưa có dự án nào trong watchlist.';
-        container.innerHTML = `<div class="wl-empty">${msg}</div>`; return;
+    /* Thứ tự hàng trong box (chốt 2026-08-06):
+       1. Narrative có mặt trong bảng xếp hạng (box Trending Narratives) — theo ĐÚNG thứ tự đó.
+       2. Narrative không có trong bảng xếp hạng (chưa có deal TGE nào sau NARRATIVE_SINCE)
+          xếp sau, nhóm nào có dự án gọi vốn to nhất thì lên trước.
+       3. Dự án chưa điền narrative xuống cuối cùng.
+       Trong cùng 1 narrative: gọi vốn nhiều → ít (nên Tempo $500M nằm trên Arc $222M). */
+    function wlOrderKeys() {
+      const rankIdx = new Map(narrativeRanking().map((g, i) => [g.name.toLowerCase(), i]));
+      const restMax = {};
+      wlData.forEach(p => {
+        const key = p.narrative.toLowerCase();
+        if (!key || rankIdx.has(key)) return;
+        restMax[key] = Math.max(restMax[key] || 0, p.raise);
+      });
+      const restIdx = new Map(Object.keys(restMax)
+        .sort((a, b) => restMax[b] - restMax[a])
+        .map((key, i) => [key, rankIdx.size + i]));
+      return p => {
+        const key = p.narrative.toLowerCase();
+        if (!key) return Number.MAX_SAFE_INTEGER;
+        return rankIdx.has(key) ? rankIdx.get(key) : restIdx.get(key);
+      };
+    }
+
+    function renderWLBox() {
+      const listEl = document.getElementById('wlb-list');
+      const en = valLang === 'EN';
+      if (wlError)   { listEl.innerHTML = errBox('retryWL', en); return; }
+      if (!wlLoaded) { listEl.innerHTML = `<div class="danger-empty">${en ? 'Loading…' : 'Đang tải…'}</div>`; return; }
+      if (!wlData.length) {
+        listEl.innerHTML = `<div class="danger-empty">${en ? 'No projects yet' : 'Chưa có dự án nào'}</div>`;
+        return;
       }
 
+      const orderOf  = wlOrderKeys();
       const wteSlugs = new Set((wteData.VI || []).map(p => wlSlug(p.name)));
+      const rows = [...wlData].sort((a, b) => orderOf(a) - orderOf(b) || b.raise - a.raise);
 
-      container.innerHTML = projects.map(p => {
+      listEl.innerHTML = rows.map(p => {
+        const slug   = wlSlug(p.name);
         const handle = p.x
           ? p.x.replace(/.*twitter\.com\/|.*x\.com\/|^@/, '').split('?')[0].trim()
           : '';
-        const xUrl = handle ? `https://x.com/${handle}` : '';
-        const logo = handle
-          ? `<img class="wl-logo" src="https://unavatar.io/twitter/${handle}" alt="${p.name}" loading="lazy" />`
-          : '';
-        const nameHtml = xUrl
-          ? `<a class="wl-name" href="${xUrl}" target="_blank" rel="noopener">${p.name}</a>`
-          : `<span class="wl-name">${p.name}</span>`;
+        const nameHtml = handle
+          ? `<a class="wlb-name" href="https://x.com/${handle}" target="_blank" rel="noopener">${p.name}</a>`
+          : `<span class="wlb-name">${p.name}</span>`;
+        // Tam giác sáng = đã có bài hướng dẫn bên Airdrop/Work → bấm được để nhảy sang
+        const arrow = wteSlugs.has(slug)
+          ? `<button class="wlb-arrow wlb-arrow--on" onclick="valGoWork('${slug}')" aria-label="${en ? 'View tasks' : 'Xem việc cần làm'}"></button>`
+          : `<span class="wlb-arrow wlb-arrow--off" aria-hidden="true"></span>`;
 
-        let badge;
-        if (p.hasWork) {
-          badge = wteSlugs.has(wlSlug(p.name))
-            ? `<button class="wl-arrow wl-arrow--on wl-arrow--link" onclick="wlGoWork('${wlSlug(p.name)}')" aria-label="View tasks"></button>`
-            : `<span class="wl-arrow wl-arrow--on" aria-hidden="true"></span>`;
-        } else {
-          badge = `<span class="wl-arrow wl-arrow--off" aria-hidden="true"></span>`;
-        }
-
-        const meta = [
-          p.narrative ? `<span class="wl-meta-item">${p.narrative}</span>` : '',
-          p.raise     ? `<span class="wl-meta-item">${p.raise}</span>`     : '',
-        ].filter(Boolean).join('<span class="wl-dot">·</span>');
-
-        return `<div class="wl-card">
-          <div class="wl-card-head">${logo}${nameHtml}${badge}</div>
-          ${meta ? `<div class="wl-meta">${meta}</div>` : ''}
+        return `<div class="wlb-row">
+          ${nameHtml}
+          <span class="wlb-narr">${p.narrative}</span>
+          ${arrow}
         </div>`;
       }).join('');
     }
 
-    // Nhảy từ Watchlist sang card Work tương ứng + flash 1.5s
-    function wlGoWork(slugId) {
-      showArdTab('work');
+    // Nhảy từ box Watchlist (Valuation) sang card Work tương ứng + flash 1.5s
+    function valGoWork(slugId) {
+      showAirdrop();
       requestAnimationFrame(() => {
         const el = document.getElementById('wte-card-' + slugId);
         if (!el) return;
@@ -2872,7 +2832,9 @@ ${line}
     // ── Init ─────────────────────────────────────────
     routeFromPath(); // tất cả biến đã khai báo xong, an toàn để gọi
     (async () => {
-      await Promise.all([fetchPublicData(), fetchWTE()]);
+      // fetchWL đi cùng đợt này vì box "Watchlist theo narrative" nằm trong Valuation,
+      // và tam giác của nó cần wteData (Work) để biết dự án nào đã có bài hướng dẫn.
+      await Promise.all([fetchPublicData(), fetchWTE(), fetchWL()]);
       renderAll();
       renderWTE();
       translateToEN();
