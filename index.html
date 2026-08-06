@@ -583,16 +583,25 @@
     }
     a.wlb-name:hover { color: var(--accent); }
     .wlb-narr { font-size: 11px; color: var(--muted); flex-shrink: 0; }
+    /* Tam giác 14px nhưng VÙNG BẤM = 38px × trọn chiều cao hàng: mask phải nằm ở
+       ::before chứ không phải ở chính nút — Chromium hit-test theo vùng mask, để mask
+       trên nút thì chỉ đúng mấy pixel hình tam giác mới bấm được (xem mục "Vùng bấm" dưới). */
     .wlb-arrow {
-      display: inline-block; width: 14px; height: 14px; flex-shrink: 0;
-      padding: 0; border: none; appearance: none; -webkit-appearance: none;
+      display: inline-block; position: relative; flex-shrink: 0;
+      align-self: stretch; width: 38px; margin: 0 -12px;   /* margin âm bù lại → layout vẫn như icon 14px */
+      padding: 0; border: none; background: none;
+      appearance: none; -webkit-appearance: none;
+      transition: color 0.15s;
+    }
+    .wlb-arrow::before {
+      content: ''; position: absolute; inset: 0 12px;
       background-color: currentColor;
       -webkit-mask: url(right2.svg) center / contain no-repeat;
       mask: url(right2.svg) center / contain no-repeat;
-      transition: transform 0.15s, color 0.15s;
+      transition: transform 0.15s;
     }
     .wlb-arrow--on  { color: var(--accent); cursor: pointer; }
-    .wlb-arrow--on:hover { transform: translateX(3px); }
+    .wlb-arrow--on:hover::before { transform: translateX(3px); }
     .wlb-arrow--off { color: var(--border); }
 
     /* Danger Zone / Trending Narratives cùng hệ flex column — margin không bị gộp */
@@ -869,16 +878,33 @@
     .wte-task-text { flex: 1; }
     .wte-task-icon { font-size: 12px; flex-shrink: 0; opacity: 0.5; margin-top: 2px; }
 
-    /* Icon "i" giải thích số liệu — cạnh tiêu đề box, mở popup (icon info.svg, cùng kỹ thuật mask như .wlb-arrow) */
+    /* Icon "i" giải thích số liệu — cạnh tiêu đề box, mở popup. Cùng kỹ thuật vùng bấm
+       như .wlb-arrow: mask nằm ở ::before, nút rộng 30px × trọn chiều cao hàng tiêu đề. */
     .info-icon {
-      display: inline-block; width: 14px; height: 14px; flex-shrink: 0;
-      margin: 0; padding: 0; border: none; appearance: none; -webkit-appearance: none;
+      display: inline-block; position: relative; flex-shrink: 0;
+      align-self: stretch; width: 30px; margin: 0 -8px;
+      padding: 0; border: none; background: none;
+      appearance: none; -webkit-appearance: none;
+      color: var(--muted); cursor: pointer; transition: color 0.15s;
+    }
+    .info-icon::before {
+      content: ''; position: absolute; inset: 0 8px;
       background-color: currentColor;
       -webkit-mask: url(info.svg) center / contain no-repeat;
       mask: url(info.svg) center / contain no-repeat;
-      color: var(--muted); cursor: pointer; transition: color 0.15s;
     }
     .info-icon:hover { color: var(--accent); }
+
+    /* ── VÙNG BẤM CỦA ICON NHỎ (chốt 2026-08-06: icon 14px bấm hụt hoài) ──────────
+       LUẬT: icon tô bằng CSS mask thì mask PHẢI đặt ở ::before, KHÔNG đặt trên chính
+       nút — Chromium hit-test theo vùng mask, để mask trên nút thì chỉ mấy pixel của
+       hình mới bấm trúng (đúng ô 14px cũng trượt). Nút rộng ra + margin âm bù lại để
+       layout không đổi; `align-self: stretch` cho cao trọn hàng, không tự chế số px.
+       Mấy nút CHỮ (✕, ⋮) không dính mask nên chỉ cần phủ thêm ::after trong suốt. */
+    .wte-opt { position: relative; }
+    .wte-opt::after, .calc-reset-btn::after, .modal-corner-close::after {
+      content: ''; position: absolute; inset: -8px -12px;
+    }
     /* Flash khi nhảy từ box "Watchlist theo narrative" (Valuation) sang card Work tương ứng */
     .wte-card--flash { box-shadow: 0 0 0 2px var(--accent); transition: box-shadow 0.2s; }
 
