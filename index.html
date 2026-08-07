@@ -895,6 +895,33 @@
     }
     .info-icon:hover { color: var(--accent); }
 
+    /* Cụm control bên phải headline Valuation: [camera] [EN|VI] — giữ đúng pattern
+       `position:relative > .val-intro (giữa) + control absolute phải` của mọi panel. */
+    .val-head-ctrl {
+      position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+      display: flex; align-items: center; gap: 8px;
+    }
+    /* Nút chụp ảnh dashboard. Cùng luật vùng bấm như .info-icon/.wlb-arrow: mask ở ::before,
+       nút cao 30px bằng .lang-toggle bên cạnh, hình icon 14px nằm giữa. */
+    .camera-btn {
+      display: inline-block; position: relative; flex-shrink: 0;
+      width: 30px; height: 30px;
+      padding: 0; border: none; background: none;
+      appearance: none; -webkit-appearance: none;
+      color: var(--sub); cursor: pointer; transition: color 0.15s, opacity 0.15s;
+    }
+    .camera-btn::before {
+      content: ''; position: absolute; inset: 8px;
+      background-color: currentColor;
+      -webkit-mask: url(camera.svg) center / contain no-repeat;
+      mask: url(camera.svg) center / contain no-repeat;
+    }
+    .camera-btn:hover { color: var(--accent); }
+    .camera-btn[disabled] { opacity: 0.4; cursor: default; }
+    /* Chỉ dùng trong bản CLONE lúc chụp ảnh: html2canvas không vẽ được CSS mask nên tắt
+       hình mask đi, chỗ đó thay bằng ký tự "→" (xem onclone trong hàm chụp ảnh). */
+    .shot-arrow::before { display: none; }
+
     /* ── VÙNG BẤM CỦA ICON NHỎ (chốt 2026-08-06: icon 14px bấm hụt hoài) ──────────
        LUẬT: icon tô bằng CSS mask thì mask PHẢI đặt ở ::before, KHÔNG đặt trên chính
        nút — Chromium hit-test theo vùng mask, để mask trên nút thì chỉ mấy pixel của
@@ -1136,9 +1163,12 @@
     <div class="val-wrap">
       <div style="position:relative">
         <div class="val-intro val-intro-clickable" id="tge-intro" title="Mở rộng"><span id="val-headline-text">Tracking altcoins to read market conditions</span></div>
-        <div class="lang-toggle" style="position:absolute; right:0; top:50%; transform:translateY(-50%)">
-          <button class="lang-btn" id="val-lang-en-btn">EN</button>
-          <button class="lang-btn active" id="val-lang-vi-btn">VI</button>
+        <div class="val-head-ctrl">
+          <button class="camera-btn" id="val-shot-btn" title="Chụp ảnh dashboard" aria-label="Chụp ảnh dashboard"></button>
+          <div class="lang-toggle">
+            <button class="lang-btn" id="val-lang-en-btn">EN</button>
+            <button class="lang-btn active" id="val-lang-vi-btn">VI</button>
+          </div>
         </div>
       </div>
 
@@ -1502,12 +1532,24 @@
       'calc-alloc':  { EN: 'e.g. 20', VI: 'vd: 20' },
       'calc-supply': { EN: 'e.g. 21M, 10B', VI: 'vd: 21M, 10B' },
     };
+    // tooltip/aria của các nút chỉ có icon (không có chữ) — cũng là nhãn tĩnh nên phải dịch
+    const VAL_TITLES = {
+      'val-shot-btn':        { EN: 'Screenshot this dashboard', VI: 'Chụp ảnh dashboard' },
+      'info-tge-btn':        { EN: 'Explain', VI: 'Giải thích' },
+      'info-danger-btn':     { EN: 'Explain', VI: 'Giải thích' },
+      'info-narratives-btn': { EN: 'Explain', VI: 'Giải thích' },
+    };
     function applyValHeadLabels() {
       for (const [id, labels] of Object.entries(VAL_HEAD_LABELS)) {
         document.getElementById(id).innerHTML = labels[valLang];
       }
       for (const [id, labels] of Object.entries(VAL_PLACEHOLDERS)) {
         document.getElementById(id).placeholder = labels[valLang];
+      }
+      for (const [id, labels] of Object.entries(VAL_TITLES)) {
+        const el = document.getElementById(id);
+        el.title = labels[valLang];
+        el.setAttribute('aria-label', labels[valLang]);
       }
     }
     applyValHeadLabels();
@@ -1623,6 +1665,64 @@ ${line}
     }
     valLangViBtn.addEventListener('click', () => switchValLang('VI'));
     valLangEnBtn.addEventListener('click', () => switchValLang('EN'));
+
+    /* ── Chụp ảnh dashboard Valuation (nút camera cạnh toggle EN|VI) ────────────────
+       html2canvas nạp TỪ CHÍNH DOMAIN (html2canvas.min.js nằm trong repo, không CDN
+       bên thứ 3) và chỉ nạp lúc bấm lần đầu — người vào đọc bình thường không phải
+       tải ~195KB lib. Không backend, không key: vẽ ảnh hoàn toàn trong máy user. */
+    const shotBtn = document.getElementById('val-shot-btn');
+    let h2cLoading = null;
+    function loadHtml2Canvas() {
+      if (window.html2canvas) return Promise.resolve(window.html2canvas);
+      if (!h2cLoading) h2cLoading = new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'html2canvas.min.js';
+        s.onload  = () => resolve(window.html2canvas);
+        s.onerror = () => { h2cLoading = null; reject(new Error('Không nạp được html2canvas.min.js')); };
+        document.head.appendChild(s);
+      });
+      return h2cLoading;
+    }
+
+    shotBtn.addEventListener('click', async () => {
+      shotBtn.disabled = true;
+      try {
+        const html2canvas = await loadHtml2Canvas();
+        const canvas = await html2canvas(document.querySelector('#valuation-view .val-wrap'), {
+          scale: 2,                                                          // nét trên màn retina
+          backgroundColor: getComputedStyle(document.body).backgroundColor,   // .val-wrap trong suốt
+          logging: false,
+          // Loại khỏi ảnh: cụm nút EN|VI + camera (điều khiển, không phải nội dung) và icon "i".
+          ignoreElements: el => el.classList?.contains('val-head-ctrl') || el.classList?.contains('info-icon'),
+          onclone: doc => {
+            // html2canvas KHÔNG hỗ trợ CSS mask → mọi icon mask sẽ ra ô đặc xấu.
+            // Mũi tên box Watchlist mang thông tin (sáng = có việc, mờ = chưa) nên không bỏ đi
+            // được như icon "i" — thay bằng ký tự "→", màu vẫn kế thừa từ .wlb-arrow--on/off.
+            doc.querySelectorAll('.wlb-arrow').forEach(el => {
+              el.classList.add('shot-arrow');
+              el.textContent = '→';
+              el.style.font = '600 13px/30px Roboto, sans-serif';
+              el.style.textAlign = 'center';
+            });
+          },
+        });
+        canvas.toBlob(blob => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `0xhieu-valuation-${new Date().toISOString().slice(0, 10)}.png`;
+          a.click();
+          setTimeout(() => URL.revokeObjectURL(url), 1000);   // revoke ngay lập tức có thể huỷ download
+        }, 'image/png');
+      } catch (err) {
+        console.error(err);
+        alert(valLang === 'VI'
+          ? 'Chụp ảnh không thành công. Thử tải lại trang rồi bấm lại.'
+          : 'Screenshot failed. Reload the page and try again.');
+      } finally {
+        shotBtn.disabled = false;
+      }
+    });
 
     function hideAllViews() {
       cvView.style.display = 'none';

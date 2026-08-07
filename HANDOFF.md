@@ -60,6 +60,24 @@ Ngoại lệ có chủ đích: `#ptask-form` (form task cá nhân) cố tình **
 
 ---
 
+## Chụp ảnh dashboard (2026-08-07) — QUY ĐỊNH
+
+Nút camera cạnh toggle EN|VI ở Valuation → xuất `.val-wrap` ra PNG (`0xhieu-valuation-<ngày>.png`),
+render hoàn toàn trong máy user bằng `html2canvas.min.js` **nằm trong repo** (không CDN — cv không
+gọi ra server bên thứ 3). Lib chỉ nạp khi bấm lần đầu (`loadHtml2Canvas()`), trang vẫn nhẹ như cũ.
+
+**LUẬT: html2canvas KHÔNG vẽ được CSS mask** — mà mọi icon của cv đều tô bằng mask (`info.svg`,
+`right2.svg`, `camera.svg`). Để nguyên thì icon ra **ô đặc màu currentColor** rất xấu. Khi thêm
+icon/element mới vào vùng chụp, phải chọn 1 trong 2 đường đã có sẵn trong hàm chụp:
+- **Không mang thông tin** (nút bấm, icon "i") → cho vào `ignoreElements` để loại khỏi ảnh.
+- **Mang thông tin** (mũi tên Watchlist: sáng = có việc, mờ = chưa) → trong `onclone` gắn class
+  `.shot-arrow` (tắt `::before`) rồi thay bằng ký tự text tương đương, màu vẫn kế thừa.
+
+Cùng lý do đó, `.val-head-ctrl` (camera + EN|VI) bị loại khỏi ảnh — vừa hợp lý (điều khiển không
+phải nội dung), vừa tránh icon camera thành ô đặc.
+
+---
+
 ## Hover / màu tương tác (2026-08-05) — QUY ĐỊNH
 
 - Hover hàng bảng: `rgba(97,85,245,0.1)` (tím nhạt, gốc brand `#6155F5`) — **không** dùng xám `--off`.
@@ -251,6 +269,10 @@ icon.png              — favicon + icon iPhone home screen (mèo-kính, mắt c
 pfp.png               — avatar Hieu Nguyen (About me)
 info.svg              — icon "i" giải thích 3 box Valuation (tô màu qua CSS mask)
 right2.svg            — tam giác của box "Watchlist theo narrative" (tô màu qua CSS mask)
+camera.svg            — icon nút chụp ảnh dashboard Valuation (tô màu qua CSS mask)
+html2canvas.min.js    — thư viện DOM→PNG (v1.4.1) để nút camera chụp dashboard. ĐỂ TRONG REPO
+                        có chủ đích (không CDN): cv giữ nguyên tắc không gọi ra server bên thứ 3.
+                        Chỉ được nạp khi user bấm camera lần đầu, không nạp sẵn lúc vào trang.
 arrow.svg             — KHÔNG còn code nào dùng từ 2026-08-06 (icon mũi tên của Watchlist cũ); giữ lại phòng khi cần
 highlights.txt + highlights/  — ảnh highlights ở About me (mỗi dòng "tên-ảnh | caption", thứ tự dòng = thứ tự hiển thị)
 .gitignore            — .env, node_modules, .claude/, .dev.vars, .wrangler/
@@ -287,6 +309,7 @@ qua server dev, đừng sửa `index.html`.)
 
 ## Decisions Log
 
+- 2026-08-07: **Nút camera chụp dashboard Valuation ra PNG** (cạnh trái toggle EN|VI) — chi tiết luật ở mục "Chụp ảnh dashboard" trên. **Chọn html2canvas ĐỂ TRONG REPO thay vì CDN** (user chốt, có cân nhắc 3 phương án): cv đang không nạp một script ngoài nào, dùng CDN sẽ phá vỡ điều đó — phụ thuộc mạng bên thứ 3, CDN lỗi là nút chết, và khách bị lộ IP sang bên đó. Phương án `getDisplayMedia` (không cần thư viện, ảnh render thật nên đẹp 100%) bị loại vì mỗi lần bấm trình duyệt bắt chọn màn hình/tab thủ công và không chạy trên mobile. Đổi lại repo gánh thêm ~195KB lib, bù bằng cách **lazy-load**: chỉ nạp khi bấm lần đầu nên người vào đọc không phải tải. Khung ảnh = dashboard **đúng như đang thấy** (bảng giữ nguyên số dòng đang hiện, không bung full ~80 token vì ảnh sẽ quá dài để đăng mạng xã hội). Kèm theo: gom camera + EN|VI vào `.val-head-ctrl` (bỏ inline style `position:absolute` cũ trên `.lang-toggle`, vẫn đúng pattern control-absolute-phải); thêm map `VAL_TITLES` cho `title`/`aria-label` của các nút chỉ-có-icon — trước đó 3 icon "i" hardcode "Giải thích" tiếng Việt kể cả khi đang ở mode EN. **Verify:** headless Edge trên route thật `/valuation` — nút hiện đúng cạnh trái EN|VI, cao bằng toggle; chặn `toBlob` để dán canvas kết quả ra trang rồi chụp lại, ảnh ra sạch: mất nút EN|VI/camera/icon "i" đúng ý đồ, gradient nút CTA đúng màu, mũi tên Watchlist thành `→` giữ đúng sáng/mờ, không dính scrollbar.
 - 2026-08-06: **Vùng bấm của icon nhỏ — LUẬT: icon tô bằng CSS `mask` thì mask phải nằm ở `::before`, KHÔNG đặt trên chính nút** — user báo "icon hơi khó click". Root cause KHÔNG phải icon nhỏ (14px) mà là **Chromium hit-test theo vùng mask**: để `mask` trên nút thì chỉ mấy pixel của hình tam giác/chữ `i` mới ăn click, bấm vào ô 14px cũng trượt. Đo bằng `document.elementFromPoint` trên DOM thật: bản cũ lệch 5px khỏi tâm đã `miss`. **Cách sửa (giữ nguyên kích thước icon nhìn thấy, layout không đổi):** nút bỏ mask, cho `align-self: stretch` (cao trọn hàng, không tự chế số px) + `width` rộng ra + `margin` âm bù lại; mask chuyển xuống `::before` với `inset` đúng ô 14px ở giữa. Hover `translateX(3px)` cũng phải chuyển sang `::before`. Kết quả đo lại: tam giác **38×27**, icon `i` **30×27**, bấm lệch tới góc vẫn `HIT`. Mấy nút CHỮ (✕ đóng modal, ✕ tính lại, ⋮ sửa task) không dính mask nên chỉ cần phủ thêm `::after` trong suốt `inset: -8px -12px` (nút ✕ 24px → vùng bấm ~48×40, đo `HIT` ở lệch 18px ngang/14px dọc). **Đừng dùng padding** để nới: mask `center / contain` sẽ kéo icon phình to theo. Verify thêm: bấm icon `i` vẫn mở popup, bấm tam giác vẫn nhảy `/airdrop` + tìm thấy `#wte-card-tempo`.
 - 2026-08-06: **Thêm box "Watchlist theo narrative" ở Valuation, XOÁ HẲN sub-tab Airdrop/Watchlist** — reason: xem watchlist theo narrative (narrative nào đang hot thì soi dự án nào nằm trong đó) hữu ích hơn một danh sách card rời bên Airdrop. Box dùng đúng khung `vc-q1`/`vc-q234` của Danger Zone/Trending Narratives nên tự thẳng hàng; cấu trúc + thứ tự sắp xếp xem mục riêng ở trên. Hai lựa chọn user chốt trong lúc làm: (1) narrative không có trong bảng xếp hạng vẫn **hiện, xếp cuối**, nhóm nào có dự án gọi vốn to nhất lên trước, dự án chưa điền narrative xuống cuối cùng (không ẩn ai — cùng tinh thần với quyết định 27/07 bỏ filter của Trending Narratives); (2) bên Airdrop **giữ chữ "Work" làm nhãn** thay vì bỏ trống hàng. Đổi kèm theo: `narrativeRanking()` tách khỏi `renderNarratives()` để 2 box dùng chung 1 nguồn thứ tự; cột E "Thing to do yet?" của Sheet Watchlist **hết tác dụng** (tam giác giờ do "có card bên Work hay không" quyết định) nên bỏ `hasWork`; `translateWL()`/`fmtRaise()`/`renderWL()`/`wlGoWork()`/`showArdTab()` + CSS `.wl-card/.wl-logo/.wl-name/.wl-arrow/.wl-meta/.wl-dot/.wl-empty` xoá theo vì không còn ai gọi (`arrow.svg` thành file mồ côi, giữ lại). **Verify:** `node --check` JS sạch; headless Edge trên route thật `/valuation` (desktop 1100px + mobile 420px) thấy box thẳng hàng với 3 box kia và xếp 1 cột đúng trên mobile; `--dump-dom` đếm đủ **65 hàng**, thứ tự đúng (Stablechain → Layer-1 → Infra → AI → … → Game/Others → nhóm chưa điền narrative; trong Stablechain: Tempo $500M > Arc $222M > KAST $90M > STRATO $52M); probe click tam giác Tempo trong DOM thật → `airdrop-view` hiện, URL `/airdrop`, tìm thấy `#wte-card-tempo`, thanh lọc rank hiện; bản EN ra "Watchlist by narrative" và giữ nguyên narrative gốc.
 - 2026-08-05: **Scrollbar: chốt 1 class dùng chung `.thin-scroll`, bỏ sạch `scrollbar-width`/`scrollbar-color`** — xem mục "Scrollbar System" ở đầu file. Reason: user thấy 3 vùng cuộn (bảng inline · popup bảng · box Narrative/Danger) ra 3 kiểu khác nhau. Root cause: từ Chromium 121, `scrollbar-width`/`scrollbar-color` khác `auto` sẽ vô hiệu hoá `::-webkit-scrollbar`; code cũ set cả 2 kiểu ở mọi nơi nên mỗi vùng render một đường. **2 lần sửa đầu (thêm `display:block`, thêm webkit rules cho popup) đều vô nghĩa** vì webkit đang bị tắt sẵn — bài học: không phán "do cache", phải render thật ra ảnh mà đối chiếu.
