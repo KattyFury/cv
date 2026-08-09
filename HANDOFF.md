@@ -1,6 +1,6 @@
 # HANDOFF — CV / Portfolio (0xhieu.xyz)
 
-**Date:** 2026-08-06  
+**Date:** 2026-08-09  
 **Repo:** https://github.com/KattyFury/cv  
 **Live:** Cloudflare Pages, project `0xhieu-xyz` (git-integration auto-deploy từ `main` — **chạy bình thường**, đã kiểm chứng 2026-08-01)  
 **Local dev:** site tĩnh — mở thẳng `index.html`, hoặc `python -m http.server` bất kỳ port nào (route `/valuation` cần SPA fallback về `index.html` giống `_redirects`)  
@@ -8,9 +8,25 @@
 
 ---
 
-## ⭐ HANDOFF mới nhất (2026-07-21) — Rebrand màu + đọc chữ + dọn dead code
+## ⭐ HANDOFF mới nhất (2026-08-09) — Work to Earn chuyển hẳn sang Cloudflare KV
 
-**Scope không đổi** (chốt 2026-07-12, chi tiết ở Decisions Log): cv **chỉ là website tĩnh đọc Google Sheet để hiển thị** (About · Valuation · Airdrop). Không backend, không function, không secret. Bot research là dự án khác (`research_airdrop_bot`).
+**Scope đổi so với 2026-07-12**: Airdrop → Work **không còn đọc Google Sheet nữa**. Toàn bộ project (trước là "Sheet public" + task cá nhân KV riêng từ 31/07) giờ nằm **chung 1 kho KV** (binding `WORK`, key `personal-tasks`), phân biệt bằng field `visibility: 'public' | 'personal'`. Lý do: user thấy sửa data qua Google Sheet phiền, tần suất sửa lại thấp (thêm 1-2 dự án lâu lâu) nên đổi database không mất gì, admin sửa trực tiếp qua popup trên site thay vì mở Sheet. Valuation vẫn đọc Google Sheet như cũ (DATA + tab Watchlist) — **không đổi**.
+
+**Trạng thái sau session 09/08:**
+1. **`functions/api/wte.js` (mới)** — endpoint public GET, KHÔNG cần mật khẩu, đọc KV rồi lọc `visibility === 'public'`, trả về cho `fetchWTE()` bên `index.html`. Thay hẳn cho gviz CSV fetch cũ (`WTE_URL_VI`/`parseWTE`/`parseStars` đã xoá — `WTE_SHEET_ID`/`parseCSVFull` VẪN giữ vì box "Watchlist theo narrative" bên Valuation còn dùng).
+2. **`functions/api/private.js`** — mỗi task giờ có 2 field mới lấy từ client (có validate): `rank` (SS/S/A/B, không còn khoá cứng "SS" cho task cá nhân) và `visibility` (`public`/`personal`, sai giá trị → rơi về `personal`). Task cũ trong KV (thêm trước 09/08) không có field `visibility` — code client coi `visibility !== 'public'` là personal nên vẫn hiển thị đúng, không cần migrate ngược.
+3. **Popup thêm/sửa task đổi cấu trúc** theo yêu cầu user: dùng `.wl-modal--wide` (680px thay vì 340px), tiêu đề căn giữa, Tên dự án + Twitter chung 1 hàng, Rank đổi từ input khoá cứng sang dropdown chọn S+/S/A/B (bắt buộc chọn, không mặc định), thêm dropdown Hiển thị (Personal/Public) chung hàng với Rank, nút xoá dòng (✕) ở Get Started/Daily/Weekly giờ cố định hiện thay vì ẩn khi chỉ còn 1 dòng.
+4. **Nút sửa (⋮) trên card** giờ hiện cho MỌI card khi admin đã mở khoá (trước chỉ hiện ở card cá nhân) — admin sửa được cả project public lẫn cá nhân qua cùng 1 form.
+5. **Migrate data thật**: 22 project từ Google Sheet (tab Work) đã ghi vào KV production với `visibility: 'public'`, giữ nguyên 4 task cá nhân cũ (Injective, Kaito, Săn GA, Creatorpad — không có field visibility, coi như personal). Ghi thẳng qua Cloudflare KV REST API (không qua `/api/private`, không cần biết `ADMIN_PASS`).
+6. Đã verify: khách thấy đúng 22 card, không thấy nút ⋮; admin thấy 22+4 card, nút ⋮ hiện đủ, sửa card public hiện đúng rank/visibility; dịch EN vẫn hoạt động cho card public; `/api/private` vẫn từ chối sai mật khẩu (401) trên site thật.
+
+**Việc CHƯA làm / cân nhắc sau:** Google Sheet "Work" giờ không còn code nào đọc — vẫn giữ nguyên trên Drive phòng cần đối chiếu, chưa xoá. `WTE_TYPES` (14 thẻ phân loại) vẫn hardcode trong `index.html`, khớp tay với dropdown Sheet cũ — Sheet không còn là nguồn nên nếu cần thêm/bớt thẻ thì sửa thẳng mảng này.
+
+---
+
+## ⭐ HANDOFF trước đó (2026-07-21) — Rebrand màu + đọc chữ + dọn dead code
+
+**Scope lúc đó** (chốt 2026-07-12, chi tiết ở Decisions Log): cv là website tĩnh đọc Google Sheet để hiển thị (About · Valuation · Airdrop). Bot research là dự án khác (`research_airdrop_bot`).
 
 **Trạng thái hiện tại sau session 21/07:**
 1. **Bảng màu thương hiệu đổi hẳn** — gradient chính `linear-gradient(45deg, #6155F5 0% → #34C759 100%)` (tím đậm → xanh lá, chéo dưới-trái lên trên-phải), dùng cho nút CTA (`Predict TGE FDV`, `Calculate`, `lang-btn.active`) + badge rank **S+/SS**. Rank tier còn lại: **S**=`#6155F5` (tím), **A**=`#0088FF` (xanh dương, KHÔNG nằm trong gradient — user giữ riêng), **B**=`#34C759` (xanh lá). Biến CSS: `--accent`/`--accent-gradient`/`--brand-1`/`--brand-2` ở đầu `:root`.
@@ -88,9 +104,9 @@ phải nội dung), vừa tránh icon camera thành ô đặc.
 ## Stack
 
 - **Static HTML** (`index.html`) — toàn bộ site (HTML + CSS + JS) trong 1 file, host trên **Cloudflare Pages**.
-- **KHÔNG có backend / Cloudflare Functions / secret key** — mọi data đọc từ nguồn public.
-- Nguồn data (đều public, keyless):
-  - **Google Sheets CSV** (gviz) — Valuation (tab DATA + tab Watchlist cho box "Watchlist theo narrative") + Airdrop Work (tab Work).
+- **Cloudflare Pages Functions** (`functions/api/`) — `wte.js` (đọc project public, không cần mật khẩu) + `private.js` (CRUD task cá nhân + public, cần `ADMIN_PASS`), cùng dùng KV binding `WORK`. Đây là phần backend DUY NHẤT trong site — không có secret nào khác, không smart contract.
+- Nguồn data còn lại vẫn public, keyless, đọc thẳng client-side:
+  - **Google Sheets CSV** (gviz) — chỉ còn Valuation dùng (tab DATA + tab Watchlist cho box "Watchlist theo narrative"). Airdrop Work **không còn đọc Sheet** từ 2026-08-09, xem HANDOFF mới nhất.
   - **CoinGecko** free API — giá / ATH (fetch live trong `index.html`).
   - **Google Translate** (gtx) — dịch VI→EN cho Airdrop.
 - **Google Apps Script** (nằm trong Sheet, chạy daily 2h) — sync ATH + current price vào DATA tab.
@@ -213,10 +229,12 @@ Logic hiện tại (2026-06-11):
 
 ## WTE Cards (Airdrop tab)
 
-- Logo: lấy từ `unavatar.io/twitter/{handle}` — extract handle từ cột Twitter
-- Rank badge (SS/S/A/B) nằm góc phải card, đứng sau Type
+- **Data source (từ 2026-08-09): Cloudflare KV**, không còn Google Sheet. `fetchWTE()` gọi `GET /api/wte` (public, không mật khẩu) → trả JSON project có `visibility: 'public'`. Admin thêm/sửa/xoá (kể cả card public) qua popup, đi qua `POST /api/private` (cần `ADMIN_PASS`).
+- Logo: lấy từ `unavatar.io/twitter/{handle}` — extract handle từ field `twitter`
+- Rank badge (SS/S/A/B) nằm góc phải card, đứng sau Type — giờ chọn tay qua dropdown trong popup admin, không còn đọc cột Sheet
 - Colors (2026-07-21): SS/S+=gradient `#6155F5→#34C759`, S=#6155F5 (tím), A=#0088FF (xanh dương), B=#34C759 (xanh lá)
 - CSS classes dùng rank trực tiếp: `.wte-card--SS`, `.rank-SS` — valid vì SS là alphanumeric
+- `WTE_TYPES` (14 thẻ phân loại, trong `index.html`) hardcode tay — trước khớp dropdown Sheet, giờ Sheet không còn là nguồn nên đây là nơi duy nhất cần sửa nếu muốn thêm/bớt thẻ
 
 ---
 
@@ -264,6 +282,8 @@ Logic hiện tại (2026-06-11):
 
 ```
 index.html            — toàn bộ website (HTML + CSS + JS)
+functions/api/wte.js      — GET public: đọc project Work to Earn từ KV (không cần mật khẩu)
+functions/api/private.js  — POST cần ADMIN_PASS: CRUD task cá nhân + public (list/add/update/delete)
 _redirects            — Cloudflare Pages SPA fallback (/* → /index.html)
 icon.png              — favicon + icon iPhone home screen (mèo-kính, mắt cam)
 pfp.png               — avatar Hieu Nguyen (About me)
@@ -277,7 +297,7 @@ arrow.svg             — KHÔNG còn code nào dùng từ 2026-08-06 (icon mũi
 highlights.txt + highlights/  — ảnh highlights ở About me (mỗi dòng "tên-ảnh | caption", thứ tự dòng = thứ tự hiển thị)
 .gitignore            — .env, node_modules, .claude/, .dev.vars, .wrangler/
 ```
-> Đã xóa khỏi repo: `functions/`, `server.js`, `export-pdf.js`, `package.json`, `.dev.vars`, toàn bộ file research/bot (archive tại `Desktop/cv-research-archive.md`).
+> Đã xóa khỏi repo: `server.js`, `export-pdf.js`, `package.json`, `.dev.vars`, toàn bộ file research/bot (archive tại `Desktop/cv-research-archive.md`). `functions/` đã QUAY LẠI repo từ 2026-07-31 (task cá nhân KV) — xem `functions/api/` ở trên.
 
 ---
 
@@ -309,6 +329,7 @@ qua server dev, đừng sửa `index.html`.)
 
 ## Decisions Log
 
+- 2026-08-09: **Airdrop → Work chuyển từ Google Sheet sang Cloudflare KV, gộp chung với task cá nhân** — reason: user thấy sửa data qua Google Sheet phiền, tần suất sửa thấp (thêm 1-2 dự án lâu lâu) nên không cần giữ UX-sửa-hàng-loạt của spreadsheet, đổi sang sửa trực tiếp qua popup admin trên site. Thêm `functions/api/wte.js` (GET public, không mật khẩu, lọc `visibility==='public'` từ KV) thay cho gviz CSV fetch cũ; `functions/api/private.js` nhận `rank`/`visibility` từ client thay vì khoá cứng `rank:'SS'`. Task cũ (trước 09/08) không có field `visibility` → client coi mọi task thiếu field này là `personal` (đúng hành vi gốc), tránh mất data khi không migrate ngược. Đã migrate 22 project thật từ Sheet vào KV production (`visibility:'public'`) bằng Cloudflare KV REST API trực tiếp (đọc token từ `ezwallet/.env.txt` — token account-level, không phải secret riêng của ezwallet), giữ nguyên 4 task cá nhân có sẵn (Injective/Kaito/Săn GA/Creatorpad). Nút sửa (⋮) trên card đổi điều kiện hiện từ "card cá nhân" sang "admin đã mở khoá" — admin giờ sửa được cả card public. Popup thêm/sửa task đổi cấu trúc theo yêu cầu user (xem HANDOFF mới nhất ở đầu file để biết chi tiết UI). **Verify:** `node --check` sạch cả 2 Function + JS inline; test qua `wrangler pages dev` local (KV + password thật) trước khi đụng production; sau deploy kiểm tra `curl https://0xhieu.xyz/api/wte` trả đúng 22 project, Playwright headless xác nhận khách không thấy nút ⋮, admin thấy đủ, `/api/private` vẫn 401 với mật khẩu sai.
 - 2026-08-07: **Nút camera chụp dashboard Valuation ra PNG** (cạnh trái toggle EN|VI) — chi tiết luật ở mục "Chụp ảnh dashboard" trên. **Chọn html2canvas ĐỂ TRONG REPO thay vì CDN** (user chốt, có cân nhắc 3 phương án): cv đang không nạp một script ngoài nào, dùng CDN sẽ phá vỡ điều đó — phụ thuộc mạng bên thứ 3, CDN lỗi là nút chết, và khách bị lộ IP sang bên đó. Phương án `getDisplayMedia` (không cần thư viện, ảnh render thật nên đẹp 100%) bị loại vì mỗi lần bấm trình duyệt bắt chọn màn hình/tab thủ công và không chạy trên mobile. Đổi lại repo gánh thêm ~195KB lib, bù bằng cách **lazy-load**: chỉ nạp khi bấm lần đầu nên người vào đọc không phải tải. Khung ảnh = dashboard **đúng như đang thấy** (bảng giữ nguyên số dòng đang hiện, không bung full ~80 token vì ảnh sẽ quá dài để đăng mạng xã hội). Kèm theo: gom camera + EN|VI vào `.val-head-ctrl` (bỏ inline style `position:absolute` cũ trên `.lang-toggle`, vẫn đúng pattern control-absolute-phải); thêm map `VAL_TITLES` cho `title`/`aria-label` của các nút chỉ-có-icon — trước đó 3 icon "i" hardcode "Giải thích" tiếng Việt kể cả khi đang ở mode EN. **Verify:** headless Edge trên route thật `/valuation` — nút hiện đúng cạnh trái EN|VI, cao bằng toggle; chặn `toBlob` để dán canvas kết quả ra trang rồi chụp lại, ảnh ra sạch: mất nút EN|VI/camera/icon "i" đúng ý đồ, gradient nút CTA đúng màu, mũi tên Watchlist thành `→` giữ đúng sáng/mờ, không dính scrollbar.
 - 2026-08-06: **Vùng bấm của icon nhỏ — LUẬT: icon tô bằng CSS `mask` thì mask phải nằm ở `::before`, KHÔNG đặt trên chính nút** — user báo "icon hơi khó click". Root cause KHÔNG phải icon nhỏ (14px) mà là **Chromium hit-test theo vùng mask**: để `mask` trên nút thì chỉ mấy pixel của hình tam giác/chữ `i` mới ăn click, bấm vào ô 14px cũng trượt. Đo bằng `document.elementFromPoint` trên DOM thật: bản cũ lệch 5px khỏi tâm đã `miss`. **Cách sửa (giữ nguyên kích thước icon nhìn thấy, layout không đổi):** nút bỏ mask, cho `align-self: stretch` (cao trọn hàng, không tự chế số px) + `width` rộng ra + `margin` âm bù lại; mask chuyển xuống `::before` với `inset` đúng ô 14px ở giữa. Hover `translateX(3px)` cũng phải chuyển sang `::before`. Kết quả đo lại: tam giác **38×27**, icon `i` **30×27**, bấm lệch tới góc vẫn `HIT`. Mấy nút CHỮ (✕ đóng modal, ✕ tính lại, ⋮ sửa task) không dính mask nên chỉ cần phủ thêm `::after` trong suốt `inset: -8px -12px` (nút ✕ 24px → vùng bấm ~48×40, đo `HIT` ở lệch 18px ngang/14px dọc). **Đừng dùng padding** để nới: mask `center / contain` sẽ kéo icon phình to theo. Verify thêm: bấm icon `i` vẫn mở popup, bấm tam giác vẫn nhảy `/airdrop` + tìm thấy `#wte-card-tempo`.
 - 2026-08-06: **Thêm box "Watchlist theo narrative" ở Valuation, XOÁ HẲN sub-tab Airdrop/Watchlist** — reason: xem watchlist theo narrative (narrative nào đang hot thì soi dự án nào nằm trong đó) hữu ích hơn một danh sách card rời bên Airdrop. Box dùng đúng khung `vc-q1`/`vc-q234` của Danger Zone/Trending Narratives nên tự thẳng hàng; cấu trúc + thứ tự sắp xếp xem mục riêng ở trên. Hai lựa chọn user chốt trong lúc làm: (1) narrative không có trong bảng xếp hạng vẫn **hiện, xếp cuối**, nhóm nào có dự án gọi vốn to nhất lên trước, dự án chưa điền narrative xuống cuối cùng (không ẩn ai — cùng tinh thần với quyết định 27/07 bỏ filter của Trending Narratives); (2) bên Airdrop **giữ chữ "Work" làm nhãn** thay vì bỏ trống hàng. Đổi kèm theo: `narrativeRanking()` tách khỏi `renderNarratives()` để 2 box dùng chung 1 nguồn thứ tự; cột E "Thing to do yet?" của Sheet Watchlist **hết tác dụng** (tam giác giờ do "có card bên Work hay không" quyết định) nên bỏ `hasWork`; `translateWL()`/`fmtRaise()`/`renderWL()`/`wlGoWork()`/`showArdTab()` + CSS `.wl-card/.wl-logo/.wl-name/.wl-arrow/.wl-meta/.wl-dot/.wl-empty` xoá theo vì không còn ai gọi (`arrow.svg` thành file mồ côi, giữ lại). **Verify:** `node --check` JS sạch; headless Edge trên route thật `/valuation` (desktop 1100px + mobile 420px) thấy box thẳng hàng với 3 box kia và xếp 1 cột đúng trên mobile; `--dump-dom` đếm đủ **65 hàng**, thứ tự đúng (Stablechain → Layer-1 → Infra → AI → … → Game/Others → nhóm chưa điền narrative; trong Stablechain: Tempo $500M > Arc $222M > KAST $90M > STRATO $52M); probe click tam giác Tempo trong DOM thật → `airdrop-view` hiện, URL `/airdrop`, tìm thấy `#wte-card-tempo`, thanh lọc rank hiện; bản EN ra "Watchlist by narrative" và giữ nguyên narrative gốc.
