@@ -32,12 +32,19 @@ const itemList = v => (Array.isArray(v) ? v : [])
   .map(it => ({ text: clean(it?.text, 500), link: cleanLink(it?.link) }))
   .filter(it => it.text);
 
-// Làm sạch các ô người dùng nhập — dùng chung cho add và update (id + rank không lấy từ client)
+// rank/visibility chỉ nhận đúng giá trị hợp lệ, sai hoặc thiếu thì rơi về mặc định an toàn
+const RANKS = ['SS', 'S', 'A', 'B'];
+const cleanRank = v => RANKS.includes(v) ? v : 'SS';
+const cleanVisibility = v => v === 'public' ? 'public' : 'personal';
+
+// Làm sạch các ô người dùng nhập — dùng chung cho add và update (chỉ id là không lấy từ client)
 const sanitize = t => ({
   name:       clean(t.name, 120) || 'Không tên',
   twitter:    cleanLink(t.twitter),
   potential:  Math.max(0, Math.min(3, parseInt(t.potential, 10) || 0)),
   type:       clean(t.type, 60),
+  rank:       cleanRank(t.rank),
+  visibility: cleanVisibility(t.visibility),
   getStarted: itemList(t.getStarted),
   daily:      itemList(t.daily),
   weekly:     itemList(t.weekly),
@@ -67,8 +74,7 @@ export async function onRequestPost({ request, env }) {
   if (body.action === 'add') {
     const tasks = await readTasks(kv);
     tasks.push({
-      id:   crypto.randomUUID(),
-      rank: 'SS',                                          // task cá nhân luôn là S+
+      id: crypto.randomUUID(),
       ...sanitize(body.task || {}),
     });
     await writeTasks(kv, tasks);
@@ -80,7 +86,7 @@ export async function onRequestPost({ request, env }) {
     const tasks = await readTasks(kv);
     const i = tasks.findIndex(t => t.id === id);
     if (i < 0) return json({ ok: false, error: 'not-found' }, 404);
-    tasks[i] = { ...tasks[i], ...sanitize(body.task || {}) };   // giữ nguyên id + rank
+    tasks[i] = { ...tasks[i], ...sanitize(body.task || {}) };   // chỉ giữ nguyên id
     await writeTasks(kv, tasks);
     return json({ ok: true, tasks });
   }

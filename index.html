@@ -993,6 +993,8 @@
     }
     #ptask-form::-webkit-scrollbar { display: none; }
     .ptask-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    /* Chỉ tiêu đề form thêm/sửa task là căn giữa, các popup khác giữ căn trái mặc định */
+    #ptask-modal .wl-modal-title { text-align: center; }
 
     /* Get started / Daily / Weekly — mỗi mục nhiều dòng (việc + link), nút + thêm dòng */
     .pt-group { display: flex; flex-direction: column; gap: 4px; }
@@ -1005,8 +1007,6 @@
       font-size: 12px; line-height: 1; cursor: pointer; transition: color 0.15s;
     }
     .pt-item-del:hover { color: var(--text); }
-    /* còn đúng 1 dòng thì không cho xoá (form luôn giữ ít nhất 1 dòng trống) */
-    .pt-item:only-child .pt-item-del { visibility: hidden; }
     .pt-row-add {
       align-self: flex-start; width: 24px; height: 24px; padding: 0;
       border: 1px dashed var(--border); border-radius: 6px;
@@ -1109,7 +1109,7 @@
             <div class="tl-body">
               <div class="tl-role">Entered Crypto Markets</div>
               <ul class="tl-bullets">
-                <li>Built a foundation in technical analysis, on-chain analysis, and market research before focusing on spot investing and independent decision-making.</li>
+                <li>Built a foundation in technical analysis, on-chain analysis, and market research before focusing on spot investing through a self-developed approach.</li>
               </ul>
             </div>
           </div>
@@ -1363,16 +1363,18 @@
 
   <!-- Admin: form thêm/sửa task cá nhân (tất cả các ô đều optional) -->
   <div class="wl-modal-backdrop" id="ptask-modal">
-    <div class="wl-modal">
+    <div class="wl-modal wl-modal--wide">
       <div class="wl-modal-title" id="pt-title">Thêm task cá nhân</div>
       <div id="ptask-form">
-        <div class="calc-field">
-          <label>Tên dự án / tiêu đề</label>
-          <input type="text" id="pt-name" placeholder="vd: Viết bài cho 0xhieu.xyz" />
-        </div>
-        <div class="calc-field">
-          <label>Twitter</label>
-          <input type="text" id="pt-twitter" placeholder="https://x.com/..." />
+        <div class="ptask-row">
+          <div class="calc-field">
+            <label>Tiêu đề (tên dự án)</label>
+            <input type="text" id="pt-name" placeholder="Ví dụ: CreatorPad" />
+          </div>
+          <div class="calc-field">
+            <label>Twitter</label>
+            <input type="text" id="pt-twitter" placeholder="Ví dụ: x.com/binance" />
+          </div>
         </div>
         <div class="ptask-row">
           <div class="calc-field">
@@ -1389,9 +1391,24 @@
             <select id="pt-type"></select>
           </div>
         </div>
-        <div class="calc-field">
-          <label>Rank</label>
-          <input type="text" id="pt-rank" value="S+" disabled />
+        <div class="ptask-row">
+          <div class="calc-field">
+            <label>Rank</label>
+            <select id="pt-rank">
+              <option value="">—</option>
+              <option value="SS">S+</option>
+              <option value="S">S</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+            </select>
+          </div>
+          <div class="calc-field">
+            <label>Hiển thị</label>
+            <select id="pt-visibility">
+              <option value="personal">Personal</option>
+              <option value="public">Public</option>
+            </select>
+          </div>
         </div>
         <div class="pt-group">
           <label>Get started</label>
@@ -2363,8 +2380,9 @@ ${line}
     // AIRDROP — Work to Earn
     // ══════════════════════════════════════════════════
 
+    // WTE_SHEET_ID vẫn dùng cho Watchlist (box "Watchlist theo narrative" bên Valuation) —
+    // riêng data Work to Earn giờ đọc từ Cloudflare KV qua /api/wte, không còn qua Sheet.
     const WTE_SHEET_ID = '1m8_nwbP_Apw43Y8iNxOoGFYy8YA-OpchGnVRfTMBUAo';
-    const WTE_URL_VI = `https://docs.google.com/spreadsheets/d/${WTE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Work`;
 
     let wteData   = { VI: [], EN: [] };
     let wteLang   = 'VI';
@@ -2395,76 +2413,14 @@ ${line}
       return rows;
     }
 
-    // ── Parse CSV into project list ───────────────────
-    // Tiềm năng (cột C): đếm dấu "*" hoặc "★" (*, **, ***), hoặc số "1-3" → trả về 0-3
-    function parseStars(raw) {
-      const s = (raw || '').trim();
-      const stars = (s.match(/[★*]/g) || []).length;
-      if (stars) return Math.min(stars, 3);
-      const d = s.match(/[1-3]/);
-      return d ? parseInt(d[0], 10) : 0;
-    }
-
-    function parseWTE(csvText) {
-      const rows = parseCSVFull(csvText);   // properly handles multi-line cells
-      const projects = [];
-      let current = null;
-
-      for (const r of rows) {
-        const projectName = r[0] ? r[0].trim() : '';
-
-        // Blank row = delimiter between projects
-        if (r.every(c => !c.trim())) {
-          current = null;
-          continue;
-        }
-
-        // Bỏ dòng header (col A = "Tên dự án"/"Name"/"Project")
-        if (/^(t[eê]n|name|project|d[uự]\s*[aá]n)/i.test(projectName)) { current = null; continue; }
-
-        // New project row: col A has a value
-        if (projectName) {
-          current = {
-            name:       projectName,
-            twitter:    (r[1] || '').trim(),
-            potential:  parseStars(r[2]),
-            type:       (r[3] || '').trim(),
-            rank:       (r[4] || '').trim().toUpperCase().replace(/^S\+$/, 'SS'),
-            getStarted: [],
-            daily:      [],
-            weekly:     [],
-          };
-          projects.push(current);
-        }
-
-        // Cột: A name · B twitter · C tiềm năng(1-3 sao) · D phân loại · E rank ·
-        // F/G getStarted+link · H/I daily+link · J/K weekly+link
-        if (!current) continue;
-        const task = (r[5] || '').trim();
-        const taskLink = (r[6] || '').trim();
-        const daily = (r[7] || '').trim();
-        const dailyLink = (r[8] || '').trim();
-        const weekly = (r[9] || '').trim();
-        const weeklyLink = (r[10] || '').trim();
-        if (task)   current.getStarted.push({ text: task,   link: taskLink });
-        if (daily)  current.daily.push({      text: daily,  link: dailyLink });
-        if (weekly) current.weekly.push({     text: weekly, link: weeklyLink });
-      }
-
-      // Sort: SS → S → A → B → others
-      const rankOrder = { SS: 0, S: 1, A: 2, B: 3 };
-      projects.sort((a, b) => (rankOrder[a.rank] ?? 9) - (rankOrder[b.rank] ?? 9));
-
-      return projects;
-    }
-
-    // ── Fetch VI sheet ────────────────────────────────
+    // ── Fetch project công khai từ KV (qua /api/wte, không cần mật khẩu) ─
     async function fetchWTE() {
       if (wteLoaded.VI) return;
       try {
-        const res  = await fetch(WTE_URL_VI);
-        const text = await res.text();
-        wteData.VI = parseWTE(text);
+        const res  = await fetch('/api/wte');
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.error || 'fetch failed');
+        wteData.VI = data.projects || [];
         wteLoaded.VI = true;
         wteError = false;
       } catch (err) {
@@ -2574,7 +2530,7 @@ ${line}
               ${potentialHtml}
               ${p.type ? `<span class="wte-type">${p.type}</span>` : ''}
               <span class="wte-rank rank-${p.rank}">${{SS:'S+',S:'S',A:'A',B:'B'}[p.rank]||p.rank}</span>
-              ${personal ? `<button class="wte-opt" data-id="${p.id}" title="Sửa task">⋮</button>` : ''}
+              ${adminUnlocked ? `<button class="wte-opt" data-id="${p.id}" title="Sửa task">⋮</button>` : ''}
             </div>
           </div>
           ${section('Get Started', p.getStarted, 'getStarted')}
@@ -2652,6 +2608,26 @@ ${line}
 
     function showMsg(el, text) { el.textContent = text; el.style.display = ''; }
 
+    // /api/private trả về TOÀN BỘ task (cá nhân + public) — tách ra 2 phần hiển thị:
+    // personalTasks (chỉ admin thấy) và wteData.VI (gộp chung với card public, giống hệt
+    // trước đây đọc từ Google Sheet). Đổi wteData.VI thì bản dịch EN cũ không còn đúng nữa.
+    function applyTaskList(allTasks) {
+      const tasks = allTasks || [];
+      // Task cũ (thêm trước khi có field visibility) không có field này — coi như personal,
+      // đúng với hành vi gốc của chúng (trước đây mọi task trong KV đều là cá nhân).
+      personalTasks = tasks.filter(t => t.visibility !== 'public');
+      wteData.VI    = tasks.filter(t => t.visibility === 'public');
+      wteLoaded.VI  = true;
+      wteData.EN    = [];
+      wteLoaded.EN  = false;
+    }
+
+    async function refreshTasksView(allTasks) {
+      applyTaskList(allTasks);
+      if (wteLang === 'EN') await translateToEN();
+      renderWTE();
+    }
+
     // ── Mở khoá ───────────────────────────────────────
     async function tryUnlock() {
       const pass = adminInput.value.trim();
@@ -2666,10 +2642,9 @@ ${line}
         return;
       }
       sessionStorage.setItem('cvAdminPass', adminPass);
-      personalTasks = r.tasks || [];
       setAdminUnlocked(true);
       adminModal.classList.remove('open');
-      renderWTE();
+      await refreshTasksView(r.tasks);
     }
 
     adminBtn.addEventListener('click', () => {
@@ -2730,6 +2705,8 @@ ${line}
       $('pt-twitter').value   = task?.twitter || '';
       $('pt-potential').value = task?.potential ? String(task.potential) : '';
       $('pt-type').value      = task?.type || '';
+      $('pt-rank').value       = task?.rank || '';
+      $('pt-visibility').value = task?.visibility || 'personal';
       ptFillRows('gs',     task?.getStarted);
       ptFillRows('daily',  task?.daily);
       ptFillRows('weekly', task?.weekly);
@@ -2745,11 +2722,14 @@ ${line}
     }
 
     async function submitPtask() {
+      if (!$('pt-rank').value) { showMsg(ptError, 'Chọn rank trước khi lưu'); return; }
       const task = {
         name:       $('pt-name').value,
         twitter:    $('pt-twitter').value,
         potential:  $('pt-potential').value,
         type:       $('pt-type').value,
+        rank:       $('pt-rank').value,
+        visibility: $('pt-visibility').value,
         getStarted: ptItems('gs'),
         daily:      ptItems('daily'),
         weekly:     ptItems('weekly'),
@@ -2760,19 +2740,18 @@ ${line}
         : await apiPrivate('add', { task });
       $('pt-add').disabled = false;
       if (!r.ok) { showMsg(ptError, r.error || ('Không lưu được (' + r.status + ')')); return; }
-      personalTasks = r.tasks || [];
       ptaskModal.classList.remove('open');
-      renderWTE();
+      await refreshTasksView(r.tasks);
     }
 
     $('pt-add').addEventListener('click', submitPtask);
     $('pt-cancel').addEventListener('click', () => ptaskModal.classList.remove('open'));
 
-    // ── Bấm ⋮ trên card → mở form sửa ─────────────────
+    // ── Bấm ⋮ trên card (cá nhân hoặc public) → mở form sửa ─
     document.getElementById('wte-cards').addEventListener('click', e => {
       const btn = e.target.closest('.wte-opt');
       if (!btn) return;
-      const task = personalTasks.find(t => t.id === btn.dataset.id);
+      const task = [...personalTasks, ...wteData.VI].find(t => t.id === btn.dataset.id);
       if (task) openPtaskForm(task);
     });
 
@@ -2793,7 +2772,7 @@ ${line}
       pendingDelId = null;
       pdelModal.classList.remove('open');
       ptaskModal.classList.remove('open');       // xoá xong thì đóng luôn form sửa
-      if (r.ok) { personalTasks = r.tasks || []; renderWTE(); }
+      if (r.ok) await refreshTasksView(r.tasks);
     });
 
     // Bấm ra ngoài popup = đóng. TRỪ form thêm task (ptaskModal) — bấm nhầm ra ngoài
@@ -2806,7 +2785,7 @@ ${line}
     (async () => {
       if (!adminPass) return;
       const r = await apiPrivate('list');
-      if (r.ok) { personalTasks = r.tasks || []; setAdminUnlocked(true); renderWTE(); }
+      if (r.ok) { setAdminUnlocked(true); await refreshTasksView(r.tasks); }
       else { adminPass = ''; sessionStorage.removeItem('cvAdminPass'); }
     })();
 
