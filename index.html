@@ -2384,6 +2384,20 @@ ${line}
     // riêng data Work to Earn giờ đọc từ Cloudflare KV qua /api/wte, không còn qua Sheet.
     const WTE_SHEET_ID = '1m8_nwbP_Apw43Y8iNxOoGFYy8YA-OpchGnVRfTMBUAo';
 
+    // ── QUY ĐỊNH: WTE_TYPES là NGUỒN DUY NHẤT cho thẻ phân loại ─────────
+    // Thứ tự trong mảng = thứ tự ưu tiên hiển thị. Dùng chung 2 chỗ:
+    //   1. Dropdown "Phân loại" trong form admin (thêm/sửa task)
+    //   2. Thứ tự card trong mỗi nhóm rank (typeOrder() bên dưới)
+    // Muốn đổi thứ tự ưu tiên hay thêm/bớt thẻ → sửa DUY NHẤT mảng này.
+    const WTE_TYPES = ['Work-to-Earn','Stablechain','Trading','Layer-1','Infra','AI','Layer-2','Prediction',
+                       'Bitcoin','Payment','DeFi','Identity','Privacy','Game','Others'];
+
+    // Project chưa điền phân loại (hoặc thẻ lạ) xếp cuối nhóm.
+    const typeOrder = p => {
+      const i = WTE_TYPES.indexOf(p.type);
+      return i === -1 ? WTE_TYPES.length : i;
+    };
+
     let wteData   = { VI: [], EN: [] };
     let wteLang   = 'VI';
     let wteLoaded = { VI: false, EN: false };
@@ -2539,8 +2553,11 @@ ${line}
         </div>`;
       };
 
+      // Trong mỗi nhóm rank: xếp theo thứ tự thẻ phân loại của WTE_TYPES.
+      // Cùng thẻ thì giữ nguyên thứ tự trong KV (sort của JS là stable).
       const groups = { SS: [], S: [], A: [], B: [] };
       projects.forEach(p => { if (groups[p.rank]) groups[p.rank].push(p); });
+      Object.values(groups).forEach(g => g.sort((a, b) => typeOrder(a) - typeOrder(b)));
 
       // Nhóm "Cá nhân" nằm TRÊN S+. Id cố tình KHÔNG bắt đầu bằng "wte-rank-"
       // để scroll-spy của thanh lọc S+/S/A/B không nhận nhầm nhóm này.
@@ -2563,10 +2580,6 @@ ${line}
     // Mật khẩu kiểm tra ở server (functions/api/private.js), không nằm trong file này.
     // ══════════════════════════════════════════════════
 
-    // 15 thẻ phân loại (Work-to-Earn ưu tiên cao nhất, đứng trước Stablechain)
-    const WTE_TYPES = ['Work-to-Earn','Stablechain','Trading','Layer-1','Infra','AI','Layer-2','Prediction',
-                       'Bitcoin','Payment','DeFi','Identity','Privacy','Game','Others'];
-
     let adminPass     = sessionStorage.getItem('cvAdminPass') || '';
     let adminUnlocked = false;
     let personalTasks = [];
@@ -2582,7 +2595,7 @@ ${line}
     const ptError    = $('pt-error');
     const pdelModal  = $('pdel-modal');
 
-    // Đổ 14 thẻ vào dropdown Phân loại
+    // Đổ thẻ phân loại vào dropdown (nguồn: WTE_TYPES, khai ở mục Work to Earn)
     $('pt-type').innerHTML = '<option value="">—</option>' +
       WTE_TYPES.map(t => `<option value="${t}">${t}</option>`).join('');
 
