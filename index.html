@@ -2421,13 +2421,16 @@ ${line}
     //   A           xanh dương #0088FF — kèo 1K
     //   B           xanh lá #34C759 — kèo xxx
     //   C           trắng (viền xám) — kèo rác
-    // Thêm/đổi nhóm → sửa 4 hằng số dưới đây, rồi thêm class `.rank-*` +
+    // Thêm/đổi nhóm → sửa 3 hằng số dưới đây, rồi thêm class `.rank-*` +
     // `.wte-card--*` trong CSS và nút cùng `data-rank` trong #rank-filter.
     const WTE_INCOME_TYPE = 'Work-to-Earn';
     const WTE_GROUPS      = ['INCOME','S','A','B','C'];
     const WTE_RANKS       = WTE_GROUPS.filter(g => g !== 'INCOME'); // rank chọn tay được trong form admin
     const RANK_LABEL      = { INCOME: '$', S: 'S', A: 'A', B: 'B', C: 'C' };
-    const GROUP_LABEL     = { INCOME: 'Income' };   // nhóm không có nhãn thì không in dòng tiêu đề
+
+    // Nhãn tiêu đề nhóm — SUY RA từ RANK_LABEL, không khai lại danh sách thứ 2.
+    // INCOME có tên riêng vì nó không phải rank; còn lại là "Rank <chữ badge>".
+    const groupLabel = r => (r === 'INCOME' ? 'Income' : `Rank ${RANK_LABEL[r]}`);
 
     // Rank "SS" (S+) của thang cũ đọc thành S, để project trong KV chưa sửa
     // tay vẫn hiện đúng chỗ thay vì rơi khỏi mọi nhóm.
@@ -2610,7 +2613,7 @@ ${line}
       container.innerHTML = personalHtml + WTE_GROUPS
         .filter(r => groups[r].length)
         .map(r => `<div id="wte-rank-${r}" class="wte-group">
-             ${GROUP_LABEL[r] ? `<div class="wte-group-label">${GROUP_LABEL[r]}</div>` : ''}
+             <div class="wte-group-label">${groupLabel(r)}</div>
              <div class="wte-rank-group wte-rank-group--${r}">${groups[r].map(p => cardHtml(p)).join('')}</div>
            </div>`)
         .join('');
