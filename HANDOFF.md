@@ -1,6 +1,6 @@
 # HANDOFF — CV / Portfolio (0xhieu.xyz)
 
-**Date:** 2026-08-09  
+**Date:** 2026-08-12  
 **Repo:** https://github.com/KattyFury/cv  
 **Live:** Cloudflare Pages, project `0xhieu-xyz` (git-integration auto-deploy từ `main` — **chạy bình thường**, đã kiểm chứng 2026-08-01)  
 **Local dev:** site tĩnh — mở thẳng `index.html`, hoặc `python -m http.server` bất kỳ port nào (route `/valuation` cần SPA fallback về `index.html` giống `_redirects`)  
@@ -8,7 +8,20 @@
 
 ---
 
-## ⭐ HANDOFF mới nhất (2026-08-09) — Work to Earn chuyển hẳn sang Cloudflare KV
+## ⭐ HANDOFF mới nhất (2026-08-12) — Fix rank C bị server chặn ngầm + đổi nhãn "Work" → "Works"
+
+**Bug:** user báo không thấy dự án nào ở Rank C, dù thang rank Work to Earn đã đổi sang `$ · S · A · B · C` đúng hôm nay (chi tiết ở Decisions Log). Root cause: đổi thang chỉ sửa phía client (`WTE_RANKS` trong `index.html`) — `functions/api/private.js` vẫn giữ whitelist rank cũ `['SS','S','A','B']` từ session 09/08, nên mỗi lần admin chọn `C` trong popup và lưu, server không nhận `'C'` hợp lệ → âm thầm ép về `'SS'`, không báo lỗi gì. Verify bằng `curl /api/wte` production trước khi sửa: 24 project, rank chỉ có S/A/B/SS, đúng 0 project C.
+
+**Đã sửa:**
+1. `functions/api/private.js` — `RANKS` đổi thành `['S','A','B','C']`, mặc định khi rank sai/thiếu đổi từ `'SS'` (không còn tồn tại trong thang mới) sang `'C'`.
+2. `index.html` — nhãn tĩnh Airdrop đổi "Work" → "Works" theo yêu cầu user.
+3. Verify: `node --check` sạch `private.js`; `new Function()` parse sạch script inline `index.html`. Commit `55d0725` đã push lên `main`, Cloudflare Pages auto-deploy.
+
+**Việc CHƯA làm:** nếu user từng cố chọn rank C cho project nào trước khi fix, project đó đang bị lưu nhầm thành `SS` → hiện nằm lộn ở nhóm S do `groupOf()` map `SS`→`S`. Cần vào popup admin kiểm tra + sửa lại rank đúng ý cho từng project — code không tự biết project nào từng bị ảnh hưởng.
+
+---
+
+## ⭐ HANDOFF trước đó (2026-08-09) — Work to Earn chuyển hẳn sang Cloudflare KV
 
 **Scope đổi so với 2026-07-12**: Airdrop → Work **không còn đọc Google Sheet nữa**. Toàn bộ project (trước là "Sheet public" + task cá nhân KV riêng từ 31/07) giờ nằm **chung 1 kho KV** (binding `WORK`, key `personal-tasks`), phân biệt bằng field `visibility: 'public' | 'personal'`. Lý do: user thấy sửa data qua Google Sheet phiền, tần suất sửa lại thấp (thêm 1-2 dự án lâu lâu) nên đổi database không mất gì, admin sửa trực tiếp qua popup trên site thay vì mở Sheet. Valuation vẫn đọc Google Sheet như cũ (DATA + tab Watchlist) — **không đổi**.
 
@@ -21,25 +34,6 @@
 6. Đã verify: khách thấy đúng 22 card, không thấy nút ⋮; admin thấy 22+4 card, nút ⋮ hiện đủ, sửa card public hiện đúng rank/visibility; dịch EN vẫn hoạt động cho card public; `/api/private` vẫn từ chối sai mật khẩu (401) trên site thật.
 
 **Việc CHƯA làm / cân nhắc sau:** Google Sheet "Work" giờ không còn code nào đọc — vẫn giữ nguyên trên Drive phòng cần đối chiếu, chưa xoá. `WTE_TYPES` (15 thẻ phân loại) hardcode trong `index.html` — nếu cần thêm/bớt thẻ hoặc đổi thứ tự ưu tiên thì sửa thẳng mảng này.
-
----
-
-## ⭐ HANDOFF trước đó (2026-07-21) — Rebrand màu + đọc chữ + dọn dead code
-
-**Scope lúc đó** (chốt 2026-07-12, chi tiết ở Decisions Log): cv là website tĩnh đọc Google Sheet để hiển thị (About · Valuation · Airdrop). Bot research là dự án khác (`research_airdrop_bot`).
-
-**Trạng thái hiện tại sau session 21/07:**
-1. **Bảng màu thương hiệu đổi hẳn** — gradient chính `linear-gradient(45deg, #6155F5 0% → #34C759 100%)` (tím đậm → xanh lá, chéo dưới-trái lên trên-phải), dùng cho nút CTA (`Predict TGE FDV`, `Calculate`, `lang-btn.active`) + badge rank **S+/SS**. Rank tier còn lại: **S**=`#6155F5` (tím), **A**=`#0088FF` (xanh dương, KHÔNG nằm trong gradient — user giữ riêng), **B**=`#34C759` (xanh lá). Biến CSS: `--accent`/`--accent-gradient`/`--brand-1`/`--brand-2` ở đầu `:root`.
-2. **Bảng màu trung tính đổi sang xám/đen/trắng thật** (bỏ hẳn tông kem/nâu ấm cũ) — `--white:#FFF`, `--text:#171717` (gần đen), `--sub:#525252` (chữ phụ, xám vừa-đậm), `--muted:#8A8A8A` (xám nhạt hơn), `--off`/`--border` cũng chuyển xám trung tính. Lý do: bản màu ấm cũ đọc khó, user phàn nàn "dark dark khó đọc".
-3. **About/Experience content viết lại toàn bộ** — tagline, cả 5 mốc Experience (2026/2025/2023-24/2022/Pre-2022) đổi wording theo bản user chốt. **Bỏ hẳn câu chuyện "học từ 1 OG 10 năm kinh nghiệm"** ở mốc 2022 (đồng bộ với việc bỏ highlight 2022B).
-4. **Highlights đổi hẳn sang naming theo năm Experience**: `<year><A/B/C...>.png` (nhiều ảnh cùng năm thì tăng chữ cái) thay vì số thứ tự 1-5 cũ. Hiện có: `2022A`, `2025A/B/C`, `2026A/B` (đã xoá `2022B` theo yêu cầu user — ảnh + caption "em trai ăn tối CZ" bị coi là khoe khoang không cần thiết). `2023-2024` chưa có ảnh, để trống có chủ đích (comment `#` trong `highlights.txt`).
-5. **Bảng Valuation — header giờ cũng nằm trong cơ chế căn khối** (trước đó chỉ áp cho data row): `th` dùng chung `span.ck` + `--ck1..--ck6`, JS đo bề rộng tính cả text header khi tìm giá trị dài nhất mỗi cột — tránh trường hợp tên cột dài hơn mọi giá trị thật mà không được tính.
-6. **Dead-code sweep session này**: xoá CSS orphan `.hero-desc` (tàn dư hero nhiều dòng cũ), `.stat-single` (định nghĩa cho Danger Zone nhưng cuối cùng dùng list riêng), `.ard-coming-soon`/`.ard-cs-icon`/`.ard-cs-text` (placeholder "Coming soon" cũ của Airdrop, giờ có nội dung thật); xoá JS orphan `fetchCoinGeckoData()` (~43 dòng, code fetch ATH/price client-side từ thời trước khi chuyển qua Google Apps Script sync) và `fmtPrice()` (duplicate cũ, bản đang dùng thật là `fmtTokenPrice()`).
-7. Nút "Predict TGE FDV" (`.predict-link`) đổi `font-weight: 700 → 500` — 2 comment cũ trong code tự mâu thuẫn nhau về weight "chuẩn" (1 nói 400, 1 nói 700/bold); chốt lại 500 cho khớp các nút CTA khác (`Calculate`, `lang-btn`, `nav-btn.active` đều 500).
-
-**Core files:** `index.html`, `_redirects`, `highlights.txt` + `highlights/`, `icon.png` (mèo-kính), `pfp.png`, `arrow.svg`, `CLAUDE.md`, `HANDOFF.md`.
-
-**`.env` / `.dev.vars`:** đã xoá 2026-07-21 (key bot research cũ, không code nào trong cv dùng). Đã xoá luôn `.claude/worktrees/` (3 worktree rác ~20MB) + 3 branch không còn dùng (`airdrop-role-safety`, `feature/airdrop-work-to-earn`, `claude/admiring-saha-abe3fb`, cả local lẫn remote) theo yêu cầu "dự án chỉ là dự án, không rác".
 
 ---
 
