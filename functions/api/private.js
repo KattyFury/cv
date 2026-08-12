@@ -33,8 +33,10 @@ const itemList = v => (Array.isArray(v) ? v : [])
   .filter(it => it.text);
 
 // rank/visibility chỉ nhận đúng giá trị hợp lệ, sai hoặc thiếu thì rơi về mặc định an toàn
-const RANKS = ['SS', 'S', 'A', 'B'];
-const cleanRank = v => RANKS.includes(v) ? v : 'SS';
+// LƯU Ý: khớp WTE_RANKS trong index.html (mục "AIRDROP — Work to Earn") — đổi thang rank
+// thì sửa cả 2 chỗ, không chỉ client.
+const RANKS = ['S', 'A', 'B', 'C'];
+const cleanRank = v => RANKS.includes(v) ? v : 'C';
 const cleanVisibility = v => v === 'public' ? 'public' : 'personal';
 
 // Làm sạch các ô người dùng nhập — dùng chung cho add và update (chỉ id là không lấy từ client)
