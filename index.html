@@ -733,22 +733,28 @@
       transition: border-color 0.15s, color 0.15s;
     }
     .lang-dd-btn:hover { border-color: var(--accent); color: var(--text); }
-    /* Rank filter màu theo tier */
-    #rf-ss.active { background: var(--accent-gradient); color: #fff; }
+    /* Rank filter màu theo tier — khớp 1-1 với .rank-* của badge trên card */
+    #rf-income.active { background: var(--accent-gradient); color: #fff; }
     #rf-s.active  { background: #6155F5; color: #fff; }
     #rf-a.active  { background: #0088FF; color: #fff; }
     #rf-b.active  { background: #34C759; color: #fff; }
+    #rf-c.active  { background: var(--white); color: var(--text); box-shadow: inset 0 0 0 1px var(--border); }
 
     /* Cards wrapper — mỗi rank group cách nhau 1 hàng */
     #wte-cards { display: flex; flex-direction: column; gap: var(--row); }
 
+    /* CẤU TRÚC CHUẨN 1 NHÓM (mọi nhóm giống nhau, kể cả "Cá nhân" của admin):
+       .wte-group[id] > .wte-group-label (tuỳ chọn) + .wte-rank-group (lưới card).
+       id nằm ở wrapper để scrollIntoView không cắt mất nhãn nhóm. */
+    .wte-group {
+      scroll-margin-top: calc(var(--row) * 2); /* chỉ navbar sticky = 2 hàng (subtab không sticky) */
+    }
     /* Mỗi rank group là 1 lưới 2 cột; card CÙNG rank cách nhau 0.5 hàng */
     .wte-rank-group {
       display: grid;
       grid-template-columns: 1fr;
       gap: calc(var(--row) * 0.5);
       margin-bottom: 0;
-      scroll-margin-top: calc(var(--row) * 2); /* chỉ navbar sticky = 2 hàng (subtab không sticky) */
     }
     @media (min-width: 768px) {
       .wte-rank-group { grid-template-columns: 1fr 1fr; }
@@ -759,11 +765,11 @@
       background: var(--white); border: 1px solid var(--border);
       border-radius: 14px; overflow: hidden;
     }
-    /* Rank-tinted backgrounds */
-    .wte-card--SS { background: var(--white); border-color: var(--border); }
-    .wte-card--S { background: var(--white); border-color: var(--border); }
-    .wte-card--A { background: var(--white); border-color: var(--border); }
-    .wte-card--B { background: var(--white); border-color: var(--border); }
+    /* Nền + viền card GIỐNG NHAU ở mọi rank — màu phân biệt nằm ở badge và
+       section label, không nằm ở nền card */
+    .wte-card--INCOME, .wte-card--S, .wte-card--A, .wte-card--B, .wte-card--C {
+      background: var(--white); border-color: var(--border);
+    }
 
     /* Card header */
     .wte-card-head {
@@ -786,10 +792,14 @@
       padding: 2px 8px; border-radius: 6px;
       flex-shrink: 0;
     }
-    .rank-SS { background: var(--accent-gradient); color: #fff; }
+    /* Thang màu badge (xem QUY ĐỊNH rank ở phần JS — WTE_GROUPS/RANK_LABEL).
+       C dùng viền bằng inset box-shadow, KHÔNG dùng border, để badge trắng
+       không bị lệch cao/rộng so với 4 badge kia. */
+    .rank-INCOME { background: var(--accent-gradient); color: #fff; }
     .rank-S { background: #6155F5; color: #fff; }
     .rank-A { background: #0088FF; color: #fff; }
     .rank-B { background: #34C759; color: #fff; }
+    .rank-C { background: var(--white); color: var(--text); box-shadow: inset 0 0 0 1px var(--border); }
 
     /* Tên dự án = TIÊU ĐỀ: bold, 13px (đồng bộ tiêu đề các box khác) */
     .wte-name {
@@ -797,9 +807,11 @@
       color: var(--text); text-decoration: none;
       flex: 1; min-width: 0;
     }
+    .wte-card--INCOME .wte-name:hover { color: var(--accent); }
     .wte-card--S .wte-name:hover { color: #6155F5; }
     .wte-card--A .wte-name:hover { color: #0088FF; }
     .wte-card--B .wte-name:hover { color: #34C759; }
+    .wte-card--C .wte-name:hover { color: var(--sub); }
 
     /* Narrative (Stablechain...) = yếu tố phụ: nhỏ, xám, regular (bỏ pill viền) */
     .wte-type {
@@ -820,10 +832,11 @@
 
 
     /* Section labels follow rank */
-    .wte-card--SS .wte-section-label { color: var(--accent); }
+    .wte-card--INCOME .wte-section-label { color: var(--accent); }
     .wte-card--S .wte-section-label { color: #6155F5; }
     .wte-card--A .wte-section-label { color: #0088FF; }
     .wte-card--B .wte-section-label { color: #34C759; }
+    .wte-card--C .wte-section-label { color: var(--sub); }
 
 
     /* Sections */
@@ -845,13 +858,15 @@
     .wte-section--daily .wte-task-text { color: var(--text); font-weight: 500; }
 
     /* Daily — xám nhạt chữ đen, border-left giữ màu rank */
-    .wte-card--SS .wte-section--daily { background: rgba(var(--accent-rgb),0.12); border-left-color: var(--accent); }
+    .wte-card--INCOME .wte-section--daily { background: rgba(var(--accent-rgb),0.12); border-left-color: var(--accent); }
     .wte-card--S .wte-section--daily { background: rgba(97,85,245,0.12);  border-left-color: #6155F5; }
     .wte-card--A .wte-section--daily { background: rgba(0,136,255,0.12); border-left-color: #0088FF; }
     .wte-card--B .wte-section--daily { background: rgba(52,199,89,0.12); border-left-color: #34C759; }
+    .wte-card--C .wte-section--daily { background: var(--off); border-left-color: var(--border); }
     .wte-card--S .wte-section--daily .wte-section-label { color: #6155F5; }
     .wte-card--A .wte-section--daily .wte-section-label { color: #0088FF; }
     .wte-card--B .wte-section--daily .wte-section-label { color: #34C759; }
+    .wte-card--C .wte-section--daily .wte-section-label { color: var(--sub); }
     .wte-tasks {
       list-style: none; margin: 0; padding: 0;
       display: flex; flex-direction: column; gap: 4px;
@@ -861,9 +876,11 @@
       font-size: 13px; color: var(--text); line-height: 1.5;   /* nội dung task: đen (chữ quan trọng) */
     }
     .wte-task-item::before { content: '•'; flex-shrink: 0; }
+    .wte-card--INCOME .wte-task-item::before { color: var(--accent); }
     .wte-card--S .wte-task-item::before { color: #6155F5; }
     .wte-card--A .wte-task-item::before { color: #0088FF; }
     .wte-card--B .wte-task-item::before { color: #34C759; }
+    .wte-card--C .wte-task-item::before { color: var(--muted); }
     .wte-task-row {
       display: flex; align-items: flex-start; gap: 8px;
       flex: 1; color: inherit; text-decoration: none;
@@ -1277,10 +1294,11 @@
   <!-- Rank filter floating bar (WTE only) -->
   <div id="rank-filter-float" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:50">
     <div class="lang-toggle" id="rank-filter" style="box-shadow:0 4px 20px rgba(0,0,0,0.15);backdrop-filter:blur(8px)">
-      <button class="lang-btn active" data-rank="SS" id="rf-ss">S+</button>
+      <button class="lang-btn active" data-rank="INCOME" id="rf-income" title="Income">$</button>
       <button class="lang-btn" data-rank="S"  id="rf-s">S</button>
       <button class="lang-btn" data-rank="A"  id="rf-a">A</button>
       <button class="lang-btn" data-rank="B"  id="rf-b">B</button>
+      <button class="lang-btn" data-rank="C"  id="rf-c">C</button>
     </div>
   </div>
 
@@ -1394,13 +1412,8 @@
         <div class="ptask-row">
           <div class="calc-field">
             <label>Rank</label>
-            <select id="pt-rank">
-              <option value="">—</option>
-              <option value="SS">S+</option>
-              <option value="S">S</option>
-              <option value="A">A</option>
-              <option value="B">B</option>
-            </select>
+            <!-- option đổ bằng JS từ WTE_RANKS — xem QUY ĐỊNH rank ở phần JS -->
+            <select id="pt-rank"></select>
           </div>
           <div class="calc-field">
             <label>Hiển thị</label>
@@ -1749,7 +1762,7 @@ ${line}
       [navCvBtn, navValBtn, navArdBtn].forEach(b => b.classList.remove('active'));
     }
 
-    // ── Rank filter S+/S/A/B → scroll to section ──────
+    // ── Rank filter $/S/A/B/C → scroll to section ──────
     // Rank filter: click → scroll, scroll → highlight
     function setActiveRankBtn(rank) {
       document.querySelectorAll('#rank-filter .lang-btn').forEach(b => {
@@ -2387,7 +2400,7 @@ ${line}
     // ── QUY ĐỊNH: WTE_TYPES là NGUỒN DUY NHẤT cho thẻ phân loại ─────────
     // Thứ tự trong mảng = thứ tự ưu tiên hiển thị. Dùng chung 2 chỗ:
     //   1. Dropdown "Phân loại" trong form admin (thêm/sửa task)
-    //   2. Thứ tự card trong mỗi nhóm rank (typeOrder() bên dưới)
+    //   2. Thứ tự card trong mỗi nhóm (typeOrder() bên dưới)
     // Muốn đổi thứ tự ưu tiên hay thêm/bớt thẻ → sửa DUY NHẤT mảng này.
     const WTE_TYPES = ['Work-to-Earn','Stablechain','Trading','Layer-1','Infra','AI','Layer-2','Prediction',
                        'Bitcoin','Payment','DeFi','Identity','Privacy','Game','Others'];
@@ -2396,6 +2409,31 @@ ${line}
     const typeOrder = p => {
       const i = WTE_TYPES.indexOf(p.type);
       return i === -1 ? WTE_TYPES.length : i;
+    };
+
+    // ── QUY ĐỊNH: thang rank của Work to Earn ───────────────────────────
+    // 5 nhóm, xếp từ trên xuống. MỌI thứ liên quan tới rank đọc từ đây:
+    //   $ (INCOME)  gradient thương hiệu — việc RA TIỀN ngắn hạn.
+    //               KHÔNG phải rank: nhóm này suy ra từ thẻ phân loại
+    //               WTE_INCOME_TYPE, bỏ qua rank lưu trong KV, và chỗ badge
+    //               rank hiện "$" thay cho chữ.
+    //   S           tím  #6155F5 — kèo 10K
+    //   A           xanh dương #0088FF — kèo 1K
+    //   B           xanh lá #34C759 — kèo xxx
+    //   C           trắng (viền xám) — kèo rác
+    // Thêm/đổi nhóm → sửa 4 hằng số dưới đây, rồi thêm class `.rank-*` +
+    // `.wte-card--*` trong CSS và nút cùng `data-rank` trong #rank-filter.
+    const WTE_INCOME_TYPE = 'Work-to-Earn';
+    const WTE_GROUPS      = ['INCOME','S','A','B','C'];
+    const WTE_RANKS       = WTE_GROUPS.filter(g => g !== 'INCOME'); // rank chọn tay được trong form admin
+    const RANK_LABEL      = { INCOME: '$', S: 'S', A: 'A', B: 'B', C: 'C' };
+    const GROUP_LABEL     = { INCOME: 'Income' };   // nhóm không có nhãn thì không in dòng tiêu đề
+
+    // Rank "SS" (S+) của thang cũ đọc thành S, để project trong KV chưa sửa
+    // tay vẫn hiện đúng chỗ thay vì rơi khỏi mọi nhóm.
+    const groupOf = p => {
+      if (p.type === WTE_INCOME_TYPE) return 'INCOME';
+      return p.rank === 'SS' ? 'S' : p.rank;
     };
 
     let wteData   = { VI: [], EN: [] };
@@ -2536,14 +2574,15 @@ ${line}
         const potentialHtml = p.potential > 0
           ? `<span class="wte-potential" title="${potentialLabel} ${p.potential}/3">${potentialLabel} <span class="wte-stars">${'★'.repeat(p.potential)}</span></span>`
           : '';
-        return `<div class="wte-card wte-card--${p.rank}" id="${cardId}">
+        const g = groupOf(p);
+        return `<div class="wte-card wte-card--${g}" id="${cardId}">
           <div class="wte-card-head">
             ${logoHtml}
             ${nameHtml}
             <div class="wte-card-meta">
               ${potentialHtml}
               ${p.type ? `<span class="wte-type">${p.type}</span>` : ''}
-              <span class="wte-rank rank-${p.rank}">${{SS:'S+',S:'S',A:'A',B:'B'}[p.rank]||p.rank}</span>
+              <span class="wte-rank rank-${g}">${RANK_LABEL[g] || g}</span>
               ${adminUnlocked ? `<button class="wte-opt" data-id="${p.id}" title="Sửa task">⋮</button>` : ''}
             </div>
           </div>
@@ -2553,24 +2592,27 @@ ${line}
         </div>`;
       };
 
-      // Trong mỗi nhóm rank: xếp theo thứ tự thẻ phân loại của WTE_TYPES.
+      // Trong mỗi nhóm: xếp theo thứ tự thẻ phân loại của WTE_TYPES.
       // Cùng thẻ thì giữ nguyên thứ tự trong KV (sort của JS là stable).
-      const groups = { SS: [], S: [], A: [], B: [] };
-      projects.forEach(p => { if (groups[p.rank]) groups[p.rank].push(p); });
+      const groups = Object.fromEntries(WTE_GROUPS.map(g => [g, []]));
+      projects.forEach(p => { const g = groupOf(p); if (groups[g]) groups[g].push(p); });
       Object.values(groups).forEach(g => g.sort((a, b) => typeOrder(a) - typeOrder(b)));
 
-      // Nhóm "Cá nhân" nằm TRÊN S+. Id cố tình KHÔNG bắt đầu bằng "wte-rank-"
-      // để scroll-spy của thanh lọc S+/S/A/B không nhận nhầm nhóm này.
+      // Nhóm "Cá nhân" nằm TRÊN cùng (trên cả nhóm $). Id cố tình KHÔNG bắt đầu bằng "wte-rank-"
+      // để scroll-spy của thanh lọc $/S/A/B/C không nhận nhầm nhóm này.
       const personalHtml = (adminUnlocked && personalTasks.length)
-        ? `<div id="wte-personal">
+        ? `<div id="wte-personal" class="wte-group">
              <div class="wte-group-label">${wteLang === 'EN' ? 'Personal' : 'Cá nhân'}</div>
-             <div class="wte-rank-group wte-rank-group--SS">${personalTasks.map(p => cardHtml(p, true)).join('')}</div>
+             <div class="wte-rank-group">${personalTasks.map(p => cardHtml(p, true)).join('')}</div>
            </div>`
         : '';
 
-      container.innerHTML = personalHtml + ['SS','S','A','B']
+      container.innerHTML = personalHtml + WTE_GROUPS
         .filter(r => groups[r].length)
-        .map(r => `<div id="wte-rank-${r}" class="wte-rank-group wte-rank-group--${r}">${groups[r].map(p => cardHtml(p)).join('')}</div>`)
+        .map(r => `<div id="wte-rank-${r}" class="wte-group">
+             ${GROUP_LABEL[r] ? `<div class="wte-group-label">${GROUP_LABEL[r]}</div>` : ''}
+             <div class="wte-rank-group wte-rank-group--${r}">${groups[r].map(p => cardHtml(p)).join('')}</div>
+           </div>`)
         .join('');
       observeRankSections();
     }
@@ -2595,9 +2637,12 @@ ${line}
     const ptError    = $('pt-error');
     const pdelModal  = $('pdel-modal');
 
-    // Đổ thẻ phân loại vào dropdown (nguồn: WTE_TYPES, khai ở mục Work to Earn)
+    // Đổ dropdown từ hằng số khai ở mục Work to Earn — KHÔNG hardcode option
+    // trong HTML, để form admin không bao giờ lệch với thang rank / thẻ đang dùng.
     $('pt-type').innerHTML = '<option value="">—</option>' +
       WTE_TYPES.map(t => `<option value="${t}">${t}</option>`).join('');
+    $('pt-rank').innerHTML = '<option value="">—</option>' +
+      WTE_RANKS.map(r => `<option value="${r}">${RANK_LABEL[r]}</option>`).join('');
 
     async function apiPrivate(action, extra = {}) {
       try {
