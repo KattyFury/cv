@@ -33,7 +33,7 @@ I'm a **Vietnamese vibecoder** — I have ideas, not a programming background. I
   - **Google Translate** (gtx) — dịch VI→EN cho tab Airdrop.
 - **Logic tính toán** (multiples, Market Condition, Predict FDV, sao tiềm năng...) nằm trong JS của `index.html`. **Data số liệu** nằm trong Google Sheet. Muốn đổi công thức → sửa `index.html`; muốn đổi số liệu dự án → sửa Sheet.
 - **Assets:** `icon.png` (favicon + iPhone icon), `pfp.png` (avatar), `arrow.svg`, `highlights/`.
-- **Local:** `D:\Files\Claude\cv` · **GitHub:** `KattyFury/cv`
+- **Local:** `D:\Files\Claude\0xhieu` · **GitHub:** `KattyFury/cv`
 
 > ⚠️ Nếu thấy mình cần một API key / backend / Cloudflare Function cho phần **công khai** của `cv` (About me / Valuation / Airdrop đọc từ Sheet) → **gần như chắc chắn là hiểu sai**. Phần công khai chỉ đọc data public. Backend duy nhất được phép tồn tại là `functions/api/private.js` cho task cá nhân.
 

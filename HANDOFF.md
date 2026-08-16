@@ -4,11 +4,23 @@
 **Repo:** https://github.com/KattyFury/cv  
 **Live:** Cloudflare Pages, project `0xhieu-xyz` (git-integration auto-deploy từ `main` — **chạy bình thường**, đã kiểm chứng 2026-08-01)  
 **Local dev:** site tĩnh — mở thẳng `index.html`, hoặc `python -m http.server` bất kỳ port nào (route `/valuation` cần SPA fallback về `index.html` giống `_redirects`)  
-**Local path:** `D:\Files\Claude\build_for_me\cv`
+**Local path:** `D:\Files\Claude\0xhieu` (đổi 2026-08-16; path cũ `build_for_me\cv` / `Claude\cv` không còn tồn tại)
 
 ---
 
-## ⭐ HANDOFF mới nhất (2026-08-12) — Fix rank C bị server chặn ngầm + đổi nhãn "Work" → "Works"
+## ⭐ HANDOFF mới nhất (2026-08-16) — Gọn lại bảng Valuation cho vừa mobile
+
+Tiêu đề cũ ("Tracking altcoins to read market conditions" / "Theo dõi altcoin để đọc tình hình thị trường") **dài quá, mobile mất chữ** → rút còn **"Tracking the market" / "Theo dõi thị trường"**. Header cột 3 bỏ chữ Date/Ngày, còn đúng **`TGE`** cho cả 2 ngôn ngữ (entry `tge-date-th` trong `VAL_HEAD_LABELS` giờ EN=VI, giữ lại trong bảng dịch cho đúng luật "mọi nhãn tĩnh phải khai báo").
+
+**Hậu tố vốn hoá trong cột Ticker: `(<$300M)`/`(>$300M)` → `S`/`L`** (class mới **`.td-cap`**: tím `--accent`, 10px, bold — KHÔNG dùng chung `.td-size` vì `.td-size` là xám-phụ, còn S/L là thông tin cần nổi). Ngưỡng không đổi (`vcFDV < 300e6`). **Chú giải S/L nằm ở box "Hệ số TGE gần đây"** (nhãn `tge-lowfdv-label`/`tge-highfdv-label` có kèm `<span class="td-cap">`) — đổi chữ ở 1 trong 2 chỗ thì phải đổi chỗ kia, nếu không S/L thành ký hiệu không ai hiểu.
+
+Popup bảng dài (`#tge-modal`) **clone thẳng thead/tbody của bảng inline** nên tự ăn theo, không có code riêng cần sửa. Verify bằng Chrome headless chụp thật 4 view (inline + popup × desktop 1280 / mobile 390) — cách làm: `node` server tạm có SPA fallback (route `/valuation` cần fallback về `index.html`, `python -m http.server` KHÔNG có nên sẽ 404).
+
+**Chưa làm (user duyệt bỏ qua):** ký tự nhân vẫn là `×` (user gõ `x` trong yêu cầu nhưng đây chỉ là cách gõ, không đổi).
+
+---
+
+## ⭐ HANDOFF trước đó (2026-08-12) — Fix rank C bị server chặn ngầm + đổi nhãn "Work" → "Works"
 
 **Bug:** user báo không thấy dự án nào ở Rank C, dù thang rank Work to Earn đã đổi sang `$ · S · A · B · C` đúng hôm nay (chi tiết ở Decisions Log). Root cause: đổi thang chỉ sửa phía client (`WTE_RANKS` trong `index.html`) — `functions/api/private.js` vẫn giữ whitelist rank cũ `['SS','S','A','B']` từ session 09/08, nên mỗi lần admin chọn `C` trong popup và lưu, server không nhận `'C'` hợp lệ → âm thầm ép về `'SS'`, không báo lỗi gì. Verify bằng `curl /api/wte` production trước khi sửa: 24 project, rank chỉ có S/A/B/SS, đúng 0 project C.
 
@@ -21,7 +33,7 @@
 
 ---
 
-## ⭐ HANDOFF trước đó (2026-08-09) — Work to Earn chuyển hẳn sang Cloudflare KV
+## ⭐ HANDOFF cũ hơn (2026-08-09) — Work to Earn chuyển hẳn sang Cloudflare KV
 
 **Scope đổi so với 2026-07-12**: Airdrop → Work **không còn đọc Google Sheet nữa**. Toàn bộ project (trước là "Sheet public" + task cá nhân KV riêng từ 31/07) giờ nằm **chung 1 kho KV** (binding `WORK`, key `personal-tasks`), phân biệt bằng field `visibility: 'public' | 'personal'`. Lý do: user thấy sửa data qua Google Sheet phiền, tần suất sửa lại thấp (thêm 1-2 dự án lâu lâu) nên đổi database không mất gì, admin sửa trực tiếp qua popup trên site thay vì mở Sheet. Valuation vẫn đọc Google Sheet như cũ (DATA + tab Watchlist) — **không đổi**.
 
