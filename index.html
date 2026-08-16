@@ -431,6 +431,7 @@
       .tge-modal-body .val-table tbody td { padding: 6px 4px; }
       .tge-modal-body .td-ticker { font-size: 11px; }
       .tge-modal-body .td-size { font-size: 10px; }
+      .tge-modal-body .td-cap { font-size: 10px; }
     }
 
     .val-table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
@@ -460,7 +461,7 @@
     .val-table tbody tr:last-child td { border-bottom: none; }
     /* 6 cột chia đều bằng nhau, canh giữa cả tiêu đề lẫn nội dung */
     .val-table th, .val-table td { width: calc(100% / 6); }
-    .td-ticker { font-weight: 700; color: var(--text) !important; font-size: 11px; }  /* tên ticker: BOLD đen, cỡ nhỏ đồng bộ (suffix ($$$) giữ regular qua .td-size) */
+    .td-ticker { font-weight: 700; color: var(--text) !important; font-size: 11px; }  /* tên ticker: BOLD đen, cỡ nhỏ đồng bộ (hậu tố vốn hoá S/L đi qua .td-cap) */
     /* Mọi cột: cả KHỐI căn giữa theo yếu tố dài nhất của cột đó (kể cả header), các yếu tố vẫn thẳng mép trái với nhau.
        Mỗi giá trị (kể cả header) nằm trong span.ck rộng bằng nhau theo cột (--ck1..--ck6 = bề rộng yếu tố dài nhất mỗi cột,
        JS đo bằng probe ẩn trong renderTable, tính cả header), span căn giữa trong cell → mép trái trùng nhau, khối nằm giữa cột. */
@@ -474,6 +475,7 @@
     .val-table thead th:nth-child(6) .ck, .val-table tbody td:nth-child(6) .ck { min-width: var(--ck6, 0px); }
     .td-narrative { font-size: 11px; color: var(--muted); }                            /* narrative: yếu tố phụ, xám nhỏ */
     .td-size   { font-size: 11px; font-weight: 400; color: var(--muted); margin-left: 4px; }  /* phụ: xám nhỏ */
+    .td-cap    { font-size: 10px; font-weight: 700; color: var(--accent); margin-left: 4px; }  /* vốn hoá VC-FDV: S (<$300M) / L (>$300M) — tím, nhỏ hơn ticker */
     .td-multi  { font-weight: 700; color: var(--accent) !important; font-size: 11px; }  /* số liệu ×: bold cam, cỡ nhỏ đồng bộ */
     .val-table td:nth-child(3), .td-multi { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; }
     /* cột TGE Date (cột 3) = yếu tố phụ: nhỏ + xám */
@@ -1179,7 +1181,7 @@
   <div id="valuation-view">
     <div class="val-wrap">
       <div style="position:relative">
-        <div class="val-intro val-intro-clickable" id="tge-intro" title="Mở rộng"><span id="val-headline-text">Tracking altcoins to read market conditions</span></div>
+        <div class="val-intro val-intro-clickable" id="tge-intro" title="Mở rộng"><span id="val-headline-text">Tracking the market</span></div>
         <div class="val-head-ctrl">
           <button class="camera-btn" id="val-shot-btn" title="Chụp ảnh dashboard" aria-label="Chụp ảnh dashboard"></button>
           <div class="lang-toggle">
@@ -1198,7 +1200,7 @@
               <tr>
                 <th><span class="ck">Ticker</span></th>
                 <th><span class="ck">Narrative</span></th>
-                <th><span class="ck" id="tge-date-th">TGE Date</span></th>
+                <th><span class="ck" id="tge-date-th">TGE</span></th>
                 <th><span class="ck">×TGE</span></th>
                 <th><span class="ck">×ATH</span></th>
                 <th><span class="ck">×ATM</span></th>
@@ -1533,7 +1535,7 @@
     // Thêm nhãn tĩnh mới ở đâu thì PHẢI khai báo ở đây, nếu không nó sẽ kẹt tiếng Anh khi ở mode VI.
     const VAL_HEAD_LABELS = {
       // headline + 3 tiêu đề box
-      'val-headline-text':       { EN: 'Tracking altcoins to read market conditions', VI: 'Theo dõi altcoin để đọc tình hình thị trường' },
+      'val-headline-text':       { EN: 'Tracking the market', VI: 'Theo dõi thị trường' },
       'tge-title-text':          { EN: 'Recent TGE multiples', VI: 'Hệ số TGE gần đây' },
       'danger-title-text':       { EN: 'Danger Zone', VI: 'Vùng nguy hiểm' },
       'narr-title-text':         { EN: 'Trending Narratives', VI: 'Narrative đang hot' },
@@ -1542,7 +1544,7 @@
       'tge-lowfdv-label':        { EN: 'Low FDV <span class="td-size">(&lt;$300M)</span>', VI: 'FDV thấp <span class="td-size">(&lt;$300M)</span>' },
       'tge-highfdv-label':       { EN: 'High FDV <span class="td-size">(&gt;$300M)</span>', VI: 'FDV cao <span class="td-size">(&gt;$300M)</span>' },
       'tge-cond-label':          { EN: 'Market condition:', VI: 'Điều kiện thị trường:' },
-      'tge-date-th':             { EN: 'TGE Date', VI: 'Ngày TGE' },
+      'tge-date-th':             { EN: 'TGE', VI: 'TGE' },   // cột ngày TGE — 2 ngôn ngữ dùng chung 1 chữ cho gọn (mobile)
       // tiêu đề 4 popup (3 info + predict) — tiêu đề nằm trong HTML tĩnh nên dễ bị quên
       'info-tge-modal-title':    { EN: 'Recent TGE multiples', VI: 'Hệ số TGE gần đây' },
       'info-danger-modal-title': { EN: 'Danger Zone', VI: 'Vùng nguy hiểm' },
@@ -2026,9 +2028,9 @@ ${line}
         const xATH  = athIntraday ? 0 : xMult(e.ath, e);
         const xATM  = xMult(e.currentPrice, e);
         const vcFDV = e.vcAlloc > 0 ? e.fundraising / (e.vcAlloc / 100) : 0;
-        const size = vcFDV <= 0 ? '' : vcFDV < 300e6 ? '&lt;$300M' : '&gt;$300M';   // HTML-escape < > vì chèn thẳng vào template string
+        const size = vcFDV <= 0 ? '' : vcFDV < 300e6 ? 'S' : 'L';   // S = vốn hoá nhỏ (<$300M), L = lớn (>$300M)
         return `<tr>
-          <td class="td-ticker"><span class="ck">${e.ticker}${size ? ` <span class="td-size">(${size})</span>` : ''}</span></td>
+          <td class="td-ticker"><span class="ck">${e.ticker}${size ? ` <span class="td-cap">${size}</span>` : ''}</span></td>
           <td class="td-narrative"><span class="ck">${e.type || '—'}</span></td>
           <td><span class="ck">${fmtDate(e.tgeDate)}</span></td>
           <td class="td-multi"><span class="ck">${xTGE > 0 ? '×' + xTGE.toFixed(2) : '—'}</span></td>
