@@ -24,7 +24,9 @@ I'm a **Vietnamese vibecoder** — I have ideas, not a programming background. I
 
 **Bản chất:** một **website tĩnh 1 file** để hiển thị data. **KHÔNG smart contract.** Phần công khai không có backend, không API key.
 
-> **Ngoại lệ duy nhất (2026-07-31):** `functions/api/private.js` — Cloudflare Pages Function cho **task cá nhân** ở Airdrop → Work (lưu KV binding `WORK`, mở bằng mật khẩu `ADMIN_PASS` đặt trong Cloudflare Dashboard, project Pages tên **`0xhieu-xyz`**). Đây là phần **riêng tư của mình tôi**, khách không thấy. Mật khẩu **không nằm trong repo**.
+> **Ngoại lệ (2026-07-31):** `functions/api/private.js` — Cloudflare Pages Function cho **task cá nhân** ở Airdrop → Work (lưu KV binding `WORK`, mở bằng mật khẩu `ADMIN_PASS` đặt trong Cloudflare Dashboard, project Pages tên **`0xhieu-xyz`**). Đây là phần **riêng tư của mình tôi**, khách không thấy. Mật khẩu **không nằm trong repo**.
+>
+> **Ngoại lệ (2026-08-17):** `functions/api/wte.js` + `functions/api/ai.js` — đọc/ghi data của Airdrop và tab AI, cùng KV binding `WORK` và cùng `ADMIN_PASS`. Ngoài 3 file này thì **không có backend nào khác**.
 
 - **Toàn bộ site nằm trong `index.html`** (HTML + CSS + JS inline). Host trên **Cloudflare Pages** (auto-deploy từ nhánh `main`).
 - **Data đọc từ nguồn PUBLIC (không key):**

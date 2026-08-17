@@ -8,7 +8,25 @@
 
 ---
 
-## ⭐ HANDOFF mới nhất (2026-08-16) — Gọn lại bảng Valuation cho vừa mobile
+## ⭐ HANDOFF mới nhất (2026-08-17) — Thêm tab "AI" (hub bài viết) + đồng bộ header 3 màn
+
+**Nav giờ là: `0xhieu.xyz · CV · Valuation · AI · Airdrop`** ("About me" đổi tên thành "CV"). Route mới `/ai` (`_redirects` vốn đã catch-all nên không phải sửa).
+
+**Tab AI = hub chia sẻ bài viết**, 4 box cố định khai trong `AI_HUBS` (`index.html`): INSIGHTS · LEARN · TOOLS · BUILD. Mỗi box cao 8 hàng (tên hub 1 hàng · mô tả 1 hàng · danh sách bài 6 hàng tự cuộn), desktop 2 cột / mobile 1 cột. Mỗi bài 1 hàng: tiêu đề (bấm mở link, `target=_blank`) + ngày (`fmtDate`, mới nhất lên đầu). **Bài viết = data admin nhập → KHÔNG dịch khi bật EN**, toggle EN|VI chỉ đổi nhãn tĩnh (tiêu đề màn + 4 mô tả hub) — đúng luật dịch của Valuation. Mặc định VI, `aiLang` độc lập với `valLang`/`wteLang`.
+
+**Backend mới `functions/api/ai.js`** — `GET /api/ai` công khai (khách đọc), `POST /api/ai` cần `ADMIN_PASS` (add/update/delete). Dùng **CHUNG KV binding `WORK`** với Work to Earn, **khác key: `ai-posts`** (Work to Earn là `personal-tasks`) và **CHUNG 1 mật khẩu `ADMIN_PASS`** → Cloudflare KHÔNG cần cấu hình gì thêm khi deploy. Mở khoá admin ở tab nào thì cả 2 tab cùng mở (`setAdminUnlocked()` gọi `syncAiAdminBtn()`); nút "Admin" biến thành "+" khi đã mở khoá, mỗi hub có nút "+" riêng (thêm thẳng vào hub đó), mỗi bài có "⋮" để sửa/xoá. Ngày đăng tự điền ngày hôm nay khi thêm, admin sửa tay được.
+
+⚠️ **Mảng `CATS` trong `ai.js` phải khớp `AI_HUBS` trong `index.html`** — thêm hub mà quên sửa server thì bài lưu vào sẽ bị ép về hub đầu tiên, im lặng không báo lỗi (đúng vết xe đổ của bug rank C ngày 12/08).
+
+**Header 3 màn giờ giống hệt nhau** — class chung **`.panel-head`**: tiêu đề (`.val-intro`) căn GIỮA, cụm control (`.val-head-ctrl`) absolute bên phải. Valuation "Theo dõi thị trường" (camera + EN|VI) · AI "Học và chia sẻ" (Admin + EN|VI) · Airdrop "Work to Earn" (Admin + EN|VI — trước nằm bên trái, `.ard-tabs`/`.ard-tab` đã xoá vì không còn dùng).
+
+**Bug bắt được lúc verify:** ở 390px, tiêu đề căn giữa **chui xuống dưới nút Admin/camera** (tiêu đề center theo TOÀN BỘ chiều rộng, không né control absolute) — Valuation cũng đã dính từ trước. Fix: `@media (max-width: 640px)` cho `.panel-head` thành `flex-direction: column-reverse` → control lên trên căn phải, tiêu đề xuống dưới vẫn giữa.
+
+**⚠️ CÁCH CHỤP MOBILE CHO ĐÚNG (đừng lặp lại lỗi này):** `chrome --headless --window-size=390,844` **KHÔNG ra mobile thật** — Windows không cho cửa sổ hẹp hơn 500px nên Chrome layout ở ~500-534px rồi **cắt** còn 390 → nhìn y như trang bị tràn ngang, dễ tưởng có bug layout. Phải ép viewport qua CDP `Emulation.setDeviceMetricsOverride` (script mẫu đã dùng: `C:\tmp\cvshot\shot.js`).
+
+---
+
+## ⭐ HANDOFF trước đó (2026-08-16) — Gọn lại bảng Valuation cho vừa mobile
 
 Tiêu đề cũ ("Tracking altcoins to read market conditions" / "Theo dõi altcoin để đọc tình hình thị trường") **dài quá, mobile mất chữ** → rút còn **"Tracking the market" / "Theo dõi thị trường"**. Header cột 3 bỏ chữ Date/Ngày, còn đúng **`TGE`** cho cả 2 ngôn ngữ (entry `tge-date-th` trong `VAL_HEAD_LABELS` giờ EN=VI, giữ lại trong bảng dịch cho đúng luật "mọi nhãn tĩnh phải khai báo").
 
@@ -20,7 +38,7 @@ Popup bảng dài (`#tge-modal`) **clone thẳng thead/tbody của bảng inline
 
 ---
 
-## ⭐ HANDOFF trước đó (2026-08-12) — Fix rank C bị server chặn ngầm + đổi nhãn "Work" → "Works"
+## ⭐ HANDOFF cũ hơn (2026-08-12) — Fix rank C bị server chặn ngầm + đổi nhãn "Work" → "Works"
 
 **Bug:** user báo không thấy dự án nào ở Rank C, dù thang rank Work to Earn đã đổi sang `$ · S · A · B · C` đúng hôm nay (chi tiết ở Decisions Log). Root cause: đổi thang chỉ sửa phía client (`WTE_RANKS` trong `index.html`) — `functions/api/private.js` vẫn giữ whitelist rank cũ `['SS','S','A','B']` từ session 09/08, nên mỗi lần admin chọn `C` trong popup và lưu, server không nhận `'C'` hợp lệ → âm thầm ép về `'SS'`, không báo lỗi gì. Verify bằng `curl /api/wte` production trước khi sửa: 24 project, rank chỉ có S/A/B/SS, đúng 0 project C.
 

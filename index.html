@@ -687,28 +687,74 @@
     }
     .modal-corner-close:hover { color: var(--text); }
 
+    /* ── AI VIEW (hub bài viết) ───────────────────────
+       4 hub bằng nhau: desktop 2 cột, mobile 1 cột · giữa các box cách 0.5 hàng (cùng cụm,
+       giống lưới .val-boxes bên Valuation). Mỗi box cao đúng 8 hàng, chia dọc:
+       tên hub 1 hàng · mô tả 1 hàng · danh sách bài 6 hàng (tự cuộn bằng .thin-scroll).
+       Dùng lại token của box Valuation: viền --border, bo 10px, nền --off, hàng nền tím 8%. */
+    #ai-view { display: none; }
+    .ai-wrap {
+      max-width: 900px; margin: 0 auto;
+      padding: 0 calc(var(--row) * 0.75) 24px;
+    }
+    .ai-hubs {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: calc(var(--row) * 0.5);
+      align-items: stretch;
+    }
+    @media (max-width: 640px) { .ai-hubs { grid-template-columns: 1fr; } }
+    .ai-hub {
+      border: 1px solid var(--border); border-radius: 10px; background: var(--off);
+      padding: 0 12px; box-sizing: border-box;
+      height: calc(var(--row) * 8);
+      display: grid; grid-template-rows: var(--row) var(--row) 1fr;
+    }
+    /* tên hub căn giữa; nút + của admin nằm absolute phải để không đẩy lệch tên */
+    .ai-hub-head { position: relative; display: flex; align-items: center; justify-content: center; }
+    .ai-hub-name { font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: 0.07em; }
+    .ai-hub-add {
+      position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+      border: none; background: none; cursor: pointer; padding: 0 2px;
+      font-size: 16px; line-height: 1; color: var(--muted); transition: color 0.15s;
+    }
+    .ai-hub-add:hover { color: var(--accent); }
+    .ai-hub-desc {
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; color: var(--muted); text-align: center;
+    }
+    .ai-list { overflow-y: auto; overflow-x: hidden; min-height: 0; }
+    /* mỗi bài gọn 1 hàng, cách nhau 0.25 hàng — cùng nhịp .danger-row/.narrative-row */
+    .ai-row {
+      display: flex; align-items: center; gap: 8px;
+      height: var(--row); padding: 0 14px; border-radius: 8px;
+      background: rgba(var(--accent-rgb), 0.08);
+      margin-bottom: calc(var(--row) * 0.25);
+    }
+    .ai-row:last-child { margin-bottom: 0; }
+    .ai-title {
+      font-size: 13px; font-weight: 400; color: var(--text); text-decoration: none;
+      flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    a.ai-title:hover { color: var(--accent); }
+    .ai-date {
+      font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums;
+      font-size: 11px; color: var(--muted); flex-shrink: 0;
+    }
+    .ai-empty { font-size: 13px; color: var(--muted); text-align: center; padding: 8px 0; }
+
     /* ── AIRDROP VIEW ─────────────────────────────── */
     #airdrop-view { display: none; }
     .ard-wrap {
       max-width: 900px; margin: 0 auto;
       padding: 0 calc(var(--row) * 0.75) 24px;
     }
-    /* Hàng 3-4 của Airdrop (cao 2 hàng, căn giữa dọc): nhãn "Work" trái · Admin + EN|VI phải.
-       Từ 2026-08-06 chỉ còn 1 nội dung (Watchlist đã chuyển thành box bên Valuation) nên
-       "Work" là NHÃN tĩnh, không bấm được — bỏ cursor/hover để không mời bấm nhầm. */
+    /* Hàng 3-4 của Airdrop: tiêu đề "Work to Earn" GIỮA · Admin + EN|VI phải — cùng pattern
+       `position:relative > .val-intro (giữa) + .val-head-ctrl (absolute phải)` với Valuation
+       và AI, để 3 màn có header giống hệt nhau (2026-08-16, trước đó nhãn nằm bên trái). */
     .ard-subtabs {
-      display: flex; align-items: center; justify-content: space-between;
-      height: calc(var(--row) * 2); padding: 0;
+      padding: 0;
       background: var(--white);
     }
-    .ard-tabs { display: flex; align-items: center; gap: 16px; }
-    .ard-tab {
-      background: none; border: none; padding: 0;
-      font-family: 'Roboto', sans-serif; font-size: 15px; font-weight: 400;
-      color: var(--muted); opacity: 0.55;
-      white-space: nowrap;
-    }
-    .ard-tab.active { color: var(--text); opacity: 1; font-weight: 500; }  /* nhãn đang hiển thị: đen đậm */
 
     /* Language toggle */
     .lang-toggle {
@@ -914,11 +960,20 @@
     }
     .info-icon:hover { color: var(--accent); }
 
-    /* Cụm control bên phải headline Valuation: [camera] [EN|VI] — giữ đúng pattern
-       `position:relative > .val-intro (giữa) + control absolute phải` của mọi panel. */
+    /* HEADER CHUẨN của cả 3 màn (Valuation · AI · Airdrop): tiêu đề .val-intro nằm GIỮA
+       hàng 3-4, cụm control (.val-head-ctrl) absolute bên phải. */
+    .panel-head { position: relative; }
     .val-head-ctrl {
       position: absolute; right: 0; top: 50%; transform: translateY(-50%);
       display: flex; align-items: center; gap: 8px;
+    }
+    /* Mobile: 1 hàng KHÔNG đủ chỗ cho tiêu đề căn giữa + control — tiêu đề canh giữa cả
+       chiều rộng nên chui xuống dưới nút Admin/camera (kiểm chứng ở 390px). Màn hẹp thì
+       tách 2 hàng: control lên trên căn phải, tiêu đề vẫn giữa ở hàng dưới. */
+    @media (max-width: 640px) {
+      .panel-head { display: flex; flex-direction: column-reverse; }
+      .val-head-ctrl { position: static; transform: none; align-self: flex-end; }
+      .panel-head .val-intro { height: calc(var(--row) * 1.5); }
     }
     /* Nút chụp ảnh dashboard. Cùng luật vùng bấm như .info-icon/.wlb-arrow: mask ở ::before,
        nút cao 30px bằng .lang-toggle bên cạnh, hình icon 14px nằm giữa. */
@@ -1051,8 +1106,9 @@
     <div class="header-inner">
       <a class="header-home" href="https://0xhieu.xyz">0xhieu.xyz</a>
       <nav>
-        <button class="nav-btn active" id="nav-cv-btn">About me</button>
+        <button class="nav-btn active" id="nav-cv-btn">CV</button>
         <button class="nav-btn" id="nav-val-btn">Valuation</button>
+        <button class="nav-btn" id="nav-ai-btn">AI</button>
         <button class="nav-btn" id="nav-ard-btn">Airdrop</button>
       </nav>
     </div>
@@ -1180,7 +1236,7 @@
   <!-- ── VALUATION VIEW ────────────────────────────── -->
   <div id="valuation-view">
     <div class="val-wrap">
-      <div style="position:relative">
+      <div class="panel-head">
         <div class="val-intro val-intro-clickable" id="tge-intro" title="Mở rộng"><span id="val-headline-text">Tracking the market</span></div>
         <div class="val-head-ctrl">
           <button class="camera-btn" id="val-shot-btn" title="Chụp ảnh dashboard" aria-label="Chụp ảnh dashboard"></button>
@@ -1261,16 +1317,36 @@
     </div>
   </div>
 
+  <!-- ── AI VIEW (hub bài viết) ───────────────────────── -->
+  <div id="ai-view" style="display:none">
+    <div class="ai-wrap">
+
+      <!-- Hàng 3-4: tiêu đề GIỮA · Admin + EN|VI phải (giống hệt Valuation/Airdrop) -->
+      <div class="panel-head">
+        <div class="val-intro"><span id="ai-headline-text">Học và chia sẻ</span></div>
+        <div class="val-head-ctrl">
+          <button class="lang-dd-btn" id="ai-admin-btn" title="Thêm bài viết">Admin</button>
+          <div class="lang-toggle">
+            <button class="lang-btn" id="ai-lang-en-btn">EN</button>
+            <button class="lang-btn active" id="ai-lang-vi-btn">VI</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 box hub — dựng bằng JS từ hằng số AI_HUBS, KHÔNG hardcode ở đây -->
+      <div class="ai-hubs" id="ai-hubs"></div>
+
+    </div>
+  </div>
+
   <!-- ── AIRDROP VIEW ─────────────────────────────────── -->
   <div id="airdrop-view" style="display:none">
     <div class="ard-wrap">
 
-      <!-- Hàng 3-4: nhãn "Work"  ·············  Admin · EN|VI -->
-      <div class="ard-subtabs" id="ard-subtabs">
-        <div class="ard-tabs">
-          <span class="ard-tab active">Works</span>
-        </div>
-        <div id="ard-wte-controls" style="display:flex;align-items:center;gap:8px">
+      <!-- Hàng 3-4: tiêu đề "Work to Earn" GIỮA · Admin + EN|VI phải -->
+      <div class="ard-subtabs panel-head" id="ard-subtabs">
+        <div class="val-intro">Work to Earn</div>
+        <div class="val-head-ctrl" id="ard-wte-controls">
           <button class="lang-dd-btn" id="admin-btn" title="Task cá nhân">Admin</button>
           <div class="lang-toggle">
             <button class="lang-btn" id="lang-en-btn">EN</button>
@@ -1451,6 +1527,54 @@
     </div>
   </div>
 
+  <!-- Admin: form thêm/sửa bài viết của tab AI (chỉ tiếng Việt, giống form task — form là
+       chỗ làm việc của riêng admin nên không dịch theo toggle EN|VI) -->
+  <div class="wl-modal-backdrop" id="aipost-modal">
+    <div class="wl-modal wl-modal--wide">
+      <div class="wl-modal-title" id="ai-form-title">Thêm bài viết</div>
+      <div id="aipost-form">
+        <div class="calc-field">
+          <label>Tiêu đề bài viết</label>
+          <input type="text" id="ai-title-in" placeholder="Ví dụ: Cách mình dùng Claude Code để build web" />
+        </div>
+        <div class="calc-field">
+          <label>Link bài viết</label>
+          <input type="text" id="ai-link-in" placeholder="https://..." />
+        </div>
+        <div class="ptask-row">
+          <div class="calc-field">
+            <label>Phân loại</label>
+            <!-- option đổ bằng JS từ AI_HUBS — không hardcode để không lệch với 4 box -->
+            <select id="ai-cat-in"></select>
+          </div>
+          <div class="calc-field">
+            <label>Ngày đăng</label>
+            <input type="date" id="ai-date-in" />
+          </div>
+        </div>
+      </div>
+      <div class="admin-msg" id="ai-error" style="display:none"></div>
+      <!-- chỉ hiện khi đang sửa bài có sẵn -->
+      <button type="button" class="pt-delete" id="ai-delete" style="display:none">Xoá bài này</button>
+      <div class="predict-actions">
+        <button class="predict-btn-secondary" id="ai-cancel">Cancel</button>
+        <button class="predict-btn-primary" id="ai-save">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin: xác nhận trước khi xoá bài viết -->
+  <div class="wl-modal-backdrop" id="aidel-modal">
+    <div class="wl-modal">
+      <div class="wl-modal-title">Xoá bài này?</div>
+      <div class="admin-msg" id="aidel-name"></div>
+      <div class="predict-actions">
+        <button class="predict-btn-secondary" id="aidel-cancel">Cancel</button>
+        <button class="predict-btn-primary" id="aidel-ok">Xoá</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Admin: xác nhận trước khi xoá task cá nhân -->
   <div class="wl-modal-backdrop" id="pdel-modal">
     <div class="wl-modal">
@@ -1467,9 +1591,11 @@
     // ── View switching ────────────────────────────────
     const cvView   = document.getElementById('cv-view');
     const valView  = document.getElementById('valuation-view');
+    const aiView   = document.getElementById('ai-view');
     const ardView  = document.getElementById('airdrop-view');
     const navCvBtn  = document.getElementById('nav-cv-btn');
     const navValBtn = document.getElementById('nav-val-btn');
+    const navAiBtn  = document.getElementById('nav-ai-btn');
     const navArdBtn = document.getElementById('nav-ard-btn');
 
     // ── TGE table popup ──────────────────────────────
@@ -1760,9 +1886,10 @@ ${line}
     function hideAllViews() {
       cvView.style.display = 'none';
       valView.style.display = 'none';
+      aiView.style.display = 'none';
       ardView.style.display = 'none';
       document.getElementById('rank-filter-float').style.display = 'none';
-      [navCvBtn, navValBtn, navArdBtn].forEach(b => b.classList.remove('active'));
+      [navCvBtn, navValBtn, navAiBtn, navArdBtn].forEach(b => b.classList.remove('active'));
     }
 
     // ── Rank filter $/S/A/B/C → scroll to section ──────
@@ -1815,6 +1942,14 @@ ${line}
       if (push) history.pushState({}, '', '/valuation');
     }
 
+    function showAI(push = true) {
+      hideAllViews();
+      aiView.style.display = 'block';
+      navAiBtn.classList.add('active');
+      if (push) history.pushState({}, '', '/ai');
+      loadAI();          // lần đầu mới gọi mạng, các lần sau render từ data đã có
+    }
+
     // Airdrop chỉ còn 1 nội dung (Work to Earn) từ 2026-08-06 nên không còn cơ chế
     // chuyển sub-tab: vào tab là hiện luôn card Work + thanh lọc rank.
     function showAirdrop(push = true) {
@@ -1829,12 +1964,14 @@ ${line}
     function routeFromPath() {
       const p = window.location.pathname;
       if (p === '/valuation') showValuation(false);
+      else if (p === '/ai') showAI(false);
       else if (p === '/airdrop') showAirdrop(false);
       else showCV(false);
     }
 
     navCvBtn.addEventListener('click',  () => showCV());
     navValBtn.addEventListener('click', () => showValuation());
+    navAiBtn.addEventListener('click',  () => showAI());
     navArdBtn.addEventListener('click', () => showAirdrop());
     window.addEventListener('popstate', routeFromPath);
 
@@ -2668,6 +2805,7 @@ ${line}
       adminUnlocked = on;
       adminBtn.textContent = on ? '+' : 'admin';
       adminBtn.title       = on ? 'Thêm task cá nhân' : 'Task cá nhân';
+      syncAiAdminBtn();    // 1 mật khẩu mở khoá cả 2 tab → nút Admin bên AI đổi theo
     }
 
     function showMsg(el, text) { el.textContent = text; el.style.display = ''; }
@@ -2868,6 +3006,192 @@ ${line}
 
     langViBtn.addEventListener('click', () => switchLang('VI'));
     langEnBtn.addEventListener('click', () => switchLang('EN'));
+
+    // ══════════════════════════════════════════════════
+    // AI — hub bài viết (tab "AI")
+    // Data nằm ở Cloudflare KV, đọc qua GET /api/ai (công khai). Admin thêm/sửa/xoá qua
+    // POST /api/ai — CÙNG mật khẩu ADMIN_PASS với Airdrop, nên mở khoá 1 lần dùng cho cả 2 tab.
+    // QUY ĐỊNH DỊCH (giống Valuation): chỉ dịch nhãn UI tĩnh (tiêu đề màn + mô tả 4 hub).
+    // Tiêu đề bài viết là DATA do admin nhập → KHÔNG dịch, giữ nguyên như đã gõ.
+    // ══════════════════════════════════════════════════
+    // Thêm/bớt hub thì phải sửa CẢ mảng CATS trong functions/api/ai.js, nếu không bài lưu
+    // vào hub mới sẽ bị server ép về hub đầu tiên (đúng lỗi rank C từng gặp bên Work to Earn).
+    const AI_HUBS = [
+      { key: 'INSIGHTS', desc: { VI: 'Góc nhìn, phân tích, nhận định',   EN: 'Views, analysis, takes' } },
+      { key: 'LEARN',    desc: { VI: 'Kiến thức, bài học, giải thích AI', EN: 'Concepts, lessons, AI explained' } },
+      { key: 'TOOLS',    desc: { VI: 'Công cụ, workflow, cách dùng AI',   EN: 'Tools, workflows, how to use AI' } },
+      { key: 'BUILD',    desc: { VI: 'Build sản phẩm, experiment, AI × Web3', EN: 'Products, experiments, AI × Web3' } },
+    ];
+    const AI_LABELS = {
+      headline: { VI: 'Học và chia sẻ', EN: 'Learn & share' },
+      empty:    { VI: 'Chưa có bài nào', EN: 'No posts yet' },
+    };
+
+    let aiLang   = 'VI';    // độc lập với valLang/wteLang — 3 tab có thể ở 3 ngôn ngữ khác nhau
+    let aiPosts  = [];
+    let aiLoaded = false;
+    let aiError  = false;
+    let aiEditId = null;    // null = form đang thêm mới · có id = đang sửa bài đó
+
+    const aiPostModal = $('aipost-modal');
+    const aiDelModal  = $('aidel-modal');
+
+    $('ai-cat-in').innerHTML = AI_HUBS.map(h => `<option value="${h.key}">${h.key}</option>`).join('');
+
+    async function loadAI() {
+      if (aiLoaded) { renderAI(); return; }
+      try {
+        const res  = await fetch('/api/ai');
+        const data = await res.json();
+        aiPosts = data.ok ? (data.posts || []) : [];
+        aiError = !data.ok;
+      } catch {
+        aiPosts = [];
+        aiError = true;
+      }
+      aiLoaded = true;
+      renderAI();
+    }
+
+    function renderAI() {
+      $('ai-headline-text').textContent = AI_LABELS.headline[aiLang];
+      // mới nhất lên đầu; cùng ngày thì giữ nguyên thứ tự đã thêm
+      const sorted = [...aiPosts].sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+
+      $('ai-hubs').innerHTML = AI_HUBS.map(hub => {
+        const posts = sorted.filter(p => p.cat === hub.key);
+        const rows = posts.length
+          ? posts.map(p => `<div class="ai-row">
+              ${p.link
+                ? `<a class="ai-title" href="${p.link}" target="_blank" rel="noopener">${p.title}</a>`
+                : `<span class="ai-title">${p.title}</span>`}
+              <span class="ai-date">${fmtDate(p.date)}</span>
+              ${adminUnlocked ? `<button class="wte-opt ai-opt" data-id="${p.id}" title="Sửa bài">⋮</button>` : ''}
+            </div>`).join('')
+          : `<div class="ai-empty">${aiError ? 'Không tải được danh sách bài' : AI_LABELS.empty[aiLang]}</div>`;
+
+        return `<div class="ai-hub">
+          <div class="ai-hub-head">
+            <span class="ai-hub-name">${hub.key}</span>
+            ${adminUnlocked ? `<button class="ai-hub-add" data-cat="${hub.key}" title="Thêm bài vào ${hub.key}">+</button>` : ''}
+          </div>
+          <div class="ai-hub-desc">${hub.desc[aiLang]}</div>
+          <div class="ai-list thin-scroll">${rows}</div>
+        </div>`;
+      }).join('');
+    }
+
+    // Nút + của mỗi hub (thêm bài vào đúng hub đó) và nút ⋮ trên từng bài (sửa)
+    $('ai-hubs').addEventListener('click', e => {
+      const add = e.target.closest('.ai-hub-add');
+      if (add) { openAiForm(null, add.dataset.cat); return; }
+      const opt = e.target.closest('.ai-opt');
+      if (opt) {
+        const post = aiPosts.find(p => p.id === opt.dataset.id);
+        if (post) openAiForm(post);
+      }
+    });
+
+    // post = null → thêm mới (cat = hub vừa bấm +) · post = object → sửa bài đó
+    function openAiForm(post, cat) {
+      aiEditId = post ? post.id : null;
+      $('ai-title-in').value = post?.title || '';
+      $('ai-link-in').value  = post?.link  || '';
+      $('ai-cat-in').value   = post?.cat   || cat || AI_HUBS[0].key;
+      // thêm mới thì điền sẵn ngày hôm nay (giờ máy admin), vẫn sửa tay được
+      $('ai-date-in').value  = post?.date  || new Date().toLocaleDateString('sv-SE');
+      $('ai-form-title').textContent = post ? 'Sửa bài viết' : 'Thêm bài viết';
+      $('ai-save').textContent       = post ? 'Save' : 'Add';
+      $('ai-delete').style.display   = post ? '' : 'none';
+      $('ai-error').style.display = 'none';
+      aiPostModal.classList.add('open');
+      $('ai-title-in').focus();
+    }
+
+    async function apiAI(action, extra = {}) {
+      try {
+        const res  = await fetch('/api/ai', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ pass: adminPass, action, ...extra }),
+        });
+        const data = await res.json().catch(() => ({ ok: false }));
+        return { status: res.status, ...data };
+      } catch {
+        return { status: 0, ok: false, error: 'Không gọi được /api/ai' };
+      }
+    }
+
+    async function submitAiPost() {
+      if (!$('ai-title-in').value.trim()) { showMsg($('ai-error'), 'Nhập tiêu đề bài viết'); return; }
+      const post = {
+        title: $('ai-title-in').value,
+        link:  $('ai-link-in').value,
+        cat:   $('ai-cat-in').value,
+        date:  $('ai-date-in').value,
+      };
+      $('ai-save').disabled = true;
+      const r = aiEditId
+        ? await apiAI('update', { id: aiEditId, post })
+        : await apiAI('add', { post });
+      $('ai-save').disabled = false;
+      if (!r.ok) { showMsg($('ai-error'), r.status === 401 ? 'Sai mật khẩu' : (r.error || 'Không lưu được')); return; }
+      aiPosts = r.posts;
+      aiPostModal.classList.remove('open');
+      renderAI();
+    }
+
+    $('ai-save').addEventListener('click', submitAiPost);
+    $('ai-cancel').addEventListener('click', () => aiPostModal.classList.remove('open'));
+
+    $('ai-delete').addEventListener('click', () => {
+      if (!aiEditId) return;
+      $('aidel-name').textContent = $('ai-title-in').value;
+      aiDelModal.classList.add('open');
+    });
+    $('aidel-cancel').addEventListener('click', () => aiDelModal.classList.remove('open'));
+    $('aidel-ok').addEventListener('click', async () => {
+      if (!aiEditId) return;
+      $('aidel-ok').disabled = true;
+      const r = await apiAI('delete', { id: aiEditId });
+      $('aidel-ok').disabled = false;
+      aiDelModal.classList.remove('open');
+      aiPostModal.classList.remove('open');       // xoá xong thì đóng luôn form sửa
+      if (r.ok) { aiPosts = r.posts; renderAI(); }
+    });
+
+    // Bấm nền để đóng — TRỪ form thêm/sửa bài (bấm nhầm là mất nội dung đang gõ), giống ptask-modal
+    aiDelModal.addEventListener('click', e => { if (e.target === aiDelModal) aiDelModal.classList.remove('open'); });
+
+    // Nút Admin của tab AI: chưa mở khoá → mở đúng popup nhập mật khẩu của Airdrop
+    // (1 mật khẩu dùng chung); đã mở khoá → nút thành "+" thêm bài vào hub đầu tiên.
+    $('ai-admin-btn').addEventListener('click', () => {
+      if (adminUnlocked) { openAiForm(null); return; }
+      adminInput.value = '';
+      adminError.style.display = 'none';
+      adminModal.classList.add('open');
+      setTimeout(() => adminInput.focus(), 50);
+    });
+
+    // Gọi từ setAdminUnlocked() ở khối admin Airdrop — mở khoá ở tab nào thì cả 2 tab cùng đổi
+    function syncAiAdminBtn() {
+      $('ai-admin-btn').textContent = adminUnlocked ? '+' : 'Admin';
+      $('ai-admin-btn').title       = adminUnlocked ? 'Thêm bài viết' : 'Đăng nhập admin';
+      if (aiLoaded) renderAI();      // hiện/ẩn nút + và ⋮ ngay, không phải tải lại trang
+    }
+
+    // ── Toggle EN|VI của tab AI ────────────────────────
+    const aiLangEnBtn = $('ai-lang-en-btn');
+    const aiLangViBtn = $('ai-lang-vi-btn');
+    function switchAiLang(lang) {
+      if (aiLang === lang) return;
+      aiLang = lang;
+      [aiLangViBtn, aiLangEnBtn].forEach(b => b.classList.remove('active'));
+      ({ VI: aiLangViBtn, EN: aiLangEnBtn })[lang]?.classList.add('active');
+      renderAI();
+    }
+    aiLangViBtn.addEventListener('click', () => switchAiLang('VI'));
+    aiLangEnBtn.addEventListener('click', () => switchAiLang('EN'));
 
     // ══════════════════════════════════════════════════
     // VALUATION — box "Watchlist theo narrative"
