@@ -955,8 +955,13 @@
       justify-content: flex-start; text-align: left;
       flex: 1; min-width: 0; overflow: hidden;
     }
+    /* Tiêu đề dài (VI "Theo dõi altcoin để nhận định thị trường") KHÔNG được cắt bằng
+       ellipsis 1 dòng nữa — màn 390px là mất nửa câu. Cho xuống tối đa 2 dòng: hộp tiêu đề
+       cao sẵn 2 hàng (~56px) nên 2 dòng 15px vẫn nằm gọn, không đẩy lưới. Quá 2 dòng mới
+       cắt (line-clamp) để không bao giờ tràn ra ngoài hộp. */
     .panel-head .val-intro > span {
-      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+      overflow: hidden; white-space: normal; line-height: 1.25;
     }
     .val-head-ctrl {
       flex-shrink: 0;
@@ -1224,7 +1229,7 @@
   <div id="valuation-view">
     <div class="val-wrap">
       <div class="panel-head">
-        <div class="val-intro val-intro-clickable" id="tge-intro" title="Mở rộng"><span id="val-headline-text">Tracking the market</span></div>
+        <div class="val-intro val-intro-clickable" id="tge-intro" title="Mở rộng"><span id="val-headline-text">Tracking altcoins to read the market</span></div>
         <div class="val-head-ctrl">
           <button class="camera-btn" id="val-shot-btn" title="Chụp ảnh dashboard" aria-label="Chụp ảnh dashboard"></button>
           <div class="lang-toggle">
@@ -1648,7 +1653,7 @@
     // Thêm nhãn tĩnh mới ở đâu thì PHẢI khai báo ở đây, nếu không nó sẽ kẹt tiếng Anh khi ở mode VI.
     const VAL_HEAD_LABELS = {
       // headline + 3 tiêu đề box
-      'val-headline-text':       { EN: 'Tracking the market', VI: 'Theo dõi thị trường' },
+      'val-headline-text':       { EN: 'Tracking altcoins to read the market', VI: 'Theo dõi altcoin để nhận định thị trường' },
       'tge-title-text':          { EN: 'Recent TGE multiples', VI: 'Hệ số TGE gần đây' },
       'danger-title-text':       { EN: 'Danger Zone', VI: 'Vùng nguy hiểm' },
       'narr-title-text':         { EN: 'Trending Narratives', VI: 'Narrative đang hot' },
