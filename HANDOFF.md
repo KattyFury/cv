@@ -37,6 +37,8 @@ Lưới hero cập nhật theo đúng luật khoảng cách sẵn có (**yếu t
 
 Phân cấp giữa 2 dòng bằng **weight** (tagline 500, niềm tin 400), cùng cỡ 15px, **cùng màu đen** — không dùng chữ xám cho nội dung. `.hero-belief` có `max-width: 62ch` để câu không kéo hết bề ngang màn lớn. Verify chụp thật: desktop 1280 xuống 2 dòng, mobile 390 xuống 2 dòng, socials và Experience không bị đè.
 
+⚠️ **Câu niềm tin CÓ 2 BẢN, cố ý — đừng "đồng bộ" lại làm một.** Bản dài 3 vế (trí óc · chân tay · tiền tệ) dùng ở **hero CV** vì có chỗ để thở; bản rút gọn *"AI is the future. Crypto is the money of the future."* dùng ở **meta description / og:description / JSON-LD / og.png** vì mấy chỗ đó bị giới hạn ký tự và ảnh preview không chứa nổi câu 3 vế. User chốt 2026-08-18.
+
 **Cùng ngày — tiêu đề Valuation dài trở lại + sửa gốc chỗ cắt chữ:** header đổi thành VI `Theo dõi altcoin để nhận định thị trường` / EN `Tracking altcoins to read the market` (`val-headline-text`, nhớ sửa CẢ nhãn mặc định trong HTML lẫn entry trong bảng dịch — 2 chỗ).
 
 ⚠️ **Câu này dài hơn giới hạn 1 dòng của mobile — ĐỪNG rút ngắn lại như hôm 16/08.** Lần đó chữ bị mất vì `.panel-head .val-intro > span` đang ép `white-space: nowrap` + `text-overflow: ellipsis`, màn 390px cắt còn "Theo dõi altcoin để nhận định t…". Đã sửa tận gốc: cho tiêu đề **xuống tối đa 2 dòng** (`-webkit-line-clamp: 2`, `white-space: normal`, `line-height: 1.25`). Hộp `.val-intro` vốn cao sẵn **2 hàng (~56px)** nên 2 dòng 15px nằm gọn, **không đẩy lưới hàng**. Verify chụp thật: 390px và **320px** đều hiện đủ câu; desktop 1280px vẫn 1 dòng; tab AI ("Học và chia sẻ") và Airdrop ("Work to Earn") tiêu đề ngắn nên không đổi gì.
