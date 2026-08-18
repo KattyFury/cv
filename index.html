@@ -464,7 +464,7 @@
     .val-table tbody tr:last-child td { border-bottom: none; }
     /* 6 cột chia đều bằng nhau, canh giữa cả tiêu đề lẫn nội dung */
     .val-table th, .val-table td { width: calc(100% / 6); }
-    .td-ticker { font-weight: 700; color: var(--text) !important; font-size: 11px; }  /* tên ticker: BOLD đen, cỡ nhỏ đồng bộ (hậu tố vốn hoá S/L đi qua .td-cap) */
+    .td-ticker { font-weight: 700; color: var(--text) !important; font-size: 11px; }  /* tên ticker: BOLD đen, cỡ nhỏ đồng bộ (hậu tố vốn hoá S/M đi qua .td-cap) */
     /* Mọi cột: cả KHỐI căn giữa theo yếu tố dài nhất của cột đó (kể cả header), các yếu tố vẫn thẳng mép trái với nhau.
        Mỗi giá trị (kể cả header) nằm trong span.ck rộng bằng nhau theo cột (--ck1..--ck6 = bề rộng yếu tố dài nhất mỗi cột,
        JS đo bằng probe ẩn trong renderTable, tính cả header), span căn giữa trong cell → mép trái trùng nhau, khối nằm giữa cột. */
@@ -478,7 +478,7 @@
     .val-table thead th:nth-child(6) .ck, .val-table tbody td:nth-child(6) .ck { min-width: var(--ck6, 0px); }
     .td-narrative { font-size: 11px; color: var(--muted); }                            /* narrative: yếu tố phụ, xám nhỏ */
     .td-size   { font-size: 11px; font-weight: 400; color: var(--muted); margin-left: 4px; }  /* phụ: xám nhỏ */
-    .td-cap    { font-size: 10px; font-weight: 700; color: var(--accent); margin-left: 4px; }  /* vốn hoá VC-FDV: S (<$300M) / L (>$300M) — tím, nhỏ hơn ticker */
+    .td-cap    { font-size: 10px; font-weight: 700; color: var(--accent); margin-left: 4px; }  /* vốn hoá VC-FDV: S (<$300M) / M (>$300M) — bậc L (>$500M) đã soạn nhưng chưa bật, xem capLabel() */
     .td-multi  { font-weight: 700; color: var(--accent) !important; font-size: 11px; }  /* số liệu ×: bold cam, cỡ nhỏ đồng bộ */
     .val-table td:nth-child(3), .td-multi { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; }
     /* cột TGE Date (cột 3) = yếu tố phụ: nhỏ + xám */
@@ -1659,9 +1659,9 @@
       'narr-title-text':         { EN: 'Trending Narratives', VI: 'Narrative đang hot' },
       'wlb-title-text':          { EN: 'Watchlist by narrative', VI: 'Watchlist theo narrative' },
       // nội dung box Recent TGE multiples + header bảng
-      // chữ S/L ở đây chính là CHÚ GIẢI cho hậu tố .td-cap trong cột Ticker — sửa 1 chỗ thì sửa cả 2
+      // chữ S/M ở đây chính là CHÚ GIẢI cho hậu tố .td-cap do capLabel() sinh ra ở cột Ticker — sửa 1 chỗ thì sửa cả 2
       'tge-lowfdv-label':        { EN: 'Low FDV <span class="td-cap">S</span> <span class="td-size">(&lt;$300M)</span>', VI: 'FDV thấp <span class="td-cap">S</span> <span class="td-size">(&lt;$300M)</span>' },
-      'tge-highfdv-label':       { EN: 'High FDV <span class="td-cap">L</span> <span class="td-size">(&gt;$300M)</span>', VI: 'FDV cao <span class="td-cap">L</span> <span class="td-size">(&gt;$300M)</span>' },
+      'tge-highfdv-label':       { EN: 'High FDV <span class="td-cap">M</span> <span class="td-size">(&gt;$300M)</span>', VI: 'FDV cao <span class="td-cap">M</span> <span class="td-size">(&gt;$300M)</span>' },
       'tge-cond-label':          { EN: 'Market condition:', VI: 'Điều kiện thị trường:' },
       'tge-date-th':             { EN: 'TGE', VI: 'TGE' },   // cột ngày TGE — 2 ngôn ngữ dùng chung 1 chữ cho gọn (mobile)
       // tiêu đề 4 popup (3 info + predict) — tiêu đề nằm trong HTML tĩnh nên dễ bị quên
@@ -2136,6 +2136,28 @@ ${line}
       return s;
     }
 
+    // ── Nhãn vốn hoá VC-FDV ở cột Ticker ─────────────
+    // Thang 3 bậc đã chốt: S (<$300M) · M ($300M–$500M) · L (>$500M).
+    // HIỆN CHỈ BẬT S VÀ M. Mốc $500M soạn sẵn nhưng chưa dùng: chỉ có 5 dự án >$500M trong
+    // 12 tháng gần nhất — quá ít để box "Hệ số TGE gần đây" (lấy 6 dự án gần nhất mỗi rổ)
+    // và predictFDV() (cần ≥2 mẫu cùng rổ, thiếu thì âm thầm fallback về toàn bộ pool) cho
+    // ra số đáng tin. Ranh giới $300M giữ nguyên vì đó đúng là chỗ data gãy: median ×TGE
+    // dưới mốc ×4.2-4.6, trên mốc ×2.7 (đo trên 76 dự án, xem Decisions Log 2026-08-18).
+    //
+    // KHI NÀO BẬT L: rổ >$500M có ≥12 dự án TGE trong 12 tháng gần nhất. Lúc đó đổi
+    // CAP_L_ACTIVE = true rồi làm NỐT 3 việc — không có cái nào tự theo:
+    //   1. renderTGEStats() + predictFDV(): đang chia 2 rổ ở FDV_SPLIT, phải tách thành 3
+    //   2. box "Hệ số TGE gần đây": thêm hàng thứ 3 (id baseline-*) cho rổ L
+    //   3. bảng dịch: thêm entry nhãn cho hàng mới, sửa (&gt;$300M) của hàng M thành khoảng
+    const CAP_M = 300e6;          // ranh giới S | M
+    const CAP_L = 500e6;          // ranh giới M | L — soạn sẵn, chưa kích hoạt
+    const CAP_L_ACTIVE = false;
+    function capLabel(vcFDV) {
+      if (!(vcFDV > 0)) return '';
+      if (vcFDV < CAP_M) return 'S';
+      return CAP_L_ACTIVE && vcFDV >= CAP_L ? 'L' : 'M';
+    }
+
     // ── Render table ──────────────────────────────────
     function renderTable() {
       const entries = allEntries();
@@ -2158,7 +2180,7 @@ ${line}
         const xATH  = athIntraday ? 0 : xMult(e.ath, e);
         const xATM  = xMult(e.currentPrice, e);
         const vcFDV = e.vcAlloc > 0 ? e.fundraising / (e.vcAlloc / 100) : 0;
-        const size = vcFDV <= 0 ? '' : vcFDV < 300e6 ? 'S' : 'L';   // S = vốn hoá nhỏ (<$300M), L = lớn (>$300M)
+        const size = capLabel(vcFDV);
         return `<tr>
           <td class="td-ticker"><span class="ck">${e.ticker}${size ? ` <span class="td-cap">${size}</span>` : ''}</span></td>
           <td class="td-narrative"><span class="ck">${e.type || '—'}</span></td>
