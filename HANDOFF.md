@@ -8,7 +8,26 @@
 
 ---
 
-## ⭐ HANDOFF mới nhất (2026-08-17) — Thêm tab "AI" (hub bài viết) + đồng bộ header 3 màn
+## ⭐ HANDOFF mới nhất (2026-08-18) — Châm ngôn "Sharing POVs on Crypto + AI" (gỡ tiếng Việt khỏi CV)
+
+**Câu định vị chính thức, dùng nguyên văn ở mọi nơi: `Sharing POVs on Crypto + AI`.** Niềm tin đứng sau: *AI là tương lai, crypto là tiền tệ của tương lai* (câu này đi kèm ở meta/og/JSON-LD, không thay thế châm ngôn).
+
+**Lý do sửa:** session 17/08 đặt tagline **tiếng Việt** ("Chia sẻ góc nhìn về web3, học AI, builder + contributor") vào tab CV + toàn bộ thẻ meta — sai, vì **tab CV không có toggle ngôn ngữ, nó là mặt tiếng Anh của site**. Luật đã ghi vào `CLAUDE.md`: tiếng Việt chỉ nằm ở tab có toggle VI/EN (Valuation · AI · Airdrop) và tài liệu nội bộ.
+
+**Đã đổi (7 chỗ trong `index.html` + ảnh):**
+- `.hero-tagline` (tab CV) → `Sharing POVs on Crypto + AI` (bỏ dấu chấm cuối — là châm ngôn, không phải câu văn)
+- `meta description` · `og:title` · `og:description` · `og:image:alt` → châm ngôn + câu niềm tin
+- JSON-LD: **giữ `jobTitle` = "Builder + Contributor"** (schema.org cần chức danh thật, không nhét khẩu hiệu vào), thêm field **`description`** chứa châm ngôn
+- `og.png` vẽ lại: tiêu đề lớn = châm ngôn (1 dòng, cỡ chữ 56px → **64px** cho cân vì chữ ngắn hơn bản cũ), dòng phụ = `AI is the future · Crypto is the money of the future` (**thay** dòng `Valuation · AI · Airdrop` cũ — muốn quay lại thì sửa 1 dòng trong `og-gen.html`, bản so sánh đã render sẵn ở `C:	mp\cvshot\og-b.png`)
+- `og:image` + JSON-LD `image` lên **`?v=4`** (bắt buộc mỗi lần thay ảnh, xem comment ngay trên thẻ)
+
+**Nguồn vẽ `og.png`:** `C:	mp\cvshot\og-gen.html` (+ biến thể `og-gen-a.html` = bản đang dùng, `og-gen-b.html` = bản giữ dòng `Valuation · AI · Airdrop`). Render: `node C:	mp\cvshot\shot.js "file:///C:/tmp/cvshot/og-gen-a.html" og-a.png 1200 630 4000`. **File nguồn nằm NGOÀI repo** — muốn vẽ lại mà máy khác không có `C:	mp` thì phải chép lại từ đây.
+
+⚠️ **Tab CV đã được quét sạch tiếng Việt** (regex dấu tiếng Việt trên vùng `<div id="cv-view">` → 0 kết quả). Trước khi push bất kỳ thay đổi nội dung CV nào, quét lại.
+
+---
+
+## ⭐ HANDOFF trước đó (2026-08-17) — Thêm tab "AI" (hub bài viết) + đồng bộ header 3 màn
 
 **Nav giờ là: `0xhieu.xyz · CV · Valuation · AI · Airdrop`** ("About me" đổi tên thành "CV"). Route mới `/ai` (`_redirects` vốn đã catch-all nên không phải sửa).
 
@@ -30,7 +49,7 @@
 
 ---
 
-## ⭐ HANDOFF trước đó (2026-08-16) — Gọn lại bảng Valuation cho vừa mobile
+## ⭐ HANDOFF cũ hơn (2026-08-16) — Gọn lại bảng Valuation cho vừa mobile
 
 Tiêu đề cũ ("Tracking altcoins to read market conditions" / "Theo dõi altcoin để đọc tình hình thị trường") **dài quá, mobile mất chữ** → rút còn **"Tracking the market" / "Theo dõi thị trường"**. Header cột 3 bỏ chữ Date/Ngày, còn đúng **`TGE`** cho cả 2 ngôn ngữ (entry `tge-date-th` trong `VAL_HEAD_LABELS` giờ EN=VI, giữ lại trong bảng dịch cho đúng luật "mọi nhãn tĩnh phải khai báo").
 
@@ -374,6 +393,7 @@ qua server dev, đừng sửa `index.html`.)
 
 ## Decisions Log
 
+- 2026-08-18: **Chốt châm ngôn `Sharing POVs on Crypto + AI` làm câu định vị duy nhất, gỡ tagline tiếng Việt khỏi CV** — reason: tagline tiếng Việt đặt hôm 17/08 nằm ở tab CV và toàn bộ thẻ meta/og, mà **tab CV không có toggle ngôn ngữ** nên đó là mặt tiếng Anh của site (khách quốc tế, X, Telegram preview đều đọc chỗ này); user chốt dùng nguyên văn tiếng Anh, kèm định vị "AI là tương lai, crypto là tiền tệ của tương lai". Sửa 7 chỗ trong `index.html` (hero tagline, meta description, og:title/description/image:alt, JSON-LD thêm `description`, bump `?v=4`) + vẽ lại `og.png`. **Giữ `jobTitle` = "Builder + Contributor"** thay vì nhét châm ngôn vào — `jobTitle` của schema.org là chức danh, Google đọc để hiện knowledge panel, bỏ khẩu hiệu vào là dùng sai field; châm ngôn đi vào field `description` đúng nghĩa hơn. Dòng phụ trên `og.png` đổi từ `Valuation · AI · Airdrop` sang câu niềm tin (bản giữ nguyên dòng cũ render sẵn ở `C:	mp\cvshot\og-b.png` nếu user muốn đổi lại). **Luật mới ghi vào `CLAUDE.md`:** tiếng Việt chỉ được xuất hiện ở tab có toggle VI/EN + tài liệu nội bộ, không bao giờ ở tab CV / thẻ meta. **Verify:** `new Function()` parse sạch script inline; regex dấu tiếng Việt trên vùng `#cv-view` → 0 kết quả; screenshot thật CV desktop 1280 + mobile 390 (CDP `setDeviceMetricsOverride`) thấy đúng 1 dòng tagline không tràn.
 - 2026-08-12: **BUG đã sửa — `functions/api/private.js` vẫn chặn rank `C` do whitelist server-side chưa cập nhật theo thang rank mới** — user báo không thấy dự án nào ở Rank C dù đã chọn C trong dropdown admin và lưu. Root cause: thang rank đổi sang `$ · S · A · B · C` (entry ngay dưới, cùng ngày) chỉ sửa phía client (`WTE_RANKS` trong `index.html`); server (`private.js`) vẫn giữ `RANKS = ['SS','S','A','B']` từ trước đó (09/08) → `cleanRank('C')` không khớp whitelist, âm thầm ép về mặc định `'SS'` (không báo lỗi). Verify qua `curl /api/wte` production: 24 project, rank chỉ có `S/A/B/SS`, 0 project `C`, xác nhận đúng triệu chứng. Fix: `RANKS` đổi thành `['S','A','B','C']`, mặc định khi sai/thiếu đổi từ `'SS'` (rank cũ không còn tồn tại trong thang mới) sang `'C'`. Đồng thời đổi nhãn tĩnh Airdrop từ "Work" → "Works" theo yêu cầu user. **Việc CHƯA làm:** những project đã lưu nhầm thành `SS` khi user cố chọn `C` (nếu có) vẫn đang nằm ở nhóm S do `groupOf()` map `SS`→`S` — user cần vào popup admin sửa lại rank đúng ý cho từng project đó, code không tự đoán được project nào bị ảnh hưởng.
 - 2026-08-12: **Đổi hệ quy chiếu rank của Work to Earn: `$ · S · A · B · C`, bỏ hẳn S+ (`SS`)** — user chốt thang mới theo *quy mô kèo* thay vì tier chung chung: `$` = việc ra tiền ngắn hạn (gradient thương hiệu, đứng đầu, badge `$` thay chữ rank), `S` tím = kèo 10K, `A` xanh dương = kèo 1K, `B` xanh lá = kèo xxx, `C` trắng = kèo rác. `$` **không phải rank** — suy ra từ thẻ `Work-to-Earn`, nên dropdown Rank không có option này (`WTE_RANKS` = `WTE_GROUPS` bỏ `INCOME`). Gom toàn bộ thang về 3 hằng số + `groupOf()`/`groupLabel()` ở một chỗ, và **đổ dropdown Rank bằng JS** thay vì hardcode `<option>` — trước đó thang rank nằm rải ở 4 nơi (HTML dropdown, HTML nút lọc, map inline trong `cardHtml`, CSS `.rank-*`) nên đổi thang là phải nhớ sửa đủ 4 chỗ. Cấu trúc nhóm cũng chuẩn hoá: mọi nhóm là `.wte-group[id] > .wte-group-label? + .wte-rank-group`, id chuyển từ lưới ra wrapper để nhãn nhóm không bị `scrollIntoView` cắt mất; mọi nhóm đều có nhãn ("Income", "Rank S", "Rank A"…) chứ không chỉ mỗi nhóm `$`. **Data:** KV vẫn đang lưu `rank: 'SS'` (Arc + task cá nhân cũ) — `groupOf()` map `SS`→`S` để không mất card, user tự chỉnh lại rank từng dự án qua popup admin theo thang mới. **Verify:** headless Edge `--dump-dom` trên `/airdrop` với KV thật + stub 1 card mỗi rank → thanh lọc ra đúng `$ S A B C`, 5 nhóm đúng thứ tự, badge/class khớp 1-1 (`card--INCOME`/`badge=$` … `card--C`/`badge=C`), Arc (`SS` trong KV) rơi vào nhóm S, tổng 23 card không mất ai; screenshot 1100px xác nhận badge `$` gradient và badge `C` trắng viền xám không lệch cỡ so với 4 badge kia.
 - 2026-08-12: **Card trong nhóm rank xếp theo `WTE_TYPES`, không còn theo thứ tự thêm vào KV** — user thêm project Injective (thẻ `Work-to-Earn`, rank S+) và thấy nó nằm sau Arc (`Stablechain`) dù `Work-to-Earn` đã được đặt đầu mảng `WTE_TYPES`. Root cause: `WTE_TYPES` chỉ được dùng để đổ dropdown admin, còn `renderWTE()` gom card theo rank rồi render **nguyên thứ tự mảng trả về từ `/api/wte`** (= thứ tự ghi vào KV) — đổi thứ tự trong `WTE_TYPES` không ảnh hưởng gì tới giao diện. Fix: chuyển `WTE_TYPES` từ mục ADMIN lên mục "AIRDROP — Work to Earn" (nó không còn là hằng số riêng của admin), thêm helper `typeOrder()`, `renderWTE()` sort từng nhóm rank theo helper này. Thẻ trống/lạ → cuối nhóm; cùng thẻ → giữ thứ tự KV (sort stable). Nhóm "Cá nhân" cố ý không sort. **Verify:** `new Function()` parse sạch block script; headless Edge `--dump-dom` trên `/airdrop` với KV data thật (23 project) → đủ 23 card, S+ ra `Work-to-Earn Injective` → `Stablechain Arc`, nhóm A hết lộn xộn (Stablechain → Trading → Layer-1 → Infra → AI → Layer-2 → Prediction → Payment → DeFi → Others).

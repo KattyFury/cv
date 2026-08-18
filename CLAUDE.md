@@ -6,6 +6,16 @@
 
 ## Who I Am
 
+**Châm ngôn / positioning (chốt 2026-08-18) — dùng NGUYÊN VĂN, KHÔNG dịch, KHÔNG viết lại:**
+
+> ### Sharing POVs on Crypto + AI
+
+Niềm tin đứng sau câu này: **AI là tương lai, crypto là tiền tệ của tương lai.**
+
+Mọi chỗ mô tả tôi ra bên ngoài phải dùng đúng câu trên: `.hero-tagline` của tab CV, `meta description`, `og:title` / `og:description` / `og:image:alt`, JSON-LD `description`, ảnh share `og.png`, và bất kỳ repo / profile nào khác của tôi.
+
+> ⚠️ **Tab CV là tiếng Anh, không có ngoại lệ.** Tiếng Việt chỉ được xuất hiện ở các tab có toggle VI/EN (Valuation · AI · Airdrop) và trong tài liệu nội bộ (`CLAUDE.md`, `HANDOFF.md`, comment code). Viết tagline / mô tả tiếng Việt vào phần CV hay thẻ meta = **sai**, đã xảy ra 2026-08-17 và phải sửa lại.
+
 I'm a **Vietnamese vibecoder** — I have ideas, not a programming background. I build products by handing off to AI, not by writing every line myself.
 
 **How I learn and work:**
