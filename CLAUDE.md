@@ -8,7 +8,7 @@
 
 **Châm ngôn / positioning (chốt 2026-08-18) — dùng NGUYÊN VĂN, KHÔNG dịch, KHÔNG viết lại:**
 
-> ### Sharing POVs on Crypto + AI
+> ### Crypto and AI
 
 Niềm tin đứng sau câu này: **AI là tương lai, crypto là tiền tệ của tương lai.**
 
