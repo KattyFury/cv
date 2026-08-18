@@ -31,6 +31,12 @@
 
 ⚠️ **ĐỪNG tách thêm bậc ở nửa DƯỚI $300M** (ý tưởng chia S/M/L kiểu nhỏ-vừa-lớn): data nói `<$100M` và `$100–300M` hành xử **y hệt** — median ×TGE 4.25 vs 4.61 toàn lịch sử, 3.38 vs 3.73 riêng 12 tháng qua. Tách ra chỉ được 2 rổ nói cùng 1 điều, mỗi rổ ít mẫu đi một nửa. Chỗ data thật sự gãy là **$300M** (dưới ×4.2-4.6 → trên ×2.7), nên ranh giới đó giữ nguyên.
 
+**Cùng ngày — hero CV thêm dòng niềm tin, lưới hero 8 hàng → 10 hàng:** dưới tagline giờ có `.hero-belief` = *"I believe AI is the future of knowledge work, robots the future of manual labor, and crypto the future of money."* (user viết tiếng Việt, yêu cầu dịch; `knowledge work` / `manual labor` là cặp chuẩn cho "công việc trí óc" / "công việc chân tay").
+
+Lưới hero cập nhật theo đúng luật khoảng cách sẵn có (**yếu tố cùng cụm cách 1 hàng**): `repeat(5, var(--row)) auto var(--row) auto var(--row) auto` — h6 tagline · h7 trống · **h8 niềm tin** · h9 trống · h10 socials. Ba hàng chữ đều để **AUTO**, không ghim `var(--row)`, vì mobile câu dài xuống 2-3 dòng sẽ tràn ô đè hàng dưới.
+
+Phân cấp giữa 2 dòng bằng **weight** (tagline 500, niềm tin 400), cùng cỡ 15px, **cùng màu đen** — không dùng chữ xám cho nội dung. `.hero-belief` có `max-width: 62ch` để câu không kéo hết bề ngang màn lớn. Verify chụp thật: desktop 1280 xuống 2 dòng, mobile 390 xuống 2 dòng, socials và Experience không bị đè.
+
 **Cùng ngày — tiêu đề Valuation dài trở lại + sửa gốc chỗ cắt chữ:** header đổi thành VI `Theo dõi altcoin để nhận định thị trường` / EN `Tracking altcoins to read the market` (`val-headline-text`, nhớ sửa CẢ nhãn mặc định trong HTML lẫn entry trong bảng dịch — 2 chỗ).
 
 ⚠️ **Câu này dài hơn giới hạn 1 dòng của mobile — ĐỪNG rút ngắn lại như hôm 16/08.** Lần đó chữ bị mất vì `.panel-head .val-intro > span` đang ép `white-space: nowrap` + `text-overflow: ellipsis`, màn 390px cắt còn "Theo dõi altcoin để nhận định t…". Đã sửa tận gốc: cho tiêu đề **xuống tối đa 2 dòng** (`-webkit-line-clamp: 2`, `white-space: normal`, `line-height: 1.25`). Hộp `.val-intro` vốn cao sẵn **2 hàng (~56px)** nên 2 dòng 15px nằm gọn, **không đẩy lưới hàng**. Verify chụp thật: 390px và **320px** đều hiện đủ câu; desktop 1280px vẫn 1 dòng; tab AI ("Học và chia sẻ") và Airdrop ("Work to Earn") tiêu đề ngắn nên không đổi gì.

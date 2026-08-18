@@ -200,12 +200,14 @@
          hàng 5    : trống (1 hàng — trong cụm)
          hàng 6    : tagline   ← AUTO cao (mobile xuống nhiều dòng → cao hơn 1 hàng, phải tự giãn)
          hàng 7    : trống (1 hàng — trong cụm, luôn = --row dù tagline dài)
-         hàng 8    : socials   ← đáy Hero (AUTO)
-       ⚠️ Hàng tagline/socials để AUTO, KHÔNG ghim var(--row) — nếu ghim, text dài tràn ô đè hàng dưới. */
+         hàng 8    : niềm tin  ← AUTO (câu dài, mobile xuống 2-3 dòng)
+         hàng 9    : trống (1 hàng — trong cụm)
+         hàng 10   : socials   ← đáy Hero (AUTO)
+       ⚠️ Hàng tagline/niềm tin/socials để AUTO, KHÔNG ghim var(--row) — nếu ghim, text dài tràn ô đè hàng dưới. */
     .hero {
       padding: 0;
       display: grid;
-      grid-template-rows: repeat(5, var(--row)) auto var(--row) auto;
+      grid-template-rows: repeat(5, var(--row)) auto var(--row) auto var(--row) auto;
       text-align: left;
     }
 
@@ -215,7 +217,8 @@
       display: flex; flex-direction: row; align-items: center; gap: 20px;
     }
     .hero-tagline { grid-row: 6; align-self: center; }
-    .socials      { grid-row: 8; align-self: center; }
+    .hero-belief  { grid-row: 8; align-self: center; }
+    .socials      { grid-row: 10; align-self: center; }
 
     .pfp {
       width: 72px; height: 72px;
@@ -242,6 +245,14 @@
     .hero-tagline {
       font-size: 15px; font-weight: 500;
       color: var(--text); line-height: 1.5;
+    }
+
+    /* Dòng niềm tin: cùng cỡ, cùng màu đen với tagline — phân cấp bằng WEIGHT (400 vs 500),
+       không dùng chữ xám cho nội dung. max-width để câu dài không kéo hết bề ngang màn to. */
+    .hero-belief {
+      font-size: 15px; font-weight: 400;
+      color: var(--text); line-height: 1.5;
+      max-width: 62ch;
     }
 
     /* ── SOCIALS — nút gọn, có icon (3 nút vừa 1 hàng cả trên mobile) ── */
@@ -1121,6 +1132,7 @@
           </div>
         </div>
         <div class="hero-tagline">Sharing POVs on Crypto and AI</div>
+        <div class="hero-belief">I believe AI is the future of knowledge work, robots the future of manual labor, and crypto the future of money.</div>
         <div class="socials">
           <a class="social-btn" href="https://x.com/0xhieuxyz" target="_blank" rel="noopener">
             <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path d="M44.2857 55.7143L10 10H30L55.7143 44.2857M44.2857 55.7143L70 90H90L55.7143 44.2857M44.2857 55.7143L10 90M55.7143 44.2857L90 10"/></svg>
