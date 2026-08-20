@@ -1,197 +1,166 @@
 # HANDOFF — CV / Portfolio (0xhieu.xyz)
 
-**Date:** 2026-08-12  
-**Repo:** https://github.com/KattyFury/cv  
-**Live:** Cloudflare Pages, project `0xhieu-xyz` (git-integration auto-deploy từ `main` — **chạy bình thường**, đã kiểm chứng 2026-08-01)  
-**Local dev:** site tĩnh — mở thẳng `index.html`, hoặc `python -m http.server` bất kỳ port nào (route `/valuation` cần SPA fallback về `index.html` giống `_redirects`)  
-**Local path:** `D:\Files\Claude\0xhieu` (đổi 2026-08-16; path cũ `build_for_me\cv` / `Claude\cv` không còn tồn tại)
+**Date:** 2026-08-20
+**Repo:** https://github.com/KattyFury/cv
+**Local path:** `D:\Files\Claude\0xhieu` (path cũ `build_for_me\cv` / `Claude\cv` không còn tồn tại)
+**Live:** Cloudflare Pages, project **`0xhieu-xyz`** (KHÁC tên repo GitHub là `cv`) — git-integration auto-deploy từ `main`, chạy bình thường
+**Local dev:** site tĩnh 1 file. Xem nhanh: mở thẳng `index.html`. Test route thật (`/valuation`, `/ai`, `/airdrop`) thì cần server có **SPA fallback** về `index.html` — `python -m http.server` KHÔNG có nên sẽ 404.
+
+> **Cách đọc file này:** mục **TRẠNG THÁI HIỆN TẠI** = sự thật của code lúc này. Mục **QUY ĐỊNH BẮT BUỘC** = luật đã trả giá mới rút ra được, đừng phá. **Decisions Log** + **Failed Approaches** ở cuối = lịch sử *vì sao*, chỉ thêm vào, không sửa lại.
+> Sửa code xong thì cập nhật mục Trạng thái + thêm 1 dòng Decisions Log; **đừng thêm mục "HANDOFF mới nhất" mới** — kiểu đó đã làm file phình lên 544 dòng với 5 mục kể lể chồng chéo, trong đó 2 mục ghi sai sự thật hiện tại (2026-08-20 dọn lại).
 
 ---
 
-## ⭐ HANDOFF mới nhất (2026-08-18) — Châm ngôn "Sharing POVs on Crypto and AI" (gỡ tiếng Việt khỏi CV)
+# TRẠNG THÁI HIỆN TẠI
 
-**Câu định vị chính thức, dùng nguyên văn ở mọi nơi: `Sharing POVs on Crypto and AI`.** (Trong ngày đi qua 2 bản nháp: `Sharing POVs on Crypto + AI` → `Crypto and AI` → bản chốt này. Ảnh `og.png` đang ở `?v=6`, cỡ chữ tiêu đề 64px.) Niềm tin đứng sau: *AI là tương lai, crypto là tiền tệ của tương lai* (câu này đi kèm ở meta/og/JSON-LD, không thay thế châm ngôn).
+## Tổng quan
 
-**Lý do sửa:** session 17/08 đặt tagline **tiếng Việt** ("Chia sẻ góc nhìn về web3, học AI, builder + contributor") vào tab CV + toàn bộ thẻ meta — sai, vì **tab CV không có toggle ngôn ngữ, nó là mặt tiếng Anh của site**. Luật đã ghi vào `CLAUDE.md`: tiếng Việt chỉ nằm ở tab có toggle VI/EN (Valuation · AI · Airdrop) và tài liệu nội bộ.
+Website cá nhân, **toàn bộ nằm trong `index.html`** (HTML + CSS + JS inline). Nav 4 tab:
 
-**Đã đổi (7 chỗ trong `index.html` + ảnh):**
-- `.hero-tagline` (tab CV) → `Sharing POVs on Crypto and AI` (bỏ dấu chấm cuối — là châm ngôn, không phải câu văn)
-- `meta description` · `og:title` · `og:description` · `og:image:alt` → châm ngôn + câu niềm tin
-- JSON-LD: **giữ `jobTitle` = "Builder + Contributor"** (schema.org cần chức danh thật, không nhét khẩu hiệu vào), thêm field **`description`** chứa châm ngôn
-- `og.png` vẽ lại: tiêu đề lớn = châm ngôn (1 dòng, cỡ chữ 56px → **64px** cho cân vì chữ ngắn hơn bản cũ), dòng phụ = `AI is the future · Crypto is the money of the future` (**thay** dòng `Valuation · AI · Airdrop` cũ — muốn quay lại thì sửa 1 dòng trong `og-gen.html`, bản so sánh đã render sẵn ở `C:\tmp\cvshot\og-b.png`)
-- `og:image` + JSON-LD `image` lên **`?v=4`** (bắt buộc mỗi lần thay ảnh, xem comment ngay trên thẻ)
+| Tab | Route | Nội dung | Ngôn ngữ |
+|---|---|---|---|
+| **CV** | `/` | Hero + Experience + Highlights + Available for | **Tiếng Anh cố định**, không toggle |
+| **Valuation** | `/valuation` | Bảng TGE + 4 box phân tích | Toggle EN\|VI, mặc định VI |
+| **AI** | `/ai` | Hub bài viết, 4 box | Toggle EN\|VI, mặc định VI |
+| **Airdrop** | `/airdrop` | Card Work to Earn + thanh lọc rank | Toggle EN\|VI, mặc định VI |
 
-**Nguồn vẽ `og.png`:** `C:\tmp\cvshot\og-gen.html` (+ biến thể `og-gen-a.html` = bản đang dùng, `og-gen-b.html` = bản giữ dòng `Valuation · AI · Airdrop`). Render: `node C:\tmp\cvshot\shot.js "file:///C:/tmp/cvshot/og-gen-a.html" og-a.png 1200 630 4000`. **File nguồn nằm NGOÀI repo** — muốn vẽ lại mà máy khác không có `C:\tmp` thì phải chép lại từ đây.
+`_redirects` là catch-all (`/* /index.html 200`) nên thêm route mới không phải sửa gì.
 
-**Cùng ngày — thang vốn hoá đổi `S/L` → `S/M`, soạn sẵn bậc `L` cho >$500M:** hậu tố ở cột Ticker và chú giải trong box "Hệ số TGE gần đây" giờ là **S (<$300M) · M (>$300M)**. Thang đầy đủ đã chốt là **S · M · L** với `L = >$500M`, nhưng **CHƯA BẬT** — mọi thứ gom về `capLabel()` + 3 hằng số `CAP_M` / `CAP_L` / `CAP_L_ACTIVE` ngay trên `renderTable()`.
+## Tab CV
 
-**Vì sao chưa bật L** (đo trên 76 dự án tab DATA, không phải cảm tính): rổ `>$500M` chỉ có **5 dự án TGE trong 12 tháng gần nhất**; box "Hệ số TGE gần đây" lấy 6 dự án gần nhất mỗi rổ, rổ này 6 dự án gần nhất trải **313 ngày** → cửa sổ kéo về 11/2025, trộn 2 chế độ thị trường. `predictFDV()` cần ≥2 mẫu cùng rổ, thiếu thì **âm thầm fallback về toàn bộ pool** (không báo gì) → số hiện ra không biết đến từ đâu.
+- **Châm ngôn định vị, dùng nguyên văn ở mọi nơi: `Sharing POVs on Crypto and AI`.**
+- Dưới tagline là `.hero-belief` — câu niềm tin bản dài 3 vế: *"I believe AI is the future of knowledge work, robots the future of manual labor, and crypto the future of money."*
+- ⚠️ **Câu niềm tin CÓ 2 BẢN, cố ý — đừng "đồng bộ" lại làm một.** Bản dài 3 vế dùng ở **hero CV** (có chỗ để thở); bản rút gọn *"AI is the future. Crypto is the money of the future."* dùng ở **meta description / og:description / JSON-LD / og.png** vì mấy chỗ đó giới hạn ký tự và ảnh preview không chứa nổi câu 3 vế.
+- Lưới hero 10 hàng: `repeat(5, var(--row)) auto var(--row) auto var(--row) auto` — h6 tagline · h7 trống · h8 niềm tin · h9 trống · h10 socials. **Ba hàng chữ để `auto`**, không ghim `var(--row)`: mobile câu dài xuống 2-3 dòng sẽ tràn ô đè hàng dưới. Phân cấp tagline/niềm tin bằng **weight** (500 vs 400), cùng 15px, cùng màu đen. `.hero-belief` có `max-width: 62ch`.
+- Highlights đọc `highlights.txt` (mỗi dòng `tên-ảnh | caption`, thứ tự dòng = thứ tự hiển thị). Ảnh thiếu → card tự ẩn.
 
-**Điều kiện bật L:** rổ `>$500M` có **≥12 dự án TGE trong 12 tháng gần nhất**. Khi đó `CAP_L_ACTIVE = true` **chưa đủ** — comment trên `capLabel()` liệt kê 3 việc phải làm nốt (tách rổ trong `renderTGEStats()` + `predictFDV()`, thêm hàng thứ 3 vào box, thêm entry dịch cho hàng mới).
+## Thẻ share (`<head>`) + `og.png`
 
-⚠️ **ĐỪNG tách thêm bậc ở nửa DƯỚI $300M** (ý tưởng chia S/M/L kiểu nhỏ-vừa-lớn): data nói `<$100M` và `$100–300M` hành xử **y hệt** — median ×TGE 4.25 vs 4.61 toàn lịch sử, 3.38 vs 3.73 riêng 12 tháng qua. Tách ra chỉ được 2 rổ nói cùng 1 điều, mỗi rổ ít mẫu đi một nửa. Chỗ data thật sự gãy là **$300M** (dưới ×4.2-4.6 → trên ×2.7), nên ranh giới đó giữ nguyên.
+- `og:title` = châm ngôn · `og:description` + `meta description` = châm ngôn + câu niềm tin bản ngắn · JSON-LD giữ `jobTitle` = "Builder + Contributor" (schema.org cần **chức danh thật**, không nhét khẩu hiệu) và để châm ngôn ở field `description`.
+- ⚠️ **Đổi ảnh thì PHẢI bump `?v=` trên `og:image` + JSON-LD `image`** — X/Telegram/Facebook cache ảnh preview theo URL, giữ nguyên URL thì chúng vẫn hiện ảnh cũ dù file đã thay. Đang ở `?v=6`.
+- **Nguồn vẽ `og.png` nằm NGOÀI repo**: `C:\tmp\cvshot\og-gen.html` (biến thể `og-gen-a.html` = bản đang dùng, `og-gen-b.html` = bản giữ dòng phụ `Valuation · AI · Airdrop`). Render: `node C:\tmp\cvshot\shot.js "file:///C:/tmp/cvshot/og-gen-a.html" og-a.png 1200 630 4000`. Máy khác không có `C:\tmp` thì phải chép lại từ đây.
+- Handle X hiện tại: **`nguyen0xhieu`** (đổi 2026-08-20 từ `0xhieuxyz`) — có ở 5 chỗ: nút Twitter hero, link footer, `twitter:site`, `twitter:creator`, `sameAs` trong JSON-LD.
 
-**Cùng ngày — hero CV thêm dòng niềm tin, lưới hero 8 hàng → 10 hàng:** dưới tagline giờ có `.hero-belief` = *"I believe AI is the future of knowledge work, robots the future of manual labor, and crypto the future of money."* (user viết tiếng Việt, yêu cầu dịch; `knowledge work` / `manual labor` là cặp chuẩn cho "công việc trí óc" / "công việc chân tay").
+## Tab Valuation
 
-Lưới hero cập nhật theo đúng luật khoảng cách sẵn có (**yếu tố cùng cụm cách 1 hàng**): `repeat(5, var(--row)) auto var(--row) auto var(--row) auto` — h6 tagline · h7 trống · **h8 niềm tin** · h9 trống · h10 socials. Ba hàng chữ đều để **AUTO**, không ghim `var(--row)`, vì mobile câu dài xuống 2-3 dòng sẽ tràn ô đè hàng dưới.
+- Bảng "Tracking altcoins" 6 cột: **Ticker · Narrative · TGE · ×TGE · ×ATH · ×ATM** (cột 3 dùng chung chữ `TGE` cho cả EN lẫn VI). Tiêu đề màn: VI `Theo dõi altcoin để nhận định thị trường` / EN `Tracking altcoins to read the market`.
+- **Hậu tố vốn hoá ở cột Ticker: `S` (<$300M) · `M` (>$300M)** — class `.td-cap` (tím `--accent`, 10px, bold; KHÔNG dùng chung `.td-size` vì `.td-size` là xám-phụ). Thang đầy đủ đã chốt là **S · M · L** với `L = >$500M` nhưng **CHƯA BẬT**; tất cả gom về `capLabel()` + 3 hằng số `CAP_M` / `CAP_L` / `CAP_L_ACTIVE` ngay trên `renderTable()`.
+- **Chú giải S/M nằm ở box "Hệ số TGE gần đây"** (`tge-lowfdv-label` / `tge-highfdv-label` có `<span class="td-cap">`) — đây là chỗ DUY NHẤT giải thích ký hiệu. Đổi chữ 1 chỗ thì phải đổi chỗ kia.
+- 4 box: Hệ số TGE gần đây (đã gộp Market Condition) · Vùng nguy hiểm · Narrative đang hot · Watchlist theo narrative. Popup bảng dài (`#tge-modal`) **clone thẳng thead/tbody của bảng inline** nên tự ăn theo mọi thay đổi, không có code riêng.
+- Nút camera xuất dashboard ra PNG (xem quy định "Chụp ảnh dashboard").
 
-Phân cấp giữa 2 dòng bằng **weight** (tagline 500, niềm tin 400), cùng cỡ 15px, **cùng màu đen** — không dùng chữ xám cho nội dung. `.hero-belief` có `max-width: 62ch` để câu không kéo hết bề ngang màn lớn. Verify chụp thật: desktop 1280 xuống 2 dòng, mobile 390 xuống 2 dòng, socials và Experience không bị đè.
+## Tab AI (hub bài viết)
 
-⚠️ **Câu niềm tin CÓ 2 BẢN, cố ý — đừng "đồng bộ" lại làm một.** Bản dài 3 vế (trí óc · chân tay · tiền tệ) dùng ở **hero CV** vì có chỗ để thở; bản rút gọn *"AI is the future. Crypto is the money of the future."* dùng ở **meta description / og:description / JSON-LD / og.png** vì mấy chỗ đó bị giới hạn ký tự và ảnh preview không chứa nổi câu 3 vế. User chốt 2026-08-18.
+- 4 box khai trong **`AI_HUBS`**: INSIGHTS · LEARN · TOOLS · BUILD. Mỗi box cao **12 hàng** (tên hub 1 hàng · danh sách bài 11 hàng tự cuộn), desktop 2 cột / mobile 1 cột. Mỗi bài 1 hàng: tiêu đề (mở link, `target=_blank`) + ngày (`fmtDate`, mới nhất lên đầu).
+- Box **chỉ có tên hub, KHÔNG dòng mô tả**; hub rỗng để trống luôn, không có chữ "Chưa có bài nào" (user chốt "chỉ cần header").
+- **KHÔNG viết CSS riêng cho tab AI**: box dùng lại nguyên class box Valuation (`.val-card` + `.val-card-label.calc-card-label.vc-q1`, nút `+` nằm cạnh tên hub đúng chỗ icon ⓘ); `.ai-row`/`.ai-title`/`.ai-date`/`.ai-list` **gộp thẳng vào định nghĩa dùng chung** với `.danger-row`/`.narrative-row`/`.wlb-row`. Sửa màu/nhịp 1 chỗ là cả site đổi theo.
+- **Dịch (khác Valuation): tab AI dịch CẢ tiêu đề bài viết** VI→EN qua `gtranslate()` (dùng chung với Airdrop). Bản dịch chỉ nằm trong RAM (`aiTitlesEN`, map id→tiêu đề EN), **KV luôn giữ tiêu đề gốc**; thêm/sửa/xoá xong `applyAiPosts()` đặt `aiTitlesEN = null` để dịch lại.
+- Admin: nút "Admin" thành "+" khi mở khoá; mỗi hub có "+" riêng (thêm thẳng vào hub đó), mỗi bài có "⋮" để sửa/xoá. Ngày đăng tự điền hôm nay, sửa tay được.
 
-**Cùng ngày — tiêu đề Valuation dài trở lại + sửa gốc chỗ cắt chữ:** header đổi thành VI `Theo dõi altcoin để nhận định thị trường` / EN `Tracking altcoins to read the market` (`val-headline-text`, nhớ sửa CẢ nhãn mặc định trong HTML lẫn entry trong bảng dịch — 2 chỗ).
+## Tab Airdrop
 
-⚠️ **Câu này dài hơn giới hạn 1 dòng của mobile — ĐỪNG rút ngắn lại như hôm 16/08.** Lần đó chữ bị mất vì `.panel-head .val-intro > span` đang ép `white-space: nowrap` + `text-overflow: ellipsis`, màn 390px cắt còn "Theo dõi altcoin để nhận định t…". Đã sửa tận gốc: cho tiêu đề **xuống tối đa 2 dòng** (`-webkit-line-clamp: 2`, `white-space: normal`, `line-height: 1.25`). Hộp `.val-intro` vốn cao sẵn **2 hàng (~56px)** nên 2 dòng 15px nằm gọn, **không đẩy lưới hàng**. Verify chụp thật: 390px và **320px** đều hiện đủ câu; desktop 1280px vẫn 1 dòng; tab AI ("Học và chia sẻ") và Airdrop ("Work to Earn") tiêu đề ngắn nên không đổi gì.
+Card Work to Earn đọc từ KV, thanh lọc rank `$ · S · A · B · C` — chi tiết luật ở mục "WTE Cards" bên dưới. Tiêu đề màn: "Work to Earn".
 
-⚠️ **Tab CV đã được quét sạch tiếng Việt** (regex dấu tiếng Việt trên vùng `<div id="cv-view">` → 0 kết quả). Trước khi push bất kỳ thay đổi nội dung CV nào, quét lại.
+## Backend + nguồn data
 
----
-
-## ⭐ HANDOFF trước đó (2026-08-17) — Thêm tab "AI" (hub bài viết) + đồng bộ header 3 màn
-
-**Nav giờ là: `0xhieu.xyz · CV · Valuation · AI · Airdrop`** ("About me" đổi tên thành "CV"). Route mới `/ai` (`_redirects` vốn đã catch-all nên không phải sửa).
-
-**Tab AI = hub chia sẻ bài viết**, 4 box cố định khai trong `AI_HUBS` (`index.html`): INSIGHTS · LEARN · TOOLS · BUILD. Mỗi box cao **12 hàng** (tên hub 1 hàng · danh sách bài 11 hàng tự cuộn), desktop 2 cột / mobile 1 cột. Mỗi bài 1 hàng: tiêu đề (bấm mở link, `target=_blank`) + ngày (`fmtDate`, mới nhất lên đầu). Box **chỉ có tên hub, KHÔNG có dòng mô tả**, hub rỗng thì để trống luôn (không có chữ "Chưa có bài nào") — user chốt "chỉ cần header".
-
-**KHÔNG viết CSS riêng cho box/hàng/chữ/scrollbar của tab AI**: box hub dùng lại nguyên class của box Valuation (`.val-card` + tiêu đề `.val-card-label.calc-card-label.vc-q1`, nút `+` nằm cạnh tên hub đúng chỗ icon ⓘ), hàng bài `.ai-row`/`.ai-title`/`.ai-date`/`.ai-list` được **gộp thẳng vào định nghĩa dùng chung** với `.danger-row`/`.narrative-row`/`.wlb-row` ở mục DANGER ZONE. Sửa màu/nhịp 1 chỗ là cả site đổi theo — đừng tách ra viết lại.
-
-**Dịch (khác Valuation):** tab AI dịch **CẢ tiêu đề bài viết** VI→EN qua `gtranslate()` (dùng chung với Airdrop) để người đọc tiếng Anh dùng được — user yêu cầu 2026-08-17. Bản dịch chỉ nằm trong RAM (`aiTitlesEN`, map id→tiêu đề EN), **KV luôn giữ tiêu đề gốc**; thêm/sửa/xoá xong thì `applyAiPosts()` đặt lại `aiTitlesEN = null` để dịch lại. Mặc định VI, `aiLang` độc lập với `valLang`/`wteLang`.
-
-**Backend mới `functions/api/ai.js`** — `GET /api/ai` công khai (khách đọc), `POST /api/ai` cần `ADMIN_PASS` (add/update/delete). Dùng **CHUNG KV binding `WORK`** với Work to Earn, **khác key: `ai-posts`** (Work to Earn là `personal-tasks`) và **CHUNG 1 mật khẩu `ADMIN_PASS`** → Cloudflare KHÔNG cần cấu hình gì thêm khi deploy. Mở khoá admin ở tab nào thì cả 2 tab cùng mở (`setAdminUnlocked()` gọi `syncAiAdminBtn()`); nút "Admin" biến thành "+" khi đã mở khoá, mỗi hub có nút "+" riêng (thêm thẳng vào hub đó), mỗi bài có "⋮" để sửa/xoá. Ngày đăng tự điền ngày hôm nay khi thêm, admin sửa tay được.
-
-⚠️ **Mảng `CATS` trong `ai.js` phải khớp `AI_HUBS` trong `index.html`** — thêm hub mà quên sửa server thì bài lưu vào sẽ bị ép về hub đầu tiên, im lặng không báo lỗi (đúng vết xe đổ của bug rank C ngày 12/08).
-
-**Header 3 màn giờ giống hệt nhau** — class chung **`.panel-head`**: **tiêu đề (`.val-intro`) bên TRÁI, cụm control (`.val-head-ctrl`) bên PHẢI**, đẩy nhau bằng flex `space-between`. Valuation "Theo dõi thị trường" (camera + EN|VI) · AI "Học và chia sẻ" (Admin + EN|VI) · Airdrop "Work to Earn" (Admin + EN|VI; `.ard-tabs`/`.ard-tab` đã xoá vì không còn dùng).
-
-⚠️ **ĐỪNG làm tiêu đề căn giữa + control `position:absolute` nữa** (đã thử và hỏng 2 lần trong ngày): tiêu đề khi đó canh giữa theo TOÀN BỘ chiều rộng nên **không né control** → chữ chui xuống dưới nút Admin/EN|VI và mất chữ. Lần 1 fix nửa vời bằng `@media (max-width:640px)` tách 2 hàng, vẫn hỏng ở khoảng 641px trở lên → **user chốt bỏ hẳn, cho header qua trái**. Trái–phải thì mọi bề rộng đều an toàn.
-
-**⚠️ CÁCH CHỤP MOBILE CHO ĐÚNG (đừng lặp lại lỗi này):** `chrome --headless --window-size=390,844` **KHÔNG ra mobile thật** — Windows không cho cửa sổ hẹp hơn 500px nên Chrome layout ở ~500-534px rồi **cắt** còn 390 → nhìn y như trang bị tràn ngang, dễ tưởng có bug layout. Phải ép viewport qua CDP `Emulation.setDeviceMetricsOverride` (script mẫu đã dùng: `C:\tmp\cvshot\shot.js`).
-
----
-
-## ⭐ HANDOFF cũ hơn (2026-08-16) — Gọn lại bảng Valuation cho vừa mobile
-
-Tiêu đề cũ ("Tracking altcoins to read market conditions" / "Theo dõi altcoin để đọc tình hình thị trường") **dài quá, mobile mất chữ** → rút còn **"Tracking the market" / "Theo dõi thị trường"**. Header cột 3 bỏ chữ Date/Ngày, còn đúng **`TGE`** cho cả 2 ngôn ngữ (entry `tge-date-th` trong `VAL_HEAD_LABELS` giờ EN=VI, giữ lại trong bảng dịch cho đúng luật "mọi nhãn tĩnh phải khai báo").
-
-**Hậu tố vốn hoá trong cột Ticker: `(<$300M)`/`(>$300M)` → `S`/`L`** (class mới **`.td-cap`**: tím `--accent`, 10px, bold — KHÔNG dùng chung `.td-size` vì `.td-size` là xám-phụ, còn S/L là thông tin cần nổi). Ngưỡng không đổi (`vcFDV < 300e6`). **Chú giải S/L nằm ở box "Hệ số TGE gần đây"** (nhãn `tge-lowfdv-label`/`tge-highfdv-label` có kèm `<span class="td-cap">`) — đổi chữ ở 1 trong 2 chỗ thì phải đổi chỗ kia, nếu không S/L thành ký hiệu không ai hiểu.
-
-Popup bảng dài (`#tge-modal`) **clone thẳng thead/tbody của bảng inline** nên tự ăn theo, không có code riêng cần sửa. Verify bằng Chrome headless chụp thật 4 view (inline + popup × desktop 1280 / mobile 390) — cách làm: `node` server tạm có SPA fallback (route `/valuation` cần fallback về `index.html`, `python -m http.server` KHÔNG có nên sẽ 404).
-
-**Chưa làm (user duyệt bỏ qua):** ký tự nhân vẫn là `×` (user gõ `x` trong yêu cầu nhưng đây chỉ là cách gõ, không đổi).
+- **Cloudflare Pages Functions** (`functions/api/`) — đây là backend DUY NHẤT của site, không có secret nào khác, không smart contract:
+  - `wte.js` — `GET /api/wte`, công khai, trả project Work to Earn có `visibility === 'public'`.
+  - `private.js` — `POST /api/private`, cần `ADMIN_PASS`, CRUD task Work to Earn (cá nhân + public). Key KV: `personal-tasks`.
+  - `ai.js` — `GET /api/ai` công khai + `POST /api/ai` cần `ADMIN_PASS`, CRUD bài viết tab AI. Key KV: `ai-posts`.
+- Cả 3 dùng **CHUNG KV binding `WORK`** và **CHUNG 1 mật khẩu `ADMIN_PASS`** (đặt ở Cloudflare Dashboard, không nằm trong repo) → thêm endpoint mới không phải cấu hình gì thêm. Mở khoá admin ở tab nào thì cả 2 tab cùng mở (`setAdminUnlocked()` gọi `syncAiAdminBtn()`). Mật khẩu giữ trong `sessionStorage`, đóng trình duyệt là phải nhập lại; kiểm tra **ở server**, sai → 401 và không trả bất kỳ dữ liệu nào.
+- Nguồn data còn lại public, keyless, đọc thẳng client-side:
+  - **Google Sheets CSV** (gviz) — chỉ Valuation dùng (tab `DATA` + tab `Watchlist`). Airdrop **không còn đọc Sheet** từ 2026-08-09.
+  - **CoinGecko** free API — giá / ATH.
+  - **Google Translate** (gtx) — dịch VI→EN cho Airdrop + tab AI.
+- **Google Apps Script** (trong Sheet, chạy daily 2h) — sync ATH + current price vào tab DATA.
 
 ---
 
-## ⭐ HANDOFF cũ hơn (2026-08-12) — Fix rank C bị server chặn ngầm + đổi nhãn "Work" → "Works"
+# QUY ĐỊNH BẮT BUỘC
 
-**Bug:** user báo không thấy dự án nào ở Rank C, dù thang rank Work to Earn đã đổi sang `$ · S · A · B · C` đúng hôm nay (chi tiết ở Decisions Log). Root cause: đổi thang chỉ sửa phía client (`WTE_RANKS` trong `index.html`) — `functions/api/private.js` vẫn giữ whitelist rank cũ `['SS','S','A','B']` từ session 09/08, nên mỗi lần admin chọn `C` trong popup và lưu, server không nhận `'C'` hợp lệ → âm thầm ép về `'SS'`, không báo lỗi gì. Verify bằng `curl /api/wte` production trước khi sửa: 24 project, rank chỉ có S/A/B/SS, đúng 0 project C.
+## Ngôn ngữ
 
-**Đã sửa:**
-1. `functions/api/private.js` — `RANKS` đổi thành `['S','A','B','C']`, mặc định khi rank sai/thiếu đổi từ `'SS'` (không còn tồn tại trong thang mới) sang `'C'`.
-2. `index.html` — nhãn tĩnh Airdrop đổi "Work" → "Works" theo yêu cầu user.
-3. Verify: `node --check` sạch `private.js`; `new Function()` parse sạch script inline `index.html`. Commit `55d0725` đã push lên `main`, Cloudflare Pages auto-deploy.
+⚠️ **Tiếng Việt CHỈ được xuất hiện ở tab có toggle VI/EN (Valuation · AI · Airdrop) và tài liệu nội bộ.** Tab CV + toàn bộ thẻ meta/og/JSON-LD là **mặt tiếng Anh của site** (khách quốc tế, X, Telegram preview đều đọc chỗ đó) → luôn tiếng Anh. Luật này cũng ghi trong `CLAUDE.md`.
 
-**Việc CHƯA làm:** nếu user từng cố chọn rank C cho project nào trước khi fix, project đó đang bị lưu nhầm thành `SS` → hiện nằm lộn ở nhóm S do `groupOf()` map `SS`→`S`. Cần vào popup admin kiểm tra + sửa lại rank đúng ý cho từng project — code không tự biết project nào từng bị ảnh hưởng.
+Trước khi push thay đổi nội dung CV: **quét lại regex dấu tiếng Việt trên vùng `<div id="cv-view">`** (hiện đang 0 kết quả).
 
----
+Quy tắc dịch trong tab có toggle: dịch **toàn bộ nhãn UI tĩnh**, **KHÔNG dịch data từ Sheet** (ticker, tên narrative, ngày, số). Ngoại lệ có chủ đích: **tiêu đề bài viết tab AI CÓ dịch** (để người đọc tiếng Anh dùng được hub); **task cá nhân Airdrop KHÔNG dịch** (ghi chú riêng, giữ nguyên chữ user gõ).
 
-## ⭐ HANDOFF cũ hơn (2026-08-09) — Work to Earn chuyển hẳn sang Cloudflare KV
+Cơ chế: `VAL_HEAD_LABELS` (id → {EN,VI}) áp bằng `innerHTML` trong `applyValHeadLabels()`. **Thêm nhãn tĩnh mới thì PHẢI khai ở đây**, không thì nó kẹt tiếng Anh khi ở mode VI. Nhãn nằm trong hàm render thì đọc `valLang` trực tiếp và `switchValLang()` gọi lại cả 3 hàm render. `#market-condition-lvl` lưu key tiếng Anh gốc ở `dataset.level` (không đọc `textContent` vì chữ hiển thị đã bị dịch).
 
-**Scope đổi so với 2026-07-12**: Airdrop → Work **không còn đọc Google Sheet nữa**. Toàn bộ project (trước là "Sheet public" + task cá nhân KV riêng từ 31/07) giờ nằm **chung 1 kho KV** (binding `WORK`, key `personal-tasks`), phân biệt bằng field `visibility: 'public' | 'personal'`. Lý do: user thấy sửa data qua Google Sheet phiền, tần suất sửa lại thấp (thêm 1-2 dự án lâu lâu) nên đổi database không mất gì, admin sửa trực tiếp qua popup trên site thay vì mở Sheet. Valuation vẫn đọc Google Sheet như cũ (DATA + tab Watchlist) — **không đổi**.
+## Header của panel (Valuation · AI · Airdrop)
 
-**Trạng thái sau session 09/08:**
-1. **`functions/api/wte.js` (mới)** — endpoint public GET, KHÔNG cần mật khẩu, đọc KV rồi lọc `visibility === 'public'`, trả về cho `fetchWTE()` bên `index.html`. Thay hẳn cho gviz CSV fetch cũ (`WTE_URL_VI`/`parseWTE`/`parseStars` đã xoá — `WTE_SHEET_ID`/`parseCSVFull` VẪN giữ vì box "Watchlist theo narrative" bên Valuation còn dùng).
-2. **`functions/api/private.js`** — mỗi task giờ có 2 field mới lấy từ client (có validate): `rank` (SS/S/A/B, không còn khoá cứng "SS" cho task cá nhân) và `visibility` (`public`/`personal`, sai giá trị → rơi về `personal`). Task cũ trong KV (thêm trước 09/08) không có field `visibility` — code client coi `visibility !== 'public'` là personal nên vẫn hiển thị đúng, không cần migrate ngược.
-3. **Popup thêm/sửa task đổi cấu trúc** theo yêu cầu user: dùng `.wl-modal--wide` (680px thay vì 340px), tiêu đề căn giữa, Tên dự án + Twitter chung 1 hàng, Rank đổi từ input khoá cứng sang dropdown chọn S+/S/A/B (bắt buộc chọn, không mặc định), thêm dropdown Hiển thị (Personal/Public) chung hàng với Rank, nút xoá dòng (✕) ở Get Started/Daily/Weekly giờ cố định hiện thay vì ẩn khi chỉ còn 1 dòng.
-4. **Nút sửa (⋮) trên card** giờ hiện cho MỌI card khi admin đã mở khoá (trước chỉ hiện ở card cá nhân) — admin sửa được cả project public lẫn cá nhân qua cùng 1 form.
-5. **Migrate data thật**: 22 project từ Google Sheet (tab Work) đã ghi vào KV production với `visibility: 'public'`, giữ nguyên 4 task cá nhân cũ (Injective, Kaito, Săn GA, Creatorpad — không có field visibility, coi như personal). Ghi thẳng qua Cloudflare KV REST API (không qua `/api/private`, không cần biết `ADMIN_PASS`).
-6. Đã verify: khách thấy đúng 22 card, không thấy nút ⋮; admin thấy 22+4 card, nút ⋮ hiện đủ, sửa card public hiện đúng rank/visibility; dịch EN vẫn hoạt động cho card public; `/api/private` vẫn từ chối sai mật khẩu (401) trên site thật.
+Class chung **`.panel-head`**: **tiêu đề (`.val-intro`) bên TRÁI, cụm control (`.val-head-ctrl`) bên PHẢI**, đẩy nhau bằng flex `space-between`.
 
-**Việc CHƯA làm / cân nhắc sau:** Google Sheet "Work" giờ không còn code nào đọc — vẫn giữ nguyên trên Drive phòng cần đối chiếu, chưa xoá. `WTE_TYPES` (15 thẻ phân loại) hardcode trong `index.html` — nếu cần thêm/bớt thẻ hoặc đổi thứ tự ưu tiên thì sửa thẳng mảng này.
+⚠️ **ĐỪNG quay lại kiểu tiêu đề căn giữa + control `position:absolute`** (đã hỏng 2 lần trong 1 ngày): tiêu đề khi đó canh giữa theo TOÀN BỘ chiều rộng nên **không né control** → chữ chui xuống dưới nút Admin/EN|VI và mất chữ. Fix nửa vời bằng `@media (max-width:640px)` vẫn hỏng ở 641px trở lên. Trái–phải thì mọi bề rộng đều an toàn.
 
----
+⚠️ **Tiêu đề dài thì sửa CHỖ CẮT CHỮ, đừng rút ngắn câu.** `.panel-head .val-intro > span` cho xuống **tối đa 2 dòng** (`-webkit-line-clamp: 2`, `white-space: normal`, `line-height: 1.25`); hộp `.val-intro` vốn cao sẵn 2 hàng (~56px) nên 2 dòng 15px nằm gọn, không đẩy lưới hàng, quá 2 dòng vẫn có ellipsis chặn. Từng có lần rút ngắn câu để "chữa" — đó là chữa triệu chứng, vì mọi tiêu đề dài đều sẽ mất chữ.
 
+## Client và server phải khớp nhau
 
-## Spacing System (2026-06-18) — QUY ĐỊNH BẮT BUỘC
+⚠️ Nhiều danh sách tồn tại **2 bản: 1 ở `index.html`, 1 ở Function** — sửa 1 bên mà quên bên kia thì server **âm thầm ép về giá trị mặc định, không báo lỗi gì**:
 
-Toàn site dùng **grid 4px**. Mọi `margin / padding / gap` PHẢI là bội số của 4:
-`4 · 8 · 12 · 16 · 20 · 24 · 32 · 40 · 48 · 56 · 64`
+| Client (`index.html`) | Server | Hậu quả nếu lệch |
+|---|---|---|
+| `AI_HUBS` | `CATS` trong `ai.js` | bài lưu vào hub mới rơi hết về hub đầu |
+| `WTE_RANKS` | `RANKS` trong `private.js` | rank mới bị ép về mặc định (đúng bug rank C ngày 12/08) |
 
-Ngoại lệ duy nhất được phép:
-- `1px / 2px` — border, micro-gap
-- `7px 10px` — table cell padding (KHÓA, không đụng)
-- Cặp `padding: 2px 6px 2px 4px` + `margin: -2px -6px -2px -4px` — alignment bù trừ (kbd inline)
+## Lưới hàng + spacing
 
-Font-size khóa riêng (không đụng): `19/15/14/13/12/11/10px`.
+- Toàn site dùng **grid 4px**: mọi `margin / padding / gap` phải là bội số của 4 (`4 · 8 · 12 · 16 · 20 · 24 · 32 · 40 · 48 · 56 · 64`). Ngoại lệ: `1px/2px` cho border, `7px 10px` cho table cell (KHOÁ). Font-size khoá riêng: `19/15/14/13/12/11/10px`. **Thêm element mới thì chọn số trong scale, không tự chế số lẻ.**
+- **Lưới hàng:** `--row = 100vh/30`. "1 hàng" = `var(--row)`. Yếu tố **cùng cụm cách 1 hàng**, cụm khác cụm cách 2 hàng. Navbar chiếm hàng 1-2, margin trái/phải 0.75 hàng.
+- Wrapper mọi tab đồng bộ: `max-width: 900px; margin: 0 auto; padding: 0 calc(var(--row)*0.75) 24px`.
 
-Scale documented trong `:root` comment đầu `<style>`. **Khi thêm element mới: chọn số trong scale, không tự chế số lẻ** (3/5/6/7/9/10/11/14/18/22 → đã loại sạch).
+## Scrollbar
 
-Wrapper mọi tab đồng bộ: `max-width:900px; margin:0 auto; padding:0 24px 24px` (val/ard/wl). Header mỗi panel dùng cùng pattern `position:relative > .val-intro (giữa) + control absolute phải`, content cách header `margin-top:4px`.
+**MỌI vùng cuộn dùng chung đúng 1 class `.thin-scroll`** (định nghĩa 1 chỗ duy nhất, ngay sau `html` ở đầu `<style>`). Không viết CSS scrollbar riêng cho từng vùng. Hình thức: lane chừa sẵn (`scrollbar-gutter: stable`) · thanh 6px màu `--muted` bo tròn · track trong suốt · không nút mũi tên.
 
----
+⚠️ **LUẬT SỐNG CÒN — không set `scrollbar-width` / `scrollbar-color` cho Chromium.** Từ Chromium 121, chỉ cần 1 trong 2 thuộc tính đó khác `auto` là trình duyệt **vô hiệu hoá toàn bộ `::-webkit-scrollbar`** → vùng đó rơi về scrollbar hệ thống. Firefox được phục vụ riêng trong `@supports not selector(::-webkit-scrollbar)`.
 
-## Scrollbar System (2026-08-05) — QUY ĐỊNH BẮT BUỘC
+**Vùng cuộn có header:** header đặt **ngoài** vùng cuộn (div riêng `overflow:hidden` + `.thin-scroll` để chừa cùng lane) → thanh cuộn chỉ bao phần data. Áp cho cả bảng inline (`#tge-head-wrap` + `.val-table-scroll`) lẫn popup (`.tge-modal-head` + `.tge-modal-scroll`). Ngoại lệ có chủ đích: `#ptask-form` ẩn hẳn scrollbar.
 
-**MỌI vùng cuộn dùng chung đúng 1 class `.thin-scroll`** (định nghĩa 1 chỗ duy nhất, ngay sau `html` ở đầu `<style>`). Không viết CSS scrollbar riêng cho từng vùng.
-
-Hình thức chuẩn: lane chừa sẵn (`scrollbar-gutter: stable`, không giật layout) · thanh **6px** màu `--muted` bo tròn · track trong suốt · **không nút mũi tên**.
-
-**LUẬT SỐNG CÒN — không được set `scrollbar-width` / `scrollbar-color` cho Chromium.** Từ **Chromium 121**, chỉ cần 1 trong 2 thuộc tính chuẩn đó khác `auto` là trình duyệt **vô hiệu hoá toàn bộ `::-webkit-scrollbar`** của phần tử → vùng đó rơi về scrollbar hệ thống (dày hơn, có mũi tên, track xám). Trước 2026-08-05 code set **cả 2 kiểu** ở mọi vùng cuộn nên mỗi nơi render một đường → bảng / popup / box ra **3 kiểu scrollbar khác nhau**. Firefox (không có `::-webkit-scrollbar`) được phục vụ riêng trong `@supports not selector(::-webkit-scrollbar)`.
-
-**Cấu trúc vùng cuộn có header cũng phải đồng bộ:** header đặt **ngoài** vùng cuộn (div riêng `overflow:hidden` + `.thin-scroll` để chừa cùng lane) → thanh cuộn chỉ bao phần data, không chạy dọc qua header. Áp cho cả bảng inline (`#tge-head-wrap` + `.val-table-scroll`) lẫn popup (`.tge-modal-head` + `.tge-modal-scroll`). Cùng lane = 6 cột header/data tự thẳng hàng.
-
-Ngoại lệ có chủ đích: `#ptask-form` (form task cá nhân) cố tình **ẩn hẳn** scrollbar.
-
----
-
-## Chụp ảnh dashboard (2026-08-07) — QUY ĐỊNH
-
-Nút camera cạnh toggle EN|VI ở Valuation → xuất `.val-wrap` ra PNG (`0xhieu-valuation-<ngày>.png`),
-render hoàn toàn trong máy user bằng `html2canvas.min.js` **nằm trong repo** (không CDN — cv không
-gọi ra server bên thứ 3). Lib chỉ nạp khi bấm lần đầu (`loadHtml2Canvas()`), trang vẫn nhẹ như cũ.
-
-**LUẬT: html2canvas KHÔNG vẽ được CSS mask** — mà mọi icon của cv đều tô bằng mask (`info.svg`,
-`right2.svg`, `camera.svg`). Để nguyên thì icon ra **ô đặc màu currentColor** rất xấu. Khi thêm
-icon/element mới vào vùng chụp, phải chọn 1 trong 2 đường đã có sẵn trong hàm chụp:
-- **Không mang thông tin** (nút bấm, icon "i") → cho vào `ignoreElements` để loại khỏi ảnh.
-- **Mang thông tin** (mũi tên Watchlist: sáng = có việc, mờ = chưa) → trong `onclone` gắn class
-  `.shot-arrow` (tắt `::before`) rồi thay bằng ký tự text tương đương, màu vẫn kế thừa.
-
-Cùng lý do đó, `.val-head-ctrl` (camera + EN|VI) bị loại khỏi ảnh — vừa hợp lý (điều khiển không
-phải nội dung), vừa tránh icon camera thành ô đặc.
-
----
-
-## Hover / màu tương tác (2026-08-05) — QUY ĐỊNH
+## Hover / màu tương tác
 
 - Hover hàng bảng: `rgba(97,85,245,0.1)` (tím nhạt, gốc brand `#6155F5`) — **không** dùng xám `--off`.
-- Khoảng cách giữa các hàng bảng phải tạo bằng **`padding` trong `<td>`**, KHÔNG dùng `border-spacing`: gap của `border-spacing` nằm **ngoài** ô nên `background` hover không tô tới → hàng bị tô hụt (đúng 1/1.25 = 4/5 chiều cao). Chia đều `padding: calc(var(--row)*0.25)` trên/dưới để chữ vẫn nằm giữa hàng.
+- Khoảng cách giữa các hàng bảng tạo bằng **`padding` trong `<td>`**, KHÔNG dùng `border-spacing`: gap của `border-spacing` nằm ngoài ô nên background hover không tô tới → hàng bị tô hụt 4/5 chiều cao.
+
+## Vùng bấm của icon
+
+⚠️ **Icon tô bằng CSS `mask` thì mask phải nằm ở `::before`, KHÔNG đặt trên chính nút** — Chromium hit-test theo vùng mask, để mask trên nút thì chỉ mấy pixel của hình mới ăn click. Nút bỏ mask, cho `align-self: stretch` + `width` rộng + `margin` âm bù lại; mask xuống `::before` với `inset` đúng ô 14px. **Đừng dùng padding để nới** — mask `center / contain` sẽ kéo icon phình to. Nút CHỮ (✕, ⋮) không dính mask, chỉ cần phủ `::after` trong suốt `inset: -8px -12px`.
+
+## Chụp ảnh dashboard (nút camera ở Valuation)
+
+Xuất `.val-wrap` ra PNG bằng `html2canvas.min.js` **nằm trong repo** (không CDN — cv giữ nguyên tắc không gọi ra server bên thứ 3), lazy-load khi bấm lần đầu.
+
+⚠️ **html2canvas KHÔNG vẽ được CSS mask** — mà mọi icon của cv đều tô bằng mask → để nguyên thì icon ra **ô đặc màu currentColor** rất xấu. Thêm icon/element mới vào vùng chụp thì chọn 1 trong 2 đường có sẵn: **không mang thông tin** (nút bấm, icon ⓘ) → cho vào `ignoreElements`; **mang thông tin** (mũi tên Watchlist sáng/mờ) → trong `onclone` gắn class `.shot-arrow` (tắt `::before`) rồi thay bằng ký tự text tương đương.
+
+## Verify bằng mắt — BẮT BUỘC trước khi chốt việc động vào layout/màu
+
+⚠️ **`chrome --headless --window-size=390,844` KHÔNG ra mobile thật.** Windows không cho cửa sổ hẹp hơn **500px**, nên Chrome layout ở ~500-534px rồi **cắt** còn 390 → nhìn y hệt trang bị tràn ngang, rất dễ tưởng có bug layout (đã tưởng nhầm 1 lần). Phải ép viewport qua CDP `Emulation.setDeviceMetricsOverride`.
+
+Script sẵn có (ngoài repo, `C:\tmp\cvshot\`):
+
+```bash
+node shot.js <url> <out.png> <width> <height> [waitMs] [clickSelector...]   # chụp đúng viewport
+node pdf.js  <out.pdf>                                                     # xuất tab CV ra PDF A4
+node serve.js                                                              # server test: SPA fallback + mock /api/ai, /api/private, /api/wte
+node test-admin.js                                                         # chạy thử luồng admin tab AI qua DOM thật
+```
 
 ---
 
-## Stack
-
-- **Static HTML** (`index.html`) — toàn bộ site (HTML + CSS + JS) trong 1 file, host trên **Cloudflare Pages**.
-- **Cloudflare Pages Functions** (`functions/api/`) — `wte.js` (đọc project public, không cần mật khẩu) + `private.js` (CRUD task cá nhân + public, cần `ADMIN_PASS`), cùng dùng KV binding `WORK`. Đây là phần backend DUY NHẤT trong site — không có secret nào khác, không smart contract.
-- Nguồn data còn lại vẫn public, keyless, đọc thẳng client-side:
-  - **Google Sheets CSV** (gviz) — chỉ còn Valuation dùng (tab DATA + tab Watchlist cho box "Watchlist theo narrative"). Airdrop Work **không còn đọc Sheet** từ 2026-08-09, xem HANDOFF mới nhất.
-  - **CoinGecko** free API — giá / ATH (fetch live trong `index.html`).
-  - **Google Translate** (gtx) — dịch VI→EN cho Airdrop.
-- **Google Apps Script** (nằm trong Sheet, chạy daily 2h) — sync ATH + current price vào DATA tab.
-
----
+# THAM CHIẾU
 
 ## Data Flow
 
 ```
 Google Sheet (DATA tab)
   → Apps Script syncAll() [daily 2am]
-      → CoinGecko /coins/markets → ghi ATH (col L) + current price (col N)
+      → CoinGecko /coins/markets → ghi ATH (col J) + current price (col N)
   → Website fetch CSV → parse → render
 ```
 
-### Sheet columns (DATA tab)
-
-> Cập nhật 2026-06-10: sheet đã đổi thứ tự cột, `index.html` đã sửa theo mapping mới này.
+### Sheet columns (tab DATA)
 
 | Col | Index | Field |
 |-----|-------|-------|
@@ -203,103 +172,52 @@ Google Sheet (DATA tab)
 | F | 5 | vcAlloc (%) |
 | G | 6 | totalSupply |
 | H | 7 | priceTGE |
-| I | 8 | beforeATH (fill bằng `fetch-before-ath.js`, xem mục riêng) |
-| J | 9 | ATH (sync bởi Apps Script, dùng cho ×ATH; bỏ trống nếu ATH cùng ngày TGE) |
+| I | 8 | beforeATH (fill bằng `fetch-before-ath.js` chạy local) |
+| J | 9 | ATH (sync bởi Apps Script; bỏ trống nếu ATH cùng ngày TGE) |
 | N | 13 | currentPrice (sync bởi Apps Script) |
 
----
+### Apps Script
 
-## Valuation Section — Logic
+`syncAll()`, trigger daily 2am (tạo bằng `setupDailyTrigger()`, chạy 1 lần). Cột N luôn cập nhật; cột J cập nhật **trừ khi** `ath_date` cùng ngày TGE (râu nến listing) thì giữ giá trị cũ. **KHÔNG sync beforeATH** — Apps Script chạy trên server Mỹ, bị Binance chặn HTTP 451.
 
-### ×TGE / ×ATH / ×ATM
+## Valuation — công thức
 
 ```
 vcPricePerToken = (fundraising * 1e6) / (vcAlloc / 100) / totalSupply
 ×TGE = priceTGE / vcPricePerToken
-×ATH = ath / vcPricePerToken       ← ATH intraday listing day bị filter → hiển thị —
+×ATH = ath / vcPricePerToken       ← ATH intraday ngày listing bị filter → hiển thị —
 ×ATM = currentPrice / vcPricePerToken
+vcFDV = fundraising / (vcAlloc / 100)      → nhãn S (<$300M) / M (>$300M) qua capLabel()
 ```
 
-**ATH intraday filter:** Nếu `ath_date` cùng ngày `tgeDate` (< 24h) → `×ATH = —`  
-Lý do: CoinGecko lấy absolute high kể cả râu nến listing day, không phản ánh thực tế.
+**ATH intraday filter:** `ath_date` cùng ngày `tgeDate` (< 24h) → `×ATH = —`. CoinGecko lấy absolute high kể cả râu nến listing day, không phản ánh giá trade được.
 
-### Size suffix (vcFDV)
+### Box "Hệ số TGE gần đây" (đã gộp Market Condition)
 
-```
-vcFDV = fundraising / (vcAlloc / 100)
-< $300M  → (low)
-≥ $300M  → (high)
-```
-(Đổi 2026-08-03 từ 4 mức `$/$$/$$$/$$$$` sang nhị phân `(low)/(high)`, dùng chung ngưỡng $300M với Recent TGE Multiples — trước đó 2 chỗ dùng 2 quy tắc khác nhau.)
+- Split theo ngưỡng **$300M** vcFDV: FDV thấp / FDV cao. Window: **6 token gần nhất** mỗi rổ; nếu token thứ 6 cách token mới nhất >60 ngày → giảm còn 4. Hiển thị median.
+- **Market condition** = median ×TGE của **6 deal gần nhất**: Weak (<4.3×) · Normal (4.3–13×) · Strong (≥13×). Ngưỡng calibrate theo giai đoạn thị trường thật (Strong ≈ chu kỳ 2023-2024, Normal ≈ Q2-Q3/2022, Weak ≈ 2025-2026), không phải phân phối thống kê thuần.
+- UI dùng chung khung `vc-q1` (tiêu đề) + `vc-q234` (nội dung) với Danger Zone / Trending Narratives để mọi box tự thẳng hàng — **đừng tự chế grid riêng cho từng box**.
 
-### Recent TGE Multiples (box đã gộp Market Condition, 2026-08-03)
+⚠️ **ĐỪNG tách thêm bậc ở nửa DƯỚI $300M.** Data nói `<$100M` và `$100–300M` hành xử y hệt (median ×TGE 4.25 vs 4.61 toàn lịch sử; 3.38 vs 3.73 riêng 12 tháng qua) — tách ra chỉ được 2 rổ nói cùng 1 điều, mỗi rổ ít mẫu đi một nửa. Chỗ data thật sự gãy là **$300M**.
 
-- Split theo $300M FDV threshold: Low FDV / High FDV
-- Window: **6 token gần nhất** mỗi bucket; nếu token thứ 6 cách token mới nhất >60 ngày → giảm còn **4** (giống logic mid-term của Market Condition)
-- Hiển thị median
-- **Box UI dùng chung khung `vc-q1`(tiêu đề)/`vc-q234`(nội dung) với Danger Zone/Trending Narratives** (đổi 2026-08-03, 2 lần trong cùng ngày — lần đầu tự chế `.rt6-grid` 6-hàng-đều rồi user phản hồi header/item không thẳng hàng với 2 box kia, lần 2 bỏ hẳn grid riêng, dùng lại đúng pattern chung để tự động khớp vị trí): tiêu đề "Recent TGE multiples" (`vc-q1`) · nội dung (`vc-q234`, class `.rt-items`) gồm 4 dòng `.rt-item` cao `var(--row)` xếp từ trên xuống — "Low FDV ×.." (`.rt-box`, nền tím nhạt) · "High FDV ×.." (`.rt-box`) · "Market condition: `<Level>`" (`.rt-cond`, không có nền) · nút "Predict TGE FDV" (`.rt-btn-row`, pill gradient `.predict-link` — đã đổi lại từ chữ gạch chân về nút pill như bản gốc, theo yêu cầu user "như cũ"). Market Condition không còn là box riêng — xem mục dưới.
+**Điều kiện bật bậc `L` (>$500M):** rổ đó có **≥12 dự án TGE trong 12 tháng gần nhất** (hiện chỉ 5). Đặt `CAP_L_ACTIVE = true` **chưa đủ** — comment trên `capLabel()` liệt kê 3 việc phải làm nốt (tách rổ trong `renderTGEStats()` + `predictFDV()`, thêm hàng thứ 3 vào box, thêm entry dịch cho hàng mới). Lý do chưa bật: `predictFDV()` cần ≥2 mẫu cùng rổ, thiếu thì **âm thầm fallback về toàn bộ pool** (không báo gì) → số hiện ra không biết đến từ đâu.
 
-### Info popup (icon "i") + toggle EN|VI (thêm 2026-08-03)
+### Danger Zone
 
-- Icon `i` (`info.svg`, mask + currentColor giống kỹ thuật `.wl-arrow`) cạnh tiêu đề **cả 3 box** (Recent TGE multiples/Danger Zone/Trending Narratives) → bấm mở popup `wl-modal-backdrop` chuẩn (giống predict-modal/tge-modal), giải thích số liệu bằng lời cho người không rành đọc.
-  - Recent TGE multiples: nội dung **động** — đọc trực tiếp `#baseline-low`/`#baseline-high`/`#market-condition-lvl` tại thời điểm mở popup (không tính lại). Có link "Bấm vào đây/Click here" gạch chân → đóng popup này, mở luôn `predict-modal`.
-  - Danger Zone / Trending Narratives: nội dung tĩnh, chỉ đổi theo ngôn ngữ.
-- **Toggle EN|VI** cạnh headline "Theo dõi altcoin..." (`position:absolute` bên phải, headline vẫn center — đúng pattern `position:relative > .val-intro giữa + control phải` đã ghi ở đầu file) — dùng lại nguyên class `.lang-toggle`/`.lang-btn` (vốn là component "language toggle" gốc, sau tái dùng cho rank-filter S+/S/A/B). Biến `valLang` (mặc định **VI**, user xác nhận thích default này) **độc lập với `wteLang`** của tab Airdrop — 2 tab có thể ở 2 ngôn ngữ khác nhau.
-- **Airdrop tab: đồng bộ hoá luôn** — dropdown "Vietnamese ▾/English" cũ đổi thành cùng 1 component `.lang-toggle` EN|VI (bỏ hẳn cơ chế dropdown/click-outside, code JS đơn giản hơn nhiều). Nút "admin" viết hoa thành "Admin", gap giữa Admin và toggle giảm `18px → 8px` (trước "kì cục" theo phản hồi user).
-- **Quy tắc dịch VI đã chốt qua nhiều lượt sửa**: dịch **toàn bộ nhãn UI tĩnh** (headline, tên box, "Low FDV"/"High FDV" → "FDV thấp"/"FDV cao", "Market condition:" → "Điều kiện thị trường:", Weak/Normal/Strong → Yếu/Bình thường/Mạnh, nút "Predict TGE FDV" → "Dự đoán FDV TGE", cột "TGE Date" → "Ngày TGE", empty-state, badge "FAKE PUMP" → "PUMP LÁO") — **KHÔNG dịch data từ Sheet** (ticker, tên narrative như "Trading"/"Stablechain", ngày tháng, số). Cơ chế: object `VAL_HEAD_LABELS` (id → {EN,VI}) áp bằng `innerHTML` (cho phép nhúng `<span class="td-size">` chú thích nhỏ) gọi trong `applyValHeadLabels()`; phần dịch nằm trong hàm render (`renderAnalysis/renderDanger/renderNarratives`) thì tự đọc biến `valLang` trực tiếp, và `switchValLang()` gọi lại cả 3 hàm render để cập nhật ngay khi đổi ngôn ngữ. **Lưu ý kỹ thuật**: `#market-condition-lvl` lưu key tiếng Anh gốc (Weak/Normal/Strong) ở `dataset.level` (không đọc từ `textContent` hiển thị, vì chữ hiển thị đã bị dịch) — info popup Recent TGE Multiples dùng `dataset.level` để tra đúng câu giải thích.
-- **Chú thích ngưỡng FDV**: cột Ticker đổi suffix `(low)/(high)` → **`(<$300M)`/`(>$300M)`** (chữ thật, dễ hiểu hơn chữ định tính); box Recent TGE multiples thêm chú thích tương tự cạnh "Low FDV"/"High FDV" — cả 2 chỗ dùng chung class `.td-size` (11px, xám) để không "to chiếm chỗ" (phản hồi user khi thấy bản đầu).
-- Popup bảng "Tracking altcoins..." (`#tge-modal`): **bỏ hẳn dòng tiêu đề lặp lại** bên trong popup (trước là `.wl-modal-title` tiếng Anh cố định, thừa vì headline y hệt đã hiện ngay phía trên, lại không dịch theo toggle trông xấu) — giờ popup chỉ còn đúng bảng. Dọn CSS mồ côi `.wl-modal--wide .wl-modal-title` theo sau.
+Lọc token đang có **×ATM ≥ 15** (VC lãi 15×+, sell pressure cực đại). Backtest 17 token từng ở vùng này → 100% về đáy. Sort token TGE mới nhất lên đầu. TGE < 30 ngày mà đã vào vùng → badge **⚠ FAKE PUMP** (pump láo sắp về 0).
 
-### Danger Zone (thêm 2026-06-11)
+### Trending Narratives
 
-- Lọc token đang có **×ATM ≥ 15** — VC lãi 15×+, sell pressure cực đại
-- Backtest: 17 token từng ở vùng ≥15× (ACE ×69, SAGA ×97, ENA ×142, XPL ×131, HOOK, MIRA, ERA, VANA...) → 100% về đáy, không con nào giữ giá
-- Sort: token TGE mới nhất lên đầu (bắt ứng cử viên vừa chớm)
-- TGE < 30 ngày mà đã vào vùng → badge **⚠ FAKE PUMP** đỏ + nền đậm (pump láo sắp về 0)
-- Nằm ở hàng card thứ 2 (`.val-analysis` row 2), render bởi `renderDanger()`
+Xếp hạng **TẤT CẢ** narrative có data từ 02/2025 (không lọc bỏ ai), theo **median ×TGE** — không dùng ×ATH vì 1 coin pump đơn lẻ về sau kéo cả nhóm trông "hot" dù ban đầu thị trường không tin. Kèm số deal `(n)` mờ cạnh tên để người xem tự đánh giá độ tin cậy mẫu.
 
-### Pattern analysis (phân tích 2026-06-11, làm nền cho các box sau)
+### Pattern analysis (nền cho các box, 2026-06-11)
 
-Metric chính: `retention = ×ATM / ×TGE` — tách các nhóm nhãn tay sạch:
-- **Mạnh**: retention 0.53–2.42 (median 0.85)
-- **RUG**: retention 0.03–0.25 (growth thấp ~1.3 — xả thẳng từ vùng list, không có sóng)
-- **FOMO rồi về 0**: retention ≤0.14 + ×TGE rất cao (median 22.7) — list giá ảo
-- **ATH rồi về 0**: retention ≤0.27 + growth cao (~6×) — pump sau TGE rồi sập
-- **rug?**: nhóm trộn — nửa giống RUG (retention <0.4), nửa số đẹp nhưng còn trẻ (<6 tháng)
+`retention = ×ATM / ×TGE` tách sạch các nhóm: **Mạnh** 0.53–2.42 (median 0.85) · **RUG** 0.03–0.25 · **FOMO rồi về 0** ≤0.14 + ×TGE rất cao · **ATH rồi về 0** ≤0.27 + growth ~6×. Box ý tưởng chưa build: Token Health, Dip Zone.
 
-Box ý tưởng chưa build (user chỉ duyệt Danger Zone): Token Health (retention-based, khớp 85% label tay), Dip Zone (median dip trước ATH — cần cột beforeATH).
+## WTE Cards (Airdrop)
 
-### Market Condition
-
-> **2026-08-03: không còn là box riêng** — đã gộp vào box Recent TGE Multiples (hàng 5, xem mục trên). Logic tính toán bên dưới KHÔNG đổi, chỉ đổi nơi hiển thị: trước hiện `×median (N deals)` + 3 nút Strong/Normal/Weak (nút active tô đậm), giờ chỉ hiện đúng 1 dòng text "Market condition: `<Level>`" (JS: `document.getElementById('market-condition-lvl').textContent = LEVELS[lvlIdx]`).
-
-- `shortMed` = median của 4 ×TGE gần nhất
-- 3 levels: Weak (<4.3×) / Normal (4.3-13×) / Strong (≥13×)
-- Ngưỡng calibrate theo các giai đoạn thị trường thực tế (không phải phân phối thống kê thuần, vì 2025-2026 chiếm phần lớn data nhưng đó là do thiếu data cũ 2018-2024, không phản ánh đúng "bình thường"):
-  - Strong  ≈ Q4/2022-Q1/2023 (HOOK+ARB, median ~21.7), Q4/2023-Q1/2024 (median ~16) → ≥13
-  - Normal  ≈ Q2-Q3/2022 (OP, ~4.8) → 4.3-13
-  - Weak    ≈ 2025 (median ~3.9), 2026 (median ~2.95) → <4.3
-
----
-
-## Apps Script (Google Sheet)
-
-**Function:** `syncAll()`  
-**Trigger:** Daily 2am (setup bằng `setupDailyTrigger()` — chạy 1 lần để tạo trigger; kiểm tra ở panel Triggers/đồng hồ, lịch sử chạy ở panel Executions)
-
-Logic hiện tại (2026-06-11):
-- Cột N: current price — luôn cập nhật
-- Cột J: ATH — cập nhật, NHƯNG nếu `ath_date` cùng ngày TGE (râu nến listing) → giữ nguyên giá trị cũ
-- KHÔNG sync beforeATH (cột I) — Apps Script chạy trên server Mỹ, bị Binance chặn HTTP 451. Dùng `fetch-before-ath.js` local thay thế.
-
----
-
-## WTE Cards (Airdrop tab)
-
-- **Data source (từ 2026-08-09): Cloudflare KV**, không còn Google Sheet. `fetchWTE()` gọi `GET /api/wte` (public, không mật khẩu) → trả JSON project có `visibility: 'public'`. Admin thêm/sửa/xoá (kể cả card public) qua popup, đi qua `POST /api/private` (cần `ADMIN_PASS`).
-- Logo: lấy từ `unavatar.io/twitter/{handle}` — extract handle từ field `twitter`
-- Rank badge nằm góc phải card, đứng sau Type — chọn tay qua dropdown trong popup admin, không còn đọc cột Sheet
-- **THANG RANK (từ 2026-08-12, bỏ hẳn S+/`SS`)** — 5 nhóm xếp từ trên xuống:
+- Data từ KV qua `GET /api/wte`. Logo lấy từ `unavatar.io/twitter/{handle}`. Rank badge góc phải card, sau Type.
+- **THANG RANK** — 5 nhóm xếp từ trên xuống:
 
   | Nhóm | Badge | Màu | Ý nghĩa |
   |---|---|---|---|
@@ -309,105 +227,59 @@ Logic hiện tại (2026-06-11):
   | `B` | `B` | `#34C759` xanh lá | kèo xxx |
   | `C` | `C` | trắng, viền xám | kèo rác |
 
-- **LUẬT — thang rank khai 1 chỗ duy nhất** trong `index.html` (mục "AIRDROP — Work to Earn"): `WTE_GROUPS` (thứ tự nhóm) · `WTE_RANKS` (rank chọn tay được = `WTE_GROUPS` bỏ `INCOME`) · `RANK_LABEL` (chữ trên badge). Dropdown Rank của form admin **đổ bằng JS từ `WTE_RANKS`**, không hardcode `<option>` trong HTML, để form không bao giờ lệch thang. Thêm/đổi nhóm = sửa 3 hằng số này + thêm `.rank-*`/`.wte-card--*` trong CSS + thêm nút cùng `data-rank` vào `#rank-filter`
-- **Mọi nhóm đều có nhãn tiêu đề** (`.wte-group-label`): `Income` cho nhóm `$`, còn lại là `Rank <chữ badge>` → "Rank S", "Rank A"… Nhãn **suy ra bằng `groupLabel(r)` từ `RANK_LABEL`**, không khai thành danh sách thứ 2; thêm rank mới là tự có nhãn. Riêng nhóm "Cá nhân" (admin) giữ nhãn riêng VI/EN vì nó không nằm trong `WTE_GROUPS`
-- `INCOME` **không phải rank**: suy ra từ thẻ phân loại `WTE_INCOME_TYPE` (`'Work-to-Earn'`) qua `groupOf()`, bỏ qua rank lưu trong KV. Không có option `$` trong dropdown Rank — muốn card vào nhóm này thì đặt **Phân loại = Work-to-Earn**
-- `groupOf()` map rank cũ `'SS'` → `'S'` để project trong KV chưa sửa tay vẫn hiện đúng chỗ. Shim này bỏ được khi KV không còn bản ghi nào rank `SS`
-- Badge `C` dùng `box-shadow: inset 0 0 0 1px` chứ **không** dùng `border` — border sẽ làm badge trắng cao/rộng hơn 4 badge kia (padding `2px 8px`, không viền)
-- Nền + viền card giống nhau ở mọi rank (`--white`/`--border`); màu phân biệt chỉ nằm ở badge, section label, `border-left` của Daily, hover tên và dấu `•`. Cả 5 tier đều có đủ 5 rule màu này
-- **CẤU TRÚC CHUẨN 1 NHÓM** (áp dụng cho MỌI nhóm, kể cả "Cá nhân" của admin): `.wte-group[id]` > `.wte-group-label` (tuỳ chọn) + `.wte-rank-group` (lưới card). `id` đặt ở **wrapper** chứ không phải lưới, để `scrollIntoView` từ thanh lọc không cắt mất nhãn nhóm; `scroll-margin-top` cũng nằm ở wrapper
-- **LUẬT — `WTE_TYPES` là nguồn DUY NHẤT cho thẻ phân loại** (khai ở mục "AIRDROP — Work to Earn" trong `index.html`, ngay dưới `WTE_SHEET_ID`). Thứ tự phần tử trong mảng = thứ tự ưu tiên, dùng chung 2 chỗ: (1) dropdown "Phân loại" của form admin, (2) thứ tự card trong mỗi nhóm rank qua helper `typeOrder()`. Thêm/bớt thẻ hoặc đổi ưu tiên → sửa đúng 1 chỗ này, không sửa rời từng nơi
-- Thứ tự card trong nhóm: `typeOrder()` trước, cùng thẻ thì giữ nguyên thứ tự trong KV (`Array.sort` của JS là stable). Project chưa điền phân loại (hoặc thẻ lạ) xếp cuối nhóm — cùng tinh thần "không ẩn ai" với box Watchlist theo narrative
-- Nhóm "Cá nhân" (admin) KHÔNG áp `typeOrder()` — giữ nguyên thứ tự user thêm vào KV, vì đây là ghi chú riêng, thứ tự gõ vào chính là thứ tự ưu tiên
+- **LUẬT — thang rank khai 1 chỗ duy nhất** (mục "AIRDROP — Work to Earn" trong `index.html`): `WTE_GROUPS` (thứ tự nhóm) · `WTE_RANKS` (rank chọn tay được = `WTE_GROUPS` bỏ `INCOME`) · `RANK_LABEL` (chữ trên badge). Dropdown Rank của form admin **đổ bằng JS từ `WTE_RANKS`**, không hardcode `<option>`. Thêm/đổi nhóm = sửa 3 hằng số + thêm `.rank-*`/`.wte-card--*` trong CSS + thêm nút cùng `data-rank` vào `#rank-filter` + **sửa `RANKS` trong `private.js`**.
+- `INCOME` **không phải rank** — suy ra từ thẻ phân loại `WTE_INCOME_TYPE` (`'Work-to-Earn'`) qua `groupOf()`, nên dropdown Rank không có option `$`. `groupOf()` còn map rank cũ `'SS'` → `'S'` cho bản ghi KV chưa sửa tay; shim này bỏ được khi KV hết bản ghi `SS`.
+- Mọi nhóm đều có nhãn (`.wte-group-label`): "Income", "Rank S", "Rank A"… suy ra bằng `groupLabel(r)` từ `RANK_LABEL`, không khai danh sách thứ 2.
+- **CẤU TRÚC CHUẨN 1 NHÓM** (kể cả nhóm "Cá nhân" của admin): `.wte-group[id]` > `.wte-group-label?` + `.wte-rank-group`. `id` đặt ở **wrapper** chứ không phải lưới, để `scrollIntoView` từ thanh lọc không cắt mất nhãn nhóm.
+- **LUẬT — `WTE_TYPES` là nguồn DUY NHẤT cho thẻ phân loại.** Thứ tự phần tử = thứ tự ưu tiên, dùng chung 2 chỗ: dropdown "Phân loại" của form admin, và thứ tự card trong mỗi nhóm rank qua `typeOrder()`. Thẻ trống/lạ xếp cuối nhóm; cùng thẻ giữ nguyên thứ tự KV (sort stable). Nhóm "Cá nhân" cố ý KHÔNG sort — thứ tự gõ vào chính là thứ tự ưu tiên.
+- Badge `C` dùng `box-shadow: inset 0 0 0 1px` chứ **không** dùng `border` — border làm badge trắng cao/rộng hơn 4 badge kia.
+- Nền + viền card giống nhau ở mọi rank; màu phân biệt chỉ ở badge, section label, `border-left` của Daily, hover tên và dấu `•`.
 
----
+## Box "Watchlist theo narrative" (Valuation, box thứ 4)
 
-## Box "Watchlist theo narrative" (Valuation, box thứ 4) — từ 2026-08-06
-
-**Vị trí:** Valuation → lưới `val-boxes`, slot 4 (hàng 2 cột 1). **Sub-tab Watchlist bên Airdrop đã bị xoá hẳn** — box này thay thế nó. Airdrop giờ chỉ còn Work to Earn, chữ "Work" ở hàng 3-4 là **nhãn tĩnh** (`<span class="ard-tab active">`), không bấm được, không còn cơ chế `showArdTab`.
-
-### Data source
-- Vẫn đọc Google Sheet tab **`Watchlist`** qua gviz CSV (`sheet=Watchlist`) — public, không key, không KV, không backend.
-- Cột: **A** tên · **B** X handle · **C** narrative · **D** gọi vốn (số triệu USD kiểu Việt, `"2.879,0"` = 2879 — `parseRaise` đổi ra số) · **E** "Thing to do yet?" **KHÔNG còn dùng**.
-- Fetch cùng đợt init với DATA + Work (`Promise.all([fetchPublicData(), fetchWTE(), fetchWL()])`) vì box nằm trong Valuation và tam giác cần `wteData` để biết dự án nào đã có bài hướng dẫn.
-
-### Cấu trúc box (giống hệt Danger Zone / Trending Narratives)
-- Khung chuẩn `vc-q1` (tiêu đề, 1 hàng) + `vc-q234` (nội dung, 5 hàng) → mọi box tự thẳng hàng nhau; danh sách dài thì cuộn trong `.thin-scroll`.
-- Mỗi hàng `.wlb-row` cao đúng `var(--row)`, cách nhau 0.25 hàng (dùng chung rule với `.danger-row`/`.narrative-row`): **tên dự án** (link X, cắt `…` nếu dài) · **narrative** (11px xám) · **tam giác**.
-- **Tam giác** = icon `right2.svg` (user tự vẽ), tô màu bằng CSS mask + `currentColor`:
-  - **Sáng** (accent) = dự án ĐÃ có card hướng dẫn bên Airdrop/Work (khớp slug tên) → **bấm được**, nhảy sang Airdrop + cuộn tới card + flash 1.5s (`valGoWork`).
-  - **Mờ** (border) = chưa có bài hướng dẫn.
-
-### Thứ tự sắp xếp (đây là điểm chính của box)
-1. **Narrative** xếp theo ĐÚNG thứ tự box "Narrative đang hot" — dùng chung hàm `narrativeRanking()` (median ×TGE, tách ra từ `renderNarratives` để 2 box không lệch nhau).
-2. Narrative **không có** trong bảng xếp hạng (chưa có deal TGE nào sau `NARRATIVE_SINCE`) xếp sau, nhóm nào có dự án gọi vốn to nhất thì lên trước.
-3. Dự án **chưa điền narrative** xuống cuối cùng.
-4. Trong cùng 1 narrative: **gọi vốn nhiều → ít** (nên Tempo $500M nằm trên Arc $222M).
-
-### Ngôn ngữ (VI/EN)
-- Theo `valLang` của Valuation (không phải `wteLang` của Airdrop). Chỉ dịch **nhãn UI**: tiêu đề box (`VAL_HEAD_LABELS['wlb-title-text']`), trạng thái loading/rỗng, `aria-label` của tam giác.
-- **Narrative KHÔNG dịch** (là data từ Sheet — đúng luật chung của Valuation). Cơ chế `translateWL()`/`wlData.EN` cũ đã xoá.
-
----
-
-## Pending / Known Issues
-
-1. **×ATH filter** — website + Apps Script đang bỏ ATH cùng ngày TGE (râu nến listing). Một số token pump ảo 1-3 ngày đầu; cân nhắc mở rộng window filter.
-
-2. **Làm cho số đông HIỂU tab Valuation là gì** (user chốt hướng 2026-08-01, CHƯA làm) — hiện các box (Recent TGE multiples · Danger Zone · Trending Narratives) chỉ bày số cho người đã biết đọc. Người lạ vào không hiểu đây là **cách user đọc thị trường**, đúc kết từ kinh nghiệm quan sát market. **Hướng: làm chính các BOX dễ hiểu hơn** — không đổi tên tab, không thêm khối mới ở About me, không đụng tagline (user đã bác 3 phương án đó). Việc cần làm nằm bên trong từng box: diễn giải con số đang nói lên điều gì, ngưỡng nào là tốt/xấu, vì sao user nhìn chỉ số đó. Cùng tinh thần cho tab Airdrop (mạch "làm việc kiếm tiền").
-
-3. **`highlights/` và ảnh** — từ 2026-08-01 ảnh dùng WebP (`pfp.webp`, `highlights/*.webp`). Tên file trong `highlights.txt` phải khớp đuôi thật. Thêm ảnh mới nên nén WebP (~750x500, dưới ~150KB) để không kéo trang nặng lại.
-
-4. ~~CHƯA verify bằng mắt thay đổi Valuation ngày 2026-08-03~~ — **đã verify bằng headless screenshot (Edge `--headless=new --screenshot`) trong session cùng ngày**: bảng 6 cột đều, box Recent TGE Multiples thẳng hàng header/item với Danger Zone/Trending Narratives, layout 3×2 desktop / 2×3 mobile (420px) đều ổn, không tràn chữ.
-
----
+- Đọc Google Sheet tab **`Watchlist`** qua gviz CSV. Cột: **A** tên · **B** X handle · **C** narrative · **D** gọi vốn (số triệu USD kiểu Việt, `"2.879,0"` = 2879 → `parseRaise`). Cột **E** "Thing to do yet?" **KHÔNG còn dùng**.
+- Fetch cùng đợt init với DATA + Work (`Promise.all`) vì tam giác cần `wteData` để biết dự án nào đã có bài hướng dẫn.
+- Mỗi hàng `.wlb-row`: tên (link X, cắt `…` nếu dài) · narrative (11px xám) · **tam giác** (`right2.svg`, tô bằng CSS mask): **sáng** = đã có card bên Airdrop/Work (khớp slug tên) → bấm được, nhảy sang + cuộn tới card + flash 1.5s (`valGoWork`); **mờ** = chưa có.
+- **Thứ tự:** (1) narrative theo ĐÚNG thứ tự box "Narrative đang hot" — dùng chung `narrativeRanking()` để 2 box không lệch; (2) narrative không có trong bảng xếp hạng xếp sau, nhóm nào có dự án gọi vốn to nhất lên trước; (3) dự án chưa điền narrative xuống cuối; (4) trong cùng narrative: gọi vốn nhiều → ít.
+- Narrative **KHÔNG dịch** (là data từ Sheet).
 
 ## Files quan trọng
 
 ```
-index.html            — toàn bộ website (HTML + CSS + JS)
-functions/api/wte.js      — GET public: đọc project Work to Earn từ KV (không cần mật khẩu)
-functions/api/private.js  — POST cần ADMIN_PASS: CRUD task cá nhân + public (list/add/update/delete)
-_redirects            — Cloudflare Pages SPA fallback (/* → /index.html)
-icon.png              — favicon + icon iPhone home screen (mèo-kính, mắt cam)
-pfp.png               — avatar Hieu Nguyen (About me)
-info.svg              — icon "i" giải thích 3 box Valuation (tô màu qua CSS mask)
-right2.svg            — tam giác của box "Watchlist theo narrative" (tô màu qua CSS mask)
-camera.svg            — icon nút chụp ảnh dashboard Valuation (tô màu qua CSS mask)
-html2canvas.min.js    — thư viện DOM→PNG (v1.4.1) để nút camera chụp dashboard. ĐỂ TRONG REPO
-                        có chủ đích (không CDN): cv giữ nguyên tắc không gọi ra server bên thứ 3.
-                        Chỉ được nạp khi user bấm camera lần đầu, không nạp sẵn lúc vào trang.
-arrow.svg             — KHÔNG còn code nào dùng từ 2026-08-06 (icon mũi tên của Watchlist cũ); giữ lại phòng khi cần
-highlights.txt + highlights/  — ảnh highlights ở About me (mỗi dòng "tên-ảnh | caption", thứ tự dòng = thứ tự hiển thị)
-.gitignore            — .env, node_modules, .claude/, .dev.vars, .wrangler/
-```
-> Đã xóa khỏi repo: `server.js`, `export-pdf.js`, `package.json`, `.dev.vars`, toàn bộ file research/bot (archive tại `Desktop/cv-research-archive.md`). `functions/` đã QUAY LẠI repo từ 2026-07-31 (task cá nhân KV) — xem `functions/api/` ở trên.
-
----
-
-## Lệnh thường dùng
-
-```bash
-# Site tĩnh — mở thẳng index.html trong browser để xem, hoặc:
-npx serve .                 # hoặc bất kỳ static server nào
-git add -A && git commit -m "..." && git push
+index.html                — toàn bộ website (HTML + CSS + JS)
+functions/api/wte.js      — GET public: project Work to Earn từ KV
+functions/api/private.js  — POST cần ADMIN_PASS: CRUD task Work to Earn (key personal-tasks)
+functions/api/ai.js       — GET public + POST cần ADMIN_PASS: CRUD bài viết tab AI (key ai-posts)
+_redirects                — Cloudflare Pages SPA fallback (/* → /index.html)
+og.png                    — ảnh preview khi share link (1200×630, nguồn vẽ ở C:\tmp\cvshot\og-gen.html)
+icon.png                  — favicon + icon iPhone home screen (mèo-kính, mắt cam)
+pfp.webp                  — avatar hero CV
+info.svg                  — icon ⓘ giải thích 3 box Valuation (tô qua CSS mask)
+right2.svg                — tam giác box "Watchlist theo narrative" (tô qua CSS mask)
+camera.svg                — icon nút chụp ảnh dashboard (tô qua CSS mask)
+html2canvas.min.js        — thư viện DOM→PNG (v1.4.1). ĐỂ TRONG REPO có chủ đích (không CDN),
+                            chỉ nạp khi user bấm camera lần đầu
+arrow.svg                 — KHÔNG còn code nào dùng từ 2026-08-06; giữ lại phòng khi cần
+highlights.txt + highlights/  — ảnh Highlights ở CV (mỗi dòng "tên-ảnh | caption")
+.gitignore                — .env, node_modules, .claude/, .dev.vars, .wrangler/
 ```
 
-**Lưu ý dev local:** `python -m http.server` KHÔNG có SPA fallback → vào `/valuation` sẽ 404
-(chỉ mở được qua nav từ trang chủ). Dùng static server có fallback về `index.html` nếu cần test route thẳng.
+> Đã xoá khỏi repo: `server.js`, `export-pdf.js`, `package.json`, `.dev.vars`, toàn bộ file research/bot (archive tại `Desktop/cv-research-archive.md`).
 
-**Verify bằng mắt (bắt buộc trước khi chốt việc động vào layout/màu):** chụp ảnh trang thật bằng
-Edge/Chrome headless thay vì đoán —
+## Cloudflare
 
-```bash
-msedge --headless=new --disable-gpu --force-device-scale-factor=2 \
-       --window-size=1100,900 --virtual-time-budget=12000 \
-       --user-data-dir=<thư mục tạm> --screenshot=<file.png> "http://localhost:<port>/valuation"
-```
+- Account id `f9df99b7751b7dc3c80a22b6911c6f2b`, project Pages **`0xhieu-xyz`**. Có API token (Pages Edit · KV Edit · DNS Edit · Cache Purge…) nên kiểm tra/cấu hình được bằng lệnh, không cần bấm dashboard.
+- Env var + binding chỉ có hiệu lực từ **bản deploy kế tiếp**; soi `kv_namespaces`/`env_vars` từng deployment qua `GET /pages/projects/0xhieu-xyz/deployments`.
+- ⚠️ **KHÔNG dùng `wrangler.toml`** cho project này: docs nói file đó thành "source of truth" và khoá dashboard thành chỉ-đọc, nhưng không nói rõ số phận của secret → rủi ro làm chết `ADMIN_PASS`.
+- Test local có KV + mật khẩu thật: `npx wrangler pages dev . --kv WORK --binding ADMIN_PASS=...`
 
-(`--user-data-dir` là bắt buộc, thiếu nó Edge báo "Access is denied" khi ghi file ảnh.
-Muốn chụp trạng thái cần click — vd popup bảng — thì inject `document.getElementById('tge-intro').click()`
-qua server dev, đừng sửa `index.html`.)
+## Pending / Known Issues
+
+1. **Làm cho số đông HIỂU tab Valuation là gì** (user chốt hướng 2026-08-01, CHƯA làm) — các box hiện chỉ bày số cho người đã biết đọc. **Hướng: làm chính các BOX dễ hiểu hơn** (diễn giải con số đang nói gì, ngưỡng nào tốt/xấu, vì sao nhìn chỉ số đó) — user đã bác 3 phương án đổi tên tab / thêm khối ở CV / đụng tagline. Cùng tinh thần cho tab Airdrop.
+2. **Rank `SS` còn sót trong KV** — project từng bị ép về `SS` (bug rank C ngày 12/08) hiện nằm lộn ở nhóm S do `groupOf()` map `SS`→`S`. Phải vào popup admin sửa tay từng cái, code không tự biết cái nào bị ảnh hưởng.
+3. **×ATH filter** — đang bỏ ATH cùng ngày TGE. Một số token pump ảo 1-3 ngày đầu; cân nhắc mở rộng window.
+4. **Ảnh** — dùng WebP (`pfp.webp`, `highlights/*.webp`), tên trong `highlights.txt` phải khớp đuôi thật. Ảnh mới nên nén WebP (~750×500, dưới ~150KB).
+5. **Google Sheet tab "Work"** không còn code nào đọc (từ 09/08) — vẫn giữ trên Drive phòng cần đối chiếu, chưa xoá.
 
 ---
 
