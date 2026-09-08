@@ -5,13 +5,13 @@
 # - Thứ tự dòng = thứ tự hiển thị trên web (trên → dưới). Muốn đổi thứ tự: di chuyển dòng.
 # - Ảnh chưa có trong thư mục → card tự ẩn, không lo web bị ảnh vỡ.
 # - Xong thì commit + push là web tự cập nhật.
-# - Đặt tên ảnh theo năm trong Experience: <year><A/B/C...> (nhiều ảnh cùng năm thì tăng chữ cái)
+# - Đặt tên ảnh theo số thứ tự: 1, 2, 3... (khớp thứ tự dòng ở dưới)
 # - Ảnh nên để 750x500. Nếu ảnh nặng hơn ~150KB thì bảo Claude nén sang WebP cho nhẹ trang.
 
-2022A.webp | Before 2022, I was a Graphic Designer specializing in Branding and Layout
+1.webp | Before 2022, I was a Graphic Designer specializing in Branding and Layout
 # 2023-2024: chưa có ảnh, bổ sung sau
-2025B.webp | Recall Ambassador & top Yapper of many projects
-2025C.webp | OG across Zama and other Web3 projects
-2026A.webp | Growing the Telegram community, 0 to 500+
-2026B.webp | Growing and sharing Arc's Vietnam community
-2026C.webp | Building on Arc Testnet
+2.webp | Recall Ambassador & top Yapper of many projects
+3.webp | OG across Zama and other Web3 projects
+4.webp | Growing the Telegram community, 0 to 500+
+5.webp | Helped share and grow Arc's Vietnam community
+6.webp | Building on Arc Testnet
