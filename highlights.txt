@@ -13,9 +13,6 @@
 2025A.webp | Started from 0 in Feb 2025, 10K followers a year later
 2025B.webp | Recall Ambassador & top Yapper of many projects
 2025C.webp | OG across Zama and other Web3 projects
-2026A.webp | Built a 500+ member Telegram community in Q1/2026
-# 2026C: chưa có ảnh, bổ sung sau
-2026C.webp | Helped grow Arc's community through ELI12-style content, tutorials, and data-driven analysis in Q2/2026
-2026B.webp | Expanded into building on Arc Testnet — writing tutorials and giving feedback to fellow builders
-# 2026D: chưa có ảnh, bổ sung sau
-2026D.webp | Helped organize Arc meetups in Vietnam (Hanoi & Ho Chi Minh City)
+2026A.webp | Growing the Telegram community, 0 to 500+
+2026B.webp | Onboarding new users into Arc's community
+2026C.webp | Building on Arc Testnet
