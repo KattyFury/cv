@@ -1246,8 +1246,17 @@
     }
     #valuation-view #tge-section { height: auto; max-height: 368px; }
     #valuation-view .val-table { width: 100%; table-layout: fixed; border-collapse: collapse; }
-    #valuation-view .val-table th,
-    #valuation-view .val-table td { width: 14.2857%; }
+    /* Figma đặt 7 khối chữ RỘNG 176 ở x = 48·240·432·624·816·1008·1200 (bước 192,
+       khe 16). Bảng thì ô phải liền nhau, nên chia đều 1328/7 = 189,7 sẽ làm tâm cột
+       lệch tới 7px so với Figma. Bộ 176/208 xen kẽ cho tâm TRÙNG KHÍT:
+         176+208+176+208+176+208+176 = 1328
+         tâm = 136 · 328 · 520 · 712 · 904 · 1096 · 1288  (đúng Figma) */
+    #valuation-view .val-table th:nth-child(odd),
+    #valuation-view .val-table td:nth-child(odd)  { width: 176px; }
+    #valuation-view .val-table th:nth-child(even),
+    #valuation-view .val-table td:nth-child(even) { width: 208px; }
+    /* Figma: thanh header kết ở y=184, dòng data đầu bắt đầu y=192 → cách 8 */
+    #valuation-view #tge-section .val-table-scroll { margin-top: 8px; }
 
     #valuation-view #tge-section .val-table thead th {
       height: 40px; padding: 0 8px; background: var(--ink);
@@ -1274,9 +1283,11 @@
     #valuation-view .td-cap, #valuation-view .td-size { display: none; }
 
     /* ── 3 BOX — 432×176, header đen chữ amber, chip xám ────────── */
+    /* Figma: bảng kết ở y=512, box bắt đầu y=528 → CÁCH ĐÚNG 16.
+       .val-table-section đã có margin-bottom 16 nên ở đây phải là 0. */
     #valuation-view .val-analysis.val-boxes {
       display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 16px; margin-top: 16px;
+      gap: 16px; margin-top: 0;
     }
     #valuation-view .val-analysis.val-boxes > .val-card {
       height: 176px; min-height: 176px; padding: 0;
@@ -1299,7 +1310,6 @@
     /* Chip 1 dòng: 3 vùng trái · giữa · phải, nền #D9D9D9 radius 8 cao 32 */
     #valuation-view .danger-row,
     #valuation-view .narrative-row,
-    #valuation-view .rt-item.rt-box,
     #valuation-view .rt-item.rt-cond {
       display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
       height: 32px; margin: 0 0 8px; padding: 0 8px; border-radius: 8px;
@@ -1311,8 +1321,23 @@
     #valuation-view .danger-multi,
     #valuation-view .narrative-med,
     #valuation-view .rt-item-val { font-weight: 700; color: var(--ink); text-align: center; }
-    #valuation-view .danger-date { text-align: right; color: var(--ink); }
+    #valuation-view .danger-date,
+    #valuation-view .narrative-count { text-align: right; color: var(--ink); }
     #valuation-view .rt-item-lbl { text-align: left; color: var(--ink); font-size: 12px; }
+
+    /* Chip 2 nửa của box "Hệ số TGE" — Figma: 2 khối chữ 195px trong cùng 1 chip 417px */
+    #valuation-view .rt-item.rt-split {
+      display: grid; grid-template-columns: 1fr 1fr; align-items: center;
+      height: 32px; margin: 0 0 8px; padding: 0 8px; border-radius: 8px;
+      background: var(--chip); font-size: 12px; color: var(--ink);
+    }
+    #valuation-view .rt-split .rt-half { text-align: center; }
+    #valuation-view .rt-split .rt-item-val { display: inline; font-weight: 700; }
+
+    /* Tiêu đề box kiêm nút mở giải thích — Figma không vẽ icon ⓘ riêng,
+       nên trigger nằm ở chính tiêu đề thay vì thêm một icon không có trong thiết kế. */
+    #valuation-view .box-title-btn { cursor: pointer; }
+    #valuation-view .box-title-btn:hover { text-decoration: underline; text-underline-offset: 3px; }
     #valuation-view .rt-cond b { color: var(--ink); font-weight: 700; }
     #valuation-view .narrative-name { color: var(--ink); }
     #valuation-view .narrative-name .td-size { display: inline; color: var(--sub2); font-size: 12px; }
@@ -1517,15 +1542,12 @@
 
         <!-- 1. Recent TGE multiples (tiêu đề vc-q1 + item vc-q234, thẳng hàng với Danger Zone/Trending) -->
         <div class="val-card">
-          <div class="val-card-label calc-card-label vc-q1"><span id="tge-title-text">Recent TGE multiples</span><button class="info-icon" id="info-tge-btn" title="Giải thích" aria-label="Giải thích"></button></div>
+          <div class="val-card-label calc-card-label vc-q1"><span id="tge-title-text" class="box-title-btn" role="button" tabindex="0" title="Giải thích">Recent TGE multiples</span></div>
           <div class="vc-q234 rt-items">
-            <div class="rt-item rt-box">
-              <span class="rt-item-lbl" id="tge-lowfdv-label">Low FDV</span>
-              <span class="rt-item-val" id="baseline-low">—</span>
-            </div>
-            <div class="rt-item rt-box">
-              <span class="rt-item-lbl" id="tge-highfdv-label">High FDV</span>
-              <span class="rt-item-val" id="baseline-high">—</span>
+            <!-- Figma: MỘT chip chứa cả 2 nửa (FDV thấp bên trái · FDV cao bên phải) -->
+            <div class="rt-item rt-split">
+              <span class="rt-half"><span class="rt-item-lbl" id="tge-lowfdv-label">Low FDV</span> <span class="rt-item-val" id="baseline-low">—</span></span>
+              <span class="rt-half"><span class="rt-item-lbl" id="tge-highfdv-label">High FDV</span> <span class="rt-item-val" id="baseline-high">—</span></span>
             </div>
             <div class="rt-item rt-cond"><span id="tge-cond-label">Market condition:</span> <b id="market-condition-lvl">—</b></div>
             <div class="rt-item rt-btn-row">
@@ -1536,13 +1558,13 @@
 
         <!-- 3. Danger Zone -->
         <div class="val-card">
-          <div class="val-card-label calc-card-label vc-q1"><span id="danger-title-text">Danger Zone</span><button class="info-icon" id="info-danger-btn" title="Giải thích" aria-label="Giải thích"></button></div>
+          <div class="val-card-label calc-card-label vc-q1"><span id="danger-title-text" class="box-title-btn" role="button" tabindex="0" title="Giải thích">Danger Zone</span></div>
           <div id="danger-list" class="vc-q234 thin-scroll"></div>
         </div>
 
         <!-- 4. Trending Narratives -->
         <div class="val-card">
-          <div class="val-card-label calc-card-label vc-q1"><span id="narr-title-text">Trending Narratives</span><button class="info-icon" id="info-narratives-btn" title="Giải thích" aria-label="Giải thích"></button></div>
+          <div class="val-card-label calc-card-label vc-q1"><span id="narr-title-text" class="box-title-btn" role="button" tabindex="0" title="Giải thích">Trending Narratives</span></div>
           <div id="narrative-list" class="vc-q234 thin-scroll"></div>
         </div>
 
@@ -1933,9 +1955,6 @@
     // tooltip/aria của các nút chỉ có icon (không có chữ) — cũng là nhãn tĩnh nên phải dịch
     const VAL_TITLES = {
       'val-shot-btn':        { EN: 'Screenshot this dashboard', VI: 'Chụp ảnh dashboard' },
-      'info-tge-btn':        { EN: 'Explain', VI: 'Giải thích' },
-      'info-danger-btn':     { EN: 'Explain', VI: 'Giải thích' },
-      'info-narratives-btn': { EN: 'Explain', VI: 'Giải thích' },
     };
     // ⚠️ MỌI vòng lặp ở đây PHẢI bỏ qua id không tồn tại. Hàm này chạy ở top-level
     // nên một getElementById trả null là ném lỗi và giết TOÀN BỘ phần script còn lại
@@ -2035,13 +2054,23 @@ ${line}
         predictModal.classList.add('open');
       });
     }
-    document.getElementById('info-tge-btn').addEventListener('click', () => { renderTgeInfo(); infoTgeModal.classList.add('open'); });
+    // Figma không vẽ icon ⓘ → trigger nằm ở chính tiêu đề box. Helper này có guard
+    // null (thiếu id thì bỏ qua, không giết script) và nhận cả Enter/Space cho bàn phím.
+    function bindBoxInfo(titleId, open) {
+      const el = document.getElementById(titleId);
+      if (!el) return;
+      el.addEventListener('click', open);
+      el.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+      });
+    }
+    bindBoxInfo('tge-title-text', () => { renderTgeInfo(); infoTgeModal.classList.add('open'); });
     infoTgeModal.addEventListener('click', e => { if (e.target === infoTgeModal) closeInfoTge(); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeInfoTge(); });
 
     const infoDangerModal = document.getElementById('info-danger-modal');
     const closeInfoDanger = () => infoDangerModal.classList.remove('open');
-    document.getElementById('info-danger-btn').addEventListener('click', () => {
+    bindBoxInfo('danger-title-text', () => {
       document.getElementById('info-danger-body').textContent = DANGER_INFO[valLang];
       infoDangerModal.classList.add('open');
     });
@@ -2050,7 +2079,7 @@ ${line}
 
     const infoNarrModal = document.getElementById('info-narratives-modal');
     const closeInfoNarr = () => infoNarrModal.classList.remove('open');
-    document.getElementById('info-narratives-btn').addEventListener('click', () => {
+    bindBoxInfo('narr-title-text', () => {
       document.getElementById('info-narratives-body').textContent = NARRATIVES_INFO[valLang];
       infoNarrModal.classList.add('open');
     });
@@ -2614,8 +2643,9 @@ ${line}
 
       listEl.innerHTML = ranked.map(g => `
         <div class="narrative-row">
-          <span class="narrative-name">${g.name}<span class="td-size">(${g.count})</span></span>
+          <span class="narrative-name">${g.name}</span>
           <span class="narrative-med">×${g.medTGE.toFixed(1)}</span>
+          <span class="narrative-count">SL:${String(g.count).padStart(2, '0')}</span>
         </div>
       `).join('');
     }
