@@ -1,4 +1,6 @@
-<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M70 20L62.9289 12.9289C61.0536 11.0536 58.51 10 55.8579 10H50H44.1421C41.49 10 38.9464 11.0536 37.0711 12.9289L30 20H20C14.4772 20 10 24.4772 10 30V75C10 80.5228 14.4772 85 20 85H80C85.5228 85 90 80.5228 90 75V30C90 24.4772 85.5228 20 80 20H70Z" stroke="black" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="50" cy="50" r="20" stroke="black" stroke-width="10"/>
+<!-- Tabler Icons v3.31.0 (MIT) — https://tabler.io/icons -->
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+     fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M5 7h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2" />
+  <path d="M9 13a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
 </svg>

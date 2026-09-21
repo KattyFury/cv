@@ -1,5 +1,7 @@
-<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M90 50C90 72.0914 72.0914 90 50 90C35.1944 90 22.2675 81.956 15.3513 70C11.9479 64.1165 10 57.2857 10 50C10 27.9086 27.9086 10 50 10C72.0914 10 90 27.9086 90 50Z" stroke="black" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M50 69.9992L50 44.9668" stroke="black" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="50" cy="29.9824" r="5" fill="black"/>
+<!-- Tabler Icons v3.31.0 (MIT) — https://tabler.io/icons -->
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+     fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+  <path d="M12 9h.01" />
+  <path d="M11 12h1v4h1" />
 </svg>
