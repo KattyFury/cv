@@ -604,7 +604,7 @@
        Scrollbar do .thin-scroll lo (quy định chung ở đầu file), mỗi data gọn 1 hàng, cách nhau 0.5 hàng. */
     /* .ai-list/.ai-row = danh sách bài của tab AI, cố tình dùng CHUNG định nghĩa ở đây
        để hàng bài giống hệt hàng của Danger Zone / Trending / Watchlist (2026-08-17) */
-    #danger-list, #narrative-list, #wlb-list, .ai-list {
+    #danger-list, #narrative-list, .ai-list {
       overflow-y: auto; overflow-x: hidden;
     }
     .danger-row, .narrative-row, .wlb-row, .ai-row {
@@ -1171,6 +1171,173 @@
       #cat-hint { right: 16px; bottom: 88px; }
     }
 
+    /* ══════════════════════════════════════════════════════════════
+       VALUATION — BẢN DỰNG MỚI theo Figma frame 60:66
+       Đặt CUỐI khối style để ĐÈ lên CSS Valuation cũ ở trên. Lý do không
+       sửa thẳng khối cũ: nó dùng chung class (.val-card, .lang-toggle,
+       .panel-head, .danger-row...) với tab AI và Work — sửa tại chỗ là
+       vỡ 2 tab đó ngay. Khi rebuild xong AI + Work thì XOÁ khối cũ.
+       Token đo thẳng từ Figma, không ước lượng.
+       ══════════════════════════════════════════════════════════════ */
+    #valuation-view { font-family: 'Inter', sans-serif; }
+
+    #valuation-view .val-wrap {
+      max-width: var(--page);
+      margin: 0 auto;
+      padding: 0 var(--gutter) 48px;
+    }
+
+    /* Hàng điều khiển: tiêu đề trái · icon + Admin + VI/EN phải. Figma y=96, cao 32 */
+    #valuation-view .panel-head {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; padding: 48px 0 16px; position: static;
+    }
+    #valuation-view .val-intro {
+      height: 32px; padding: 0; display: flex; align-items: center;
+      justify-content: flex-start; text-align: left;
+      font-size: 18px; font-weight: 700; color: var(--ink); letter-spacing: 0;
+    }
+    #valuation-view .val-intro-clickable:hover { color: var(--amber); }
+    #valuation-view .val-head-ctrl {
+      position: static; display: flex; align-items: center; gap: 16px;
+    }
+
+    /* Nút Admin: 81×32, radius 8, trắng + viền — KHÁC nút hành động (radius 24) */
+    #valuation-view .lang-dd-btn {
+      width: 81px; height: 32px; border-radius: 8px;
+      background: var(--white); border: 1px solid var(--line2);
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
+      color: var(--ink); cursor: pointer; padding: 0;
+    }
+    #valuation-view .lang-dd-btn:hover { border-color: var(--amber); color: var(--amber); }
+
+    /* Toggle VI/EN: máng #D9D9D9 81×32 radius 8, viên đang chọn trắng 40×32 */
+    #valuation-view .lang-toggle {
+      display: flex; width: 81px; height: 32px; padding: 0;
+      background: var(--chip); border: 1px solid #BFBFBF; border-radius: 8px;
+      overflow: hidden; box-shadow: none; backdrop-filter: none;
+    }
+    #valuation-view .lang-btn {
+      flex: 1; height: 100%; border: none; background: transparent; border-radius: 8px;
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
+      color: var(--sub2); cursor: pointer; padding: 0;
+    }
+    #valuation-view .lang-btn.active {
+      background: var(--white); border: 1px solid var(--line2); color: var(--ink);
+    }
+
+    /* Icon 32×32 cạnh Admin (Figma: add x=1103, camera x=1151) */
+    #valuation-view .camera-btn {
+      width: 32px; height: 32px; padding: 0; border: none;
+      background: transparent; cursor: pointer; position: relative;
+    }
+    #valuation-view .camera-btn::before {
+      content: ''; position: absolute; inset: 4px;
+      background: var(--ink);
+      -webkit-mask: url(camera.svg) center / contain no-repeat;
+      mask: url(camera.svg) center / contain no-repeat;
+    }
+    #valuation-view .camera-btn:hover::before { background: var(--amber); }
+
+    /* ── BẢNG — 7 cột × 176 + 6 gutter 16 = 1328 ───────────────── */
+    #valuation-view .val-table-section {
+      border: 1px solid var(--line2); border-radius: 8px;
+      overflow: hidden; background: var(--white); margin-bottom: 16px;
+    }
+    #valuation-view #tge-section { height: auto; max-height: 368px; }
+    #valuation-view .val-table { width: 100%; table-layout: fixed; border-collapse: collapse; }
+    #valuation-view .val-table th,
+    #valuation-view .val-table td { width: 14.2857%; }
+
+    #valuation-view #tge-section .val-table thead th {
+      height: 40px; padding: 0 8px; background: var(--ink);
+      font-size: 15px; font-weight: 700; color: var(--amber);
+      text-align: center; text-transform: none; letter-spacing: 0; border: none;
+    }
+    #valuation-view #tge-section .val-table tbody td {
+      height: 32px; padding: 0 8px; border: none;
+      font-size: 12px; font-weight: 700; color: var(--ink);
+      text-align: center; font-variant-numeric: tabular-nums;
+    }
+    /* ⚠️ Phải lặp lại `#tge-section .val-table tbody` cho ĐỦ specificity — rule chung
+       ở trên có 2 id, rule ngắn hơn sẽ thua và mọi ô đều bị bold. */
+    /* Narrative + TGE = yếu tố phụ: thường, xám */
+    #valuation-view #tge-section .val-table tbody td.td-narrative,
+    #valuation-view #tge-section .val-table tbody td.td-date {
+      font-weight: 400; color: var(--sub2); font-size: 12px;
+    }
+    /* Ticker: ĐẬM = FDV ≥ $300M · THƯỜNG = dưới. Thay hẳn nhãn S/M cũ */
+    #valuation-view #tge-section .val-table tbody td.td-ticker { font-weight: 400; }
+    #valuation-view #tge-section .val-table tbody td.td-ticker.fdv-hi { font-weight: 700; }
+    #valuation-view #tge-section .val-table tbody td.td-multi { color: var(--ink) !important; font-size: 12px; font-weight: 700; }
+    #valuation-view .val-table .ck { min-width: 0 !important; }
+    #valuation-view .td-cap, #valuation-view .td-size { display: none; }
+
+    /* ── 3 BOX — 432×176, header đen chữ amber, chip xám ────────── */
+    #valuation-view .val-analysis.val-boxes {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 16px; margin-top: 16px;
+    }
+    #valuation-view .val-analysis.val-boxes > .val-card {
+      height: 176px; min-height: 176px; padding: 0;
+      background: var(--white); border: 1px solid var(--line2); border-radius: 8px;
+      overflow: hidden; display: grid; grid-template-rows: 40px 1fr;
+    }
+    #valuation-view .vc-q1 {
+      grid-row: 1; height: 40px; margin: 0; padding: 0 8px;
+      background: var(--ink); display: flex; align-items: center;
+      justify-content: center; gap: 6px;
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
+      color: var(--amber); letter-spacing: 0; text-transform: none;
+    }
+    #valuation-view .vc-q234 { grid-row: 2; padding: 8px; min-height: 0; overflow-y: auto; }
+
+    /* Icon ⓘ nằm trong header đen → tô amber cho nổi */
+    #valuation-view .info-icon::before { background: var(--amber); }
+    #valuation-view .info-icon:hover::before { background: var(--white); }
+
+    /* Chip 1 dòng: 3 vùng trái · giữa · phải, nền #D9D9D9 radius 8 cao 32 */
+    #valuation-view .danger-row,
+    #valuation-view .narrative-row,
+    #valuation-view .rt-item.rt-box,
+    #valuation-view .rt-item.rt-cond {
+      display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+      height: 32px; margin: 0 0 8px; padding: 0 8px; border-radius: 8px;
+      background: var(--chip);
+      font-size: 12px; font-weight: 400; color: var(--ink);
+    }
+    #valuation-view .danger-row > :nth-child(1),
+    #valuation-view .narrative-row > :nth-child(1) { text-align: left; }
+    #valuation-view .danger-multi,
+    #valuation-view .narrative-med,
+    #valuation-view .rt-item-val { font-weight: 700; color: var(--ink); text-align: center; }
+    #valuation-view .danger-date { text-align: right; color: var(--ink); }
+    #valuation-view .rt-item-lbl { text-align: left; color: var(--ink); font-size: 12px; }
+    #valuation-view .rt-cond b { color: var(--ink); font-weight: 700; }
+    #valuation-view .narrative-name { color: var(--ink); }
+    #valuation-view .narrative-name .td-size { display: inline; color: var(--sub2); font-size: 12px; }
+
+    /* Nút hành động = radius 24 + viền (khác chip chỉ-đọc radius 8) */
+    #valuation-view .rt-btn-row { background: transparent; margin-top: 0; }
+    #valuation-view .predict-link {
+      width: 216px; height: 32px; margin: 0 auto; border-radius: 24px;
+      background: var(--white); border: 1px solid var(--line2);
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
+      color: var(--ink); cursor: pointer; padding: 0;
+    }
+    #valuation-view .predict-link:hover { border-color: var(--amber); color: var(--amber); }
+
+    @media (max-width: 1024px) {
+      #valuation-view .val-analysis.val-boxes { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      #valuation-view .val-wrap { padding: 0 16px 32px; }
+      #valuation-view .panel-head { flex-wrap: wrap; padding: 24px 0 16px; }
+      #valuation-view .val-analysis.val-boxes { grid-template-columns: 1fr; }
+      #valuation-view .val-table-section { overflow-x: auto; }
+      #valuation-view .val-table { min-width: 720px; }
+    }
+
   </style>
 </head>
 <body>
@@ -1329,6 +1496,7 @@
                 <th><span class="ck">Narrative</span></th>
                 <th><span class="ck" id="tge-date-th">TGE</span></th>
                 <th><span class="ck">×TGE</span></th>
+                <th><span class="ck">×ATL</span></th>
                 <th><span class="ck">×ATH</span></th>
                 <th><span class="ck">×ATM</span></th>
               </tr>
@@ -1378,11 +1546,6 @@
           <div id="narrative-list" class="vc-q234 thin-scroll"></div>
         </div>
 
-        <!-- 5. Watchlist theo narrative — thứ tự narrative lấy đúng từ box Trending Narratives ở trên -->
-        <div class="val-card">
-          <div class="val-card-label calc-card-label vc-q1"><span id="wlb-title-text">Watchlist theo narrative</span></div>
-          <div id="wlb-list" class="vc-q234 thin-scroll"></div>
-        </div>
 
       </div>
     </div>
@@ -1742,7 +1905,6 @@
       'tge-title-text':          { EN: 'Recent TGE multiples', VI: 'Hệ số TGE gần đây' },
       'danger-title-text':       { EN: 'Danger Zone', VI: 'Vùng nguy hiểm' },
       'narr-title-text':         { EN: 'Trending Narratives', VI: 'Narrative đang hot' },
-      'wlb-title-text':          { EN: 'Watchlist by narrative', VI: 'Watchlist theo narrative' },
       // nội dung box Recent TGE multiples + header bảng
       // chữ S/M ở đây chính là CHÚ GIẢI cho hậu tố .td-cap do capLabel() sinh ra ở cột Ticker — sửa 1 chỗ thì sửa cả 2
       'tge-lowfdv-label':        { EN: 'Low FDV <span class="td-cap">S</span> <span class="td-size">(&lt;$300M)</span>', VI: 'FDV thấp <span class="td-cap">S</span> <span class="td-size">(&lt;$300M)</span>' },
@@ -1775,15 +1937,22 @@
       'info-danger-btn':     { EN: 'Explain', VI: 'Giải thích' },
       'info-narratives-btn': { EN: 'Explain', VI: 'Giải thích' },
     };
+    // ⚠️ MỌI vòng lặp ở đây PHẢI bỏ qua id không tồn tại. Hàm này chạy ở top-level
+    // nên một getElementById trả null là ném lỗi và giết TOÀN BỘ phần script còn lại
+    // (routeFromPath không chạy → site kẹt ở tab CV). Đã dính đúng bẫy này ngày
+    // 2026-09-21 khi bỏ box Watchlist mà quên gỡ nhãn 'wlb-title-text'.
     function applyValHeadLabels() {
       for (const [id, labels] of Object.entries(VAL_HEAD_LABELS)) {
-        document.getElementById(id).innerHTML = labels[valLang];
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = labels[valLang];
       }
       for (const [id, labels] of Object.entries(VAL_PLACEHOLDERS)) {
-        document.getElementById(id).placeholder = labels[valLang];
+        const el = document.getElementById(id);
+        if (el) el.placeholder = labels[valLang];
       }
       for (const [id, labels] of Object.entries(VAL_TITLES)) {
         const el = document.getElementById(id);
+        if (!el) continue;
         el.title = labels[valLang];
         el.setAttribute('aria-label', labels[valLang]);
       }
@@ -1894,7 +2063,7 @@ ${line}
       [valLangViBtn, valLangEnBtn].forEach(b => b.classList.remove('active'));
       ({ VI: valLangViBtn, EN: valLangEnBtn })[lang]?.classList.add('active');
       applyValHeadLabels();
-      renderAnalysis(); renderDanger(); renderNarratives(); renderWLBox();   // Weak/Normal/Strong, empty-state, badge "PUMP LÁO" đều phụ thuộc valLang
+      renderAnalysis(); renderDanger(); renderNarratives();   // Weak/Normal/Strong, empty-state, badge "PUMP LÁO" đều phụ thuộc valLang
       if (infoTgeModal.classList.contains('open')) renderTgeInfo();
       if (infoDangerModal.classList.contains('open')) document.getElementById('info-danger-body').textContent = DANGER_INFO[valLang];
       if (infoNarrModal.classList.contains('open')) document.getElementById('info-narratives-body').textContent = NARRATIVES_INFO[valLang];
@@ -2066,7 +2235,6 @@ ${line}
     }
     async function retryValuation(btn) { if (btn) btn.disabled = true; await fetchPublicData(); renderAll(); }
     async function retryWTE(btn)       { if (btn) btn.disabled = true; await fetchWTE();       renderWTE(); }
-    async function retryWL(btn)        { if (btn) btn.disabled = true; await fetchWL();        renderWLBox(); }
 
     // Robust single-line CSV parser (handles quoted fields with embedded commas)
     function parseCSVLine(line) {
@@ -2244,14 +2412,25 @@ ${line}
     }
 
     // ── Render table ──────────────────────────────────
+    // Ngưỡng chia FDV cao/thấp — dùng CHUNG cho chữ đậm ở cột Ticker và cho
+    // 2 dòng "FDV thấp / FDV cao" trong box Hệ số TGE, để người đọc nối được 2 chỗ.
+    const FDV_SPLIT_MAIN = 300e6;
+
+    // Bội số hiển thị: bỏ dấu × (header đã mang), dấu thập phân theo ngôn ngữ đang chọn
+    function fmtMult(n) {
+      if (!(n > 0)) return '—';
+      const t = n.toFixed(2);
+      return valLang === 'VI' ? t.replace('.', ',') : t;
+    }
+
     function renderTable() {
       const entries = allEntries();
       const tbody = document.getElementById('tge-tbody');
 
       if (!entries.length) {
         tbody.innerHTML = publicDataError
-          ? `<tr><td colspan="6">${errBox('retryValuation', true)}</td></tr>`
-          : '<tr><td colspan="6"><div class="val-empty">Loading data…</div></td></tr>';
+          ? `<tr><td colspan="7">${errBox('retryValuation', true)}</td></tr>`
+          : '<tr><td colspan="7"><div class="val-empty">Loading data…</div></td></tr>';
         return;
       }
 
@@ -2265,14 +2444,18 @@ ${line}
         const xATH  = athIntraday ? 0 : xMult(e.ath, e);
         const xATM  = xMult(e.currentPrice, e);
         const vcFDV = e.vcAlloc > 0 ? e.fundraising / (e.vcAlloc / 100) : 0;
-        const size = capLabel(vcFDV);
+        // Ticker ĐẬM = FDV cao (≥$300M) · THƯỜNG = thấp. Thay hẳn nhãn S/M (spec v3 §4)
+        const hi = vcFDV >= FDV_SPLIT_MAIN ? ' fdv-hi' : '';
+        // ×ATL chờ job Binance ghi vào val-prices — chưa có data thì để gạch
+        const xATL = e.atl ? xMult(e.atl, e) : null;
         return `<tr>
-          <td class="td-ticker"><span class="ck">${e.ticker}${size ? ` <span class="td-cap">${size}</span>` : ''}</span></td>
+          <td class="td-ticker${hi}"><span class="ck">${e.ticker}</span></td>
           <td class="td-narrative"><span class="ck">${e.type || '—'}</span></td>
-          <td><span class="ck">${fmtDate(e.tgeDate)}</span></td>
-          <td class="td-multi"><span class="ck">${xTGE > 0 ? '×' + xTGE.toFixed(2) : '—'}</span></td>
-          <td class="td-multi"><span class="ck">${xATH > 0 ? '×' + xATH.toFixed(2) : '—'}</span></td>
-          <td class="td-multi"><span class="ck">${xATM > 0 ? '×' + xATM.toFixed(2) : '—'}</span></td>
+          <td class="td-date"><span class="ck">${fmtDate(e.tgeDate)}</span></td>
+          <td class="td-multi"><span class="ck">${fmtMult(xTGE)}</span></td>
+          <td class="td-multi"><span class="ck">${fmtMult(xATL)}</span></td>
+          <td class="td-multi"><span class="ck">${fmtMult(xATH)}</span></td>
+          <td class="td-multi"><span class="ck">${fmtMult(xATM)}</span></td>
         </tr>`;
       }).join('');
 
@@ -2280,20 +2463,21 @@ ${line}
       // để CSS theo cột áp dụng đúng font; không đo bảng thật vì có thể đang display:none)
       const probe = document.createElement('div');
       probe.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;width:2000px;';
-      for (let i = 1; i <= 6; i++) probe.style.setProperty('--ck' + i, '0px');
+      for (let i = 1; i <= 7; i++) probe.style.setProperty('--ck' + i, '0px');
       probe.innerHTML = `<section id="tge-section"><table class="val-table val-table-body">
         <thead><tr>
           <th><span class="ck">Ticker</span></th>
           <th><span class="ck">Narrative</span></th>
           <th><span class="ck">${document.getElementById('tge-date-th').textContent}</span></th>
           <th><span class="ck">×TGE</span></th>
+          <th><span class="ck">×ATL</span></th>
           <th><span class="ck">×ATH</span></th>
           <th><span class="ck">×ATM</span></th>
         </tr></thead>
         <tbody>${tbody.innerHTML}</tbody>
       </table></section>`;
       document.body.appendChild(probe);
-      for (let i = 1; i <= 6; i++) {
+      for (let i = 1; i <= 7; i++) {
         let w = 0;
         probe.querySelectorAll(`th:nth-child(${i}) .ck, td:nth-child(${i}) .ck`).forEach(s => { w = Math.max(w, s.getBoundingClientRect().width); });
         document.documentElement.style.setProperty('--ck' + i, Math.ceil(w) + 'px');
@@ -2436,7 +2620,7 @@ ${line}
       `).join('');
     }
 
-    function renderAll() { renderTable(); renderAnalysis(); renderDanger(); renderNarratives(); renderWLBox(); }
+    function renderAll() { renderTable(); renderAnalysis(); renderDanger(); renderNarratives(); }
 
     // ── Weighted median ───────────────────────────────
     function weightedMedian(items) {
@@ -3307,141 +3491,11 @@ ${line}
     aiLangViBtn.addEventListener('click', () => switchAiLang('VI'));
     aiLangEnBtn.addEventListener('click', () => switchAiLang('EN'));
 
-    // ══════════════════════════════════════════════════
-    // VALUATION — box "Watchlist theo narrative"
-    // Sheet tab "Watchlist" · cột A tên · B X · C narrative · D gọi vốn (số triệu USD)
-    // (cột E "Thing to do yet?" KHÔNG còn được dùng: tam giác sáng/mờ giờ do bên
-    //  Airdrop/Work có card hướng dẫn hay không quyết định, không phải do cột E)
-    // Narrative là data từ Sheet → KHÔNG dịch khi bật EN (đúng luật chung của Valuation).
-    // ══════════════════════════════════════════════════
-    const WL_URL = `https://docs.google.com/spreadsheets/d/${WTE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Watchlist`;
-    let wlData = [];
-    let wlLoaded = false;
-    let wlError = false;
-
-    const wlSlug = n => n.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-
-    // Cột D là số triệu USD viết kiểu Việt ("2.879,0" = 2879) → số thật để sắp xếp.
-    // Chỉ dùng để xếp thứ tự, không hiển thị.
-    function parseRaise(raw) {
-      const n = parseFloat((raw || '').trim().replace(/\./g, '').replace(',', '.'));
-      return isFinite(n) ? n : 0;
-    }
-
-    function parseWL(csvText) {
-      const rows = parseCSVFull(csvText);
-      // Nếu tab "Watchlist" chưa tồn tại, gviz trả về tab DATA (sheet đầu) thay vì báo lỗi.
-      // Nhận diện chữ ký cột của DATA để không render nhầm data valuation thành card rác.
-      const head = (rows[0] || []).join('|').toUpperCase();
-      if (/TGE DATE|FUNDRAISED|TICKER|TOTAL SUPPLY/.test(head)) return [];
-      const out = [];
-      rows.forEach((r, i) => {
-        const name = (r[0] || '').trim();
-        if (!name) return;
-        // Bỏ dòng header (row 1 nếu cột A là "tên"/"name"/"dự án"/"project")
-        if (i === 0 && /^(t[eê]n|name|project|d[uự]\s*[aá]n)/i.test(name)) return;
-        out.push({
-          name,
-          x:         (r[1] || '').trim(),
-          narrative: (r[2] || '').trim(),
-          raise:     parseRaise(r[3]),
-        });
-      });
-      return out;
-    }
-
-    async function fetchWL() {
-      if (wlLoaded) return;
-      try {
-        const res  = await fetch(WL_URL);
-        const text = await res.text();
-        wlData = parseWL(text);
-        wlLoaded = true;
-        wlError = false;
-      } catch (err) {
-        console.warn('WL fetch failed:', err);
-        wlData = [];
-        wlError = true;
-      }
-    }
-
-    /* Thứ tự hàng trong box (chốt 2026-08-06):
-       1. Narrative có mặt trong bảng xếp hạng (box Trending Narratives) — theo ĐÚNG thứ tự đó.
-       2. Narrative không có trong bảng xếp hạng (chưa có deal TGE nào sau NARRATIVE_SINCE)
-          xếp sau, nhóm nào có dự án gọi vốn to nhất thì lên trước.
-       3. Dự án chưa điền narrative xuống cuối cùng.
-       Trong cùng 1 narrative: gọi vốn nhiều → ít (nên Tempo $500M nằm trên Arc $222M). */
-    function wlOrderKeys() {
-      const rankIdx = new Map(narrativeRanking().map((g, i) => [g.name.toLowerCase(), i]));
-      const restMax = {};
-      wlData.forEach(p => {
-        const key = p.narrative.toLowerCase();
-        if (!key || rankIdx.has(key)) return;
-        restMax[key] = Math.max(restMax[key] || 0, p.raise);
-      });
-      const restIdx = new Map(Object.keys(restMax)
-        .sort((a, b) => restMax[b] - restMax[a])
-        .map((key, i) => [key, rankIdx.size + i]));
-      return p => {
-        const key = p.narrative.toLowerCase();
-        if (!key) return Number.MAX_SAFE_INTEGER;
-        return rankIdx.has(key) ? rankIdx.get(key) : restIdx.get(key);
-      };
-    }
-
-    function renderWLBox() {
-      const listEl = document.getElementById('wlb-list');
-      const en = valLang === 'EN';
-      if (wlError)   { listEl.innerHTML = errBox('retryWL', en); return; }
-      if (!wlLoaded) { listEl.innerHTML = `<div class="danger-empty">${en ? 'Loading…' : 'Đang tải…'}</div>`; return; }
-      if (!wlData.length) {
-        listEl.innerHTML = `<div class="danger-empty">${en ? 'No projects yet' : 'Chưa có dự án nào'}</div>`;
-        return;
-      }
-
-      const orderOf  = wlOrderKeys();
-      const wteSlugs = new Set((wteData.VI || []).map(p => wlSlug(p.name)));
-      const rows = [...wlData].sort((a, b) => orderOf(a) - orderOf(b) || b.raise - a.raise);
-
-      listEl.innerHTML = rows.map(p => {
-        const slug   = wlSlug(p.name);
-        const handle = p.x
-          ? p.x.replace(/.*twitter\.com\/|.*x\.com\/|^@/, '').split('?')[0].trim()
-          : '';
-        const nameHtml = handle
-          ? `<a class="wlb-name" href="https://x.com/${handle}" target="_blank" rel="noopener">${p.name}</a>`
-          : `<span class="wlb-name">${p.name}</span>`;
-        // Tam giác sáng = đã có bài hướng dẫn bên Airdrop/Work → bấm được để nhảy sang
-        const arrow = wteSlugs.has(slug)
-          ? `<button class="wlb-arrow wlb-arrow--on" onclick="valGoWork('${slug}')" aria-label="${en ? 'View tasks' : 'Xem việc cần làm'}"></button>`
-          : `<span class="wlb-arrow wlb-arrow--off" aria-hidden="true"></span>`;
-
-        return `<div class="wlb-row">
-          ${nameHtml}
-          <span class="wlb-narr">${p.narrative}</span>
-          ${arrow}
-        </div>`;
-      }).join('');
-    }
-
-    // Nhảy từ box Watchlist (Valuation) sang card Work tương ứng + flash 1.5s
-    function valGoWork(slugId) {
-      showAirdrop();
-      requestAnimationFrame(() => {
-        const el = document.getElementById('wte-card-' + slugId);
-        if (!el) return;
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        el.classList.add('wte-card--flash');
-        setTimeout(() => el.classList.remove('wte-card--flash'), 1500);
-      });
-    }
 
     // ── Init ─────────────────────────────────────────
     routeFromPath(); // tất cả biến đã khai báo xong, an toàn để gọi
     (async () => {
-      // fetchWL đi cùng đợt này vì box "Watchlist theo narrative" nằm trong Valuation,
-      // và tam giác của nó cần wteData (Work) để biết dự án nào đã có bài hướng dẫn.
-      await Promise.all([fetchPublicData(), fetchWTE(), fetchWL()]);
+      await Promise.all([fetchPublicData(), fetchWTE()]);
       renderAll();
       renderWTE();
       translateToEN();
