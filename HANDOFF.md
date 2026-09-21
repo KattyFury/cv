@@ -15,6 +15,11 @@
 
 ## Tổng quan
 
+> ⚠️ **Đang giữa đợt rebuild theo Figma mới** (bắt đầu 2026-09-21).
+> **CV và Valuation đã build xong theo thiết kế mới. AI và Work vẫn layout cũ** — navbar dùng chung nên 2 tab đó đã ăn màu mới nhưng nội dung vẫn rộng 900 và chạy bằng lưới `--row` cũ, nhìn sẽ lệch cho tới khi rebuild nốt.
+> Figma là **nguồn sự thật** cho mọi thứ hình ảnh: file `qPitw8s3XP5ennmBmhzYQF` · frame CV `55:2` · Valuation `60:66` · AI `70:33` · Work `71:121`, mỗi frame **1424×944**.
+> Thứ tự ưu tiên khi mâu thuẫn: `REBUILD_SPEC_V3_VALUATION.md` > Figma > spec v2 > spec v1.
+
 Website cá nhân, **toàn bộ nằm trong `index.html`** (HTML + CSS + JS inline). Nav 4 tab:
 
 | Tab | Route | Nội dung | Ngôn ngữ |
@@ -27,6 +32,10 @@ Website cá nhân, **toàn bộ nằm trong `index.html`** (HTML + CSS + JS inli
 `_redirects` là catch-all (`/* /index.html 200`) nên thêm route mới không phải sửa gì.
 
 ## Tab CV
+
+**Đã rebuild theo Figma `55:2` (2026-09-21).** Bố cục: hero (avatar 81 · tên Bold 21 · nơi ở xám 15 · tagline Bold 18 · câu niềm tin xám 15 rộng 656 · 3 viên thuốc 129×32) → Experience dạng **timeline 3 cột** `128 / 64 / 944`, chấm amber 8px đúng tâm đường kẻ `x=208`, item cách nhau 48 → Highlights (3 cột × 432) → Available for (chip xám) → footer.
+
+Ba khối **Figma không vẽ nhưng vẫn giữ** (frame chỉ cao 944 nên cắt): Highlights · Available for · mục timeline `Pre-2022 Graphic Designer`. User đã xác nhận giữ.
 
 - **Châm ngôn định vị, dùng nguyên văn ở mọi nơi: `Sharing POVs on Crypto and AI`.**
 - Dưới tagline là `.hero-belief` — câu niềm tin bản dài 3 vế: *"I believe AI is the future of knowledge work, robots the future of manual labor, and crypto the future of money."*
@@ -43,11 +52,25 @@ Website cá nhân, **toàn bộ nằm trong `index.html`** (HTML + CSS + JS inli
 
 ## Tab Valuation
 
+**Đã rebuild theo Figma `60:66` (2026-09-21).** Nội dung rộng 1328 (lề 48). Bảng: header đen chữ amber Bold 15, 7 cột, dòng cao 32. 3 box 432×176 header đen chữ amber + chip xám `#D9D9D9`. Bóng đổ `0 4px 8px rgba(0,0,0,.5)` trên bảng · 3 box · nút Admin · viên VI/EN đang chọn · nút "Dự đoán FDV TGE" (KHÔNG có trên chip xám và máng toggle).
+
+- **Bảng 7 cột: Ticker · Narrative · TGE · ×TGE · ×ATL · ×ATH · ×ATM.** `×ATL` đứng TRƯỚC `×ATH`.
+- **Ticker ĐẬM = vcFDV ≥ $300M · THƯỜNG = dưới.** Nhãn `S`/`M` đã bỏ hẳn.
+- Ô số **bỏ dấu `×`** (header đã mang), dấu thập phân theo ngôn ngữ đang chọn. `×ATM` dùng **3 chữ số thập phân**, 3 cột bội số kia dùng 2.
+- **Cột rộng đúng 176, khe 16** — ô bảng phải liền nhau nên khe nằm trong *padding*: ô đầu 184 (`176+8`) · ô giữa 192 (`8+176+8`) ×5 · ô cuối 184. Tổng 1328, tâm cột `136·328·520·712·904·1096·1288`. **Đừng chia đều `1328/7`** (lệch 7px) và **đừng kéo giãn cột** cho vừa.
+- **Mỗi box luôn vẽ đủ 3 ô chip**, ô thừa để trống (`pad3()`).
+- **Tiêu đề box kiêm nút mở popup giải thích** — Figma không vẽ icon ⓘ nên trigger nằm ở chính tiêu đề (`bindBoxInfo()`, có guard null + nhận Enter/Space).
+- **Nút Admin** dùng chung `ADMIN_PASS` với AI + Work; mở khoá ở tab nào thì cả 3 cùng mở (`setAdminUnlocked` → `syncValAdminBtn`). Icon `+` cạnh camera đang **disabled** vì form thêm dự án phải chờ kho KV.
+
+<details><summary>Bảng cũ 6 cột (đã thay)</summary>
+
 - Bảng "Tracking altcoins" 6 cột: **Ticker · Narrative · TGE · ×TGE · ×ATH · ×ATM** (cột 3 dùng chung chữ `TGE` cho cả EN lẫn VI). Tiêu đề màn: VI `Theo dõi altcoin để nhận định thị trường` / EN `Tracking altcoins to read the market`.
 - **Hậu tố vốn hoá ở cột Ticker: `S` (<$300M) · `M` (>$300M)** — class `.td-cap` (tím `--accent`, 10px, bold; KHÔNG dùng chung `.td-size` vì `.td-size` là xám-phụ). Thang đầy đủ đã chốt là **S · M · L** với `L = >$500M` nhưng **CHƯA BẬT**; tất cả gom về `capLabel()` + 3 hằng số `CAP_M` / `CAP_L` / `CAP_L_ACTIVE` ngay trên `renderTable()`.
 - **Chú giải S/M nằm ở box "Hệ số TGE gần đây"** (`tge-lowfdv-label` / `tge-highfdv-label` có `<span class="td-cap">`) — đây là chỗ DUY NHẤT giải thích ký hiệu. Đổi chữ 1 chỗ thì phải đổi chỗ kia.
 - 4 box: Hệ số TGE gần đây (đã gộp Market Condition) · Vùng nguy hiểm · Narrative đang hot · Watchlist theo narrative. Popup bảng dài (`#tge-modal`) **clone thẳng thead/tbody của bảng inline** nên tự ăn theo mọi thay đổi, không có code riêng.
 - Nút camera xuất dashboard ra PNG (xem quy định "Chụp ảnh dashboard").
+
+</details>
 
 ## Tab AI (hub bài viết)
 
@@ -105,6 +128,36 @@ Class chung **`.panel-head`**: **tiêu đề (`.val-intro`) bên TRÁI, cụm co
 | `AI_HUBS` | `CATS` trong `ai.js` | bài lưu vào hub mới rơi hết về hub đầu |
 | `WTE_RANKS` | `RANKS` trong `private.js` | rank mới bị ép về mặc định (đúng bug rank C ngày 12/08) |
 
+## Token thiết kế mới (từ 2026-09-21)
+
+Đo thẳng từ Figma, khai ở `:root`. Áp cho **navbar (dùng chung 4 tab) + tab CV + tab Valuation**. AI và Work vẫn xài token cũ bên trên — migrate từng tab, đừng đổi hàng loạt.
+
+| Token | Giá trị | Dùng cho |
+|---|---|---|
+| `--amber` | `#FFA111` | logo · tab đang chọn · tiêu đề box · chấm timeline · mắt mèo |
+| `--ink` | `#000000` | chữ chính + nền navbar + nền header bảng/box |
+| `--sub2` | `#4B5563` | chữ phụ: nơi ở, câu niềm tin, bullet, Narrative, TGE |
+| `--line2` | `#ABABAB` | viền (**0.5px**, không phải 1px) · đường kẻ timeline · tab chưa chọn |
+| `--chip` | `#D9D9D9` | nền chip **chỉ-đọc** |
+| `--shadow` | `0 4px 8px rgba(0,0,0,.5)` | thẻ nổi + nút bấm được. **Không** dùng cho chip chỉ-đọc và máng toggle |
+| `--navbar` | `48px` | |
+| `--page` | `1424px` | bề ngang frame Figma |
+| `--gutter` | `48px` | lề trái/phải |
+
+**Luật phân biệt bấm-được / chỉ-đọc** (design system tự nói, đừng phá):
+
+| | Spec |
+|---|---|
+| **Bấm được** (nút) | radius **24** · nền trắng · viền `--line2` · có bóng |
+| **Chỉ đọc** (chip dữ liệu) | radius **8** · nền `--chip` · không viền · không bóng |
+| Nút Admin / máng VI-EN | radius **8** + viền (ngoại lệ, đúng Figma) |
+
+Chữ: **Inter**. Cỡ bội số của 3 — `12 / 15 / 18 / 21`. Khoảng cách bội số của 8. Bước lưới 48 (`n đơn vị = 48n − 16`).
+
+Icon: **Tabler Icons v3.31.0 (MIT)**, inline path, KHÔNG CDN. Bộ này được chọn vì có **cả brand icon lẫn icon UI** nên nét đồng đều. File `.svg` dùng làm CSS mask phải để `stroke="#000"` — `currentColor` không kế thừa được khi SVG load như ảnh.
+
+---
+
 ## Lưới hàng + spacing
 
 - Toàn site dùng **grid 4px**: mọi `margin / padding / gap` phải là bội số của 4 (`4 · 8 · 12 · 16 · 20 · 24 · 32 · 40 · 48 · 56 · 64`). Ngoại lệ: `1px/2px` cho border, `7px 10px` cho table cell (KHOÁ). Font-size khoá riêng: `19/15/14/13/12/11/10px`. **Thêm element mới thì chọn số trong scale, không tự chế số lẻ.**
@@ -133,6 +186,24 @@ Class chung **`.panel-head`**: **tiêu đề (`.val-intro`) bên TRÁI, cụm co
 Xuất `.val-wrap` ra PNG bằng `html2canvas.min.js` **nằm trong repo** (không CDN — cv giữ nguyên tắc không gọi ra server bên thứ 3), lazy-load khi bấm lần đầu.
 
 ⚠️ **html2canvas KHÔNG vẽ được CSS mask** — mà mọi icon của cv đều tô bằng mask → để nguyên thì icon ra **ô đặc màu currentColor** rất xấu. Thêm icon/element mới vào vùng chụp thì chọn 1 trong 2 đường có sẵn: **không mang thông tin** (nút bấm, icon ⓘ) → cho vào `ignoreElements`; **mang thông tin** (mũi tên Watchlist sáng/mờ) → trong `onclone` gắn class `.shot-arrow` (tắt `::before`) rồi thay bằng ký tự text tương đương.
+
+## Chụp ảnh kiểm tra — cách đang dùng (2026-09-21)
+
+Không có puppeteer trong repo. Dùng Chrome headless có sẵn trên máy:
+
+```
+"C:\Program Files\Google\Chrome\Application\chrome.exe" --headless=new --disable-gpu \
+  --no-sandbox --hide-scrollbars --user-data-dir=<thư mục profile MỚI mỗi lần> \
+  --screenshot=out.png --window-size=1424,944 --virtual-time-budget=20000 <url>
+```
+
+- **Phải dùng profile mới mỗi lần** (`--user-data-dir` ngẫu nhiên), không thì hay trả về rỗng.
+- Thỉnh thoảng vẫn fail không rõ lý do → **đổi `--window-size` vài px rồi chạy lại**, thường là được.
+- `python -m http.server` **không có SPA fallback** nên `/valuation` trả 404. Muốn chụp tab khác trang chủ thì chạy server có fallback như `_redirects` (xem `scratchpad/serve.py` của session trước), hoặc chụp thẳng trên production sau khi deploy.
+- Bắt lỗi JS: tạo bản `_preview.html` cắm `window.addEventListener('error', ...)` in lỗi ra thẳng `<body>` rồi chụp — cách này tìm ra bug `wlb-title-text` bên dưới. **Nhớ xoá `_preview.html` trước khi commit.**
+- Kiểm nhanh trước khi push: `node --check` trên script inline đã tách ra, và `json.loads` khối JSON-LD.
+
+---
 
 ## Verify bằng mắt — BẮT BUỘC trước khi chốt việc động vào layout/màu
 
@@ -235,13 +306,6 @@ Xếp hạng **TẤT CẢ** narrative có data từ 02/2025 (không lọc bỏ a
 - Badge `C` dùng `box-shadow: inset 0 0 0 1px` chứ **không** dùng `border` — border làm badge trắng cao/rộng hơn 4 badge kia.
 - Nền + viền card giống nhau ở mọi rank; màu phân biệt chỉ ở badge, section label, `border-left` của Daily, hover tên và dấu `•`.
 
-## Box "Watchlist theo narrative" (Valuation, box thứ 4)
-
-- Đọc Google Sheet tab **`Watchlist`** qua gviz CSV. Cột: **A** tên · **B** X handle · **C** narrative · **D** gọi vốn (số triệu USD kiểu Việt, `"2.879,0"` = 2879 → `parseRaise`). Cột **E** "Thing to do yet?" **KHÔNG còn dùng**.
-- Fetch cùng đợt init với DATA + Work (`Promise.all`) vì tam giác cần `wteData` để biết dự án nào đã có bài hướng dẫn.
-- Mỗi hàng `.wlb-row`: tên (link X, cắt `…` nếu dài) · narrative (11px xám) · **tam giác** (`right2.svg`, tô bằng CSS mask): **sáng** = đã có card bên Airdrop/Work (khớp slug tên) → bấm được, nhảy sang + cuộn tới card + flash 1.5s (`valGoWork`); **mờ** = chưa có.
-- **Thứ tự:** (1) narrative theo ĐÚNG thứ tự box "Narrative đang hot" — dùng chung `narrativeRanking()` để 2 box không lệch; (2) narrative không có trong bảng xếp hạng xếp sau, nhóm nào có dự án gọi vốn to nhất lên trước; (3) dự án chưa điền narrative xuống cuối; (4) trong cùng narrative: gọi vốn nhiều → ít.
-- Narrative **KHÔNG dịch** (là data từ Sheet).
 
 ## Files quan trọng
 
@@ -254,9 +318,12 @@ _redirects                — Cloudflare Pages SPA fallback (/* → /index.html)
 og.png                    — ảnh preview khi share link (1200×630, nguồn vẽ ở C:\tmp\cvshot\og-gen.html)
 icon.png                  — favicon + icon iPhone home screen (mèo-kính, mắt cam)
 pfp.webp                  — avatar hero CV
-info.svg                  — icon ⓘ giải thích 3 box Valuation (tô qua CSS mask)
-right2.svg                — tam giác box "Watchlist theo narrative" (tô qua CSS mask)
-camera.svg                — icon nút chụp ảnh dashboard (tô qua CSS mask)
+REBUILD_SPEC.md           — khảo sát hiện trạng trước rebuild (đo từ commit 5f0afd6)
+REBUILD_SPEC_V3_VALUATION.md — SPEC ĐÃ CHỐT cho tab Valuation. Đọc trước khi động vào tab này
+info.svg / camera.svg / plus.svg / right2.svg
+                          — icon Tabler v3.31.0, tô qua CSS mask. stroke để #000 (mask
+                            không kế thừa được currentColor). right2.svg hiện KHÔNG còn
+                            code nào dùng sau khi bỏ box Watchlist
 html2canvas.min.js        — thư viện DOM→PNG (v1.4.1). ĐỂ TRONG REPO có chủ đích (không CDN),
                             chỉ nạp khi user bấm camera lần đầu
 arrow.svg                 — KHÔNG còn code nào dùng từ 2026-08-06; giữ lại phòng khi cần
@@ -275,15 +342,42 @@ highlights.txt + highlights/  — ảnh Highlights ở CV (mỗi dòng "tên-ả
 
 ## Pending / Known Issues
 
-1. **Làm cho số đông HIỂU tab Valuation là gì** (user chốt hướng 2026-08-01, CHƯA làm) — các box hiện chỉ bày số cho người đã biết đọc. **Hướng: làm chính các BOX dễ hiểu hơn** (diễn giải con số đang nói gì, ngưỡng nào tốt/xấu, vì sao nhìn chỉ số đó) — user đã bác 3 phương án đổi tên tab / thêm khối ở CV / đụng tagline. Cùng tinh thần cho tab Airdrop.
-2. **Rank `SS` còn sót trong KV** — project từng bị ép về `SS` (bug rank C ngày 12/08) hiện nằm lộn ở nhóm S do `groupOf()` map `SS`→`S`. Phải vào popup admin sửa tay từng cái, code không tự biết cái nào bị ảnh hưởng.
-3. **×ATH filter** — đang bỏ ATH cùng ngày TGE. Một số token pump ảo 1-3 ngày đầu; cân nhắc mở rộng window.
-4. **Ảnh** — dùng WebP (`pfp.webp`, `highlights/*.webp`), tên trong `highlights.txt` phải khớp đuôi thật. Ảnh mới nên nén WebP (~750×500, dưới ~150KB).
-5. **Google Sheet tab "Work"** không còn code nào đọc (từ 09/08) — vẫn giữ trên Drive phòng cần đối chiếu, chưa xoá.
+### Việc còn lại của đợt rebuild (ưu tiên)
+
+1. **Backend Valuation chưa dựng gì.** Spec đã chốt hết trong `REBUILD_SPEC_V3_VALUATION.md`, code thì chưa có dòng nào:
+   - `functions/api/val.js` — GET công khai + POST cần `ADMIN_PASS`
+   - KV 2 key: `val-projects` (admin ghi) · `val-prices` (job ghi). Binding `WORK` = namespace `b8fab2f8a83f45f0a023d2ba3ce78cde`
+   - Script chạy 1 lần chuyển 78 dòng từ Sheet sang KV
+   - Job hằng ngày đặt trong dự án `D:\Files\Claude\1_Agents\binance` (máy chạy 24/7), gọi **REST thẳng** rồi POST sang cv kèm `ADMIN_PASS`
+   - ⚠️ **Đã verify: `binance-cli` BỎ QUA `--start-time`** → không lấy được lịch sử, phải dùng `fetch` REST
+2. **Cột ×ATL đang trống toàn bộ** — chờ job Binance ghi `atl` vào `val-prices`. Code bảng đã sẵn sàng đọc `e.atl`.
+3. **Form thêm/sửa/xoá dự án** — nút Admin đã mở khoá được, nhưng icon `+` còn disabled vì chưa có kho KV. Yêu cầu của user: bấm `+` mở **danh sách đầy đủ**, sửa/xoá từng dòng, **chỉ hiện data nguồn**, không hiện ×TGE/×ATL/×ATH/×ATM.
+4. **Tab AI và Work chưa rebuild** — vẫn nội dung rộng 900 + lưới `--row` cũ, trong khi navbar đã 1424. Chưa đọc frame Figma `70:33` và `71:121`.
+5. **Narrative trong Sheet vẫn viết hoa** (`Layer-2`, `AI`). Client đang `toLowerCase()` lúc parse nên hiển thị đúng, nhưng chuẩn hoá thật phải làm lúc migrate sang KV. Figma vẽ TIA là `modular` — Sheet ghi `layer-1`, **Sheet đúng, `modular` là chữ bịa trong mock**.
+6. **Badge rank tab Work vẫn gradient tím→xanh** (`--brand-1`/`--brand-2`) — 2 token này chưa đổi sang palette mới, sẽ dọn khi rebuild tab Work.
+7. **CSS Valuation cũ vẫn còn** ở giữa khối `<style>`, bị khối mới ở cuối đè lên. Giữ vì nó dùng chung class với AI + Work. **Xoá khi rebuild xong 2 tab đó.**
+
+### Tồn đọng cũ
+
+8. **Làm cho số đông HIỂU tab Valuation là gì** (user chốt hướng 2026-08-01, CHƯA làm) — các box hiện chỉ bày số cho người đã biết đọc. **Hướng: làm chính các BOX dễ hiểu hơn** (diễn giải con số đang nói gì, ngưỡng nào tốt/xấu, vì sao nhìn chỉ số đó) — user đã bác 3 phương án đổi tên tab / thêm khối ở CV / đụng tagline. Cùng tinh thần cho tab Airdrop.
+9. **Rank `SS` còn sót trong KV** — project từng bị ép về `SS` (bug rank C ngày 12/08) hiện nằm lộn ở nhóm S do `groupOf()` map `SS`→`S`. Phải vào popup admin sửa tay từng cái, code không tự biết cái nào bị ảnh hưởng.
+10. **×ATH filter** — đang bỏ ATH cùng ngày TGE. Một số token pump ảo 1-3 ngày đầu; cân nhắc mở rộng window.
+11. **Ảnh** — dùng WebP (`pfp.webp`, `highlights/*.webp`), tên trong `highlights.txt` phải khớp đuôi thật. Ảnh mới nên nén WebP (~750×500, dưới ~150KB).
+12. **Google Sheet tab "Work"** không còn code nào đọc (từ 09/08) — vẫn giữ trên Drive phòng cần đối chiếu, chưa xoá.
 
 ---
 
 ## Decisions Log
+
+- 2026-09-21: **Rebuild theo Figma mới — CV + Valuation xong, AI + Work chưa.** Palette đổi từ tím `#6155F5` + xanh `#34C759` sang **đen + amber `#FFA111`** (thương hiệu chốt: *mèo đen mắt amber*, chính là `icon.png`). Font Roboto → **Inter**. Nội dung 900 → 1328. Lý do đổi hàng loạt: user nói "tuân thủ thiết kế mới và bỏ thiết kế cũ đi", và navbar dùng chung cả 4 tab nên không thể đổi nửa vời. **Verify:** Chrome headless chụp 1424×944 đối chiếu ảnh render từ Figma, từng phần tử một.
+- 2026-09-21: **Bảng Valuation 6 → 7 cột, thêm `×ATL` đứng trước `×ATH`.** `×ATL` = **đáy thấp nhất trong khoảng [ngày lên sàn → ngày ATH]**, KHÔNG phải đáy toàn lịch sử. Kiểm trên 10 token thật: cách "đáy toàn lịch sử, ẩn nếu rơi sau ATH" chỉ hiện được **1/8** token (hầu hết alt 2022-2024 đang ở đáy lịch sử ngay lúc này), còn "đáy trước ATH" hiện **8/8**. Cách sau cũng kể đúng câu chuyện cần kể — OP: list 1,232 → rơi 0,396 (÷3) ngày 18/06/2022 → rồi mới lên 4,865.
+- 2026-09-21: **Bỏ nhãn vốn hoá `S`/`M`, thay bằng Ticker in đậm/thường ở ngưỡng $300M.** Giữ $300M chứ không dùng median ($136M): chia **21 đậm / 57 thường** nên đậm là thiểu số, đọc ra ngay; median sẽ chia 39/39, một nửa bảng in đậm là mất tác dụng. Và box "Hệ số TGE" đã chia FDV thấp/cao ở đúng $300M nên người đọc nối được 2 chỗ.
+- 2026-09-21: **Bỏ hẳn box "Watchlist theo narrative"** (user đã chốt từ trước). Dọn kèm 128 dòng code chết. Ghi để sau: *cân nhắc đem Watchlist vào lại sau khi build xong Agent.*
+- 2026-09-21: **Icon chuyển sang Tabler Icons v3.31.0 (MIT), inline path, không CDN.** Chọn Tabler vì là bộ **duy nhất có cả brand icon (`brand-x`, `brand-telegram`) lẫn icon UI** — Lucide đã bỏ brand icon, dùng nó thì phải ghép thêm Simple Icons, hai bộ hai nét. Inline để giữ tính chất "mọi thứ trong một file".
+- 2026-09-21: **Bỏ icon ⓘ khỏi tiêu đề box, chuyển trigger popup giải thích sang CHÍNH tiêu đề.** Figma không vẽ icon nào ở đó. Xoá icon mà giữ nguyên tính năng — tiêu đề bấm được, hover gạch chân, nhận cả Enter/Space.
+- 2026-09-21: **Cột bảng giữ đúng 176, phần dư thành khe 16 nhét vào padding của ô** (ô đầu 184 · giữa 192 ×5 · cuối 184 = 1328). Trước đó thử 2 cách đều sai: chia đều `1328/7 = 189,7` làm tâm lệch 7px; rồi kéo giãn xen kẽ 176/208 cho tâm trùng nhưng **cột bị giãn** — user bắt đúng: "7 cột dư sức dàn trong box lại đi mở rộng box ra".
+- 2026-09-21: **Job lấy giá hằng ngày đặt trong dự án `binance`, không phải Cloudflare Worker.** Lý do: HANDOFF đã ghi Apps Script từng bị Binance trả **HTTP 451** vì chạy trên server Mỹ; Worker chạy ở colo không cố định quốc gia nên dính đúng rủi ro đó. Máy user đã chạy dự án binance 24/7 và mạng tới Binance thông (đã test 18 ticker). Hai bên chỉ nói chuyện qua HTTP + `ADMIN_PASS`, **không chia sẻ dòng code nào** → không vi phạm luật "không lôi code dự án khác vào cv".
+- 2026-09-21: **Thêm nút mèo (Agent) 80×80 góc dưới phải, mới dựng vỏ.** Figma vẽ ở cả 4 frame. Ruột dùng `icon.png` có sẵn thay vì export SVG từ Figma — node đó là **ảnh raster nhúng base64**, export ra 36KB. Agent thật là **dự án riêng**, không thuộc rebuild này: nó cần `ANTHROPIC_API_KEY` mà cv là trang public, để key ở client là lộ ngay.
 
 - 2026-08-18: **Chốt châm ngôn `Sharing POVs on Crypto and AI`** — bản `Crypto and AI` (entry dưới) chỉ giữ được ít phút: rút xuống 13 ký tự làm **hero của tab CV trông trống huếch** — hero vốn chỉ còn đúng 1 dòng tagline từ 19/07 (dòng "Outside crypto…" và câu "I don't sell dreams…" đã bỏ từ đó), nên câu tagline chính là toàn bộ phần chữ giới thiệu. **Bài học:** với hero 1 dòng, tagline không chỉ là khẩu hiệu mà là **cả đoạn mô tả bản thân** — rút quá ngắn là mất luôn phần "about me". Ảnh `og.png` lên `?v=6`, cỡ chữ tiêu đề về lại 64px (80px chỉ hợp với câu 13 ký tự).
 - 2026-08-18: **Rút châm ngôn xuống còn `Crypto and AI`** (thay bản đầu cùng ngày `Sharing POVs on Crypto + AI`, entry dưới) — user chốt ngắn gọn, và chốt luôn **đổi đồng bộ cả 6 chỗ** thay vì chỉ dòng hero: `.hero-tagline`, `meta description`, `og:title`, `og:image:alt`, JSON-LD `description`, và vẽ lại `og.png` (`?v=4` → **`?v=5`**). `og:description` không đụng vì nó chứa câu niềm tin chứ không chứa châm ngôn. Trong `og-gen.html` phải **tăng cỡ chữ tiêu đề 64px → 80px**: câu mới chỉ 13 ký tự, để nguyên 64px thì nửa dưới ảnh trống huếch. **Verify:** chụp thật `og.png` 1200×630 (1 dòng, cân khung); chụp CV desktop 1280 + mobile 390; curl site production kiểm tra cả 5 thẻ + ảnh.
@@ -404,6 +498,12 @@ highlights.txt + highlights/  — ảnh Highlights ở CV (mỗi dòng "tên-ả
 - 2026-08-03 (session 3): **Thêm icon info + popup giải thích 3 box Valuation + toggle EN|VI**, đồng bộ hoá luôn với toggle ngôn ngữ ở Airdrop (dropdown cũ → cùng component pill EN|VI), dịch VI cho toàn bộ nhãn UI tĩnh của Valuation (không đụng data), đổi chú thích ticker `(low)/(high)` → `(<$300M)/(>$300M)`, bỏ tiêu đề lặp trong popup bảng TGE. Xem chi tiết mục "Info popup (icon "i") + toggle EN|VI" ở trên. `info.svg` (đã có sẵn trong repo nhưng chưa từng được dùng/commit) giờ chính thức được dùng làm icon giải thích.
 
 ## Failed Approaches
+
+- 2026-09-21: Bỏ box Watchlist khỏi HTML nhưng **quên gỡ nhãn `'wlb-title-text'`** trong `VAL_HEAD_LABELS` → `applyValHeadLabels()` chạy ở top-level gọi `document.getElementById('wlb-title-text').innerHTML` trên `null` → **ném lỗi giết TOÀN BỘ phần script còn lại**, `routeFromPath()` không chạy, site kẹt ở tab CV, bấm Valuation không ra gì. Triệu chứng đánh lừa: trang trông vẫn bình thường, chỉ là không chuyển tab được. → Đã thêm **guard null cho cả 3 vòng lặp** trong hàm đó. **Bài học: mọi vòng lặp `getElementById` chạy ở top-level phải bỏ qua id không tồn tại** — một phần tử bị xoá là chết cả trang.
+- 2026-09-21: Lặp lại đúng lỗi trên lần 2 khi gỡ 3 nút `info-*-btn` mà để nguyên `addEventListener` trỏ tới id đã xoá. Bắt được trước khi push nhờ grep lại id vừa xoá. → **Xoá phần tử nào thì grep ngay id đó trên toàn file**, đừng tin là mình nhớ hết chỗ dùng.
+- 2026-09-21: Chèn code bằng `str.replace('</script>', ..., 1)` — file có **2 thẻ `</script>`** và thẻ đầu là của **JSON-LD**, nên đoạn JS rơi vào giữa khối structured data, phá luôn SEO metadata. → Dùng `rfind` khi muốn thẻ cuối, và **luôn `json.loads` khối JSON-LD trước khi commit**.
+- 2026-09-21: `binance-cli` (Binance Agent OS Skill Hub CLI) **bỏ qua `--start-time`**: gọi `--start-time 0 --limit 1` vẫn trả nến mới nhất; ép cả `--start-time` lẫn `--end-time` thì trả mảng rỗng. → Không lấy được lịch sử bằng CLI, **phải gọi `fetch` REST thẳng**. Nếu không verify thì cả job lấy đáy sẽ âm thầm sai.
+- 2026-09-21: CSS override cho Valuation viết selector ngắn hơn rule chung (`#valuation-view .val-table td.td-ticker` vs `#valuation-view #tge-section .val-table tbody td`) → **thua specificity**, mọi ô đều bold, ticker không phân biệt đậm/thường. → Khi viết khối đè, **lặp lại đủ tiền tố id** của rule đang muốn đè.
 
 - 2026-06-11: Apps Script + CoinGecko `market_chart/range` và `market_chart?days=max` → 401 (Demo key không có quyền) → bỏ.
 - 2026-06-11: Apps Script + Binance klines → 451 geo-block (server Google ở Mỹ) → chuyển sang chạy local.
