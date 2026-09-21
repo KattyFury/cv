@@ -1134,6 +1134,43 @@
     }
     .pt-delete:hover { opacity: 0.7; }
 
+    /* ── NÚT MÈO (Agent) ─────────────────────────────────────────
+       Figma: 80×80 ở (1312, 832) trên frame 1424×944 → cách mép phải
+       và mép dưới đúng 32. Bóng lấy từ filter trong Figma: dy 4 · blur 8
+       · đen 50%. Nút nằm NGOÀI mọi #*-view nên hiện ở cả 4 tab.
+       Ruột là icon.png (mèo đen mắt amber) — cũng là favicon, một file
+       duy nhất cho thương hiệu, không nhân bản asset.
+       ⚠️ Mới có VỎ. Chưa gắn Agent — bấm vào chỉ hiện "coming soon". */
+    #cat-btn {
+      position: fixed; right: 32px; bottom: 32px;
+      width: 80px; height: 80px;
+      border: none; border-radius: 50%; padding: 0; overflow: hidden;
+      background: var(--ink);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+      cursor: pointer; z-index: 80;
+      transition: transform 0.15s;
+    }
+    #cat-btn img { width: 100%; height: 100%; display: block; object-fit: cover; }
+    #cat-btn:hover { transform: scale(1.06); }
+    #cat-btn:active { transform: scale(0.98); }
+
+    #cat-hint {
+      position: fixed; right: 32px; bottom: 120px;
+      background: var(--ink); color: var(--amber);
+      font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700;
+      padding: 8px 16px; border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+      z-index: 80; opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+    #cat-hint.show { opacity: 1; }
+
+    @media (max-width: 640px) {
+      #cat-btn  { width: 56px; height: 56px; right: 16px; bottom: 16px; }
+      #cat-hint { right: 16px; bottom: 88px; }
+    }
+
   </style>
 </head>
 <body>
@@ -1404,6 +1441,12 @@
   </div>
 
   <!-- Rank filter floating bar (WTE only) -->
+  <!-- Nút mèo (Agent) — hiện ở cả 4 tab, mới dựng vỏ -->
+  <button id="cat-btn" aria-label="Agent (coming soon)" title="Agent (coming soon)">
+    <img src="icon.png?v=2" width="80" height="80" alt="" />
+  </button>
+  <div id="cat-hint">Agent — coming soon</div>
+
   <div id="rank-filter-float" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:50">
     <div class="lang-toggle" id="rank-filter" style="box-shadow:0 4px 20px rgba(0,0,0,0.15);backdrop-filter:blur(8px)">
       <button class="lang-btn active" data-rank="INCOME" id="rf-income" title="Income">$</button>
@@ -3402,6 +3445,19 @@ ${line}
       renderAll();
       renderWTE();
       translateToEN();
+    })();
+
+    // ── Nút mèo (Agent) — mới có vỏ, bấm vào chỉ báo là chưa xong ──
+    (function () {
+      const btn = document.getElementById('cat-btn');
+      const hint = document.getElementById('cat-hint');
+      if (!btn || !hint) return;
+      let t;
+      btn.addEventListener('click', () => {
+        hint.classList.add('show');
+        clearTimeout(t);
+        t = setTimeout(() => hint.classList.remove('show'), 1800);
+      });
     })();
   </script>
 
