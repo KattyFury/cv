@@ -145,14 +145,39 @@ Tất cả **chữ thường**, viết y hệt trên.
 | 6 | ×ATH | tính |
 | 7 | ×ATM | tính |
 
-### Lưới — 7 cột khớp grid tốt hơn 6 cột
+### Lưới — đã dựng xong trong Figma
 
 ```
-7 × 176px + 6 gutter × 16px = 1232 + 96 = 1328 ✓
-176 = 48×4 − 16  →  mỗi cột đúng 4 ô lưới; 7 × 4 = 28 cột
+7 × 176px + 6 gutter × 16px = 1232 + 96 = 1328 ✓  (đúng bề ngang bảng)
+bước cột 192 = 48 × 4  →  mọi mốc đều là bội số của 8
 ```
 
-Bản 6 cột trong Figma đang là 1328 ÷ 6 = 221,33px — **lệch lưới**. Thêm ×ATL thì bảng tự về đúng grid. Figma cần vẽ lại bảng thành 7 cột × 176.
+Toạ độ `x` của 7 cột (áp cho **cả** header lẫn khối data):
+
+| # | Cột | x | rộng |
+|---|---|---|---|
+| 1 | Ticker | 48 | 176 |
+| 2 | Narrative | 240 | 176 |
+| 3 | TGE | 432 | 176 |
+| 4 | ×TGE | 624 | 176 |
+| 5 | **×ATL** | **816** | 176 |
+| 6 | ×ATH | 1008 | 176 |
+| 7 | ×ATM | 1200 | 176 |
+
+Header `y=152 h=24` · khối data `y=192 h=312` (10 dòng × line-height 32, chừa 8px đệm đáy) · thanh header `h=40`.
+
+> Bản 6 cột cũ chia đều 1328 ÷ 6 = **221,33px** — lệch lưới, và text rộng 206,67 với inset ~7px. Bản 7 cột giữ đúng cách chia đều nhưng mọi số về bội số của 8; tâm cột lệch bản cũ nhiều nhất 7px, cột giữa trùng khít.
+
+### Token đo được từ Figma
+
+| | |
+|---|---|
+| Amber (chữ header, tên box, logo, mắt mèo) | `#FFA111` |
+| Xám phụ (Narrative, TGE) | `#4B5563` |
+| Nền thanh header bảng / header box | đen `#000000` |
+| Nền bảng / nền box | trắng, bo góc `8` |
+| Header bảng | Inter **Bold** 15, line-height 32 |
+| Data bảng | Inter 12, line-height 32 — cột bội số **Bold đen**, Narrative + TGE **Regular xám** |
 
 ### Công thức
 
@@ -307,11 +332,39 @@ Script phải xử lý đúng định dạng kiểu Việt trong Sheet:
 
 ---
 
-## 9. Còn treo
+## 9. Figma — đã sửa xong (2026-09-21)
 
-1. Figma cần sửa 3 chỗ *(việc của chủ site)*: vẽ lại bảng **7 cột × 176** · thêm icon thứ hai ở **x=1103** · **xoá box Watchlist** ở (48, 720).
-2. **Nút tròn 80×80 góc dưới phải = chú mèo đeo kính = Agent.** Có ở cả 4 frame Figma. Đây là **dự án riêng**, không nằm trong rebuild này — Agent cần `ANTHROPIC_API_KEY` mà cv là trang public, để key ở client là lộ ngay. Chú mèo trên cv chỉ nên là **cửa vào**, não nằm chỗ khác. Bàn riêng sau.
-3. Logic 4 box và MODEL D: chủ site sẽ chỉnh sau khi đọc báo cáo Cổng 2 — chưa đổi gì trong đợt này.
+Frame Valuation `60:66` đã cập nhật khớp spec này, không còn việc vẽ tay:
+
+| Việc | Kết quả |
+|---|---|
+| Bảng 6 → **7 cột** | Thêm header `×ATL` (`81:2`) + khối data `×ATL` (`81:3`), dàn lại cả 14 khối về lưới 176/192 |
+| Giá trị ×ATL trong mock | **Số thật**, tính từ nến Binance + data Sheet — không phải số giả |
+| **Xoá box Watchlist** | Gỡ 10 node ở (48, 720). Valuation còn 3 box |
+| **Icon thứ hai** | `icon-add` (`83:2`) ở x=1103, cạnh `icon-camera` (`60:124`) ở x=1151, cách nhau 16 |
+| Thanh header bảng | 39,99 → **40** |
+| Hàng điều khiển (tiêu đề · Admin · VI/EN · 2 icon) | `y=95 h=33` → **`y=96 h=32`**, về đúng bội số 8 |
+
+×ATL trong mock, tính thật cho 10 token:
+
+| | OP | HOOK | ARB | SUI | ARKM | WLD | SEI | CYBER | TIA | ACE |
+|---|---|---|---|---|---|---|---|---|---|---|
+| ×TGE | 4,82 | 24,67 | 18,73 | 8,36 | 7,97 | 12,15 | 4,24 | 4,71 | 14,37 | 69,56 |
+| **×ATL** | **1,62** | **10,79** | **10,47** | **2,16** | **3,39** | **5,46** | **2,23** | **3,54** | **13,42** | **60,21** |
+| ×ATH | 19,80 | 40,70 | 33,87 | 31,96 | 48,03 | 66,04 | 26,82 | 15,85 | 131,37 | 83,84 |
+
+---
+
+## 10. Thương hiệu
+
+**Mèo đen mắt amber.** Chú mèo đeo kính chính là chủ site — nút tròn 80×80 góc dưới phải, có ở cả 4 frame. Đen `#000000` + amber `#FFA111` là cặp màu thương hiệu, dùng thống nhất cho logo, header bảng, tên box và mắt mèo.
+
+---
+
+## 11. Còn treo
+
+1. **Chú mèo = Agent.** Có ở cả 4 frame Figma. Đây là **dự án riêng**, không nằm trong rebuild này — Agent cần `ANTHROPIC_API_KEY` mà cv là trang public, để key ở client là lộ ngay. Chú mèo trên cv chỉ nên là **cửa vào**, não nằm chỗ khác. Bàn riêng sau.
+2. Logic 3 box và MODEL D: chủ site sẽ chỉnh sau khi đọc báo cáo Cổng 2 — chưa đổi gì trong đợt này.
 
 ---
 
