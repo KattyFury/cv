@@ -220,22 +220,54 @@ Nút Admin, nhập mật khẩu xong hiện **2 icon: `add` và `camera`**.
 
 Đúng bằng nội dung key `val-projects` — kiến trúc 2 key đã tách sẵn nên không phải lọc gì thêm.
 
+### Trường bắt buộc
+
+**Chặn lưu nếu thiếu 7 trường cần để tính bội số:** `ticker` · `tgeDate` · `narrative` · `fundraising` · `vcAlloc` · `totalSupply` · `priceTGE`.
+
+Thiếu một trong 7 thì cả 4 cột bội số của dòng đó ra `—`, dự án nằm trong bảng mà không nói gì — vô dụng.
+
+**Cho trống:** `cgId` và `binanceSymbol`. Lý do: để nhập trước được dự án chưa lên sàn / chưa có trên CoinGecko. Dòng thiếu `cgId` thì job bỏ qua, ×ATM ra `—` cho tới khi điền — danh sách admin nên đánh dấu để không quên (đúng lỗi DOS đang bị).
+
 ---
 
-## 6. Bốn box — giữ nguyên logic, chờ chủ site chỉnh
+## 6. Ba box — bỏ Watchlist
 
-Logic hiện tại đã báo cáo đầy đủ (Cổng 2). Chưa đổi gì ngoài 2 điểm:
+**Box "Watchlist theo narrative" bỏ hẳn khỏi Valuation.** Chủ site đã chốt trước buổi này.
+
+> ⚠️ **Figma vẫn đang vẽ box thứ 4** ở toạ độ (48, 720) tên "Watchlist theo narrative" — cần **xoá khỏi Figma**. Valuation chỉ còn hàng 3 box ở y=528, không còn hàng y=720.
+
+Ghi vào HANDOFF: *sau này cân nhắc đem Watchlist vào lại, sau khi đã build Agent hoàn thiện.*
+
+### Hệ quả — cv cắt hẳn Google Sheet
+
+Watchlist là chỗ cuối cùng còn đọc gviz CSV. Bỏ nó + chuyển DATA sang KV = **cv không còn đọc Google Sheet ở bất kỳ đâu**. Hai tab `DATA` và `Watchlist` vẫn giữ trên Drive để đối chiếu, giống cách tab `Work` đang được giữ.
+
+### Code thành mồ côi, phải xoá
+
+Đây là orphan **do thay đổi này sinh ra**, nên xoá chứ không để lại:
+
+```
+parseRaise()   parseWL()      fetchWL()
+wlOrderKeys()  renderWLBox()  valGoWork()   retryWL()
+lời gọi renderWLBox() trong renderAll()
+HTML  #wlb-list  và  .val-card thứ 4
+CSS   .wlb-row / .wlb-* 
+right2.svg  — tam giác của box này, hết chỗ dùng
+```
+
+`narrativeRanking()` **giữ lại** — box "Narrative đang hot" vẫn cần, chỉ thôi dùng chung với box 4.
+
+### Ba box còn lại — giữ nguyên logic, chờ chủ site chỉnh
+
+Chưa đổi gì ngoài 2 điểm:
 - Box "Narrative đang hot" **thôi dùng `xTGEm`**, chuyển sang ×TGE tính ở client như bảng.
 - Nhãn S/M biến mất khỏi box "Hệ số TGE gần đây" (theo §4).
-
-Tóm tắt logic đang chạy:
 
 | Box | Luật |
 |---|---|
 | Hệ số TGE gần đây | Điều kiện thị trường = median ×TGE của 6 dự án mới nhất (`≥13` Mạnh · `4.3–13` Bình thường · `<4.3` Yếu). FDV thấp/cao chia ở $300M, mỗi rổ 6 dự án mới nhất, nếu dự án thứ 6 cách dự án đầu >60 ngày thì rút còn 4 |
 | Vùng nguy hiểm | ×ATM ≥ 15, TGE mới nhất lên đầu, TGE <30 ngày → badge ⚠ PUMP LÁO |
 | Narrative đang hot | Chỉ dự án TGE từ 01/02/2025, xếp theo median ×TGE giảm dần |
-| Watchlist theo narrative | Thứ tự narrative ăn theo box trên; trong cùng narrative: gọi vốn nhiều → ít |
 
 **Dự đoán FDV TGE** giữ nguyên MODEL D 7 bước, nhưng cần sửa **3 chỗ fallback âm thầm** (bước 1 rổ <2 mẫu → lấy cả pool; bước 3 <3 mẫu → lấy tất; bước 5 <2 mẫu → giữ nguyên): phải báo ra màn hình số đang đến từ đâu, thay vì im lặng.
 
@@ -244,11 +276,9 @@ Tóm tắt logic đang chạy:
 ## 7. Còn treo
 
 1. Box phân tích rộng **432** (chia đều 1328÷3) hay **416** (đúng lưới 48, thừa 48px)? Trục dọc đã chuẩn grid, chỉ trục ngang lệch.
-2. Figma phải vẽ lại bảng **7 cột × 176** và thêm icon thứ hai ở x=1103.
-3. Trường nào **bắt buộc** khi thêm dự án? Thiếu `cgId` hoặc `binanceSymbol` thì có chặn lưu không?
-4. Tab `Watchlist` trên Google Sheet (box thứ 4) có chuyển sang KV cùng đợt không?
-5. Cách chuyển 78 dòng từ Sheet sang KV: chạy một lần bằng script, hay nhập tay qua form?
-6. **Nút tròn 80×80 góc dưới phải = chú mèo đeo kính = Agent.** Có ở cả 4 frame Figma. Đây là **dự án riêng**, không nằm trong rebuild này — Agent cần `ANTHROPIC_API_KEY` mà cv là trang public, để key ở client là lộ ngay. Chú mèo trên cv chỉ nên là **cửa vào**, não nằm chỗ khác. Bàn riêng sau.
+2. Cách chuyển 78 dòng từ Sheet sang KV: chạy một lần bằng script, hay nhập tay qua form?
+3. Figma cần sửa 3 chỗ *(việc của chủ site)*: vẽ lại bảng **7 cột × 176** · thêm icon thứ hai ở **x=1103** · **xoá box Watchlist** ở (48, 720).
+4. **Nút tròn 80×80 góc dưới phải = chú mèo đeo kính = Agent.** Có ở cả 4 frame Figma. Đây là **dự án riêng**, không nằm trong rebuild này — Agent cần `ANTHROPIC_API_KEY` mà cv là trang public, để key ở client là lộ ngay. Chú mèo trên cv chỉ nên là **cửa vào**, não nằm chỗ khác. Bàn riêng sau.
 
 ---
 
