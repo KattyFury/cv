@@ -8,7 +8,7 @@
   <meta name="description" content="Hieu Nguyen (0xhieu.xyz) — Sharing POVs on Crypto and AI. AI is the future, crypto is the money of the future. Valuation · AI · Work." />
   <meta name="author" content="Hieu Nguyen" />
   <link rel="canonical" href="https://0xhieu.xyz/" />
-  <meta name="theme-color" content="#6155F5" />
+  <meta name="theme-color" content="#000000" />
 
   <link rel="icon" type="image/png" href="icon.png?v=2" />
   <link rel="apple-touch-icon" href="icon.png?v=2" />
@@ -45,7 +45,7 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -65,8 +65,19 @@
       --muted:  #8A8A8A;
       --sub:    #525252;   /* chữ phụ: xám vừa-đậm, phân biệt rõ với --text */
       --text:   #171717;   /* chữ chính: gần đen */
-      --accent: #6155F5;  /* tím đậm — điểm chính gradient thương hiệu, dùng cho text/border/hover (đặc, không gradient) */
-      --accent-rgb: 97, 85, 245;
+      --accent: #FFA111;  /* amber — mắt mèo. Thương hiệu: MÈO ĐEN MẮT AMBER (chốt 2026-09-21) */
+      --accent-rgb: 255, 161, 17;
+
+      /* ── PALETTE MỚI, đo thẳng từ Figma qPitw8s3XP5ennmBmhzYQF ─────────
+         Dùng cho navbar (chung 4 tab) + tab CV. Các tab chưa rebuild vẫn
+         đang xài token cũ bên trên; migrate dần từng tab, đừng đổi hàng loạt. */
+      --amber:  #FFA111;   /* logo · tab đang chọn · chấm timeline · mắt mèo */
+      --ink:    #000000;   /* chữ chính + nền navbar */
+      --sub2:   #4B5563;   /* chữ phụ: nơi ở, câu niềm tin, bullet */
+      --line2:  #ABABAB;   /* viền nút + đường kẻ timeline + tab chưa chọn */
+      --navbar: 48px;      /* cao navbar */
+      --page:   1424px;    /* bề ngang frame Figma */
+      --gutter: 48px;      /* lề trái/phải (48 = 1 bước lưới) */
       --brand-1: #6155F5;
       --brand-2: #34C759;
       --accent-gradient: linear-gradient(45deg, var(--brand-1) 0%, var(--brand-2) 100%);
@@ -115,22 +126,21 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── HEADER ───────────────────────────────────── */
+    /* ── HEADER — thanh đen full-bleed, dùng CHUNG cho cả 4 tab ─────
+       Figma: nền đen cao 48 · logo amber bold 18 ở x=47 · 4 tab mỗi ô rộng 88,
+       cách nhau 8, canh phải kết ở x=1376. Tab đang chọn = amber, còn lại #ABABAB. */
     header {
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(253,252,250,0.88);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--border);
+      background: var(--ink);
     }
 
     .header-inner {
-      max-width: 900px;
+      max-width: var(--page);
       margin: 0 auto;
-      padding: 0 calc(var(--row) * 0.75);
-      height: calc(var(--row) * 2 - 1px);   /* + border-bottom 1px = đúng 2 hàng; line ở ranh giới hàng 2/3 */
+      padding: 0 var(--gutter);
+      height: var(--navbar);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -138,20 +148,20 @@
     }
 
     .header-home {
-      font-family: 'Roboto', sans-serif;
-      font-size: 19px;
-      font-weight: 500;
-      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--amber);
       text-decoration: none;
-      letter-spacing: -0.01em;
       white-space: nowrap;
       flex-shrink: 0;
+      transition: opacity 0.15s;
     }
-    .header-home:hover { color: var(--accent); }
+    .header-home:hover { opacity: 0.8; }
 
     nav {
       display: flex;
-      gap: 20px;
+      gap: 8px;
       flex-shrink: 0;
       align-items: center;
     }
@@ -160,157 +170,165 @@
       background: none;
       border: none;
       cursor: pointer;
-      font-family: 'Roboto', sans-serif;
-      font-size: 15px;
-      font-weight: 400;
-      color: var(--muted); opacity: 0.55;   /* chưa chọn: xám thường + mờ rõ rệt */
+      font-family: 'Inter', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--line2);
+      opacity: 1;
+      width: 88px;
       padding: 0;
-      transition: color 0.15s, opacity 0.15s;
+      text-align: center;
+      transition: color 0.15s;
       white-space: nowrap;
     }
-    .nav-btn:hover { color: var(--accent); opacity: 1; }
-    .nav-btn.active { color: var(--text); opacity: 1; font-weight: 500; }
-    .nav-btn:disabled { color: var(--muted); cursor: default; }
-    .nav-btn:disabled:hover { color: var(--muted); }
+    .nav-btn:hover { color: #fff; }
+    .nav-btn.active { color: var(--amber); }
+    .nav-btn:disabled { color: var(--line2); cursor: default; }
+    .nav-btn:disabled:hover { color: var(--line2); }
 
-    /* ── CV LAYOUT ────────────────────────────────── */
-    main {
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 0 calc(var(--row) * 0.75);
+    @media (max-width: 640px) {
+      .nav-btn { width: auto; font-size: 15px; }
+      nav { gap: 16px; }
+      .header-inner { padding: 0 16px; }
+      .header-home { font-size: 15px; }
     }
 
-    /* Không còn line ngăn cách; các cụm (section) cách nhau đúng 2 hàng */
+    /* ── CV LAYOUT — dựng theo Figma frame 55:2 (1424×944) ──────────
+       Mọi khoảng cách là bội số của 8. Mốc dọc gốc trong Figma:
+         navbar 0–48 · avatar y=96 · tagline y=192 · socials y=288
+         Experience y=384 · timeline item đầu y=432, các item cách nhau 48 */
+    #cv-view { font-family: 'Inter', sans-serif; }
+
+    main {
+      max-width: var(--page);
+      margin: 0 auto;
+      padding: 0 var(--gutter);
+    }
+
     section { padding: 0; }
-    section + section { margin-top: calc(var(--row) * 2); }
+    section + section { margin-top: 64px; }
 
     h2 {
-      font-family: 'Roboto', sans-serif;
-      font-size: 19px;
-      font-weight: 500;
-      letter-spacing: -0.01em;
-      color: var(--text);
-      margin-bottom: var(--row);   /* tiêu đề cách nội dung 1 hàng (yếu tố trong cụm) */
+      font-family: 'Inter', sans-serif;
+      font-size: 21px;
+      font-weight: 700;
+      letter-spacing: 0;
+      color: var(--ink);
+      margin-bottom: 16px;
     }
 
-    /* ── HERO — 1 CỤM "About" (pfp/tên + tagline + socials), mọi yếu tố cách nhau 1 hàng ──
-       Hero kết thúc ở socials → Experience 2 hàng dưới (cụm≠cụm):
-         hàng 1-2  : trống  ← cách navbar 2 hàng (cụm khác)
-         hàng 3-4  : PFP + tên/nơi ở
-         hàng 5    : trống (1 hàng — trong cụm)
-         hàng 6    : tagline   ← AUTO cao (mobile xuống nhiều dòng → cao hơn 1 hàng, phải tự giãn)
-         hàng 7    : trống (1 hàng — trong cụm, luôn = --row dù tagline dài)
-         hàng 8    : niềm tin  ← AUTO (câu dài, mobile xuống 2-3 dòng)
-         hàng 9    : trống (1 hàng — trong cụm)
-         hàng 10   : socials   ← đáy Hero (AUTO)
-       ⚠️ Hàng tagline/niềm tin/socials để AUTO, KHÔNG ghim var(--row) — nếu ghim, text dài tràn ô đè hàng dưới. */
-    .hero {
-      padding: 0;
-      display: grid;
-      grid-template-rows: repeat(5, var(--row)) auto var(--row) auto var(--row) auto;
-      text-align: left;
+    @media (max-width: 640px) {
+      main { padding: 0 16px; }
+      section + section { margin-top: 48px; }
     }
 
-    .hero-top {
-      grid-row: 3 / span 2;
-      align-self: center;
-      display: flex; flex-direction: row; align-items: center; gap: 20px;
-    }
-    .hero-tagline { grid-row: 6; align-self: center; }
-    .hero-belief  { grid-row: 8; align-self: center; }
-    .socials      { grid-row: 10; align-self: center; }
+    .hero { padding-top: 48px; text-align: left; }
+
+    .hero-top { display: flex; align-items: center; gap: 16px; }
 
     .pfp {
-      width: 72px; height: 72px;
+      width: 81px; height: 81px;
       border-radius: 50%; overflow: hidden;
-      background: #1a1a1a; flex-shrink: 0;
+      background: var(--ink); flex-shrink: 0;
     }
     .pfp img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     .pfp-fallback {
       width: 100%; height: 100%;
       display: flex; align-items: center; justify-content: center;
-      color: #fff; font-size: 19px; font-weight: 700; letter-spacing: -0.02em;
+      color: var(--amber); font-size: 21px; font-weight: 700;
     }
 
     .hero-info { display: flex; flex-direction: column; gap: 4px; }
 
-    .hero-handle {
-      font-family: 'Roboto', sans-serif;
-      font-size: 19px; font-weight: 500;
-      letter-spacing: -0.01em; line-height: 1.15;
-    }
-    .hero-location { font-size: 13px; font-weight: 400; color: var(--text); }
+    .hero-handle { font-size: 21px; font-weight: 700; color: var(--ink); line-height: 1.2; }
+    .hero-location { font-size: 15px; font-weight: 400; color: var(--sub2); line-height: 1.5; }
 
     .hero-tagline {
-      font-size: 15px; font-weight: 500;
-      color: var(--text); line-height: 1.5;
+      margin-top: 16px;
+      font-size: 18px; font-weight: 700;
+      color: var(--ink); line-height: 1.6;
     }
 
-    /* Dòng niềm tin: cùng cỡ, cùng màu đen với tagline — phân cấp bằng WEIGHT (400 vs 500),
-       không dùng chữ xám cho nội dung. max-width để câu dài không kéo hết bề ngang màn to. */
+    /* Câu niềm tin: xám phụ, hẹp hơn để không kéo hết bề ngang màn to (Figma: 656px) */
     .hero-belief {
       font-size: 15px; font-weight: 400;
-      color: var(--text); line-height: 1.5;
-      max-width: 62ch;
+      color: var(--sub2); line-height: 1.6;
+      max-width: 656px;
     }
 
-    /* ── SOCIALS — nút gọn, có icon (3 nút vừa 1 hàng cả trên mobile) ── */
-    .socials { display: flex; flex-wrap: nowrap; justify-content: flex-start; gap: 8px; }
+    /* ── SOCIALS — 3 viên thuốc 129×32, viền xám, chữ đen bold ── */
+    .socials { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 16px; }
 
     .social-btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-      padding: 6px 14px; border-radius: 999px;
-      border: 1px solid var(--border);
-      font-family: 'Roboto', sans-serif; font-size: 13px; font-weight: 400;
-      color: var(--text); text-decoration: none; background: var(--white);
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 129px; height: 32px; border-radius: 24px;
+      border: 1px solid var(--line2);
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
+      color: var(--ink); text-decoration: none; background: var(--white);
       white-space: nowrap;
-      transition: border-color 0.15s, background 0.15s;
+      transition: border-color 0.15s, color 0.15s;
     }
-    .social-btn:hover { border-color: var(--accent); background: var(--off); }
-    .social-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .social-btn:hover { border-color: var(--amber); color: var(--amber); }
 
     @media (max-width: 480px) {
-      .socials { gap: 6px; }
-      .social-btn { padding: 6px 10px; font-size: 12px; }
+      .socials { gap: 8px; }
+      .social-btn { width: auto; padding: 0 16px; font-size: 13px; }
     }
 
-    /* ── TIMELINE ─────────────────────────────────── */
-    .timeline { display: flex; flex-direction: column; }
+    /* ── TIMELINE ─────────────────────────────────────────────────
+       3 cột: năm 128 (canh phải, kết ở x=176) · rãnh 64 chứa chấm ·
+       nội dung từ x=240. Đường kẻ chạy đúng tâm chấm (x=208 = 160 tính
+       từ mép trái .timeline). Item cách nhau 48. */
+    .timeline { position: relative; display: flex; flex-direction: column; }
 
-    .tl-item { display: grid; grid-template-columns: 90px 1fr; gap: 0 20px; }
+    .timeline::before {
+      content: ''; position: absolute;
+      left: 160px; top: 0; bottom: 0;
+      width: 1px; background: var(--line2);
+    }
+
+    .tl-item { position: relative; display: grid; grid-template-columns: 128px 64px minmax(0, 944px); }
+    .tl-item + .tl-item { margin-top: 48px; }
 
     .tl-year {
-      padding-top: 4px; font-size: 13px; font-weight: 500;
-      color: var(--text); text-align: right; white-space: nowrap;
+      font-size: 15px; font-weight: 700; line-height: 32px;
+      color: var(--ink); text-align: right; white-space: nowrap;
     }
 
-    .tl-body {
-      padding-bottom: 32px; padding-left: 20px;
-      border-left: 1px solid var(--border); position: relative;
-    }
-    .tl-item:last-child .tl-body { padding-bottom: 0; }
-
-    .tl-body::before {
-      content: ''; position: absolute; left: -4px; top: 9px;
-      width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
+    /* Rãnh giữa chỉ để đặt chấm — chấm nằm 28px vào rãnh = x=204 trên Figma */
+    .tl-gutter { position: relative; }
+    .tl-gutter::before {
+      content: ''; position: absolute; left: 28px; top: 13px;
+      width: 8px; height: 8px; border-radius: 50%; background: var(--amber);
     }
 
-    .tl-role { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.3; }
+    .tl-role { font-size: 18px; font-weight: 700; color: var(--ink); line-height: 32px; }
 
-    .tl-bullets { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; list-style: none; }
+    .tl-bullets { margin-top: 16px; padding-left: 22px; list-style: disc; }
     .tl-bullets li {
-      font-size: 15px; font-weight: 400; color: var(--text);
-      padding-left: 16px; position: relative; line-height: 1.6;
+      font-size: 15px; font-weight: 400; color: var(--sub2);
+      line-height: 24px;
     }
-    .tl-bullets li::before { content: '–'; position: absolute; left: 0; color: var(--muted); }
+    .tl-bullets li::marker { color: var(--sub2); }
+    .tl-bullets a { color: var(--sub2); text-underline-offset: 3px; }
+    .tl-bullets a:hover { color: var(--amber); }
+
+    @media (max-width: 640px) {
+      .timeline::before { left: 4px; }
+      .tl-item { grid-template-columns: 1fr; padding-left: 24px; }
+      .tl-item + .tl-item { margin-top: 32px; }
+      .tl-year { text-align: left; }
+      .tl-gutter { position: absolute; left: 0; width: 24px; height: 32px; }
+      .tl-gutter::before { left: 0; }
+    }
 
     /* ── HIGHLIGHTS ───────────────────────────────── */
-    #highlights-grid { display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--row) * 0.5); }
+    #highlights-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 944px; }
 
     @media (max-width: 480px) { #highlights-grid { grid-template-columns: 1fr; } }
 
-    .hl-card { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--white); }
+    .hl-card { border: 1px solid var(--line2); border-radius: 8px; overflow: hidden; background: var(--white); }
     .hl-card img { width: 100%; display: block; aspect-ratio: 16/9; object-fit: cover; cursor: zoom-in; transition: opacity 0.15s; }
     .hl-card img:hover { opacity: 0.88; }
 
@@ -331,24 +349,23 @@
       opacity: 0.7; transition: opacity 0.15s;
     }
     #lightbox-close:hover { opacity: 1; }
-    .hl-caption { padding: 12px 16px 12px; font-size: 15px; font-weight: 400; color: var(--text); line-height: 1.5; }
+    .hl-caption { padding: 16px; font-size: 15px; font-weight: 400; color: var(--sub2); line-height: 24px; }
     .hl-empty { grid-column: 1/-1; text-align: center; padding: 48px 0; font-size: 15px; color: var(--muted); }
 
     /* ── AVAILABLE FOR ────────────────────────────── */
-    .avail-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .avail-list { list-style: disc; padding-left: 22px; }
     .avail-list li {
-      font-size: 15px; font-weight: 400; color: var(--text);
-      padding-left: 16px; position: relative; line-height: 1.6;
+      font-size: 15px; font-weight: 400; color: var(--sub2); line-height: 24px;
     }
-    .avail-list li::before { content: '–'; position: absolute; left: 0; color: var(--muted); }
+    .avail-list li::marker { color: var(--sub2); }
 
     /* ── FOOTER — thanh 1 dòng: handle trái · icon link phải ── */
     /* padding-top 0 → chữ cách "Available for" đúng 2 hàng (margin-top); chừa 2 hàng dưới cho thoáng */
-    footer { padding: 0 calc(var(--row) * 0.75) calc(var(--row) * 2); max-width: var(--max); margin: calc(var(--row) * 2) auto 0; }
+    footer { padding: 0 var(--gutter) 64px; max-width: var(--page); margin: 64px auto 0; }
     .footer-inner { display: flex; flex-direction: row; align-items: center; justify-content: center; }
     .footer-links { display: flex; gap: 20px; align-items: center; }
-    .footer-links a { display: inline-flex; color: var(--text); transition: color 0.15s; }
-    .footer-links a:hover { color: var(--accent); }
+    .footer-links a { display: inline-flex; color: var(--sub2); transition: color 0.15s; }
+    .footer-links a:hover { color: var(--amber); }
     .footer-links a svg { width: 16px; height: 16px; }
 
     /* ── VALUATION VIEW ───────────────────────────── */
@@ -1134,18 +1151,9 @@
         <div class="hero-tagline">Sharing POVs on Crypto and AI</div>
         <div class="hero-belief">I believe AI is the future of knowledge work, robots are the future of manual labor, and crypto is the future of money.</div>
         <div class="socials">
-          <a class="social-btn" href="https://x.com/nguyen0xhieu" target="_blank" rel="noopener">
-            <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path d="M44.2857 55.7143L10 10H30L55.7143 44.2857M44.2857 55.7143L70 90H90L55.7143 44.2857M44.2857 55.7143L10 90M55.7143 44.2857L90 10"/></svg>
-            Twitter
-          </a>
-          <a class="social-btn" href="https://t.me/nguyen0xhieu" target="_blank" rel="noopener">
-            <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path fill-rule="evenodd" clip-rule="evenodd" d="M30 50L80 20L40 60V80L48.8889 66.6667L80 90L90 10L10 40L30 50Z"/></svg>
-            Telegram
-          </a>
-          <a class="social-btn" href="https://mail.google.com/mail/?view=cm&to=kattyfury1403@gmail.com" target="_blank" rel="noopener">
-            <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="10" stroke-linejoin="round"><path d="M90 20H10V80H90V20ZM10 20L50 50L90 20"/></svg>
-            Email
-          </a>
+          <a class="social-btn" href="https://x.com/nguyen0xhieu" target="_blank" rel="noopener">Twitter</a>
+          <a class="social-btn" href="https://t.me/nguyen0xhieu" target="_blank" rel="noopener">Telegram</a>
+          <a class="social-btn" href="https://mail.google.com/mail/?view=cm&to=kattyfury1403@gmail.com" target="_blank" rel="noopener">Email</a>
         </div>
       </section>
 
@@ -1154,17 +1162,19 @@
         <div class="timeline">
           <div class="tl-item">
             <div class="tl-year">2026</div>
+            <div class="tl-gutter"></div>
             <div class="tl-body">
               <div class="tl-role">Community Builder</div>
               <ul class="tl-bullets">
-                <li>Grew a Telegram community from 0 to 500+ members in Q1 2026: <a href="https://t.me/airdrop_1wallet" target="_blank" rel="noopener" style="color:var(--text);text-underline-offset:3px;">t.me/airdrop_1wallet</a></li>
+                <li>Grew a Telegram community from 0 to 500+ members in Q1 2026: <a href="https://t.me/airdrop_1wallet" target="_blank" rel="noopener">t.me/airdrop_1wallet</a></li>
                 <li>Helped grow Arc's community by onboarding users through ELI12-style content. Helped organize Arc meetups in Vietnam (3/3 so far, across Vietnam)</li>
-                <li>Built products on Arc: <a href="https://github.com/KattyFury/" target="_blank" rel="noopener" style="color:var(--text);text-underline-offset:3px;">github.com/KattyFury</a></li>
+                <li>Built products on Arc: <a href="https://github.com/KattyFury/" target="_blank" rel="noopener">github.com/KattyFury</a></li>
               </ul>
             </div>
           </div>
           <div class="tl-item">
             <div class="tl-year">2025</div>
+            <div class="tl-gutter"></div>
             <div class="tl-body">
               <div class="tl-role">Content Creator &amp; Contributor</div>
               <ul class="tl-bullets">
@@ -1174,16 +1184,19 @@
             </div>
           </div>
           <div class="tl-item">
-            <div class="tl-year">2023 – 2024</div>
+            <div class="tl-year">2023-2024</div>
+            <div class="tl-gutter"></div>
             <div class="tl-body">
               <div class="tl-role">Investment Analyst</div>
               <ul class="tl-bullets">
                 <li>Analyzed crypto markets to support spot investment decisions for a small investment fund.</li>
+                <li>Left to manage my family investment portfolio.</li>
               </ul>
             </div>
           </div>
           <div class="tl-item">
             <div class="tl-year">2022</div>
+            <div class="tl-gutter"></div>
             <div class="tl-body">
               <div class="tl-role">Entered Crypto Markets</div>
               <ul class="tl-bullets">
@@ -1193,6 +1206,7 @@
           </div>
           <div class="tl-item">
             <div class="tl-year">Pre-2022</div>
+            <div class="tl-gutter"></div>
             <div class="tl-body">
               <div class="tl-role">Graphic Designer</div>
               <ul class="tl-bullets">
