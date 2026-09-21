@@ -273,12 +273,45 @@ Chưa đổi gì ngoài 2 điểm:
 
 ---
 
-## 7. Còn treo
+## 7. Bề ngang box phân tích — 432
 
-1. Box phân tích rộng **432** (chia đều 1328÷3) hay **416** (đúng lưới 48, thừa 48px)? Trục dọc đã chuẩn grid, chỉ trục ngang lệch.
-2. Cách chuyển 78 dòng từ Sheet sang KV: chạy một lần bằng script, hay nhập tay qua form?
-3. Figma cần sửa 3 chỗ *(việc của chủ site)*: vẽ lại bảng **7 cột × 176** · thêm icon thứ hai ở **x=1103** · **xoá box Watchlist** ở (48, 720).
-4. **Nút tròn 80×80 góc dưới phải = chú mèo đeo kính = Agent.** Có ở cả 4 frame Figma. Đây là **dự án riêng**, không nằm trong rebuild này — Agent cần `ANTHROPIC_API_KEY` mà cv là trang public, để key ở client là lộ ngay. Chú mèo trên cv chỉ nên là **cửa vào**, não nằm chỗ khác. Bàn riêng sau.
+```
+432 × 3 + 16 × 2 = 1328  → mép trái 48, mép phải 1376: TRÙNG KHÍT bảng phía trên
+416 × 3 + 16 × 2 = 1280  → mép phải 1328: LỆCH bảng 48px
+```
+
+Chọn **432**. Lệch lưới 30 cột thì không nhìn thấy; lệch mép với bảng ngay phía trên thì nhìn phát ra ngay. Hàng 3 box hiểu là "chia đều ba bề ngang content", không phải "n cột lưới". **Trục dọc vẫn bám grid 48 tuyệt đối** — chỉ trục ngang của riêng hàng box là ngoại lệ, và chỉ ở đây.
+
+---
+
+## 8. Chuyển 78 dòng sang KV
+
+**Script chạy một lần, đẩy thẳng vào KV.** Không dừng lại xem trước — sai thì mở danh sách admin sửa tay.
+
+Script phải xử lý đúng định dạng kiểu Việt trong Sheet:
+
+| Sheet | Sang KV |
+|---|---|
+| `"$178.500.000"` | `178500000` (number) |
+| `"17,00%"` | `17` (number) |
+| `"4.294.967.295"` | `4294967295` (number) |
+| `"1,1783000"` | `1.1783` (number) |
+| `"30/05/2022"` và `"7/10/2025"` | `"2022-05-30"` / `"2025-10-07"` — có dòng **không đệm số 0** |
+| `"Layer-2"` | `"layer-2"` |
+| `"Others"` (BIO) | `"desci"` |
+| `""` (DOS) | `"ai"`, kèm `cgId = "dappos"` |
+
+`binanceSymbol`: thử `{TICKER}USDT` trên Spot, hụt thì thử Futures, hụt nữa thì `null`. Đã biết trước 5 ticker không có ở đâu: STABLE, CAMP, KGEN, DOS, TMX. MYX **chỉ có trên Futures**.
+
+> Không chuyển các cột bội số (`×TGE`, `×BOTTOM`, `×ATH`, `xATM`) và cột `BOTTOM` của Sheet. Bội số tính ở client; đáy do job Binance lấy lại từ đầu. Cột `BOTTOM` cũ trong Sheet đầy `-` và `#VALUE!`, và **code chưa bao giờ đọc nó**.
+
+---
+
+## 9. Còn treo
+
+1. Figma cần sửa 3 chỗ *(việc của chủ site)*: vẽ lại bảng **7 cột × 176** · thêm icon thứ hai ở **x=1103** · **xoá box Watchlist** ở (48, 720).
+2. **Nút tròn 80×80 góc dưới phải = chú mèo đeo kính = Agent.** Có ở cả 4 frame Figma. Đây là **dự án riêng**, không nằm trong rebuild này — Agent cần `ANTHROPIC_API_KEY` mà cv là trang public, để key ở client là lộ ngay. Chú mèo trên cv chỉ nên là **cửa vào**, não nằm chỗ khác. Bàn riêng sau.
+3. Logic 4 box và MODEL D: chủ site sẽ chỉnh sau khi đọc báo cáo Cổng 2 — chưa đổi gì trong đợt này.
 
 ---
 
