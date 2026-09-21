@@ -75,6 +75,7 @@
       --ink:    #000000;   /* chữ chính + nền navbar */
       --sub2:   #4B5563;   /* chữ phụ: nơi ở, câu niềm tin, bullet */
       --line2:  #ABABAB;   /* viền nút + đường kẻ timeline + tab chưa chọn */
+      --chip:   #D9D9D9;   /* nền chip CHỈ-ĐỌC (radius 8). Nút bấm được thì radius 24 + viền */
       --navbar: 48px;      /* cao navbar */
       --page:   1424px;    /* bề ngang frame Figma */
       --gutter: 48px;      /* lề trái/phải (48 = 1 bước lưới) */
@@ -324,12 +325,15 @@
     }
 
     /* ── HIGHLIGHTS ───────────────────────────────── */
-    #highlights-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 944px; }
+    /* 3 cot x 432 + 2 gutter 16 = 1328 — cùng bề ngang content, cùng cỡ card Valuation.
+       6 ảnh → vừa đúng 2 hàng. Ảnh 3:2 (432×288, 288 = 48×6) khớp tỉ lệ ảnh gốc ~750×500. */
+    #highlights-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 
-    @media (max-width: 480px) { #highlights-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 1024px) { #highlights-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 640px)  { #highlights-grid { grid-template-columns: 1fr; } }
 
     .hl-card { border: 1px solid var(--line2); border-radius: 8px; overflow: hidden; background: var(--white); }
-    .hl-card img { width: 100%; display: block; aspect-ratio: 16/9; object-fit: cover; cursor: zoom-in; transition: opacity 0.15s; }
+    .hl-card img { width: 100%; display: block; aspect-ratio: 3/2; object-fit: cover; cursor: zoom-in; transition: opacity 0.15s; }
     .hl-card img:hover { opacity: 0.88; }
 
     /* ── LIGHTBOX ─────────────────────────────────── */
@@ -350,14 +354,25 @@
     }
     #lightbox-close:hover { opacity: 1; }
     .hl-caption { padding: 16px; font-size: 15px; font-weight: 400; color: var(--sub2); line-height: 24px; }
-    .hl-empty { grid-column: 1/-1; text-align: center; padding: 48px 0; font-size: 15px; color: var(--muted); }
+    .hl-empty { grid-column: 1/-1; text-align: center; padding: 48px 0; font-size: 15px; color: var(--sub2); }
 
     /* ── AVAILABLE FOR ────────────────────────────── */
-    .avail-list { list-style: disc; padding-left: 22px; }
+    /* Đây là NHÃN, không phải nút — nên dùng spec chip của Valuation
+       (nền #D9D9D9, radius 8, cao 32), KHÔNG dùng spec nút (radius 24, viền, trắng).
+       Phân biệt này là có chủ đích: radius 24 = bấm được, radius 8 = chỉ đọc. */
+    .avail-list { list-style: none; display: flex; flex-wrap: wrap; gap: 16px; }
     .avail-list li {
-      font-size: 15px; font-weight: 400; color: var(--sub2); line-height: 24px;
+      display: inline-flex; align-items: center;
+      height: 32px; padding: 0 16px; border-radius: 8px;
+      background: var(--chip);
+      font-size: 15px; font-weight: 400; color: var(--ink);
+      white-space: nowrap;
     }
-    .avail-list li::marker { color: var(--sub2); }
+
+    @media (max-width: 480px) {
+      .avail-list { gap: 8px; }
+      .avail-list li { font-size: 13px; padding: 0 12px; }
+    }
 
     /* ── FOOTER — thanh 1 dòng: handle trái · icon link phải ── */
     /* padding-top 0 → chữ cách "Available for" đúng 2 hàng (margin-top); chừa 2 hàng dưới cho thoáng */
