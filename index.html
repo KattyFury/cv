@@ -76,6 +76,9 @@
       --sub2:   #4B5563;   /* chữ phụ: nơi ở, câu niềm tin, bullet */
       --line2:  #ABABAB;   /* viền nút + đường kẻ timeline + tab chưa chọn */
       --chip:   #D9D9D9;   /* nền chip CHỈ-ĐỌC (radius 8). Nút bấm được thì radius 24 + viền */
+      --shadow: 0 4px 8px rgba(0,0,0,0.5);   /* Figma drop shadow: y4 · blur8 · đen 50%.
+                                                Dùng cho thẻ nổi + nút bấm được.
+                                                KHÔNG dùng cho chip chỉ-đọc và máng toggle. */
       --navbar: 48px;      /* cao navbar */
       --page:   1424px;    /* bề ngang frame Figma */
       --gutter: 48px;      /* lề trái/phải (48 = 1 bước lưới) */
@@ -1205,7 +1208,8 @@
     /* Nút Admin: 81×32, radius 8, trắng + viền — KHÁC nút hành động (radius 24) */
     #valuation-view .lang-dd-btn {
       width: 81px; height: 32px; border-radius: 8px;
-      background: var(--white); border: 1px solid var(--line2);
+      background: var(--white); border: 0.5px solid var(--line2);
+      box-shadow: var(--shadow);
       font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
       color: var(--ink); cursor: pointer; padding: 0;
     }
@@ -1214,8 +1218,8 @@
     /* Toggle VI/EN: máng #D9D9D9 81×32 radius 8, viên đang chọn trắng 40×32 */
     #valuation-view .lang-toggle {
       display: flex; width: 81px; height: 32px; padding: 0;
-      background: var(--chip); border: 1px solid #BFBFBF; border-radius: 8px;
-      overflow: hidden; box-shadow: none; backdrop-filter: none;
+      background: var(--chip); border: 0.5px solid #BFBFBF; border-radius: 8px;
+      overflow: visible; box-shadow: none; backdrop-filter: none;
     }
     #valuation-view .lang-btn {
       flex: 1; height: 100%; border: none; background: transparent; border-radius: 8px;
@@ -1223,7 +1227,8 @@
       color: var(--sub2); cursor: pointer; padding: 0;
     }
     #valuation-view .lang-btn.active {
-      background: var(--white); border: 1px solid var(--line2); color: var(--ink);
+      background: var(--white); border: 0.5px solid var(--line2); color: var(--ink);
+      box-shadow: var(--shadow);
     }
 
     /* Icon 32×32 cạnh Admin (Figma: add x=1103, camera x=1151) */
@@ -1239,32 +1244,53 @@
     }
     #valuation-view .camera-btn:hover::before { background: var(--amber); }
 
+    /* Icon "thêm dự án" — cùng khuôn 32×32 với camera (Figma: x=1103, cách camera 16).
+       Chỉ hiện sau khi mở khoá admin. Đang disabled vì form thêm dự án cần kho KV,
+       phần đó chưa dựng — thà để rõ là chưa dùng được còn hơn bấm vào không ra gì. */
+    #valuation-view .add-btn {
+      width: 32px; height: 32px; padding: 0; border: none;
+      background: transparent; position: relative;
+    }
+    #valuation-view .add-btn::before {
+      content: ''; position: absolute; inset: 4px;
+      background: var(--ink);
+      -webkit-mask: url(plus.svg) center / contain no-repeat;
+      mask: url(plus.svg) center / contain no-repeat;
+    }
+    #valuation-view .add-btn:disabled { cursor: not-allowed; }
+    #valuation-view .add-btn:disabled::before { opacity: 0.35; }
+
     /* ── BẢNG — 7 cột × 176 + 6 gutter 16 = 1328 ───────────────── */
     #valuation-view .val-table-section {
-      border: 1px solid var(--line2); border-radius: 8px;
+      border: 0.5px solid var(--line2); border-radius: 8px;
       overflow: hidden; background: var(--white); margin-bottom: 16px;
+      box-shadow: var(--shadow);
     }
     #valuation-view #tge-section { height: auto; max-height: 368px; }
     #valuation-view .val-table { width: 100%; table-layout: fixed; border-collapse: collapse; }
-    /* Figma đặt 7 khối chữ RỘNG 176 ở x = 48·240·432·624·816·1008·1200 (bước 192,
-       khe 16). Bảng thì ô phải liền nhau, nên chia đều 1328/7 = 189,7 sẽ làm tâm cột
-       lệch tới 7px so với Figma. Bộ 176/208 xen kẽ cho tâm TRÙNG KHÍT:
-         176+208+176+208+176+208+176 = 1328
-         tâm = 136 · 328 · 520 · 712 · 904 · 1096 · 1288  (đúng Figma) */
-    #valuation-view .val-table th:nth-child(odd),
-    #valuation-view .val-table td:nth-child(odd)  { width: 176px; }
-    #valuation-view .val-table th:nth-child(even),
-    #valuation-view .val-table td:nth-child(even) { width: 208px; }
+    /* Figma: 7 khối chữ đều RỘNG 176, khe giữa 16, tại x = 48·240·432·624·816·
+       1008·1200. Ô bảng phải liền nhau nên khe được nhét vào PADDING của ô — cột
+       vẫn đúng 176, không cột nào bị kéo giãn:
+         ô đầu  184 = 176 + 8 phải
+         ô giữa 192 = 8 + 176 + 8   (×5)
+         ô cuối 184 = 8 trái + 176
+         184 + 192×5 + 184 = 1328 ✓  tâm = 136·328·520·712·904·1096·1288 */
+    #valuation-view .val-table th,
+    #valuation-view .val-table td { width: 192px; padding-left: 8px; padding-right: 8px; }
+    #valuation-view .val-table th:first-child,
+    #valuation-view .val-table td:first-child { width: 184px; padding-left: 0; }
+    #valuation-view .val-table th:last-child,
+    #valuation-view .val-table td:last-child  { width: 184px; padding-right: 0; }
     /* Figma: thanh header kết ở y=184, dòng data đầu bắt đầu y=192 → cách 8 */
     #valuation-view #tge-section .val-table-scroll { margin-top: 8px; }
 
     #valuation-view #tge-section .val-table thead th {
-      height: 40px; padding: 0 8px; background: var(--ink);
+      height: 40px; padding-top: 0; padding-bottom: 0; background: var(--ink);
       font-size: 15px; font-weight: 700; color: var(--amber);
       text-align: center; text-transform: none; letter-spacing: 0; border: none;
     }
     #valuation-view #tge-section .val-table tbody td {
-      height: 32px; padding: 0 8px; border: none;
+      height: 32px; padding-top: 0; padding-bottom: 0; border: none;
       font-size: 12px; font-weight: 700; color: var(--ink);
       text-align: center; font-variant-numeric: tabular-nums;
     }
@@ -1291,8 +1317,9 @@
     }
     #valuation-view .val-analysis.val-boxes > .val-card {
       height: 176px; min-height: 176px; padding: 0;
-      background: var(--white); border: 1px solid var(--line2); border-radius: 8px;
+      background: var(--white); border: 0.5px solid var(--line2); border-radius: 8px;
       overflow: hidden; display: grid; grid-template-rows: 40px 1fr;
+      box-shadow: var(--shadow);
     }
     #valuation-view .vc-q1 {
       grid-row: 1; height: 40px; margin: 0; padding: 0 8px;
@@ -1346,7 +1373,8 @@
     #valuation-view .rt-btn-row { background: transparent; margin-top: 0; }
     #valuation-view .predict-link {
       width: 216px; height: 32px; margin: 0 auto; border-radius: 24px;
-      background: var(--white); border: 1px solid var(--line2);
+      background: var(--white); border: 0.5px solid var(--line2);
+      box-shadow: var(--shadow);
       font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
       color: var(--ink); cursor: pointer; padding: 0;
     }
@@ -1502,7 +1530,9 @@
       <div class="panel-head">
         <div class="val-intro val-intro-clickable" id="tge-intro" title="Mở rộng"><span id="val-headline-text">Tracking altcoins to read the market</span></div>
         <div class="val-head-ctrl">
+          <button class="add-btn" id="val-add-btn" title="Thêm dự án" aria-label="Thêm dự án" style="display:none"></button>
           <button class="camera-btn" id="val-shot-btn" title="Chụp ảnh dashboard" aria-label="Chụp ảnh dashboard"></button>
+          <button class="lang-dd-btn" id="val-admin-btn" title="Đăng nhập admin">Admin</button>
           <div class="lang-toggle">
             <button class="lang-btn" id="val-lang-en-btn">EN</button>
             <button class="lang-btn active" id="val-lang-vi-btn">VI</button>
@@ -3119,6 +3149,20 @@ ${line}
       adminBtn.textContent = on ? '+' : 'admin';
       adminBtn.title       = on ? 'Thêm task cá nhân' : 'Task cá nhân';
       syncAiAdminBtn();    // 1 mật khẩu mở khoá cả 2 tab → nút Admin bên AI đổi theo
+      syncValAdminBtn();   // ... và tab Valuation
+    }
+
+    // Valuation: mở khoá xong thì hiện icon "+" cạnh camera (đúng Figma), nút Admin
+    // đổi nhãn. Icon + còn disabled vì form thêm dự án phải chờ kho KV.
+    function syncValAdminBtn() {
+      const add = document.getElementById('val-add-btn');
+      const btn = document.getElementById('val-admin-btn');
+      if (!add || !btn) return;
+      add.style.display = adminUnlocked ? '' : 'none';
+      add.disabled = true;
+      add.title = 'Thêm dự án — cần kho KV (chưa dựng)';
+      btn.textContent = adminUnlocked ? 'Đã mở' : 'Admin';
+      btn.title = adminUnlocked ? 'Đã mở khoá admin' : 'Đăng nhập admin';
     }
 
     function showMsg(el, text) { el.textContent = text; el.style.display = ''; }
@@ -3161,6 +3205,16 @@ ${line}
       adminModal.classList.remove('open');
       await refreshTasksView(r.tasks);
     }
+
+    // Valuation dùng CHUNG mật khẩu với AI + Work (1 ADMIN_PASS duy nhất).
+    // Mở khoá ở tab nào thì cả 3 tab cùng mở — xem setAdminUnlocked().
+    $('val-admin-btn').addEventListener('click', () => {
+      if (adminUnlocked) return;           // đã mở khoá → icon + đã hiện, không làm gì thêm
+      adminInput.value = '';
+      adminError.style.display = 'none';
+      adminModal.classList.add('open');
+      setTimeout(() => adminInput.focus(), 50);
+    });
 
     adminBtn.addEventListener('click', () => {
       if (adminUnlocked) { openPtaskForm(); return; }
