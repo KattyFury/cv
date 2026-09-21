@@ -1335,9 +1335,13 @@
     #valuation-view .info-icon:hover::before { background: var(--white); }
 
     /* Chip 1 dòng: 3 vùng trái · giữa · phải, nền #D9D9D9 radius 8 cao 32 */
-    #valuation-view .danger-row,
-    #valuation-view .narrative-row,
     #valuation-view .rt-item.rt-cond {
+      display: flex; align-items: center; justify-content: center;
+      height: 32px; margin: 0 0 8px; padding: 0 8px; border-radius: 8px;
+      background: var(--chip); font-size: 12px; color: var(--ink);
+    }
+    #valuation-view .danger-row,
+    #valuation-view .narrative-row {
       display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
       height: 32px; margin: 0 0 8px; padding: 0 8px; border-radius: 8px;
       background: var(--chip);
@@ -1350,6 +1354,11 @@
     #valuation-view .rt-item-val { font-weight: 700; color: var(--ink); text-align: center; }
     #valuation-view .danger-date,
     #valuation-view .narrative-count { text-align: right; color: var(--ink); }
+
+    /* Ô chip trống — Figma luôn vẽ đủ 3 ô trong mỗi box */
+    #valuation-view .chip-empty {
+      height: 32px; margin: 0 0 8px; border-radius: 8px; background: var(--chip);
+    }
     #valuation-view .rt-item-lbl { text-align: left; color: var(--ink); font-size: 12px; }
 
     /* Chip 2 nửa của box "Hệ số TGE" — Figma: 2 khối chữ 195px trong cùng 1 chip 417px */
@@ -1530,12 +1539,12 @@
       <div class="panel-head">
         <div class="val-intro val-intro-clickable" id="tge-intro" title="Mở rộng"><span id="val-headline-text">Tracking altcoins to read the market</span></div>
         <div class="val-head-ctrl">
-          <button class="add-btn" id="val-add-btn" title="Thêm dự án" aria-label="Thêm dự án" style="display:none"></button>
+          <button class="add-btn" id="val-add-btn" title="Thêm dự án" aria-label="Thêm dự án" disabled></button>
           <button class="camera-btn" id="val-shot-btn" title="Chụp ảnh dashboard" aria-label="Chụp ảnh dashboard"></button>
           <button class="lang-dd-btn" id="val-admin-btn" title="Đăng nhập admin">Admin</button>
           <div class="lang-toggle">
-            <button class="lang-btn" id="val-lang-en-btn">EN</button>
             <button class="lang-btn active" id="val-lang-vi-btn">VI</button>
+            <button class="lang-btn" id="val-lang-en-btn">EN</button>
           </div>
         </div>
       </div>
@@ -1579,7 +1588,7 @@
               <span class="rt-half"><span class="rt-item-lbl" id="tge-lowfdv-label">Low FDV</span> <span class="rt-item-val" id="baseline-low">—</span></span>
               <span class="rt-half"><span class="rt-item-lbl" id="tge-highfdv-label">High FDV</span> <span class="rt-item-val" id="baseline-high">—</span></span>
             </div>
-            <div class="rt-item rt-cond"><span id="tge-cond-label">Market condition:</span> <b id="market-condition-lvl">—</b></div>
+            <div class="rt-item rt-cond"><span><span id="tge-cond-label">Market condition:</span><b id="market-condition-lvl">—</b></span></div>
             <div class="rt-item rt-btn-row">
               <button class="predict-link" id="predict-open-btn">Predict TGE FDV</button>
             </div>
@@ -1959,8 +1968,8 @@
       'narr-title-text':         { EN: 'Trending Narratives', VI: 'Narrative đang hot' },
       // nội dung box Recent TGE multiples + header bảng
       // chữ S/M ở đây chính là CHÚ GIẢI cho hậu tố .td-cap do capLabel() sinh ra ở cột Ticker — sửa 1 chỗ thì sửa cả 2
-      'tge-lowfdv-label':        { EN: 'Low FDV <span class="td-cap">S</span> <span class="td-size">(&lt;$300M)</span>', VI: 'FDV thấp <span class="td-cap">S</span> <span class="td-size">(&lt;$300M)</span>' },
-      'tge-highfdv-label':       { EN: 'High FDV <span class="td-cap">M</span> <span class="td-size">(&gt;$300M)</span>', VI: 'FDV cao <span class="td-cap">M</span> <span class="td-size">(&gt;$300M)</span>' },
+      'tge-lowfdv-label':        { EN: 'Low FDV:',  VI: 'FDV thấp:' },
+      'tge-highfdv-label':       { EN: 'High FDV:', VI: 'FDV cao:' },
       'tge-cond-label':          { EN: 'Market condition:', VI: 'Điều kiện thị trường:' },
       'tge-date-th':             { EN: 'TGE', VI: 'TGE' },   // cột ngày TGE — 2 ngôn ngữ dùng chung 1 chữ cho gọn (mobile)
       // tiêu đề 4 popup (3 info + predict) — tiêu đề nằm trong HTML tĩnh nên dễ bị quên
@@ -2340,7 +2349,7 @@ ${line}
               tgeDate:     normalizeDate(r[0]),                            // col A
               ticker:      (r[1] || '').replace(/^\$/, '').toUpperCase(), // col B
               cgId:        (r[2] || '').trim().toLowerCase(),              // col C: CoinGecko ID
-              type:        r[3] || '',                                     // col D
+              type:        (r[3] || '').trim().toLowerCase(),              // col D — slug chữ thường (spec v3 §3)
               fundraising: parseMoney(r[4]),                               // col E
               vcAlloc:     num(r[5]),                                      // col F: percent
               totalSupply: parseSupply(r[6]) || 0,                        // col G
@@ -2476,9 +2485,9 @@ ${line}
     const FDV_SPLIT_MAIN = 300e6;
 
     // Bội số hiển thị: bỏ dấu × (header đã mang), dấu thập phân theo ngôn ngữ đang chọn
-    function fmtMult(n) {
+    function fmtMult(n, dp = 2) {
       if (!(n > 0)) return '—';
-      const t = n.toFixed(2);
+      const t = n.toFixed(dp);
       return valLang === 'VI' ? t.replace('.', ',') : t;
     }
 
@@ -2514,7 +2523,7 @@ ${line}
           <td class="td-multi"><span class="ck">${fmtMult(xTGE)}</span></td>
           <td class="td-multi"><span class="ck">${fmtMult(xATL)}</span></td>
           <td class="td-multi"><span class="ck">${fmtMult(xATH)}</span></td>
-          <td class="td-multi"><span class="ck">${fmtMult(xATM)}</span></td>
+          <td class="td-multi"><span class="ck">${fmtMult(xATM, 3)}</span></td>
         </tr>`;
       }).join('');
 
@@ -2599,6 +2608,14 @@ ${line}
       highEl.textContent = highFDVMults.length ? `×${median(highFDVMults).toFixed(2)}` : '—';
     }
 
+    // Figma vẽ ĐỦ 3 ô chip trong mỗi box, ô thừa để trống. Hộp cao 176 vừa đúng
+    // 3 chip (8 + 32 + 8 + 32 + 8 + 32 + 8 = 128), nên thiếu thì đệm cho đủ.
+    function pad3(html, n) {
+      let out = html;
+      for (let i = n; i < 3; i++) out += '<div class="chip-empty"></div>';
+      return out;
+    }
+
     // ── Danger Zone: token đang ở ×ATM ≥ 15 — VC lãi quá lớn, sell pressure cực đại ──
     // TGE < 30 ngày mà đã vào vùng này = pump láo, cảnh báo đặc biệt
     function renderDanger() {
@@ -2616,7 +2633,7 @@ ${line}
         return;
       }
 
-      listEl.innerHTML = danger.map(({ e, xATM }) => {
+      listEl.innerHTML = pad3(danger.map(({ e, xATM }) => {
         const isAlert = now - new Date(e.tgeDate) < ALERT_DAYS;
         return `<div class="danger-row${isAlert ? ' danger-new' : ''}">
           <span class="danger-ticker">${e.ticker}</span>
@@ -2624,7 +2641,7 @@ ${line}
           <span class="danger-multi">×${xATM.toFixed(1)}</span>
           <span class="danger-date">${fmtDate(e.tgeDate)}</span>
         </div>`;
-      }).join('');
+      }).join(''), danger.length);
     }
 
     // ── Trending Narratives: xếp hạng TẤT CẢ narrative từ 02/2025 tới nay ──
@@ -2671,13 +2688,13 @@ ${line}
         return;
       }
 
-      listEl.innerHTML = ranked.map(g => `
+      listEl.innerHTML = pad3(ranked.map(g => `
         <div class="narrative-row">
           <span class="narrative-name">${g.name}</span>
           <span class="narrative-med">×${g.medTGE.toFixed(1)}</span>
           <span class="narrative-count">SL:${String(g.count).padStart(2, '0')}</span>
         </div>
-      `).join('');
+      `).join(''), ranked.length);
     }
 
     function renderAll() { renderTable(); renderAnalysis(); renderDanger(); renderNarratives(); }
@@ -3158,8 +3175,7 @@ ${line}
       const add = document.getElementById('val-add-btn');
       const btn = document.getElementById('val-admin-btn');
       if (!add || !btn) return;
-      add.style.display = adminUnlocked ? '' : 'none';
-      add.disabled = true;
+      add.disabled = true;   // form thêm dự án còn chờ kho KV
       add.title = 'Thêm dự án — cần kho KV (chưa dựng)';
       btn.textContent = adminUnlocked ? 'Đã mở' : 'Admin';
       btn.title = adminUnlocked ? 'Đã mở khoá admin' : 'Đăng nhập admin';
