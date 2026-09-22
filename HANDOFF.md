@@ -20,7 +20,9 @@
 > Figma là **nguồn sự thật** cho mọi thứ hình ảnh: file `qPitw8s3XP5ennmBmhzYQF` · frame CV `55:2` · Valuation `60:66` · AI `70:33` · Work `71:121`, mỗi frame **1424×944**.
 > Thứ tự ưu tiên khi mâu thuẫn: `REBUILD_SPEC_V3_VALUATION.md` > Figma > spec v2 > spec v1.
 
-Website cá nhân, **toàn bộ nằm trong `index.html`** (HTML + CSS + JS inline). Nav 4 tab:
+> ⚠️ **Repo không còn thuần "website tĩnh 1 file" nữa** (từ 2026-09-22): có thêm `bot/` — một job Node chạy bằng Docker trên PC nhà. User chốt đặt bot **trong repo này** vì sau còn triển khai Agent ở đây. `CLAUDE.md` vẫn mô tả repo theo bản cũ, đọc mục này trước.
+
+Website cá nhân, phần web **toàn bộ nằm trong `index.html`** (HTML + CSS + JS inline). Nav 4 tab:
 
 | Tab | Route | Nội dung | Ngôn ngữ |
 |---|---|---|---|
@@ -98,6 +100,28 @@ Card Work to Earn đọc từ KV, thanh lọc rank `$ · S · A · B · C` — c
 - **cv KHÔNG còn đọc Google Sheet ở bất kỳ đâu** (từ 2026-09-22). Hai tab `DATA` và `Watchlist` vẫn giữ trên Drive để đối chiếu, giống tab `Work`. Apps Script `syncAll()` trong Sheet cũng hết tác dụng với site.
 - Nguồn data còn lại public, keyless, đọc thẳng client-side:
   - **Google Translate** (gtx) — dịch VI→EN cho Work + tab AI.
+
+### Bot lấy giá (`bot/`) — chạy Docker trên PC nhà
+
+Job Node không phụ thuộc package nào (Node 22 có `fetch` sẵn). Chạy **ngay một lượt** lúc khởi động, sau đó **mỗi ngày lúc `RUN_AT_HOUR`** (mặc định 2h, giờ Việt Nam). `restart: unless-stopped`.
+
+```
+cd bot && cp .env.example .env && docker compose up -d --build
+docker compose logs -f          # xem log
+docker compose restart          # chạy lại ngay
+docker compose run --rm -e RUN_ONCE=true val-price-bot   # test 1 lượt rồi thoát
+```
+
+| Nguồn | Lấy | Cho |
+|---|---|---|
+| CoinGecko `/coins/markets` | `atm` · `ath` · `athDate` | 78/78 dự án (1 lần gọi, batch theo `ids=`) |
+| Binance `/klines` `interval=1d` | `atl` · `atlDate` | dự án có `binanceSymbol` |
+
+`atl` = đáy thấp nhất trong khoảng **[ngày lên sàn → ngày ATH]**, đã bỏ nến ngày lên sàn. ATH rơi ngay ngày lên sàn → không có khoảng trước → để trống. Lượt đầu: **42/78 có đáy**, 28 không (thiếu cặp Binance hoặc ATH quá sát ngày lên sàn).
+
+Ghi **chỉ key `val-prices`**, hai đường tự chọn theo cấu hình: `ADMIN_PASS` → `POST /api/val` (đi qua whitelist trường) · `CLOUDFLARE_API_TOKEN` → ghi thẳng KV (dự phòng, đang dùng). Secret nằm ở `bot/.env` (gitignore chặn; `bot/.env.example` thì được commit).
+
+⚠️ Hai cái bẫy đã dính, ghi trong `bot/README.md`: **`binance-cli` bỏ qua `--start-time`** nên phải gọi REST thẳng; và **Binance trả HTTP 451** cho server một số quốc gia — đó là lý do bot chạy ở máy nhà chứ không phải Cloudflare Worker.
 
 ### Luật của `val.js`
 
@@ -351,6 +375,9 @@ REBUILD_SPEC.md           — khảo sát hiện trạng trước rebuild (đo t
 REBUILD_SPEC_V3_VALUATION.md — SPEC ĐÃ CHỐT cho tab Valuation. Đọc trước khi động vào tab này
 functions/api/val.js      — GET công khai + POST cần ADMIN_PASS: CRUD dự án Valuation
                             (key val-projects) + nhận giá từ job (key val-prices)
+bot/sync-prices.js        — job lấy giá hằng ngày (CoinGecko + Binance)
+bot/Dockerfile · docker-compose.yml · README.md · .env.example
+                            — chạy bot bằng Docker trên PC nhà. bot/.env KHÔNG commit
 info.svg / camera.svg / plus.svg / right2.svg
                           — icon Tabler v3.31.0, tô qua CSS mask. stroke để #000 (mask
                             không kế thừa được currentColor). right2.svg hiện KHÔNG còn
@@ -375,18 +402,13 @@ highlights.txt + highlights/  — ảnh Highlights ở CV (mỗi dòng "tên-ả
 
 ### Việc còn lại của đợt rebuild (ưu tiên)
 
-1. **Job lấy giá hằng ngày — việc backend DUY NHẤT còn thiếu.** Đặt trong dự án `D:\Files\Claude\1_Agents\binance` (máy chạy 24/7), mỗi ngày:
-   - CoinGecko `/coins/markets` → `atm`, `ath`, `athDate` cho cả 78 dự án
-   - Binance klines `interval=1d` → `atl` (đáy trong khoảng [lên sàn → ngày ATH]) cho 70 dự án có `binanceSymbol`
-   - `POST https://0xhieu.xyz/api/val` với `{ pass, action: 'prices', prices }`
-   - ⚠️ **Dùng `fetch` REST thẳng, KHÔNG dùng `binance-cli`** — đã verify: CLI bỏ qua `--start-time` nên không lấy được lịch sử.
-   - ⚠️ Binance trả **HTTP 451** cho server một số quốc gia (Apps Script từng dính) — đó là lý do job đặt ở máy nhà chứ không phải Cloudflare Worker.
-2. **Cột ×ATL đang trống toàn bộ** — hệ quả trực tiếp của mục 1. Code bảng đã sẵn sàng đọc `e.atl`.
-3. **Tab AI và Work chưa rebuild** — vẫn nội dung rộng 900 + lưới `--row` cũ, trong khi navbar đã 1424. Chưa đọc frame Figma `70:33` và `71:121`.
-4. **Badge rank tab Work vẫn gradient tím→xanh** (`--brand-1`/`--brand-2`) — 2 token này chưa đổi sang palette mới, sẽ dọn khi rebuild tab Work.
-5. **CSS Valuation cũ vẫn còn** ở giữa khối `<style>`, bị khối mới ở cuối đè lên. Giữ vì nó dùng chung class với AI + Work. **Xoá khi rebuild xong 2 tab đó.**
-6. **`right2.svg` không còn code nào dùng** sau khi bỏ box Watchlist.
-7. **Figma vẽ TIA là `modular`** — KV ghi `layer-1`. **KV đúng**, `modular` là chữ bịa trong mock, không nằm trong 15 slug.
+1. **Tab AI và Work chưa rebuild** — vẫn nội dung rộng 900 + lưới `--row` cũ, trong khi navbar đã 1424. Chưa đọc frame Figma `70:33` và `71:121`. Popup thì đã ăn theo hệ mới rồi.
+2. **Badge rank tab Work vẫn gradient tím→xanh** (`--brand-1`/`--brand-2`) — 2 token này chưa đổi sang palette mới, dọn khi rebuild tab Work.
+3. **CSS Valuation cũ vẫn còn** ở giữa khối `<style>`, bị khối mới ở cuối đè lên. Giữ vì dùng chung class với AI + Work. **Xoá khi rebuild xong 2 tab đó.**
+4. **`right2.svg` không còn code nào dùng** sau khi bỏ box Watchlist.
+5. **36/78 dự án chưa có `atl`** — 8 dự án không có cặp Binance, còn lại do ATH rơi quá sát ngày lên sàn nên không có khoảng trước ATH. Đúng theo luật, không phải lỗi.
+6. **Figma vẽ TIA là `modular`** — KV ghi `layer-1`. **KV đúng**, `modular` là chữ bịa trong mock, không nằm trong 15 slug.
+7. **Agent (chú mèo)** — mới có vỏ, bấm vào chỉ hiện "coming soon". Bot đã đặt sẵn trong repo để sau này Agent ở chung chỗ.
 
 ### Tồn đọng cũ
 
@@ -399,6 +421,9 @@ highlights.txt + highlights/  — ảnh Highlights ở CV (mỗi dòng "tên-ả
 ---
 
 ## Decisions Log
+
+- 2026-09-22: **Bot lấy giá đặt TRONG repo cv, chạy Docker trên PC nhà.** User chốt: *"bot đặt luôn trong dự án này, sau này còn triển khai agent mà"* + *"chạy docker ngay trên PC này"*. Trước đó spec v3 định đặt bot ở dự án `binance` — bỏ hướng đó. Hệ quả: repo không còn thuần "website tĩnh 1 file", `CLAUDE.md` mô tả cũ cần biết là đã lỗi thời. Đổi lại thì Agent sau này ở chung chỗ với bot, không phải nói chuyện xuyên 2 repo.
+- 2026-09-22: **Bot không cài package nào.** Node 22 đã có `fetch`, nên `Dockerfile` chỉ `COPY` đúng 1 file js. Không `package.json`, không `node_modules`, không lockfile phải bảo trì. Lịch chạy tự viết bằng `setTimeout` thay vì kéo `node-cron` về.
 
 - 2026-09-22: **Bỏ hẳn Google Sheet, chuyển Valuation sang KV.** Lý do trực tiếp: user muốn nút `+` chạy được và bấm vào data thì sửa được — mà Sheet thì không ghi từ web được. Chuyển 78/78 dự án + giá hiện có vào KV, 70/78 có cặp Binance. **cv giờ không còn đọc Google Sheet ở bất kỳ đâu.** Migrate ghi thẳng vào KV bằng `CLOUDFLARE_API_TOKEN` (quyền KV Edit) nên không cần `ADMIN_PASS`.
 - 2026-09-22: **`priceTGE` không bao giờ để job ghi.** User chốt: *"giá TGE là do tôi nhập… thứ tôi cần fetch là ATH ATM chứ không cần fetch giá TGE mỗi ngày, vì giá đó vốn chỉ có 1."* Thiết kế 2 key vốn đã đúng vậy; khoá chặt thêm bằng **whitelist trường** trong action `prices` (chỉ `atm/ath/athDate/atl/atlDate/updatedAt`) để một job viết ẩu cũng không chạm được data nhập tay.
