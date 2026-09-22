@@ -269,6 +269,7 @@
       width: 129px; height: 32px; border-radius: 24px;
       border: 1px solid var(--line2);
       font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
+      line-height: 1;               /* body có line-height 1.65 → hộp chữ cao hơn icon, chữ bị tụt lên */
       color: var(--ink); text-decoration: none; background: var(--white);
       white-space: nowrap;
       transition: border-color 0.15s, color 0.15s;
@@ -318,6 +319,8 @@
     }
     .tl-bullets li::marker { color: var(--sub2); }
     .tl-bullets a { color: var(--sub2); text-underline-offset: 3px; }
+    /* Proof (link, danh hiệu) in đậm nhưng vẫn giữ màu xám phụ — nổi bật mà không phá nhịp */
+    .tl-bullets strong { font-weight: 700; color: var(--sub2); }
     .tl-bullets a:hover { color: var(--amber); }
 
     @media (max-width: 640px) {
@@ -499,7 +502,7 @@
     /* Hover hàng = tím nhạt (gốc brand #6155F5 @10%), KHÔNG dùng xám --off — xem quy định
        "Hover / màu tương tác" trong HANDOFF.md. Muốn nền phủ TRỌN hàng thì khoảng cách giữa
        các hàng phải nằm trong padding của <td>, không phải border-spacing. */
-    .val-table tbody tr:hover { background: rgba(97, 85, 245, 0.1); }
+    .val-table tbody tr:hover { background: rgba(255, 161, 17, 0.10); }   /* amber nhạt, không phải tím cũ */
 
     .val-table tbody td {
       padding: 12px 16px;
@@ -1208,6 +1211,7 @@
     /* Nút Admin: 81×32, radius 8, trắng + viền — KHÁC nút hành động (radius 24) */
     #valuation-view .lang-dd-btn {
       width: 81px; height: 32px; border-radius: 8px;
+      display: inline-flex; align-items: center; justify-content: center; line-height: 1;
       background: var(--white); border: 0.5px solid var(--line2);
       box-shadow: var(--shadow);
       font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
@@ -1275,12 +1279,15 @@
          ô giữa 192 = 8 + 176 + 8   (×5)
          ô cuối 184 = 8 trái + 176
          184 + 192×5 + 184 = 1328 ✓  tâm = 136·328·520·712·904·1096·1288 */
+    /* Dùng % chứ KHÔNG ghim px: ghim px thì bảng chỉ đúng ở đúng 1424, màn hẹp hơn
+       bị tràn còn màn rộng hơn thì thừa chỗ. % giữ nguyên tỉ lệ Figma ở MỌI bề ngang:
+         184/1328 = 13.855%   ·   192/1328 = 14.458%  (×5)   → tổng 100% */
     #valuation-view .val-table th,
-    #valuation-view .val-table td { width: 192px; padding-left: 8px; padding-right: 8px; }
+    #valuation-view .val-table td { width: 14.458%; padding-left: 8px; padding-right: 8px; }
     #valuation-view .val-table th:first-child,
-    #valuation-view .val-table td:first-child { width: 184px; padding-left: 0; }
+    #valuation-view .val-table td:first-child { width: 13.855%; padding-left: 0; }
     #valuation-view .val-table th:last-child,
-    #valuation-view .val-table td:last-child  { width: 184px; padding-right: 0; }
+    #valuation-view .val-table td:last-child  { width: 13.855%; padding-right: 0; }
     /* Figma: thanh header kết ở y=184, dòng data đầu bắt đầu y=192 → cách 8 */
     #valuation-view #tge-section .val-table-scroll { margin-top: 8px; }
 
@@ -1400,6 +1407,139 @@
       #valuation-view .val-table { min-width: 720px; }
     }
 
+    /* ══════════════════════════════════════════════════════════════
+       POPUP — dựng lại theo hệ thiết kế mới. Đặt cuối khối style để đè
+       CSS popup cũ. Áp cho MỌI popup (Admin · Dự đoán FDV · form task ·
+       các popup giải thích) vì chúng dùng chung class .wl-modal.
+       Figma không vẽ popup nào, nên suy từ luật đã có:
+         thẻ nổi   = trắng · radius 8 · viền 0.5 · bóng --shadow
+         nút thường = radius 24 · trắng · viền · bóng
+         nút chính  = radius 24 · nền đen · chữ amber · bóng  (lấy từ navbar)
+         ô nhập     = radius 8 · viền 0.5  (giống chip, vì là vùng chứa dữ liệu)
+       ══════════════════════════════════════════════════════════════ */
+    .wl-modal-backdrop { background: rgba(0,0,0,0.45); }
+    .wl-modal {
+      font-family: 'Inter', sans-serif;
+      background: var(--white);
+      border: 0.5px solid var(--line2);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      gap: 16px;
+    }
+    .wl-modal-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 18px; font-weight: 700; line-height: 1.4;
+      color: var(--ink); letter-spacing: 0;
+    }
+    .wl-modal .info-modal-body {
+      font-family: 'Inter', sans-serif;
+      font-size: 15px; line-height: 24px; color: var(--sub2);
+    }
+    .wl-modal .info-modal-link { color: var(--amber); font-weight: 700; }
+
+    /* Ô nhập + nhãn */
+    .wl-modal .calc-field label,
+    .wl-modal .pt-group > label {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px; font-weight: 400; color: var(--sub2);
+      letter-spacing: 0; text-transform: none;
+    }
+    .wl-modal .calc-field input,
+    .wl-modal .calc-field select,
+    .wl-modal input[type=text],
+    .wl-modal input[type=password],
+    .wl-modal input[type=number],
+    .wl-modal input[type=date],
+    .wl-modal select {
+      font-family: 'Inter', sans-serif; font-size: 15px; color: var(--ink);
+      height: 32px; padding: 0 12px;
+      border: 0.5px solid var(--line2); border-radius: 8px;
+      background: var(--white); box-sizing: border-box; width: 100%;
+    }
+    .wl-modal .calc-field input:focus,
+    .wl-modal .calc-field select:focus,
+    .wl-modal input:focus, .wl-modal select:focus {
+      outline: none; border-color: var(--amber);
+    }
+    .wl-modal input:disabled { color: var(--sub2); background: var(--chip); }
+
+    /* Nút trong popup */
+    .wl-modal .predict-btn-secondary,
+    .wl-modal .predict-btn-primary,
+    .wl-modal .wl-btn,
+    .wl-modal button.pt-save,
+    .wl-modal button.pt-cancel {
+      height: 32px; padding: 0 16px; min-width: 96px;
+      border-radius: 24px; box-shadow: var(--shadow);
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
+      line-height: 1; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .wl-modal .predict-btn-secondary,
+    .wl-modal button.pt-cancel {
+      background: var(--white); border: 0.5px solid var(--line2); color: var(--ink);
+    }
+    .wl-modal .predict-btn-secondary:hover,
+    .wl-modal button.pt-cancel:hover { border-color: var(--amber); color: var(--amber); }
+    /* Nút chính lấy cặp màu navbar: nền đen chữ amber */
+    .wl-modal .predict-btn-primary,
+    .wl-modal button.pt-save {
+      background: var(--ink); border: 0.5px solid var(--ink); color: var(--amber);
+    }
+    .wl-modal .predict-btn-primary:hover,
+    .wl-modal button.pt-save:hover { opacity: 0.85; }
+
+    .wl-modal .modal-corner-close,
+    .wl-modal .calc-reset-btn {
+      color: var(--sub2); font-size: 16px; line-height: 1;
+    }
+    .wl-modal .modal-corner-close:hover,
+    .wl-modal .calc-reset-btn:hover { color: var(--amber); }
+
+    .wl-modal .admin-msg { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--ink); }
+
+    /* Nút thử lại khi tải data hỏng */
+    #valuation-view .retry-btn {
+      height: 32px; padding: 0 16px; border-radius: 24px;
+      border: 0.5px solid var(--line2); box-shadow: var(--shadow);
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700; color: var(--ink);
+    }
+    #valuation-view .retry-btn:hover { border-color: var(--amber); color: var(--amber); }
+
+    /* ── Admin Valuation: danh sách + form ──────────────────────────
+       Danh sách CHỈ hiện data nguồn (thứ nhập tay). Không hiện ×TGE/×ATL/
+       ×ATH/×ATM — đó là số tính ra, và giá thì do job ghi ở key khác. */
+    .val-count { font-size: 12px; font-weight: 400; color: var(--sub2); }
+    .val-list-head, .val-row {
+      display: grid; grid-template-columns: 80px 96px 1fr 120px 64px;
+      gap: 8px; align-items: center;
+    }
+    .val-list-head {
+      padding: 0 8px 8px; font-size: 12px; font-weight: 700; color: var(--sub2);
+      border-bottom: 0.5px solid var(--line2);
+    }
+    #val-list { max-height: 52vh; overflow-y: auto; padding-top: 8px; }
+    .val-row {
+      height: 32px; margin-bottom: 8px; padding: 0 8px; border-radius: 8px;
+      background: var(--chip); font-size: 12px; color: var(--ink); cursor: pointer;
+      border: 0.5px solid transparent;
+    }
+    .val-row:hover { border-color: var(--amber); }
+    .val-row b { font-weight: 700; }
+    .val-row .vr-warn { color: #B42318; font-weight: 700; }
+    .val-del-btn {
+      height: 32px; padding: 0 16px; margin-right: auto; border-radius: 24px;
+      background: var(--white); border: 0.5px solid #B42318; color: #B42318;
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
+      line-height: 1; cursor: pointer; box-shadow: var(--shadow);
+    }
+    .val-del-btn:hover { background: #B42318; color: var(--white); }
+    #val-form-fields { display: flex; flex-direction: column; gap: 12px; }
+    #val-form-fields .predict-actions { display: flex; gap: 8px; align-items: center; }
+    /* Dòng bảng bấm được khi đã mở khoá admin */
+    #valuation-view .val-table tbody tr.row-editable { cursor: pointer; }
+
   </style>
 </head>
 <body>
@@ -1449,9 +1589,9 @@
             <div class="tl-body">
               <div class="tl-role">Community Builder</div>
               <ul class="tl-bullets">
-                <li>Grew a Telegram community from 0 to 500+ members in Q1 2026: <a href="https://t.me/airdrop_1wallet" target="_blank" rel="noopener">t.me/airdrop_1wallet</a></li>
+                <li>Grew a Telegram community from 0 to 500+ members in Q1 2026: <a href="https://t.me/airdrop_1wallet" target="_blank" rel="noopener"><strong>t.me/airdrop_1wallet</strong></a></li>
                 <li>Helped grow Arc's community by onboarding users through ELI12-style content. Helped organize Arc meetups in Vietnam (3/3 so far, across Vietnam)</li>
-                <li>Built products on Arc: <a href="https://github.com/KattyFury/" target="_blank" rel="noopener">github.com/KattyFury</a></li>
+                <li>Built products on Arc: <a href="https://github.com/KattyFury/" target="_blank" rel="noopener"><strong>github.com/KattyFury</strong></a></li>
               </ul>
             </div>
           </div>
@@ -1461,8 +1601,8 @@
             <div class="tl-body">
               <div class="tl-role">Content Creator &amp; Contributor</div>
               <ul class="tl-bullets">
-                <li>Ambassador: $RECALL. Top Yapper: $NEWT, $RECALL, $MIRA, $RLS, $SENT, $ZAMA.</li>
-                <li>OG Contributor: $SOMI, $RECALL, $RLS, $SENT, $ZAMA.</li>
+                <li><strong>Ambassador</strong>: $RECALL. <strong>Top Yapper</strong>: $NEWT, $RECALL, $MIRA, $RLS, $SENT, $ZAMA.</li>
+                <li><strong>OG Contributor</strong>: $SOMI, $RECALL, $RLS, $SENT, $ZAMA.</li>
               </ul>
             </div>
           </div>
@@ -1689,6 +1829,54 @@
   </div>
 
   <!-- Predict TGE FDV modal -->
+  <!-- Admin Valuation: danh sách dự án (bấm "+") -->
+  <div class="wl-modal-backdrop" id="val-list-modal">
+    <div class="wl-modal wl-modal--wide">
+      <button class="modal-corner-close" id="val-list-close" aria-label="Đóng">✕</button>
+      <div class="wl-modal-title">Dự án <span id="val-list-count" class="val-count"></span></div>
+      <div class="val-list-head">
+        <span>Ticker</span><span>TGE</span><span>Narrative</span><span>Gọi vốn</span><span>VC&nbsp;%</span>
+      </div>
+      <div id="val-list" class="thin-scroll"></div>
+      <div class="predict-actions">
+        <button class="predict-btn-primary" id="val-new-btn">Thêm dự án</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Valuation: form thêm / sửa 1 dự án -->
+  <div class="wl-modal-backdrop" id="val-form-modal">
+    <div class="wl-modal">
+      <button class="modal-corner-close" id="val-form-close" aria-label="Đóng">✕</button>
+      <div class="wl-modal-title" id="val-form-title">Sửa dự án</div>
+      <div id="val-form-fields">
+        <div class="ptask-row">
+          <div class="calc-field"><label>Ticker *</label><input type="text" id="vf-ticker" placeholder="OP" /></div>
+          <div class="calc-field"><label>Ngày TGE *</label><input type="date" id="vf-tgeDate" /></div>
+        </div>
+        <div class="calc-field"><label>Narrative *</label><select id="vf-narrative"></select></div>
+        <div class="ptask-row">
+          <div class="calc-field"><label>Gọi vốn (USD) *</label><input type="number" id="vf-fundraising" step="any" placeholder="178500000" /></div>
+          <div class="calc-field"><label>VC Alloc (%) *</label><input type="number" id="vf-vcAlloc" step="any" placeholder="17" /></div>
+        </div>
+        <div class="ptask-row">
+          <div class="calc-field"><label>Total supply *</label><input type="number" id="vf-totalSupply" step="any" placeholder="4294967295" /></div>
+          <div class="calc-field"><label>Giá TGE *</label><input type="number" id="vf-priceTGE" step="any" placeholder="1.1783" /></div>
+        </div>
+        <div class="ptask-row">
+          <div class="calc-field"><label>CoinGecko id</label><input type="text" id="vf-cgId" placeholder="optimism" /></div>
+          <div class="calc-field"><label>Cặp Binance</label><input type="text" id="vf-binanceSymbol" placeholder="OPUSDT" /></div>
+        </div>
+        <div class="admin-msg" id="vf-error" style="display:none"></div>
+        <div class="predict-actions">
+          <button class="val-del-btn" id="vf-delete">Xoá</button>
+          <button class="predict-btn-secondary" id="vf-cancel">Huỷ</button>
+          <button class="predict-btn-primary" id="vf-save">Lưu</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="wl-modal-backdrop" id="predict-modal">
     <div class="wl-modal">
       <button class="modal-corner-close" id="predict-modal-close" aria-label="Đóng">✕</button>
@@ -2294,6 +2482,7 @@ ${line}
     const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1m8_nwbP_Apw43Y8iNxOoGFYy8YA-OpchGnVRfTMBUAo/gviz/tq?tqx=out:csv&sheet=DATA';
 
     let publicData = [];
+    let valProjects = [];   // bản GỐC từ KV (data nhập tay) — form admin sửa trên bản này
     let publicDataError = false;   // tải Sheet hỏng → hiện lỗi thật, không kẹt "Loading…"
 
     // ── Khối báo lỗi + nút thử lại, dùng chung cho Valuation / Work / box Watchlist ──
@@ -2323,47 +2512,38 @@ ${line}
       return out;
     }
 
+    // Nguồn data: KV qua /api/val (đã bỏ hẳn Google Sheet, 2026-09-22).
+    // `projects` = data nhập tay · `prices` = giá do job ghi. Hai key TÁCH RIÊNG trong KV
+    // nên admin sửa dự án và job ghi giá không bao giờ ghi đè nhau — gộp lại ở đây thôi.
     async function fetchPublicData() {
       try {
-        const res  = await fetch(SHEET_CSV_URL);
-        const text = await res.text();
-        const lines = text.trim().split('\n');
-        publicData = lines.slice(1)
-          .map(l => parseCSVLine(l))
-          .filter(r => r[0])   // must have ticker (col A)
-          .map(r => {
-            const num = s => {
-              let v = String(s).replace(/[$\s]/g, '').trim();
-              const commas = (v.match(/,/g) || []).length;
-              if (commas > 1) v = v.replace(/,/g, '');
-              else if (commas === 1) v = v.replace(',', '.');
-              return parseFloat(v) || 0;
-            };
-            const parseMoney = s => {
-              let v = String(s).replace(/\$/g, '').trim();
-              const dots = (v.match(/\./g) || []).length;
-              v = dots > 1 ? v.replace(/\./g, '') : v.replace(/,/g, '');
-              return parseFloat(v) || 0;
-            };
+        const res = await fetch('/api/val');
+        const d = await res.json();
+        if (!d.ok) throw new Error(d.error || 'api-error');
+        valProjects = d.projects || [];
+        const prices = d.prices || {};
+        publicData = valProjects
+          .filter(p => p.ticker && p.tgeDate && p.fundraising > 0)
+          .map(p => {
+            const px = prices[p.ticker] || {};
             return {
-              tgeDate:     normalizeDate(r[0]),                            // col A
-              ticker:      (r[1] || '').replace(/^\$/, '').toUpperCase(), // col B
-              cgId:        (r[2] || '').trim().toLowerCase(),              // col C: CoinGecko ID
-              type:        (r[3] || '').trim().toLowerCase(),              // col D — slug chữ thường (spec v3 §3)
-              fundraising: parseMoney(r[4]),                               // col E
-              vcAlloc:     num(r[5]),                                      // col F: percent
-              totalSupply: parseSupply(r[6]) || 0,                        // col G
-              priceTGE:     num(r[7]),                                     // col H
-              ath:          num(r[9]),                                    // col J
-              xTGEm:        num(r[10]),                                   // col K: ×TGE multiple (precomputed)
-              xATHm:        num(r[12]),                                   // col M: ×ATH multiple (precomputed)
-              currentPrice: num(r[13]),                                   // col N
+              ticker:       p.ticker,
+              tgeDate:      p.tgeDate,
+              cgId:         p.cgId || '',
+              type:         p.narrative || '',
+              fundraising:  p.fundraising,
+              vcAlloc:      p.vcAlloc,
+              totalSupply:  p.totalSupply || 0,
+              priceTGE:     p.priceTGE,
+              ath:          px.ath || 0,
+              athDate:      px.athDate || '',
+              atl:          px.atl || 0,
+              currentPrice: px.atm || 0,
             };
-          })
-          .filter(e => e.ticker && e.tgeDate && e.fundraising > 0);
+          });
         publicDataError = false;
       } catch (err) {
-        console.warn('Could not load sheet data:', err);
+        console.warn('Không tải được /api/val:', err);
         publicDataError = true;
       }
     }
@@ -2516,7 +2696,7 @@ ${line}
         const hi = vcFDV >= FDV_SPLIT_MAIN ? ' fdv-hi' : '';
         // ×ATL chờ job Binance ghi vào val-prices — chưa có data thì để gạch
         const xATL = e.atl ? xMult(e.atl, e) : null;
-        return `<tr>
+        return `<tr data-ticker="${e.ticker}" class="${adminUnlocked ? 'row-editable' : ''}">
           <td class="td-ticker${hi}"><span class="ck">${e.ticker}</span></td>
           <td class="td-narrative"><span class="ck">${e.type || '—'}</span></td>
           <td class="td-date"><span class="ck">${fmtDate(e.tgeDate)}</span></td>
@@ -3175,7 +3355,9 @@ ${line}
       const add = document.getElementById('val-add-btn');
       const btn = document.getElementById('val-admin-btn');
       if (!add || !btn) return;
-      add.disabled = true;   // form thêm dự án còn chờ kho KV
+      add.disabled = !adminUnlocked;
+      add.title = adminUnlocked ? 'Danh sách dự án' : 'Cần mở khoá admin';
+      if (typeof renderTable === 'function' && publicData.length) renderTable();
       add.title = 'Thêm dự án — cần kho KV (chưa dựng)';
       btn.textContent = adminUnlocked ? 'Đã mở' : 'Admin';
       btn.title = adminUnlocked ? 'Đã mở khoá admin' : 'Đăng nhập admin';
@@ -3613,6 +3795,119 @@ ${line}
         t = setTimeout(() => hint.classList.remove('show'), 1800);
       });
     })();
+
+    // ══ ADMIN VALUATION — danh sách + form sửa dự án ═══════════════
+    // Dùng CHUNG mật khẩu với /api/private và /api/ai (1 ADMIN_PASS duy nhất).
+    const VAL_NARRATIVES = ['stablechain','layer-1','infra','ai','layer-2','prediction',
+      'trading','bitcoin','payment','defi','identity','privacy','game','social','desci'];
+    const VF = ['ticker','tgeDate','narrative','fundraising','vcAlloc','totalSupply',
+                'priceTGE','cgId','binanceSymbol'];
+    let vfEditing = null;   // ticker đang sửa; null = thêm mới
+
+    async function apiVal(action, extra = {}) {
+      try {
+        const res = await fetch('/api/val', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ pass: adminPass, action, ...extra }),
+        });
+        return { status: res.status, ...(await res.json().catch(() => ({ ok: false }))) };
+      } catch {
+        return { status: 0, ok: false, error: 'Không gọi được /api/val' };
+      }
+    }
+
+    function renderValList() {
+      const el = document.getElementById('val-list');
+      const cnt = document.getElementById('val-list-count');
+      if (!el) return;
+      cnt.textContent = `(${valProjects.length})`;
+      const sorted = [...valProjects].sort((a, b) => (b.tgeDate || '').localeCompare(a.tgeDate || ''));
+      el.innerHTML = sorted.map(p => {
+        const warn = !p.cgId ? '<span class="vr-warn" title="Thiếu CoinGecko id nên job không lấy được giá">!</span>' : '';
+        return `<div class="val-row" data-ticker="${p.ticker}">
+          <span><b>${p.ticker}</b> ${warn}</span>
+          <span>${fmtDate(p.tgeDate)}</span>
+          <span>${p.narrative || '<span class="vr-warn">—</span>'}</span>
+          <span>${p.fundraising ? fmtFDV(p.fundraising) : '—'}</span>
+          <span>${p.vcAlloc ?? '—'}</span>
+        </div>`;
+      }).join('');
+    }
+
+    function openValForm(ticker) {
+      vfEditing = ticker || null;
+      const p = ticker ? valProjects.find(x => x.ticker === ticker) : null;
+      const sel = document.getElementById('vf-narrative');
+      sel.innerHTML = '<option value=""></option>' +
+        VAL_NARRATIVES.map(n => `<option value="${n}">${n}</option>`).join('');
+      VF.forEach(k => { document.getElementById('vf-' + k).value = p ? (p[k] ?? '') : ''; });
+      document.getElementById('vf-ticker').disabled = !!p;   // ticker là khoá chính, sửa = tạo bản ghi lạc
+      document.getElementById('vf-delete').style.display = p ? '' : 'none';
+      document.getElementById('val-form-title').textContent = p ? `Sửa ${p.ticker}` : 'Thêm dự án';
+      document.getElementById('vf-error').style.display = 'none';
+      document.getElementById('val-form-modal').classList.add('open');
+    }
+
+    async function saveValProject() {
+      const err = document.getElementById('vf-error');
+      const project = {};
+      VF.forEach(k => { project[k] = document.getElementById('vf-' + k).value.trim(); });
+      if (vfEditing) project.ticker = vfEditing;
+      const r = await apiVal(vfEditing ? 'update' : 'add', { project, ticker: vfEditing || project.ticker });
+      if (!r.ok) {
+        err.textContent = r.error === 'missing' ? 'Thiếu: ' + r.fields.join(', ')
+          : r.error === 'duplicate-ticker' ? 'Ticker này đã có rồi'
+          : r.error === 'wrong-pass' ? 'Sai mật khẩu'
+          : 'Lỗi: ' + (r.error || r.status);
+        err.style.display = '';
+        return;
+      }
+      document.getElementById('val-form-modal').classList.remove('open');
+      await fetchPublicData();
+      renderAll(); renderValList();
+    }
+
+    async function deleteValProject() {
+      if (!vfEditing) return;
+      const r = await apiVal('delete', { ticker: vfEditing });
+      if (!r.ok) {
+        const err = document.getElementById('vf-error');
+        err.textContent = 'Xoá hỏng: ' + (r.error || r.status); err.style.display = '';
+        return;
+      }
+      document.getElementById('val-form-modal').classList.remove('open');
+      await fetchPublicData();
+      renderAll(); renderValList();
+    }
+
+    document.getElementById('val-add-btn').addEventListener('click', () => {
+      if (!adminUnlocked) return;
+      renderValList();
+      document.getElementById('val-list-modal').classList.add('open');
+    });
+    document.getElementById('val-list-close').addEventListener('click',
+      () => document.getElementById('val-list-modal').classList.remove('open'));
+    document.getElementById('val-new-btn').addEventListener('click', () => openValForm(null));
+    document.getElementById('val-list').addEventListener('click', e => {
+      const row = e.target.closest('.val-row');
+      if (row) openValForm(row.dataset.ticker);
+    });
+    document.getElementById('vf-cancel').addEventListener('click',
+      () => document.getElementById('val-form-modal').classList.remove('open'));
+    document.getElementById('val-form-close').addEventListener('click',
+      () => document.getElementById('val-form-modal').classList.remove('open'));
+    document.getElementById('vf-save').addEventListener('click', saveValProject);
+    document.getElementById('vf-delete').addEventListener('click', deleteValProject);
+
+    // Bấm thẳng vào một dòng trong bảng → mở form sửa (chỉ khi đã mở khoá)
+    document.getElementById('tge-tbody').addEventListener('click', e => {
+      if (!adminUnlocked) return;
+      const tr = e.target.closest('tr');
+      if (!tr || !tr.dataset.ticker) return;
+      openValForm(tr.dataset.ticker);
+    });
+
   </script>
 
 </body>
