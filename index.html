@@ -1646,15 +1646,21 @@
 
     /* ── WORK: card 656×256, header đen ĐÈ lên mép trên thân ────── */
     #airdrop-view .ard-subtabs { padding: 48px 0 16px; }
-    #airdrop-view #wte-cards { display: flex; flex-direction: column; gap: 32px; }
-    #airdrop-view .wte-group { display: flex; flex-direction: column; gap: 32px; }
-    #airdrop-view .wte-rank-group { display: flex; flex-direction: column; gap: 32px; }
+    /* Card CÙNG rank dàn ngang 2 cột (656×2 + khe 16 = 1328, đúng bề ngang content).
+       Card KHÁC rank cách nhau một khoảng rộng hơn hẳn để thấy rõ ranh giới nhóm.
+       align-items: start để card ít task không bị kéo cao bằng card nhiều task. */
+    #airdrop-view #wte-cards { display: flex; flex-direction: column; gap: 48px; }
+    #airdrop-view .wte-group { display: block; }
+    #airdrop-view .wte-rank-group {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 16px; align-items: start;
+    }
     #airdrop-view .wte-group-label {
       font-size: 12px; font-weight: 700; color: var(--ink);
       margin: 0; letter-spacing: 0; text-transform: none;
     }
     #airdrop-view .wte-card {
-      width: 100%; max-width: 656px; padding: 0;
+      width: 100%; padding: 0;
       background: var(--white); border: 0.5px solid var(--line2); border-radius: 8px;
       box-shadow: var(--shadow); overflow: hidden;
     }
@@ -1820,6 +1826,8 @@
       #airdrop-view .wte-section-label,
       #airdrop-view .wte-task-row { font-size: 12px; }
       #airdrop-view .wte-logo { width: 20px; height: 20px; }
+      #airdrop-view .wte-rank-group { grid-template-columns: 1fr; }
+      #airdrop-view #wte-cards { gap: 32px; }
     }
 
   </style>
