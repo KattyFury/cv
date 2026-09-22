@@ -1,0 +1,20 @@
+# Chạy bot ngay trên PC này.
+#
+#   cd bot
+#   cp .env.example .env     rồi điền secret vào .env
+#   docker compose up -d --build
+#   docker compose logs -f
+#
+# Container tự bật lại khi Docker/PC khởi động lại (restart: unless-stopped).
+# Bot chạy NGAY 1 lượt lúc khởi động, sau đó mỗi ngày đúng RUN_AT_HOUR.
+
+services:
+  val-price-bot:
+    build: .
+    image: 0xhieu-val-price-bot
+    container_name: val-price-bot
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      TZ: Asia/Ho_Chi_Minh
+    # Không mount volume: bot không giữ trạng thái gì, mọi thứ nằm ở KV trên Cloudflare.
