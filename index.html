@@ -1679,7 +1679,11 @@
       text-align: right; background: none; border: none; padding: 0; width: auto; height: auto;
       box-shadow: none; border-radius: 0;
     }
-    #airdrop-view .wte-logo { display: none; }   /* Figma không vẽ logo trong header */
+    #airdrop-view .wte-name-wrap { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    #airdrop-view .wte-logo {
+      display: block; width: 24px; height: 24px; border-radius: 50%;
+      object-fit: cover; flex-shrink: 0; background: var(--chip);
+    }
     #airdrop-view .wte-opt { color: var(--amber); }
 
     #airdrop-view .wte-section {
@@ -1742,6 +1746,80 @@
     #rank-filter-float .lang-btn.active,
     #rank-filter-float #rf-income.active {
       background: var(--ink); border: 0.5px solid var(--ink); color: var(--amber);
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       SỬA MOBILE + DỌN NỐT PHẦN CŨ CỦA WORK
+       ══════════════════════════════════════════════════════════════ */
+
+    /* ── Work: 3 thứ còn sót của bản cũ ────────────────────────────
+       1. .wte-task-row có margin ÂM (-2px -6px -2px -4px) → chip tràn ra
+          ngoài vùng padding của card, nhìn như box DAILY lấn vào box chính.
+       2. .wte-task-icon bị opacity .5 → mũi tên amber ra nhạt như đang
+          disable. Figma vẽ mũi tên đậm.
+       3. Nhãn nhóm "Income" / "Rank S" — Figma đã bỏ, card tự nói rank
+          rồi ("rank: $" nằm ngay trên header). */
+    #airdrop-view .wte-task-row { margin: 0; }
+    #airdrop-view .wte-task-icon { opacity: 1; margin-top: 0; }
+    #airdrop-view .wte-group-label { display: none; }
+    #airdrop-view .wte-tasks { gap: 0; }
+    #airdrop-view .wte-task-item { display: block; }
+
+    /* ── MOBILE ────────────────────────────────────────────────────
+       Luật chung: dưới 640px thang chữ tụt một bậc (18→15, 15→12) và
+       mọi ô/icon co lại cho vừa màn, thay vì để chữ bị cắt. */
+    @media (max-width: 640px) {
+
+      /* Hàng điều khiển: tiêu đề + Admin + VI/EN + icon cùng co lại,
+         không xuống dòng, không cắt chữ. */
+      #valuation-view .panel-head,
+      #ai-view .panel-head,
+      #airdrop-view .panel-head {
+        flex-wrap: nowrap; gap: 8px; padding: 24px 0 12px;
+      }
+      #valuation-view .val-intro,
+      #ai-view .val-intro,
+      #airdrop-view .val-intro {
+        font-size: 15px; min-width: 0;
+        overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      }
+      #valuation-view .val-head-ctrl,
+      #ai-view .val-head-ctrl,
+      #airdrop-view .val-head-ctrl { gap: 8px; flex-shrink: 0; }
+      #valuation-view .lang-dd-btn,
+      #ai-view .lang-dd-btn,
+      #airdrop-view .lang-dd-btn { width: 56px; font-size: 12px; }
+      #valuation-view .lang-toggle,
+      #ai-view .lang-toggle,
+      #airdrop-view .lang-toggle { width: 60px; }
+      #valuation-view .lang-btn,
+      #ai-view .lang-btn,
+      #airdrop-view .lang-btn { font-size: 12px; }
+      #valuation-view .camera-btn,
+      #valuation-view .add-btn { width: 24px; height: 24px; }
+
+      /* Bảng Valuation: mọi thứ về 12, bỏ min-width để không phải cuộn ngang */
+      #valuation-view .val-table-section { overflow-x: visible; }
+      #valuation-view .val-table { min-width: 0; }
+      #valuation-view #tge-section .val-table thead th { font-size: 12px; padding: 0 2px; }
+      #valuation-view #tge-section .val-table tbody td { font-size: 12px; padding: 0 2px; }
+      #valuation-view #tge-section .val-table tbody td.td-narrative,
+      #valuation-view #tge-section .val-table tbody td.td-date { font-size: 12px; }
+      #valuation-view .ath-arrow { margin: 0; }
+      /* Narrative và TGE là cột phụ — ẩn trên màn hẹp để 5 cột số còn chỗ thở */
+      #valuation-view .val-table th:nth-child(2),
+      #valuation-view .val-table td:nth-child(2),
+      #valuation-view .val-table th:nth-child(3),
+      #valuation-view .val-table td:nth-child(3) { display: none; }
+
+      /* Work: thang chữ 15-12 */
+      #airdrop-view .wte-name { font-size: 15px; }
+      #airdrop-view .wte-rank { font-size: 12px; }
+      #airdrop-view .wte-headline { font-size: 12px; }
+      #airdrop-view .wte-card-head { height: auto; min-height: 40px; padding: 4px 8px; }
+      #airdrop-view .wte-section-label,
+      #airdrop-view .wte-task-row { font-size: 12px; }
+      #airdrop-view .wte-logo { width: 20px; height: 20px; }
     }
 
   </style>
@@ -1966,8 +2044,8 @@
         <div class="val-head-ctrl">
           <button class="lang-dd-btn" id="ai-admin-btn" title="Thêm bài viết">Admin</button>
           <div class="lang-toggle">
-            <button class="lang-btn" id="ai-lang-en-btn">EN</button>
             <button class="lang-btn active" id="ai-lang-vi-btn">VI</button>
+            <button class="lang-btn" id="ai-lang-en-btn">EN</button>
           </div>
         </div>
       </div>
@@ -1988,8 +2066,8 @@
         <div class="val-head-ctrl" id="ard-wte-controls">
           <button class="lang-dd-btn" id="admin-btn" title="Task cá nhân">Admin</button>
           <div class="lang-toggle">
-            <button class="lang-btn" id="lang-en-btn">EN</button>
             <button class="lang-btn active" id="lang-vi-btn">VI</button>
+            <button class="lang-btn" id="lang-en-btn">EN</button>
           </div>
         </div>
       </div>
@@ -3477,7 +3555,7 @@ ${line}
         const g = groupOf(p);
         return `<div class="wte-card wte-card--${g}" id="${cardId}">
           <div class="wte-card-head">
-            ${nameHtml}
+            <span class="wte-name-wrap">${logoHtml}${nameHtml}</span>
             <span class="wte-headline">${headline}</span>
             <span class="wte-rank rank-${g}">rank: ${RANK_LABEL[g] || g}${adminUnlocked ? ` <button class="wte-opt" data-id="${p.id}" title="Sửa task">⋮</button>` : ''}</span>
           </div>
