@@ -267,14 +267,14 @@
     .social-btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 8px;
       width: 129px; height: 32px; border-radius: 24px;
-      border: 1px solid var(--line2);
+      border: 0.5px solid var(--ink); box-shadow: var(--shadow);
       font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
       line-height: 1;               /* body có line-height 1.65 → hộp chữ cao hơn icon, chữ bị tụt lên */
-      color: var(--ink); text-decoration: none; background: var(--white);
+      color: var(--amber); text-decoration: none; background: var(--ink);
       white-space: nowrap;
       transition: border-color 0.15s, color 0.15s;
     }
-    .social-btn:hover { border-color: var(--amber); color: var(--amber); }
+    .social-btn:hover { background: #1a1a1a; border-color: #1a1a1a; }
     /* Icon Tabler 24×24 thu ve 16 — nét 2 thành ~1.33, khớp chữ Bold 15 cạnh nó */
     .social-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
 
@@ -1389,12 +1389,12 @@
     #valuation-view .rt-btn-row { background: transparent; margin-top: 0; }
     #valuation-view .predict-link {
       width: 216px; height: 32px; margin: 0 auto; border-radius: 24px;
-      background: var(--white); border: 0.5px solid var(--line2);
+      background: var(--ink); border: 0.5px solid var(--ink);
       box-shadow: var(--shadow);
       font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
-      color: var(--ink); cursor: pointer; padding: 0;
+      color: var(--amber); cursor: pointer; padding: 0;
     }
-    #valuation-view .predict-link:hover { border-color: var(--amber); color: var(--amber); }
+    #valuation-view .predict-link:hover { opacity: 0.85; }
 
     @media (max-width: 1024px) {
       #valuation-view .val-analysis.val-boxes { grid-template-columns: 1fr 1fr; }
@@ -1419,6 +1419,7 @@
        ══════════════════════════════════════════════════════════════ */
     .wl-modal-backdrop { background: rgba(0,0,0,0.45); }
     .wl-modal {
+      position: relative;   /* neo cho nút ✕ góc trên-phải — thiếu dòng này nó bay ra ngoài popup */
       font-family: 'Inter', sans-serif;
       background: var(--white);
       border: 0.5px solid var(--line2);
@@ -1476,18 +1477,19 @@
       line-height: 1; cursor: pointer;
       display: inline-flex; align-items: center; justify-content: center;
     }
+    /* LUẬT NÚT: tròn (radius 24) = nền đen chữ amber · vuông (radius 8) = trắng chữ đen.
+       Nút Admin và máng VI/EN là nút VUÔNG nên giữ trắng-đen. */
     .wl-modal .predict-btn-secondary,
-    .wl-modal button.pt-cancel {
-      background: var(--white); border: 0.5px solid var(--line2); color: var(--ink);
-    }
-    .wl-modal .predict-btn-secondary:hover,
-    .wl-modal button.pt-cancel:hover { border-color: var(--amber); color: var(--amber); }
-    /* Nút chính lấy cặp màu navbar: nền đen chữ amber */
     .wl-modal .predict-btn-primary,
+    .wl-modal .wl-btn,
+    .wl-modal button.pt-cancel,
     .wl-modal button.pt-save {
       background: var(--ink); border: 0.5px solid var(--ink); color: var(--amber);
     }
+    .wl-modal .predict-btn-secondary:hover,
     .wl-modal .predict-btn-primary:hover,
+    .wl-modal .wl-btn:hover,
+    .wl-modal button.pt-cancel:hover,
     .wl-modal button.pt-save:hover { opacity: 0.85; }
 
     .wl-modal .modal-corner-close,
@@ -1502,10 +1504,10 @@
     /* Nút thử lại khi tải data hỏng */
     #valuation-view .retry-btn {
       height: 32px; padding: 0 16px; border-radius: 24px;
-      border: 0.5px solid var(--line2); box-shadow: var(--shadow);
-      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700; color: var(--ink);
+      background: var(--ink); border: 0.5px solid var(--ink); box-shadow: var(--shadow);
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700; color: var(--amber);
     }
-    #valuation-view .retry-btn:hover { border-color: var(--amber); color: var(--amber); }
+    #valuation-view .retry-btn:hover { opacity: 0.85; }
 
     /* ── Admin Valuation: danh sách + form ──────────────────────────
        Danh sách CHỈ hiện data nguồn (thứ nhập tay). Không hiện ×TGE/×ATL/
@@ -1529,14 +1531,22 @@
     .val-row b { font-weight: 700; }
     .val-row .vr-warn { color: #B42318; font-weight: 700; }
     .val-del-btn {
-      height: 32px; padding: 0 16px; margin-right: auto; border-radius: 24px;
-      background: var(--white); border: 0.5px solid #B42318; color: #B42318;
+      height: 32px; padding: 0 16px; border-radius: 24px;
+      background: var(--ink); border: 0.5px solid var(--ink); color: var(--amber);
       font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
       line-height: 1; cursor: pointer; box-shadow: var(--shadow);
     }
-    .val-del-btn:hover { background: #B42318; color: var(--white); }
+    .val-del-btn:hover { opacity: 0.85; }
+    /* Bấm lần 1 chuyển sang trạng thái hỏi lại — xoá không hoàn tác được */
+    .val-del-btn.confirm { background: #B42318; border-color: #B42318; color: #fff; }
     #val-form-fields { display: flex; flex-direction: column; gap: 12px; }
     #val-form-fields .predict-actions { display: flex; gap: 8px; align-items: center; }
+    /* Popup danh sách: nút "Thêm dự án" canh giữa */
+    #val-list-modal .predict-actions { display: flex; justify-content: center; }
+    /* Popup sửa: Xoá bên trái · Lưu bên phải, cân đối nhau. Huỷ = dấu ✕ góc trên phải. */
+    #val-form-fields .predict-actions { justify-content: space-between; }
+    #val-form-fields .predict-actions .val-del-btn,
+    #val-form-fields .predict-actions .predict-btn-primary { min-width: 120px; }
     /* Dòng bảng bấm được khi đã mở khoá admin */
     #valuation-view .val-table tbody tr.row-editable { cursor: pointer; }
 
@@ -1856,11 +1866,11 @@
         </div>
         <div class="calc-field"><label>Narrative *</label><select id="vf-narrative"></select></div>
         <div class="ptask-row">
-          <div class="calc-field"><label>Gọi vốn (USD) *</label><input type="number" id="vf-fundraising" step="any" placeholder="178500000" /></div>
+          <div class="calc-field"><label>Gọi vốn (USD) *</label><input type="text" id="vf-fundraising" placeholder="178.5M" /></div>
           <div class="calc-field"><label>VC Alloc (%) *</label><input type="number" id="vf-vcAlloc" step="any" placeholder="17" /></div>
         </div>
         <div class="ptask-row">
-          <div class="calc-field"><label>Total supply *</label><input type="number" id="vf-totalSupply" step="any" placeholder="4294967295" /></div>
+          <div class="calc-field"><label>Total supply *</label><input type="text" id="vf-totalSupply" placeholder="4.29B" /></div>
           <div class="calc-field"><label>Giá TGE *</label><input type="number" id="vf-priceTGE" step="any" placeholder="1.1783" /></div>
         </div>
         <div class="ptask-row">
@@ -1870,7 +1880,6 @@
         <div class="admin-msg" id="vf-error" style="display:none"></div>
         <div class="predict-actions">
           <button class="val-del-btn" id="vf-delete">Xoá</button>
-          <button class="predict-btn-secondary" id="vf-cancel">Huỷ</button>
           <button class="predict-btn-primary" id="vf-save">Lưu</button>
         </div>
       </div>
@@ -3805,6 +3814,18 @@ ${line}
                 'priceTGE','cgId','binanceSymbol'];
     let vfEditing = null;   // ticker đang sửa; null = thêm mới
 
+    // 2 ô nhập theo lối viết tắt: gõ "6.8M" thay vì "6800000", "10B" thay vì 10 số 0.
+    // Đọc bằng parseSupply() có sẵn (đã xử lý K/M/B/T + dấu phân cách nghìn kiểu Việt/Mỹ).
+    const VF_SHORT = ['fundraising', 'totalSupply'];
+    function fmtShort(n) {
+      if (!(n > 0)) return '';
+      if (n >= 1e12) return +(n / 1e12).toFixed(2) + 'T';
+      if (n >= 1e9)  return +(n / 1e9).toFixed(2)  + 'B';
+      if (n >= 1e6)  return +(n / 1e6).toFixed(2)  + 'M';
+      if (n >= 1e3)  return +(n / 1e3).toFixed(2)  + 'K';
+      return String(n);
+    }
+
     async function apiVal(action, extra = {}) {
       try {
         const res = await fetch('/api/val', {
@@ -3842,9 +3863,17 @@ ${line}
       const sel = document.getElementById('vf-narrative');
       sel.innerHTML = '<option value=""></option>' +
         VAL_NARRATIVES.map(n => `<option value="${n}">${n}</option>`).join('');
-      VF.forEach(k => { document.getElementById('vf-' + k).value = p ? (p[k] ?? '') : ''; });
+      VF.forEach(k => {
+        const v = p ? (p[k] ?? '') : '';
+        document.getElementById('vf-' + k).value =
+          (VF_SHORT.includes(k) && v !== '') ? fmtShort(v) : v;
+      });
       document.getElementById('vf-ticker').disabled = !!p;   // ticker là khoá chính, sửa = tạo bản ghi lạc
-      document.getElementById('vf-delete').style.display = p ? '' : 'none';
+      const del = document.getElementById('vf-delete');
+      del.style.display = p ? '' : 'none';
+      del.classList.remove('confirm');
+      del.textContent = 'Xoá';
+      vfDelArmed = false;
       document.getElementById('val-form-title').textContent = p ? `Sửa ${p.ticker}` : 'Thêm dự án';
       document.getElementById('vf-error').style.display = 'none';
       document.getElementById('val-form-modal').classList.add('open');
@@ -3853,7 +3882,19 @@ ${line}
     async function saveValProject() {
       const err = document.getElementById('vf-error');
       const project = {};
-      VF.forEach(k => { project[k] = document.getElementById('vf-' + k).value.trim(); });
+      let badShort = '';
+      VF.forEach(k => {
+        const raw = document.getElementById('vf-' + k).value.trim();
+        if (!VF_SHORT.includes(k) || !raw) { project[k] = raw; return; }
+        const n = parseSupply(raw);          // hiểu 6.8M · 10B · số thường
+        if (!isFinite(n)) { badShort = raw; project[k] = ''; return; }
+        project[k] = n;
+      });
+      if (badShort) {
+        err.textContent = `Không đọc được "${badShort}" — viết kiểu 6.8M hoặc 10B`;
+        err.style.display = '';
+        return;
+      }
       if (vfEditing) project.ticker = vfEditing;
       const r = await apiVal(vfEditing ? 'update' : 'add', { project, ticker: vfEditing || project.ticker });
       if (!r.ok) {
@@ -3869,8 +3910,20 @@ ${line}
       renderAll(); renderValList();
     }
 
+    let vfDelArmed = false;
     async function deleteValProject() {
       if (!vfEditing) return;
+      const btn = document.getElementById('vf-delete');
+      if (!vfDelArmed) {                 // xoá không hoàn tác được → hỏi lại một nhịp
+        vfDelArmed = true;
+        btn.classList.add('confirm');
+        btn.textContent = 'Chắc chưa?';
+        setTimeout(() => { vfDelArmed = false; btn.classList.remove('confirm'); btn.textContent = 'Xoá'; }, 4000);
+        return;
+      }
+      vfDelArmed = false;
+      btn.classList.remove('confirm');
+      btn.textContent = 'Xoá';
       const r = await apiVal('delete', { ticker: vfEditing });
       if (!r.ok) {
         const err = document.getElementById('vf-error');
@@ -3894,8 +3947,6 @@ ${line}
       const row = e.target.closest('.val-row');
       if (row) openValForm(row.dataset.ticker);
     });
-    document.getElementById('vf-cancel').addEventListener('click',
-      () => document.getElementById('val-form-modal').classList.remove('open'));
     document.getElementById('val-form-close').addEventListener('click',
       () => document.getElementById('val-form-modal').classList.remove('open'));
     document.getElementById('vf-save').addEventListener('click', saveValProject);
