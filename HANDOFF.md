@@ -15,8 +15,7 @@
 
 ## Tổng quan
 
-> ⚠️ **Đang giữa đợt rebuild theo Figma mới** (bắt đầu 2026-09-21).
-> **CV và Valuation đã build xong theo thiết kế mới. AI và Work vẫn layout cũ** — navbar dùng chung nên 2 tab đó đã ăn màu mới nhưng nội dung vẫn rộng 900 và chạy bằng lưới `--row` cũ, nhìn sẽ lệch cho tới khi rebuild nốt.
+> ✅ **Cả 4 tab đã rebuild xong theo Figma mới** (21–22/09/2026). Quy luật thiết kế dùng chung nằm ở **`DESIGN_SYSTEM.md`** — đọc file đó trước khi động vào bất cứ thứ gì về giao diện.
 > Figma là **nguồn sự thật** cho mọi thứ hình ảnh: file `qPitw8s3XP5ennmBmhzYQF` · frame CV `55:2` · Valuation `60:66` · AI `70:33` · Work `71:121`, mỗi frame **1424×944**.
 > Thứ tự ưu tiên khi mâu thuẫn: `REBUILD_SPEC_V3_VALUATION.md` > Figma > spec v2 > spec v1.
 
@@ -79,13 +78,26 @@ Ba khối **Figma không vẽ nhưng vẫn giữ** (frame chỉ cao 944 nên c�
 
 ## Tab AI (hub bài viết)
 
+**Đã rebuild theo Figma `70:33` (2026-09-22).** 4 card **656×368**, lưới 2×2 khe 16 (`656×2+16 = 1328`). Card trắng radius 8 + bóng, **header đen cao 40 chữ amber Bold 15** canh giữa. Mỗi bài là một chip 32: tiêu đề trái · ngày phải.
+
+
 - 4 box khai trong **`AI_HUBS`**: INSIGHTS · LEARN · TOOLS · BUILD. Mỗi box cao **12 hàng** (tên hub 1 hàng · danh sách bài 11 hàng tự cuộn), desktop 2 cột / mobile 1 cột. Mỗi bài 1 hàng: tiêu đề (mở link, `target=_blank`) + ngày (`fmtDate`, mới nhất lên đầu).
 - Box **chỉ có tên hub, KHÔNG dòng mô tả**; hub rỗng để trống luôn, không có chữ "Chưa có bài nào" (user chốt "chỉ cần header").
 - **KHÔNG viết CSS riêng cho tab AI**: box dùng lại nguyên class box Valuation (`.val-card` + `.val-card-label.calc-card-label.vc-q1`, nút `+` nằm cạnh tên hub đúng chỗ icon ⓘ); `.ai-row`/`.ai-title`/`.ai-date`/`.ai-list` **gộp thẳng vào định nghĩa dùng chung** với `.danger-row`/`.narrative-row`/`.wlb-row`. Sửa màu/nhịp 1 chỗ là cả site đổi theo.
 - **Dịch (khác Valuation): tab AI dịch CẢ tiêu đề bài viết** VI→EN qua `gtranslate()` (dùng chung với Airdrop). Bản dịch chỉ nằm trong RAM (`aiTitlesEN`, map id→tiêu đề EN), **KV luôn giữ tiêu đề gốc**; thêm/sửa/xoá xong `applyAiPosts()` đặt `aiTitlesEN = null` để dịch lại.
 - Admin: nút "Admin" thành "+" khi mở khoá; mỗi hub có "+" riêng (thêm thẳng vào hub đó), mỗi bài có "⋮" để sửa/xoá. Ngày đăng tự điền hôm nay, sửa tay được.
 
-## Tab Airdrop
+## Tab Airdrop (nav hiển thị "Work")
+
+**Đã rebuild theo Figma `71:121` (2026-09-22).**
+
+- Card **656**, header đen 40 chia **3 vùng**: logo tròn 24 + tên dự án **trái** (Bold 15 amber) · `high-potential / narrative` **giữa** (Bold 12 amber) · `rank: $` **phải**.
+- **Card cùng rank dàn ngang 2 cột** (656×2 + khe 16 = 1328), card khác rank cách nhau **48** — ranh giới nhóm nhìn ra ngay nên đã **bỏ nhãn nhóm** "Income"/"Rank S" (Figma cũng không vẽ).
+- `align-items: start` để card ít task không bị kéo cao bằng card nhiều task.
+- Thân card: nhãn nhóm 32 (Bold 12 đen) → chip 32 → nhãn → chip…, mũi tên amber bên phải.
+- Kho đang lưu `potential` dạng **số 1–3** (chưa migrate sang 2 mức như spec v2) → client quy đổi `≥2 = high-potential`.
+
+> ⚠️ **Hệ màu phân biệt rank bằng MÀU đã bỏ hẳn** (tím S · xanh dương A · xanh lá B). Thiết kế mới chỉ có đen · amber · xám; rank đọc bằng **chữ**.
 
 Card Work to Earn đọc từ KV, thanh lọc rank `$ · S · A · B · C` — chi tiết luật ở mục "WTE Cards" bên dưới. Tiêu đề màn: "Work to Earn".
 
@@ -400,15 +412,15 @@ highlights.txt + highlights/  — ảnh Highlights ở CV (mỗi dòng "tên-ả
 
 ## Pending / Known Issues
 
-### Việc còn lại của đợt rebuild (ưu tiên)
+### Việc còn lại (ưu tiên)
 
-1. **Tab AI và Work chưa rebuild** — vẫn nội dung rộng 900 + lưới `--row` cũ, trong khi navbar đã 1424. Chưa đọc frame Figma `70:33` và `71:121`. Popup thì đã ăn theo hệ mới rồi.
-2. **Badge rank tab Work vẫn gradient tím→xanh** (`--brand-1`/`--brand-2`) — 2 token này chưa đổi sang palette mới, dọn khi rebuild tab Work.
-3. **CSS Valuation cũ vẫn còn** ở giữa khối `<style>`, bị khối mới ở cuối đè lên. Giữ vì dùng chung class với AI + Work. **Xoá khi rebuild xong 2 tab đó.**
+1. **Kiểm mobile trên máy thật.** Chụp ảnh bằng Chrome headless **không mô phỏng được viewport mobile**: đặt `--window-size=390,700` thì `document.documentElement.clientWidth` vẫn ra **494**, và `--force-device-scale-factor=1` không đổi được. Ảnh chụp bị *cắt* ở 390 nên trông như tràn ngang, dù script đo cho thấy **không phần tử nào vượt viewport**. → Mobile phải mở bằng điện thoại thật hoặc DevTools device mode mới kết luận được.
+2. **Xoá khối CSS cũ** đang nằm giữa `<style>` (Valuation + AI + Work), bị các khối mới ở cuối đè lên. Giờ cả 4 tab đã rebuild nên an toàn để xoá — file sẽ gọn đi đáng kể.
+3. **`potential` trong KV vẫn là số 1–3**, spec v2 chốt chỉ còn `high-potential` / `low-potential`. Client đang quy đổi tạm; nên migrate cho đúng kho.
 4. **`right2.svg` không còn code nào dùng** sau khi bỏ box Watchlist.
-5. **36/78 dự án chưa có `atl`** — 8 dự án không có cặp Binance, còn lại do ATH rơi quá sát ngày lên sàn nên không có khoảng trước ATH. Đúng theo luật, không phải lỗi.
-6. **Figma vẽ TIA là `modular`** — KV ghi `layer-1`. **KV đúng**, `modular` là chữ bịa trong mock, không nằm trong 15 slug.
-7. **Agent (chú mèo)** — mới có vỏ, bấm vào chỉ hiện "coming soon". Bot đã đặt sẵn trong repo để sau này Agent ở chung chỗ.
+5. **36/78 dự án chưa có `preAth`** — 1 là râu nến listing (NEWT, bot tự nhận ra), còn lại do ATH quá sát ngày lên sàn. Đúng theo luật, không phải lỗi.
+6. **Figma vẽ TIA là `modular`** — KV ghi `layer-1`. **KV đúng**, `modular` không nằm trong 15 slug.
+7. **Agent (chú mèo)** — mới có vỏ, bấm vào hiện "coming soon". Bot đã đặt sẵn trong repo để Agent sau này ở chung chỗ.
 
 ### Tồn đọng cũ
 
@@ -421,6 +433,12 @@ highlights.txt + highlights/  — ảnh Highlights ở CV (mỗi dòng "tên-ả
 ---
 
 ## Decisions Log
+
+- 2026-09-22: **Rút thang chữ còn đúng 3 cỡ: 18 / 15 / 12.** Bỏ hẳn 21. Phân cấp làm bằng **cỡ + đậm/thường + đen/xám**, không thêm cỡ mới. Hệ quả: tên người 21→18, và tagline 18→15 vì **tên phải là thứ 18 duy nhất ở hero** — không để hai thứ cùng cấp cạnh nhau. Toàn bộ quy luật ghi ở `DESIGN_SYSTEM.md`.
+- 2026-09-22: **Rút quy luật thiết kế ra file riêng trước khi build** (`DESIGN_SYSTEM.md`), bằng cách đọc cả 4 frame Figma rồi đối chiếu. Phát hiện Figma **tự mâu thuẫn**: máng VI/EN là `#D9D9D9` ở frame Valuation nhưng `#ABABAB` ở AI/Work → chốt dùng `--chip`, bớt một màu. Làm vậy vì trước đó mỗi tab build một kiểu, sửa chỗ này lệch chỗ kia.
+- 2026-09-22: **VI/EN thống nhất VI trái · EN phải ở cả 4 tab** (đúng Figma). Trước đó Valuation là VI-EN còn AI/Work là EN-VI.
+- 2026-09-22: **Card Work cùng rank dàn ngang 2 cột, khác rank cách 48.** Trước đó mỗi card chiếm nửa màn rồi xếp dọc → phí một nửa bề ngang. Khoảng cách đủ rõ nên bỏ luôn nhãn nhóm "Income"/"Rank S".
+- 2026-09-22: **Trả lại ô tròn logo 24px cạnh tên dự án.** Hôm trước tôi ẩn đi vì Figma không vẽ — user yêu cầu giữ.
 
 - 2026-09-22: **Bot lấy giá đặt TRONG repo cv, chạy Docker trên PC nhà.** User chốt: *"bot đặt luôn trong dự án này, sau này còn triển khai agent mà"* + *"chạy docker ngay trên PC này"*. Trước đó spec v3 định đặt bot ở dự án `binance` — bỏ hướng đó. Hệ quả: repo không còn thuần "website tĩnh 1 file", `CLAUDE.md` mô tả cũ cần biết là đã lỗi thời. Đổi lại thì Agent sau này ở chung chỗ với bot, không phải nói chuyện xuyên 2 repo.
 - 2026-09-22: **Bot không cài package nào.** Node 22 đã có `fetch`, nên `Dockerfile` chỉ `COPY` đúng 1 file js. Không `package.json`, không `node_modules`, không lockfile phải bảo trì. Lịch chạy tự viết bằng `setTimeout` thay vì kéo `node-cron` về.
@@ -562,6 +580,9 @@ highlights.txt + highlights/  — ảnh Highlights ở CV (mỗi dòng "tên-ả
 - 2026-08-03 (session 3): **Thêm icon info + popup giải thích 3 box Valuation + toggle EN|VI**, đồng bộ hoá luôn với toggle ngôn ngữ ở Airdrop (dropdown cũ → cùng component pill EN|VI), dịch VI cho toàn bộ nhãn UI tĩnh của Valuation (không đụng data), đổi chú thích ticker `(low)/(high)` → `(<$300M)/(>$300M)`, bỏ tiêu đề lặp trong popup bảng TGE. Xem chi tiết mục "Info popup (icon "i") + toggle EN|VI" ở trên. `info.svg` (đã có sẵn trong repo nhưng chưa từng được dùng/commit) giờ chính thức được dùng làm icon giải thích.
 
 ## Failed Approaches
+
+- 2026-09-22: **Chẩn đoán nhầm "tràn ngang trên mobile".** Ảnh headless ở `--window-size=390` trông như card và navbar bị cắt, nên tôi đi sửa CSS (cho dòng `high-potential` xuống hàng, thêm `min-width: 0`). Chạy script đo thật mới thấy `clientWidth=494` chứ không phải 390 — **headless Chrome layout ở 494 rồi chụp khung 390**, nên ảnh bị *cắt* chứ trang không hề tràn; script cũng xác nhận không phần tử nào vượt viewport. → **Đừng kết luận layout từ ảnh headless ở cỡ mobile.** Muốn chắc thì chạy script đo `getBoundingClientRect()` hoặc mở máy thật. Mấy thay đổi đã làm không có hại (vẫn là phòng thủ đúng) nhưng lý do thì sai.
+- 2026-09-22: Sửa CSS xong chụp production thấy **vẫn giao diện cũ** → tưởng thua specificity, đi dựng server cục bộ kiểm thì CSS chạy đúng. Hoá ra chỉ là **deploy chưa lan hết edge** (`cf-cache-status: DYNAMIC`, không phải cache). → Chờ thêm rồi chụp lại, đừng vội sửa CSS.
 
 - 2026-09-22: Chuyển nguồn data sang KV nhưng **quên `narrativeRanking()` vẫn đọc `e.xTGEm`** — cột K của Sheet tính sẵn, đã biến mất cùng Sheet. Box "Narrative đang hot" ra "Chưa đủ dữ liệu" ngay trên production. Chính spec v3 đã ghi phải chuyển box này sang tự tính mà mình bỏ qua. → **Bỏ một nguồn data thì grep TOÀN BỘ field mà nguồn đó từng cấp**, không chỉ chỗ gọi hàm fetch.
 - 2026-09-22: Nút ✕ của 2 popup mới **không hiện**. `.modal-corner-close` là `position: absolute`, nhưng chỉ `#predict-modal .wl-modal` có `position: relative` — popup khác neo vào backdrop (`position: fixed`) nên ✕ bay ra góc màn hình. → Thêm `position: relative` vào `.wl-modal` dùng chung. **Copy một component thì kiểm luôn các thuộc tính neo của nó**, đừng chỉ copy markup.
