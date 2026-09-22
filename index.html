@@ -1559,6 +1559,11 @@
        Đặt cuối khối style để đè CSS cũ ở trên (cùng cách đã làm với Valuation).
        ══════════════════════════════════════════════════════════════ */
     #ai-view, #airdrop-view { font-family: 'Inter', sans-serif; }
+    /* Chặn tràn ngang ở gốc: mọi ô lưới mặc định có min-width auto, chỉ cần
+       một chữ nowrap dài là cả trang bị đẩy rộng ra. */
+    #airdrop-view .wte-card, #airdrop-view .wte-section,
+    #ai-view .ai-hub, #ai-view .ai-row { min-width: 0; }
+    #ai-view .ai-row > * { min-width: 0; }
 
     #ai-view .ai-wrap,
     #airdrop-view .ard-wrap {
@@ -1828,6 +1833,17 @@
       #airdrop-view .wte-logo { width: 20px; height: 20px; }
       #airdrop-view .wte-rank-group { grid-template-columns: 1fr; }
       #airdrop-view #wte-cards { gap: 32px; }
+      /* Dòng "high-potential / narrative" để nowrap thì card KHÔNG co được dưới
+         bề ngang của nó → cả trang tràn ngang. Trên mobile cho nó xuống hàng
+         riêng trong header, và mọi ô lưới được phép co (min-width: 0). */
+      #airdrop-view .wte-card-head {
+        grid-template-columns: 1fr auto; row-gap: 2px; padding: 6px 8px;
+      }
+      #airdrop-view .wte-card-head > * { min-width: 0; }
+      #airdrop-view .wte-headline {
+        grid-column: 1 / -1; text-align: left; white-space: normal;
+      }
+      #airdrop-view .wte-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     }
 
   </style>
