@@ -1,7 +1,13 @@
 // Bot lấy giá hằng ngày cho tab Valuation.
 //
-//   CoinGecko  → atm (giá hiện tại) · ath · athDate     — cho TẤT CẢ dự án
-//   Binance    → atl (đáy trong khoảng [lên sàn → ngày ATH])  — cho dự án có binanceSymbol
+//   CoinGecko  → atm · ath · athDate · atl · atlDate    — cho TẤT CẢ dự án
+//   Binance    → preAth (đáy TRƯỚC khi lập ATH)          — cho dự án có binanceSymbol
+//
+// PHÂN BIỆT RÕ 2 CON SỐ ĐÁY (đừng lẫn, đã lẫn một lần rồi):
+//   atl     = đáy THẬT SỰ của token, đúng nghĩa all-time low. Lấy từ CoinGecko.
+//   preAth  = đáy trong khoảng [lên sàn → ngày ATH]. KHÔNG phải đáy lịch sử —
+//             nó là mức chiều sâu trước khi token bật lên đỉnh. Hiện ghép chung ô
+//             với ×ATH dạng "1,62 → 19,80".
 //
 // ⚠️ KHÔNG đụng `priceTGE`. Giá lúc TGE là dữ kiện lịch sử, chỉ có MỘT giá trị,
 //    do chủ site nhập tay và nằm ở key `val-projects`. Bot chỉ ghi `val-prices`.
@@ -64,6 +70,8 @@ async function fetchCoinGecko(projects) {
         atm: r.current_price ?? null,
         ath: r.ath ?? null,
         athDate: r.ath_date ? r.ath_date.slice(0, 10) : null,
+        atl: r.atl ?? null,                                   // đáy THẬT SỰ, đúng nghĩa all-time low
+        atlDate: r.atl_date ? r.atl_date.slice(0, 10) : null,
       };
     }
     if (i + 250 < ids.length) await sleep(15000);
@@ -71,9 +79,10 @@ async function fetchCoinGecko(projects) {
   return out;
 }
 
-// ── 3. Binance: đáy trong khoảng [lên sàn → ngày ATH] ───────────────
+// ── 3. Binance: đáy TRƯỚC khi lập ATH ───────────────────────────────
 // Bỏ NẾN ĐẦU TIÊN (ngày lên sàn) vì râu nến hôm đó không phải giá trade được.
-async function fetchAtl(symbol, athDate) {
+// Đây KHÔNG phải all-time low — xem ghi chú đầu file.
+async function fetchPreAth(symbol, athDate) {
   if (!symbol || !athDate) return null;
   const athMs = Date.parse(athDate + 'T23:59:59Z');
   if (!Number.isFinite(athMs)) return null;
@@ -102,7 +111,7 @@ async function fetchAtl(symbol, athDate) {
       if (low > 0 && low < lo) { lo = low; loAt = c[0]; }
     }
     if (!Number.isFinite(lo)) return null;
-    return { atl: lo, atlDate: new Date(loAt).toISOString().slice(0, 10) };
+    return { preAth: lo, preAthDate: new Date(loAt).toISOString().slice(0, 10) };
   }
   return null;
 }
@@ -146,7 +155,7 @@ async function runOnce() {
   log(`CoinGecko trả ${Object.keys(cg).length} / ${projects.length}`);
 
   const prices = {};
-  let nAtl = 0, nSkip = 0;
+  let nPre = 0, nSkip = 0;
   for (const p of projects) {
     const row = {};
     const c = p.cgId ? cg[p.cgId] : null;
@@ -154,10 +163,15 @@ async function runOnce() {
       if (c.atm != null) row.atm = c.atm;
       if (c.ath != null) row.ath = c.ath;
       if (c.athDate) row.athDate = c.athDate;
+      if (c.atl != null) row.atl = c.atl;                    // đáy thật sự
+      if (c.atlDate) row.atlDate = c.atlDate;
     }
-    if (p.binanceSymbol && row.athDate) {
-      const a = await fetchAtl(p.binanceSymbol, row.athDate);
-      if (a) { row.atl = a.atl; row.atlDate = a.atlDate; nAtl++; } else nSkip++;
+    // Đáy trước ATH chỉ có nghĩa khi ATH cách ngày TGE hơn 1 tuần — trong 1 tuần
+    // thì "đỉnh" đó là râu nến listing, không phải đỉnh thật (xem luật ở index.html).
+    if (p.binanceSymbol && row.athDate && p.tgeDate
+        && Date.parse(row.athDate) - Date.parse(p.tgeDate) > 7 * 86400000) {
+      const a = await fetchPreAth(p.binanceSymbol, row.athDate);
+      if (a) { row.preAth = a.preAth; row.preAthDate = a.preAthDate; nPre++; } else nSkip++;
       await sleep(120);
     }
     if (Object.keys(row).length) {
@@ -166,7 +180,8 @@ async function runOnce() {
     }
   }
 
-  log(`có giá: ${Object.keys(prices).length} · có đáy: ${nAtl} · không tính được đáy: ${nSkip}`);
+  const nAtl = Object.values(prices).filter(v => v.atl != null).length;
+  log(`có giá: ${Object.keys(prices).length} · có ATL: ${nAtl} · có đáy-trước-ATH: ${nPre} · bỏ qua: ${nSkip}`);
   log('đã ghi:', await writePrices(prices));
   log(`xong sau ${Math.round((Date.now() - t0) / 1000)}s`);
 }

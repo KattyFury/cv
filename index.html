@@ -1312,6 +1312,8 @@
     #valuation-view #tge-section .val-table tbody td.td-ticker { font-weight: 400; }
     #valuation-view #tge-section .val-table tbody td.td-ticker.fdv-hi { font-weight: 700; }
     #valuation-view #tge-section .val-table tbody td.td-multi { color: var(--ink) !important; font-size: 12px; font-weight: 700; }
+    /* Ô ×ATH mang 2 số nên mũi tên phải nhạt để không cạnh tranh với con số */
+    #valuation-view .ath-arrow { color: var(--sub2); font-weight: 400; margin: 0 2px; }
     #valuation-view .val-table .ck { min-width: 0 !important; }
     #valuation-view .td-cap, #valuation-view .td-size { display: none; }
 
@@ -1710,8 +1712,8 @@
                 <th><span class="ck">Narrative</span></th>
                 <th><span class="ck" id="tge-date-th">TGE</span></th>
                 <th><span class="ck">×TGE</span></th>
-                <th><span class="ck">×ATL</span></th>
                 <th><span class="ck">×ATH</span></th>
+                <th><span class="ck">×ATL</span></th>
                 <th><span class="ck">×ATM</span></th>
               </tr>
             </thead>
@@ -2546,7 +2548,8 @@ ${line}
               priceTGE:     p.priceTGE,
               ath:          px.ath || 0,
               athDate:      px.athDate || '',
-              atl:          px.atl || 0,
+              preAth:       px.preAth || 0,      // đáy TRƯỚC khi lập ATH — ghép chung ô với ×ATH
+              atl:          px.atl || 0,         // đáy THẬT SỰ (all-time low), đứng cột riêng
               currentPrice: px.atm || 0,
             };
           });
@@ -2695,23 +2698,31 @@ ${line}
 
       tbody.innerHTML = sorted.map(e => {
         const xTGE  = multiple(e);
-        // ATH cùng ngày TGE = râu nến listing, không tính
-        const athIntraday = e.athDate && e.tgeDate &&
-          Math.abs(new Date(e.athDate) - new Date(e.tgeDate)) < 24 * 3600 * 1000;
-        const xATH  = athIntraday ? 0 : xMult(e.ath, e);
+        // LUẬT ATH: chỉ tính là đỉnh thật nếu nó rơi SAU ngày TGE hơn MỘT TUẦN.
+        // Trong vòng 1 tuần thì đó là râu nến những ngày đầu lên sàn, không phải
+        // đỉnh do thị trường thật sự đẩy lên. (Trước 2026-09-22 ngưỡng là 24h.)
+        const ATH_MIN_DAYS = 7;
+        const athTooEarly = !e.athDate || !e.tgeDate ||
+          (new Date(e.athDate) - new Date(e.tgeDate)) <= ATH_MIN_DAYS * 86400000;
+        const xATH  = athTooEarly ? 0 : xMult(e.ath, e);
         const xATM  = xMult(e.currentPrice, e);
         const vcFDV = e.vcAlloc > 0 ? e.fundraising / (e.vcAlloc / 100) : 0;
         // Ticker ĐẬM = FDV cao (≥$300M) · THƯỜNG = thấp. Thay hẳn nhãn S/M (spec v3 §4)
         const hi = vcFDV >= FDV_SPLIT_MAIN ? ' fdv-hi' : '';
-        // ×ATL chờ job Binance ghi vào val-prices — chưa có data thì để gạch
-        const xATL = e.atl ? xMult(e.atl, e) : null;
+        const xATL = e.atl ? xMult(e.atl, e) : null;              // đáy thật sự
+        const xPre = e.preAth ? xMult(e.preAth, e) : null;         // đáy trước khi lập ATH
+        // Ô ×ATH mang 2 con số: đáy-trước-đỉnh → đỉnh. Đọc thành "chiều xuống bao nhiêu
+        // rồi mới bật lên bấy nhiêu" (OP: 1,62 → 19,80). Không có số trước thì hiện mình đỉnh.
+        const athCell = xATH > 0
+          ? (xPre > 0 ? `${fmtMult(xPre)} <span class="ath-arrow">→</span> ${fmtMult(xATH)}` : fmtMult(xATH))
+          : '—';
         return `<tr data-ticker="${e.ticker}" class="${adminUnlocked ? 'row-editable' : ''}">
           <td class="td-ticker${hi}"><span class="ck">${e.ticker}</span></td>
           <td class="td-narrative"><span class="ck">${e.type || '—'}</span></td>
           <td class="td-date"><span class="ck">${fmtDate(e.tgeDate)}</span></td>
           <td class="td-multi"><span class="ck">${fmtMult(xTGE)}</span></td>
+          <td class="td-multi td-ath"><span class="ck">${athCell}</span></td>
           <td class="td-multi"><span class="ck">${fmtMult(xATL)}</span></td>
-          <td class="td-multi"><span class="ck">${fmtMult(xATH)}</span></td>
           <td class="td-multi"><span class="ck">${fmtMult(xATM, 3)}</span></td>
         </tr>`;
       }).join('');
@@ -2727,8 +2738,8 @@ ${line}
           <th><span class="ck">Narrative</span></th>
           <th><span class="ck">${document.getElementById('tge-date-th').textContent}</span></th>
           <th><span class="ck">×TGE</span></th>
-          <th><span class="ck">×ATL</span></th>
           <th><span class="ck">×ATH</span></th>
+          <th><span class="ck">×ATL</span></th>
           <th><span class="ck">×ATM</span></th>
         </tr></thead>
         <tbody>${tbody.innerHTML}</tbody>
