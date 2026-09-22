@@ -103,13 +103,26 @@ export async function onRequestPost({ request, env }) {
 
   const kv = env.WORK;
 
-  // Job lấy giá hằng ngày ghi vào key RIÊNG, không đụng data nhập tay
+  // Job lấy giá hằng ngày ghi vào key RIÊNG, không đụng data nhập tay.
+  //
+  // ⚠️ `priceTGE` KHÔNG nằm trong danh sách này và không bao giờ được nằm:
+  // giá lúc TGE là dữ kiện lịch sử, chỉ có MỘT giá trị duy nhất, do chủ site
+  // nhập tay và cất ở val-projects. Job chỉ lấy thứ thay đổi theo ngày.
+  // Lọc theo whitelist để một job viết ẩu cũng không ghi đè được data nhập tay.
+  const PRICE_FIELDS = ['atm', 'ath', 'athDate', 'atl', 'atlDate', 'updatedAt'];
   if (body.action === 'prices') {
     if (!body.prices || typeof body.prices !== 'object') {
       return json({ ok: false, error: 'bad-prices' }, 400);
     }
-    await kv.put(KEY_PRICES, JSON.stringify(body.prices));
-    return json({ ok: true, count: Object.keys(body.prices).length });
+    const clean_ = {};
+    for (const [ticker, v] of Object.entries(body.prices)) {
+      if (!v || typeof v !== 'object') continue;
+      const row = {};
+      for (const f of PRICE_FIELDS) if (v[f] !== undefined) row[f] = v[f];
+      if (Object.keys(row).length) clean_[clean(ticker, 20).toUpperCase()] = row;
+    }
+    await kv.put(KEY_PRICES, JSON.stringify(clean_));
+    return json({ ok: true, count: Object.keys(clean_).length });
   }
 
   const projects = await readJson(kv, KEY_PROJECTS, []);
