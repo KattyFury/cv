@@ -110,7 +110,7 @@ export async function onRequestPost({ request, env }) {
   // nhập tay và cất ở val-projects. Job chỉ lấy thứ thay đổi theo ngày.
   // Lọc theo whitelist để một job viết ẩu cũng không ghi đè được data nhập tay.
   const PRICE_FIELDS = ['atm', 'ath', 'athDate', 'atl', 'atlDate',
-                       'preAth', 'preAthDate', 'updatedAt'];
+                       'preAth', 'preAthDate', 'athWick', 'updatedAt'];
   if (body.action === 'prices') {
     if (!body.prices || typeof body.prices !== 'object') {
       return json({ ok: false, error: 'bad-prices' }, 400);

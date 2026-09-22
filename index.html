@@ -2549,6 +2549,7 @@ ${line}
               ath:          px.ath || 0,
               athDate:      px.athDate || '',
               preAth:       px.preAth || 0,      // đáy TRƯỚC khi lập ATH — ghép chung ô với ×ATH
+              athWick:      !!px.athWick,        // bot xác nhận ATH rơi đúng ngày mở giao dịch
               atl:          px.atl || 0,         // đáy THẬT SỰ (all-time low), đứng cột riêng
               currentPrice: px.atm || 0,
             };
@@ -2702,7 +2703,10 @@ ${line}
         // Trong vòng 1 tuần thì đó là râu nến những ngày đầu lên sàn, không phải
         // đỉnh do thị trường thật sự đẩy lên. (Trước 2026-09-22 ngưỡng là 24h.)
         const ATH_MIN_DAYS = 7;
-        const athTooEarly = !e.athDate || !e.tgeDate ||
+        // Ngoài luật 1 tuần, còn tin thêm cờ athWick do bot đặt: có sàn list token
+        // nhưng KHÔNG sàn nào có nến trước ATH → đỉnh đó rơi đúng ngày mở giao dịch,
+        // dù ngày TGE trong kho ghi cách đó cả tháng (NEWT là ca thật).
+        const athTooEarly = e.athWick || !e.athDate || !e.tgeDate ||
           (new Date(e.athDate) - new Date(e.tgeDate)) <= ATH_MIN_DAYS * 86400000;
         const xATH  = athTooEarly ? 0 : xMult(e.ath, e);
         const xATM  = xMult(e.currentPrice, e);

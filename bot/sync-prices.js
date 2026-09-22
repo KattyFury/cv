@@ -1,7 +1,7 @@
 // Bot lấy giá hằng ngày cho tab Valuation.
 //
 //   CoinGecko  → atm · ath · athDate · atl · atlDate    — cho TẤT CẢ dự án
-//   Binance    → preAth (đáy TRƯỚC khi lập ATH)          — cho dự án có binanceSymbol
+//   Binance / Gate / Bybit → preAth (đáy TRƯỚC khi lập ATH) — hỏi lần lượt tới khi ra
 //
 // PHÂN BIỆT RÕ 2 CON SỐ ĐÁY (đừng lẫn, đã lẫn một lần rồi):
 //   atl     = đáy THẬT SỰ của token, đúng nghĩa all-time low. Lấy từ CoinGecko.
@@ -79,41 +79,95 @@ async function fetchCoinGecko(projects) {
   return out;
 }
 
-// ── 3. Binance: đáy TRƯỚC khi lập ATH ───────────────────────────────
-// Bỏ NẾN ĐẦU TIÊN (ngày lên sàn) vì râu nến hôm đó không phải giá trade được.
-// Đây KHÔNG phải all-time low — xem ghi chú đầu file.
-async function fetchPreAth(symbol, athDate) {
+// ── 3. Đáy TRƯỚC khi lập ATH — hỏi lần lượt 3 sàn ───────────────────
+//
+// VÌ SAO CẦN NHIỀU SÀN: Binance nhiều khi list token MUỘN HƠN ngày nó lập ATH
+// (PLUME, NEWT là ví dụ thật) — lúc đó Binance không có nến nào trước đỉnh, trả
+// về rỗng. Sàn khác list sớm hơn thì vẫn có. Hỏi lần lượt, sàn nào ra kết quả
+// trước thì lấy.
+//
+// Bỏ NẾN ĐẦU TIÊN của mỗi sàn vì râu nến ngày mở giao dịch không phải giá
+// trade được. Đây KHÔNG phải all-time low — xem ghi chú đầu file.
+
+const sec = ms => Math.floor(ms / 1000);
+
+// Mỗi sàn trả về mảng nến với thứ tự cột khác nhau → chuẩn hoá về {t, low}.
+const EXCHANGES = [
+  {
+    name: 'binance',
+    // Binance phân trang theo startTime; kéo tới khi vượt ngày ATH.
+    async candles(sym, fromMs, toMs) {
+      for (const base of ['https://api.binance.com/api/v3', 'https://fapi.binance.com/fapi/v1']) {
+        let out = [], cursor = 0;
+        try {
+          for (let page = 0; page < 5; page++) {
+            const k = await getJson(`${base}/klines?symbol=${sym}&interval=1d&startTime=${cursor}&limit=1000`, 2);
+            if (!k.length) break;
+            out = out.concat(k.map(c => ({ t: c[0], low: parseFloat(c[3]) })));
+            if (k[k.length - 1][0] >= toMs || k.length < 1000) break;
+            cursor = k[k.length - 1][0] + 86400000;
+            await sleep(150);
+          }
+        } catch { continue; }
+        if (out.length) return out;
+      }
+      return [];
+    },
+  },
+  {
+    name: 'gate',
+    // Gate nhận thẳng cửa sổ from/to (giây). Cột: [ts, vol, close, high, low, open]
+    async candles(sym, fromMs, toMs) {
+      const pair = sym.replace(/USDT$/, '') + '_USDT';
+      const url = 'https://api.gateio.ws/api/v4/spot/candlesticks'
+        + `?currency_pair=${pair}&interval=1d&from=${sec(fromMs)}&to=${sec(toMs)}&limit=1000`;
+      const k = await getJson(url, 2).catch(() => null);
+      if (!Array.isArray(k)) return [];
+      return k.map(c => ({ t: Number(c[0]) * 1000, low: parseFloat(c[4]) }));
+    },
+  },
+  {
+    name: 'bybit',
+    // Bybit trả DESCENDING. Cột: [start, open, high, low, close, ...]
+    async candles(sym, fromMs, toMs) {
+      const url = 'https://api.bybit.com/v5/market/kline'
+        + `?category=spot&symbol=${sym}&interval=D&start=${fromMs}&end=${toMs}&limit=1000`;
+      const d = await getJson(url, 2).catch(() => null);
+      const k = d && d.result && d.result.list;
+      if (!Array.isArray(k) || !k.length) return [];
+      return k.map(c => ({ t: Number(c[0]), low: parseFloat(c[3]) })).sort((a, b) => a.t - b.t);
+    },
+  },
+];
+
+async function fetchPreAth(symbol, tgeDate, athDate) {
   if (!symbol || !athDate) return null;
   const athMs = Date.parse(athDate + 'T23:59:59Z');
+  const tgeMs = Date.parse((tgeDate || '1970-01-01') + 'T00:00:00Z');
   if (!Number.isFinite(athMs)) return null;
 
-  for (const base of ['https://api.binance.com/api/v3', 'https://fapi.binance.com/fapi/v1']) {
-    let candles = [], cursor = 0;
-    try {
-      for (let page = 0; page < 5; page++) {
-        const url = `${base}/klines?symbol=${symbol}&interval=1d&startTime=${cursor}&limit=1000`;
-        const k = await getJson(url, 2);
-        if (!k.length) break;
-        candles = candles.concat(k);
-        if (k[k.length - 1][0] >= athMs) break;     // đã vượt ngày ATH, không cần kéo nữa
-        cursor = k[k.length - 1][0] + 86400000;
-        if (k.length < 1000) break;
-        await sleep(150);
-      }
-    } catch { continue; }                            // symbol không có ở sàn này → thử sàn kia
-    if (!candles.length) continue;
+  let listedSomewhere = false;   // có sàn nào thật sự list token này không
 
-    const window = candles.slice(1).filter(c => c[0] < athMs);   // bỏ nến listing + chỉ lấy trước ATH
-    if (!window.length) return null;                             // ATH rơi ngay ngày lên sàn
+  for (const ex of EXCHANGES) {
+    let rows;
+    try { rows = await ex.candles(symbol, tgeMs, athMs); } catch { continue; }
+    if (!rows || !rows.length) continue;
+    listedSomewhere = true;
+
+    const win = rows.slice(1).filter(c => c.t < athMs && c.low > 0);   // bỏ nến mở giao dịch
+    if (!win.length) continue;                                          // sàn này list sau ATH → thử sàn kế
+
     let lo = Infinity, loAt = null;
-    for (const c of window) {
-      const low = parseFloat(c[3]);
-      if (low > 0 && low < lo) { lo = low; loAt = c[0]; }
-    }
-    if (!Number.isFinite(lo)) return null;
-    return { preAth: lo, preAthDate: new Date(loAt).toISOString().slice(0, 10) };
+    for (const c of win) if (c.low < lo) { lo = c.low; loAt = c.t; }
+    if (!Number.isFinite(lo)) continue;
+    return { preAth: lo, preAthDate: new Date(loAt).toISOString().slice(0, 10), src: ex.name };
   }
-  return null;
+
+  // Có sàn list nhưng KHÔNG sàn nào có nến trước ATH → token chỉ bắt đầu giao dịch
+  // đúng ngày lập đỉnh. Đó là râu nến listing, không phải đỉnh thật — kể cả khi
+  // ngày TGE ghi trong kho cách đó cả tháng (NEWT: TGE 08/05, lên sàn 24/06 = ngày ATH).
+  if (listedSomewhere) return { athWick: true };
+  return null;   // không sàn nào list → không kết luận được gì, cứ để nguyên ATH
 }
 
 // ── 4. Ghi kết quả ──────────────────────────────────────────────────
@@ -155,7 +209,8 @@ async function runOnce() {
   log(`CoinGecko trả ${Object.keys(cg).length} / ${projects.length}`);
 
   const prices = {};
-  let nPre = 0, nSkip = 0;
+  let nPre = 0, nSkip = 0, nWick = 0;
+  const bySrc = {};
   for (const p of projects) {
     const row = {};
     const c = p.cgId ? cg[p.cgId] : null;
@@ -168,10 +223,20 @@ async function runOnce() {
     }
     // Đáy trước ATH chỉ có nghĩa khi ATH cách ngày TGE hơn 1 tuần — trong 1 tuần
     // thì "đỉnh" đó là râu nến listing, không phải đỉnh thật (xem luật ở index.html).
-    if (p.binanceSymbol && row.athDate && p.tgeDate
+    // Đáy trước ATH chỉ có nghĩa khi ATH cách ngày TGE hơn 1 tuần — trong 1 tuần
+    // thì "đỉnh" đó là râu nến những ngày đầu lên sàn, không phải đỉnh thật.
+    // Không có binanceSymbol vẫn thử: đoán cặp từ chính ticker để hỏi Gate/Bybit.
+    if (row.athDate && p.tgeDate
         && Date.parse(row.athDate) - Date.parse(p.tgeDate) > 7 * 86400000) {
-      const a = await fetchPreAth(p.binanceSymbol, row.athDate);
-      if (a) { row.preAth = a.preAth; row.preAthDate = a.preAthDate; nPre++; } else nSkip++;
+      const sym = p.binanceSymbol || (p.ticker + 'USDT');
+      const a = await fetchPreAth(sym, p.tgeDate, row.athDate);
+      if (a && a.athWick) {
+        row.athWick = true;                      // ATH rơi đúng ngày mở giao dịch → client ẩn ×ATH
+        nWick++;
+      } else if (a) {
+        row.preAth = a.preAth; row.preAthDate = a.preAthDate;
+        nPre++; bySrc[a.src] = (bySrc[a.src] || 0) + 1;
+      } else nSkip++;
       await sleep(120);
     }
     if (Object.keys(row).length) {
@@ -181,7 +246,9 @@ async function runOnce() {
   }
 
   const nAtl = Object.values(prices).filter(v => v.atl != null).length;
-  log(`có giá: ${Object.keys(prices).length} · có ATL: ${nAtl} · có đáy-trước-ATH: ${nPre} · bỏ qua: ${nSkip}`);
+  const srcs = Object.entries(bySrc).map(([k, v]) => `${k} ${v}`).join(' · ') || 'không có';
+  log(`có giá: ${Object.keys(prices).length} · có ATL: ${nAtl} · có đáy-trước-ATH: ${nPre} (${srcs})`
+    + ` · ATH là râu nến listing: ${nWick} · không sàn nào list: ${nSkip}`);
   log('đã ghi:', await writePrices(prices));
   log(`xong sau ${Math.round((Date.now() - t0) / 1000)}s`);
 }
