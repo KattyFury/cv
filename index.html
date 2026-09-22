@@ -2842,9 +2842,10 @@ ${line}
       const groups = {};
       allEntries().forEach(e => {
         if (!e.type || !e.tgeDate || e.tgeDate < NARRATIVE_SINCE) return;
-        if (!e.xTGEm || e.xTGEm <= 0) return;
+        const m = multiple(e);
+        if (!(m > 0)) return;
         if (!groups[e.type]) groups[e.type] = [];
-        groups[e.type].push(e);
+        groups[e.type].push(m);
       });
 
       return Object.keys(groups)
@@ -2853,7 +2854,7 @@ ${line}
           return {
             name,
             count: list.length,
-            medTGE: median(list.map(e => e.xTGEm)),
+            medTGE: median(list),
           };
         })
         .sort((a, b) => b.medTGE - a.medTGE);
