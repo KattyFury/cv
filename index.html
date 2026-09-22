@@ -1716,6 +1716,34 @@
       #ai-view .ai-hub { height: 300px; }
     }
 
+    /* ── WORK: dọn nốt phần cũ còn sót ─────────────────────────────
+       Hệ màu cũ phân biệt rank bằng MÀU (tím/xanh dương/xanh lá) — bỏ hết.
+       Thiết kế mới chỉ có đen · amber · xám, rank đọc bằng CHỮ ("rank: S"). */
+    #airdrop-view .wte-task-item::before { content: none; }   /* dấu • cũ nằm NGOÀI chip */
+    #airdrop-view .wte-section--daily {
+      background: none; border-left: none; padding-left: 0;
+    }
+    #airdrop-view .wte-section--daily .wte-section-label { font-weight: 700; color: var(--ink); }
+    #airdrop-view .wte-section--daily .wte-task-text { color: var(--ink); font-weight: 400; }
+    #airdrop-view .wte-section-label { color: var(--ink) !important; }
+    #airdrop-view .wte-name:hover { color: var(--white) !important; }
+
+    /* Thanh lọc rank $ S A B C — cùng khuôn với toggle VI/EN */
+    #rank-filter-float .lang-toggle {
+      display: flex; height: 32px; padding: 0;
+      background: var(--chip); border: 0.5px solid #BFBFBF; border-radius: 8px;
+      box-shadow: var(--shadow); backdrop-filter: none; overflow: visible;
+    }
+    #rank-filter-float .lang-btn {
+      min-width: 36px; height: 100%; border: none; background: transparent; border-radius: 8px;
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
+      color: var(--sub2); cursor: pointer; padding: 0 8px;
+    }
+    #rank-filter-float .lang-btn.active,
+    #rank-filter-float #rf-income.active {
+      background: var(--ink); border: 0.5px solid var(--ink); color: var(--amber);
+    }
+
   </style>
 </head>
 <body>
