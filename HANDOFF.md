@@ -60,7 +60,10 @@ Ba khối **Figma không vẽ nhưng vẫn giữ** (frame chỉ cao 944 nên c�
 - **Cột rộng đúng 176, khe 16** — ô bảng phải liền nhau nên khe nằm trong *padding*: ô đầu 184 (`176+8`) · ô giữa 192 (`8+176+8`) ×5 · ô cuối 184. Tổng 1328, tâm cột `136·328·520·712·904·1096·1288`. **Đừng chia đều `1328/7`** (lệch 7px) và **đừng kéo giãn cột** cho vừa.
 - **Mỗi box luôn vẽ đủ 3 ô chip**, ô thừa để trống (`pad3()`).
 - **Tiêu đề box kiêm nút mở popup giải thích** — Figma không vẽ icon ⓘ nên trigger nằm ở chính tiêu đề (`bindBoxInfo()`, có guard null + nhận Enter/Space).
-- **Nút Admin** dùng chung `ADMIN_PASS` với AI + Work; mở khoá ở tab nào thì cả 3 cùng mở (`setAdminUnlocked` → `syncValAdminBtn`). Icon `+` cạnh camera đang **disabled** vì form thêm dự án phải chờ kho KV.
+- **Nút Admin** dùng chung `ADMIN_PASS` với AI + Work; mở khoá ở tab nào thì cả 3 cùng mở (`setAdminUnlocked` → `syncValAdminBtn`).
+- **Sửa data (từ 2026-09-22):** mở khoá xong, icon `+` mở popup **danh sách đầy đủ** — CHỈ hiện data nguồn, không hiện bội số. Bấm 1 dòng trong danh sách **hoặc bấm thẳng 1 dòng trong bảng** đều mở form sửa.
+- Form 9 trường. `ticker` bị khoá khi sửa vì là khoá chính — đổi nó là tạo ra bản ghi lạc thay vì sửa. Huỷ = dấu ✕ góc trên phải; 2 nút cân đối: **Xoá trái · Lưu phải**. Xoá **hỏi lại một nhịp** (bấm 1 lần đổi thành "Chắc chưa?" 4 giây) vì không hoàn tác được.
+- Ô "Gọi vốn" và "Total supply" nhận **viết tắt** `6.8M` / `10B`, đọc bằng `parseSupply()` có sẵn; mở form ra cũng hiện dạng viết tắt.
 
 <details><summary>Bảng cũ 6 cột (đã thay)</summary>
 
@@ -90,12 +93,18 @@ Card Work to Earn đọc từ KV, thanh lọc rank `$ · S · A · B · C` — c
   - `wte.js` — `GET /api/wte`, công khai, trả project Work to Earn có `visibility === 'public'`.
   - `private.js` — `POST /api/private`, cần `ADMIN_PASS`, CRUD task Work to Earn (cá nhân + public). Key KV: `personal-tasks`.
   - `ai.js` — `GET /api/ai` công khai + `POST /api/ai` cần `ADMIN_PASS`, CRUD bài viết tab AI. Key KV: `ai-posts`.
+  - `val.js` — `GET /api/val` công khai + `POST /api/val` cần `ADMIN_PASS`, CRUD dự án Valuation. **2 key KV tách riêng:** `val-projects` (data nhập tay, CHỈ admin ghi) · `val-prices` (giá, CHỈ job ghi). Tách ra để admin sửa dự án và job ghi giá không bao giờ đụng cùng một key.
 - Cả 3 dùng **CHUNG KV binding `WORK`** và **CHUNG 1 mật khẩu `ADMIN_PASS`** (đặt ở Cloudflare Dashboard, không nằm trong repo) → thêm endpoint mới không phải cấu hình gì thêm. Mở khoá admin ở tab nào thì cả 2 tab cùng mở (`setAdminUnlocked()` gọi `syncAiAdminBtn()`). Mật khẩu giữ trong `sessionStorage`, đóng trình duyệt là phải nhập lại; kiểm tra **ở server**, sai → 401 và không trả bất kỳ dữ liệu nào.
+- **cv KHÔNG còn đọc Google Sheet ở bất kỳ đâu** (từ 2026-09-22). Hai tab `DATA` và `Watchlist` vẫn giữ trên Drive để đối chiếu, giống tab `Work`. Apps Script `syncAll()` trong Sheet cũng hết tác dụng với site.
 - Nguồn data còn lại public, keyless, đọc thẳng client-side:
-  - **Google Sheets CSV** (gviz) — chỉ Valuation dùng (tab `DATA` + tab `Watchlist`). Airdrop **không còn đọc Sheet** từ 2026-08-09.
-  - **CoinGecko** free API — giá / ATH.
-  - **Google Translate** (gtx) — dịch VI→EN cho Airdrop + tab AI.
-- **Google Apps Script** (trong Sheet, chạy daily 2h) — sync ATH + current price vào tab DATA.
+  - **Google Translate** (gtx) — dịch VI→EN cho Work + tab AI.
+
+### Luật của `val.js`
+
+- **KHÔNG lưu bất kỳ bội số nào** (×TGE, ×ATL, ×ATH, ×ATM) — tất cả tính ở client lúc render. Bản cũ từng lưu sẵn ×TGE ở cột K của Sheet rồi dùng lẫn với số client tự tính, hai chỗ lệch nhau mà không ai biết.
+- **7 trường bắt buộc**: `ticker · tgeDate · narrative · fundraising · vcAlloc · totalSupply · priceTGE`. Thiếu một trong số đó → chặn lưu (404 `missing` kèm danh sách trường). `cgId` và `binanceSymbol` cho trống để nhập trước dự án chưa lên sàn.
+- **Narrative phải thuộc 15 slug.** Giá trị lạ → để trống cho admin thấy mà sửa, KHÔNG nhét bừa vào một nhóm (nhét bừa là làm lệch median của box Narrative).
+- ⚠️ **`priceTGE` không bao giờ bị job ghi đè.** Giá lúc TGE là dữ kiện lịch sử, chỉ có một giá trị, do chủ site nhập tay. Action `prices` có **whitelist trường**: chỉ nhận `atm · ath · athDate · atl · atlDate · updatedAt`, mọi trường khác bị loại — job viết ẩu cũng không chạm được data nhập tay.
 
 ---
 
@@ -151,6 +160,15 @@ Class chung **`.panel-head`**: **tiêu đề (`.val-intro`) bên TRÁI, cụm co
 | **Bấm được** (nút) | radius **24** · nền trắng · viền `--line2` · có bóng |
 | **Chỉ đọc** (chip dữ liệu) | radius **8** · nền `--chip` · không viền · không bóng |
 | Nút Admin / máng VI-EN | radius **8** + viền (ngoại lệ, đúng Figma) |
+
+**Màu nút (user chốt 2026-09-22):**
+
+| Hình | Màu |
+|---|---|
+| **Tròn** (radius 24) | nền **đen** `--ink` · chữ **amber** `--amber` · có bóng |
+| **Vuông** (radius 8) | nền **trắng** · chữ **đen** · viền `--line2` |
+
+Áp cho toàn site: 3 nút social ở CV, "Dự đoán FDV TGE", mọi nút trong popup, nút thử lại, nút Xoá đều là nút tròn → đen-amber. Nút Admin và máng VI/EN là nút vuông → giữ trắng-đen.
 
 Chữ: **Inter**. Cỡ bội số của 3 — `12 / 15 / 18 / 21`. Khoảng cách bội số của 8. Bước lưới 48 (`n đơn vị = 48n − 16`).
 
@@ -225,27 +243,35 @@ node test-admin.js                                                         # ch�
 ## Data Flow
 
 ```
-Google Sheet (DATA tab)
-  → Apps Script syncAll() [daily 2am]
-      → CoinGecko /coins/markets → ghi ATH (col J) + current price (col N)
-  → Website fetch CSV → parse → render
+Cloudflare KV `WORK`  (namespace b8fab2f8a83f45f0a023d2ba3ce78cde)
+  ├─ val-projects   ← admin ghi qua POST /api/val   (data nhập tay)
+  ├─ val-prices     ← job  ghi qua POST /api/val    (giá: atm · ath · atl)
+  ├─ personal-tasks ← tab Work
+  └─ ai-posts       ← tab AI
+        │
+        └─ GET /api/val → client gộp projects + prices → tính bội số → render
 ```
 
-### Sheet columns (tab DATA)
+### Hình dạng `val-projects` (1 dự án)
 
-| Col | Index | Field |
-|-----|-------|-------|
-| A | 0 | tgeDate (DD/MM/YYYY) |
-| B | 1 | ticker |
-| C | 2 | CoinGecko ID |
-| D | 3 | type (Layer-1, Layer-2...) |
-| E | 4 | fundraising ($M) |
-| F | 5 | vcAlloc (%) |
-| G | 6 | totalSupply |
-| H | 7 | priceTGE |
-| I | 8 | beforeATH (fill bằng `fetch-before-ath.js` chạy local) |
-| J | 9 | ATH (sync bởi Apps Script; bỏ trống nếu ATH cùng ngày TGE) |
-| N | 13 | currentPrice (sync bởi Apps Script) |
+| Trường | Kiểu | Ghi chú |
+|---|---|---|
+| `ticker` | string | KHOÁ CHÍNH, viết hoa. Form sửa khoá ô này lại |
+| `tgeDate` | `YYYY-MM-DD` | |
+| `narrative` | 1 trong 15 slug | chữ thường |
+| `fundraising` | number | USD. Form nhận viết tắt `178.5M` |
+| `vcAlloc` | number | phần trăm, lưu `17` |
+| `totalSupply` | number | Form nhận viết tắt `4.29B` |
+| `priceTGE` | number | **chỉ có 1 giá trị, nhập tay, job không đụng** |
+| `cgId` | string | CoinGecko id, cho trống |
+| `binanceSymbol` | string | vd `OPUSDT`, cho trống. 70/78 dự án có |
+
+### Hình dạng `val-prices` (1 dự án)
+
+```json
+"OP": { "atm": 0.0996, "ath": 4.865, "athDate": "2024-03-06",
+        "atl": 0.396, "atlDate": "2022-06-18", "updatedAt": "..." }
+```
 
 ### Apps Script
 
@@ -278,6 +304,9 @@ vcFDV = fundraising / (vcAlloc / 100)      → nhãn S (<$300M) / M (>$300M) qua
 Lọc token đang có **×ATM ≥ 15** (VC lãi 15×+, sell pressure cực đại). Backtest 17 token từng ở vùng này → 100% về đáy. Sort token TGE mới nhất lên đầu. TGE < 30 ngày mà đã vào vùng → badge **⚠ FAKE PUMP** (pump láo sắp về 0).
 
 ### Trending Narratives
+
+> ⚠️ Từ 2026-09-22 `narrativeRanking()` tự tính `multiple(e)` ở client. Trước đó nó đọc `e.xTGEm` — cột K của Sheet tính sẵn — nên khi bỏ Sheet thì box ra "Chưa đủ dữ liệu". **Không bao giờ lưu sẵn bội số ở kho nữa**, một nguồn duy nhất.
+
 
 Xếp hạng **TẤT CẢ** narrative có data từ 02/2025 (không lọc bỏ ai), theo **median ×TGE** — không dùng ×ATH vì 1 coin pump đơn lẻ về sau kéo cả nhóm trông "hot" dù ban đầu thị trường không tin. Kèm số deal `(n)` mờ cạnh tên để người xem tự đánh giá độ tin cậy mẫu.
 
@@ -320,6 +349,8 @@ icon.png                  — favicon + icon iPhone home screen (mèo-kính, m�
 pfp.webp                  — avatar hero CV
 REBUILD_SPEC.md           — khảo sát hiện trạng trước rebuild (đo từ commit 5f0afd6)
 REBUILD_SPEC_V3_VALUATION.md — SPEC ĐÃ CHỐT cho tab Valuation. Đọc trước khi động vào tab này
+functions/api/val.js      — GET công khai + POST cần ADMIN_PASS: CRUD dự án Valuation
+                            (key val-projects) + nhận giá từ job (key val-prices)
 info.svg / camera.svg / plus.svg / right2.svg
                           — icon Tabler v3.31.0, tô qua CSS mask. stroke để #000 (mask
                             không kế thừa được currentColor). right2.svg hiện KHÔNG còn
@@ -344,18 +375,18 @@ highlights.txt + highlights/  — ảnh Highlights ở CV (mỗi dòng "tên-ả
 
 ### Việc còn lại của đợt rebuild (ưu tiên)
 
-1. **Backend Valuation chưa dựng gì.** Spec đã chốt hết trong `REBUILD_SPEC_V3_VALUATION.md`, code thì chưa có dòng nào:
-   - `functions/api/val.js` — GET công khai + POST cần `ADMIN_PASS`
-   - KV 2 key: `val-projects` (admin ghi) · `val-prices` (job ghi). Binding `WORK` = namespace `b8fab2f8a83f45f0a023d2ba3ce78cde`
-   - Script chạy 1 lần chuyển 78 dòng từ Sheet sang KV
-   - Job hằng ngày đặt trong dự án `D:\Files\Claude\1_Agents\binance` (máy chạy 24/7), gọi **REST thẳng** rồi POST sang cv kèm `ADMIN_PASS`
-   - ⚠️ **Đã verify: `binance-cli` BỎ QUA `--start-time`** → không lấy được lịch sử, phải dùng `fetch` REST
-2. **Cột ×ATL đang trống toàn bộ** — chờ job Binance ghi `atl` vào `val-prices`. Code bảng đã sẵn sàng đọc `e.atl`.
-3. **Form thêm/sửa/xoá dự án** — nút Admin đã mở khoá được, nhưng icon `+` còn disabled vì chưa có kho KV. Yêu cầu của user: bấm `+` mở **danh sách đầy đủ**, sửa/xoá từng dòng, **chỉ hiện data nguồn**, không hiện ×TGE/×ATL/×ATH/×ATM.
-4. **Tab AI và Work chưa rebuild** — vẫn nội dung rộng 900 + lưới `--row` cũ, trong khi navbar đã 1424. Chưa đọc frame Figma `70:33` và `71:121`.
-5. **Narrative trong Sheet vẫn viết hoa** (`Layer-2`, `AI`). Client đang `toLowerCase()` lúc parse nên hiển thị đúng, nhưng chuẩn hoá thật phải làm lúc migrate sang KV. Figma vẽ TIA là `modular` — Sheet ghi `layer-1`, **Sheet đúng, `modular` là chữ bịa trong mock**.
-6. **Badge rank tab Work vẫn gradient tím→xanh** (`--brand-1`/`--brand-2`) — 2 token này chưa đổi sang palette mới, sẽ dọn khi rebuild tab Work.
-7. **CSS Valuation cũ vẫn còn** ở giữa khối `<style>`, bị khối mới ở cuối đè lên. Giữ vì nó dùng chung class với AI + Work. **Xoá khi rebuild xong 2 tab đó.**
+1. **Job lấy giá hằng ngày — việc backend DUY NHẤT còn thiếu.** Đặt trong dự án `D:\Files\Claude\1_Agents\binance` (máy chạy 24/7), mỗi ngày:
+   - CoinGecko `/coins/markets` → `atm`, `ath`, `athDate` cho cả 78 dự án
+   - Binance klines `interval=1d` → `atl` (đáy trong khoảng [lên sàn → ngày ATH]) cho 70 dự án có `binanceSymbol`
+   - `POST https://0xhieu.xyz/api/val` với `{ pass, action: 'prices', prices }`
+   - ⚠️ **Dùng `fetch` REST thẳng, KHÔNG dùng `binance-cli`** — đã verify: CLI bỏ qua `--start-time` nên không lấy được lịch sử.
+   - ⚠️ Binance trả **HTTP 451** cho server một số quốc gia (Apps Script từng dính) — đó là lý do job đặt ở máy nhà chứ không phải Cloudflare Worker.
+2. **Cột ×ATL đang trống toàn bộ** — hệ quả trực tiếp của mục 1. Code bảng đã sẵn sàng đọc `e.atl`.
+3. **Tab AI và Work chưa rebuild** — vẫn nội dung rộng 900 + lưới `--row` cũ, trong khi navbar đã 1424. Chưa đọc frame Figma `70:33` và `71:121`.
+4. **Badge rank tab Work vẫn gradient tím→xanh** (`--brand-1`/`--brand-2`) — 2 token này chưa đổi sang palette mới, sẽ dọn khi rebuild tab Work.
+5. **CSS Valuation cũ vẫn còn** ở giữa khối `<style>`, bị khối mới ở cuối đè lên. Giữ vì nó dùng chung class với AI + Work. **Xoá khi rebuild xong 2 tab đó.**
+6. **`right2.svg` không còn code nào dùng** sau khi bỏ box Watchlist.
+7. **Figma vẽ TIA là `modular`** — KV ghi `layer-1`. **KV đúng**, `modular` là chữ bịa trong mock, không nằm trong 15 slug.
 
 ### Tồn đọng cũ
 
@@ -368,6 +399,14 @@ highlights.txt + highlights/  — ảnh Highlights ở CV (mỗi dòng "tên-ả
 ---
 
 ## Decisions Log
+
+- 2026-09-22: **Bỏ hẳn Google Sheet, chuyển Valuation sang KV.** Lý do trực tiếp: user muốn nút `+` chạy được và bấm vào data thì sửa được — mà Sheet thì không ghi từ web được. Chuyển 78/78 dự án + giá hiện có vào KV, 70/78 có cặp Binance. **cv giờ không còn đọc Google Sheet ở bất kỳ đâu.** Migrate ghi thẳng vào KV bằng `CLOUDFLARE_API_TOKEN` (quyền KV Edit) nên không cần `ADMIN_PASS`.
+- 2026-09-22: **`priceTGE` không bao giờ để job ghi.** User chốt: *"giá TGE là do tôi nhập… thứ tôi cần fetch là ATH ATM chứ không cần fetch giá TGE mỗi ngày, vì giá đó vốn chỉ có 1."* Thiết kế 2 key vốn đã đúng vậy; khoá chặt thêm bằng **whitelist trường** trong action `prices` (chỉ `atm/ath/athDate/atl/atlDate/updatedAt`) để một job viết ẩu cũng không chạm được data nhập tay.
+- 2026-09-22: **Luật màu nút — tròn = đen-amber, vuông = trắng-đen.** User chốt. Áp toàn site. Nút Admin và máng VI/EN là nút vuông nên giữ trắng-đen.
+- 2026-09-22: **Ô nhập số dùng viết tắt `6.8M` / `10B`** thay vì gõ hết số 0. Đọc bằng `parseSupply()` đã có sẵn (xử lý K/M/B/T + dấu phân cách kiểu Việt/Mỹ) — không viết parser mới. Mở form ra cũng hiện dạng viết tắt.
+- 2026-09-22: **Xoá dự án hỏi lại một nhịp** (bấm 1 lần → "Chắc chưa?" 4 giây → bấm lại mới xoá) thay vì popup xác nhận riêng. Xoá không hoàn tác được nhưng cũng không đáng dựng thêm một tầng popup.
+- 2026-09-22: **Cột bảng đổi từ px sang %** (13.855 / 14.458). Ghim px thì bảng chỉ đúng ở đúng bề ngang 1424 — màn hẹp hơn tràn, rộng hơn thừa chỗ. % giữ nguyên tỉ lệ Figma ở mọi bề ngang. User bắt đúng: *"chỉ đo với full width, lẽ ra nên vừa màn hình với mọi frame."*
+- 2026-09-22: **Popup dựng lại theo hệ thiết kế mới.** Figma không vẽ popup nào nên suy từ luật đã có: thẻ nổi (radius 8, viền 0.5, bóng) · ô nhập radius 8 · nút tròn đen-amber. Áp cho MỌI popup vì chúng dùng chung class `.wl-modal` — tab AI và Work cũng ăn theo, coi như trả trước một phần việc rebuild 2 tab đó.
 
 - 2026-09-21: **Rebuild theo Figma mới — CV + Valuation xong, AI + Work chưa.** Palette đổi từ tím `#6155F5` + xanh `#34C759` sang **đen + amber `#FFA111`** (thương hiệu chốt: *mèo đen mắt amber*, chính là `icon.png`). Font Roboto → **Inter**. Nội dung 900 → 1328. Lý do đổi hàng loạt: user nói "tuân thủ thiết kế mới và bỏ thiết kế cũ đi", và navbar dùng chung cả 4 tab nên không thể đổi nửa vời. **Verify:** Chrome headless chụp 1424×944 đối chiếu ảnh render từ Figma, từng phần tử một.
 - 2026-09-21: **Bảng Valuation 6 → 7 cột, thêm `×ATL` đứng trước `×ATH`.** `×ATL` = **đáy thấp nhất trong khoảng [ngày lên sàn → ngày ATH]**, KHÔNG phải đáy toàn lịch sử. Kiểm trên 10 token thật: cách "đáy toàn lịch sử, ẩn nếu rơi sau ATH" chỉ hiện được **1/8** token (hầu hết alt 2022-2024 đang ở đáy lịch sử ngay lúc này), còn "đáy trước ATH" hiện **8/8**. Cách sau cũng kể đúng câu chuyện cần kể — OP: list 1,232 → rơi 0,396 (÷3) ngày 18/06/2022 → rồi mới lên 4,865.
@@ -498,6 +537,10 @@ highlights.txt + highlights/  — ảnh Highlights ở CV (mỗi dòng "tên-ả
 - 2026-08-03 (session 3): **Thêm icon info + popup giải thích 3 box Valuation + toggle EN|VI**, đồng bộ hoá luôn với toggle ngôn ngữ ở Airdrop (dropdown cũ → cùng component pill EN|VI), dịch VI cho toàn bộ nhãn UI tĩnh của Valuation (không đụng data), đổi chú thích ticker `(low)/(high)` → `(<$300M)/(>$300M)`, bỏ tiêu đề lặp trong popup bảng TGE. Xem chi tiết mục "Info popup (icon "i") + toggle EN|VI" ở trên. `info.svg` (đã có sẵn trong repo nhưng chưa từng được dùng/commit) giờ chính thức được dùng làm icon giải thích.
 
 ## Failed Approaches
+
+- 2026-09-22: Chuyển nguồn data sang KV nhưng **quên `narrativeRanking()` vẫn đọc `e.xTGEm`** — cột K của Sheet tính sẵn, đã biến mất cùng Sheet. Box "Narrative đang hot" ra "Chưa đủ dữ liệu" ngay trên production. Chính spec v3 đã ghi phải chuyển box này sang tự tính mà mình bỏ qua. → **Bỏ một nguồn data thì grep TOÀN BỘ field mà nguồn đó từng cấp**, không chỉ chỗ gọi hàm fetch.
+- 2026-09-22: Nút ✕ của 2 popup mới **không hiện**. `.modal-corner-close` là `position: absolute`, nhưng chỉ `#predict-modal .wl-modal` có `position: relative` — popup khác neo vào backdrop (`position: fixed`) nên ✕ bay ra góc màn hình. → Thêm `position: relative` vào `.wl-modal` dùng chung. **Copy một component thì kiểm luôn các thuộc tính neo của nó**, đừng chỉ copy markup.
+- 2026-09-22: Viết khối kiểm lỗi cho ô nhập viết tắt bằng cách `return` trong `forEach` rồi đoán trạng thái qua `style.display === ''` — `forEach` không dừng được vòng lặp và `''` cũng là trạng thái mặc định nên logic sai cả hai đầu. → Viết lại bằng một biến cờ. **`return` trong `forEach` chỉ bỏ qua một vòng, không thoát hàm.**
 
 - 2026-09-21: Bỏ box Watchlist khỏi HTML nhưng **quên gỡ nhãn `'wlb-title-text'`** trong `VAL_HEAD_LABELS` → `applyValHeadLabels()` chạy ở top-level gọi `document.getElementById('wlb-title-text').innerHTML` trên `null` → **ném lỗi giết TOÀN BỘ phần script còn lại**, `routeFromPath()` không chạy, site kẹt ở tab CV, bấm Valuation không ra gì. Triệu chứng đánh lừa: trang trông vẫn bình thường, chỉ là không chuyển tab được. → Đã thêm **guard null cho cả 3 vòng lặp** trong hàm đó. **Bài học: mọi vòng lặp `getElementById` chạy ở top-level phải bỏ qua id không tồn tại** — một phần tử bị xoá là chết cả trang.
 - 2026-09-21: Lặp lại đúng lỗi trên lần 2 khi gỡ 3 nút `info-*-btn` mà để nguyên `addEventListener` trỏ tới id đã xoá. Bắt được trước khi push nhờ grep lại id vừa xoá. → **Xoá phần tử nào thì grep ngay id đó trên toàn file**, đừng tin là mình nhớ hết chỗ dùng.
