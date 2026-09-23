@@ -1852,6 +1852,78 @@
       #airdrop-view .wte-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     }
 
+    /* ══════════════════════════════════════════════════════════════
+       MOBILE — THANG CHỮ CHỈ CÒN 2 CỠ: 15 và 12 (chốt 2026-09-23)
+       Desktop dùng 18/15/12; dưới 640px bỏ hẳn 18, mọi thứ dồn về 2 cỡ nhỏ:
+         15 Bold  = tiêu đề (tên người · tiêu đề mục · tiêu đề màn · tên card · vai trò)
+         12       = mọi thứ còn lại (thân bài · chip · bảng · nút · nhãn)
+       Phân cấp vẫn làm bằng đậm/thường + đen/xám, không bằng cỡ.
+       Khối này đặt CUỐI để đè mọi rule mobile viết trước đó.
+       ══════════════════════════════════════════════════════════════ */
+    @media (max-width: 640px) {
+
+      /* ── 15 Bold: tiêu đề ─────────────────────────────────────── */
+      h2,
+      .hero-handle,
+      .pfp-fallback,
+      #valuation-view .val-intro,
+      #ai-view .val-intro,
+      #airdrop-view .val-intro,
+      .hero-tagline,
+      .tl-role,
+      #ai-view .ai-hub .vc-q1,
+      #valuation-view .vc-q1,
+      #airdrop-view .wte-name,
+      .wl-modal-title { font-size: 15px; }
+
+      /* ── 12: mọi thứ còn lại ──────────────────────────────────── */
+      .hero-location,
+      .hero-belief,
+      .social-btn,
+      .tl-year,
+      .tl-bullets li,
+      .hl-caption,
+      .avail-list li,
+      .hl-empty,
+      footer,
+      #valuation-view .lang-dd-btn,
+      #valuation-view .lang-btn,
+      #ai-view .lang-dd-btn,
+      #ai-view .lang-btn,
+      #airdrop-view .lang-dd-btn,
+      #airdrop-view .lang-btn,
+      #valuation-view .predict-link,
+      #valuation-view .rt-item,
+      #valuation-view .danger-row,
+      #valuation-view .narrative-row,
+      #ai-view .ai-row,
+      #ai-view .ai-title,
+      #ai-view .ai-date,
+      #airdrop-view .wte-rank,
+      #airdrop-view .wte-headline,
+      #airdrop-view .wte-section-label,
+      #airdrop-view .wte-task-row,
+      #rank-filter-float .lang-btn,
+      .wl-modal .info-modal-body,
+      .wl-modal .calc-field input,
+      .wl-modal .calc-field select,
+      .wl-modal .predict-btn-primary,
+      .wl-modal .predict-btn-secondary,
+      .val-del-btn { font-size: 12px; }
+
+      /* Chữ 12 thì dòng 24 quá thưa — kéo về 20 */
+      .hero-belief, .tl-bullets li, .hl-caption, .avail-list li,
+      .wl-modal .info-modal-body { line-height: 20px; }
+
+      /* Nút thu theo cỡ chữ mới */
+      .social-btn { width: auto; padding: 0 12px; }
+      #valuation-view .predict-link { width: auto; min-width: 160px; padding: 0 16px; }
+
+      /* Mốc dọc của timeline bám theo chữ 12 */
+      .tl-year { line-height: 24px; }
+      .tl-role { line-height: 24px; }
+    }
+
   </style>
 </head>
 <body>
