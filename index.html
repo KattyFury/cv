@@ -1833,15 +1833,21 @@
       #airdrop-view .wte-logo { width: 20px; height: 20px; }
       #airdrop-view .wte-rank-group { grid-template-columns: 1fr; }
       #airdrop-view #wte-cards { gap: 32px; }
-      /* Dòng "high-potential / narrative" để nowrap thì card KHÔNG co được dưới
-         bề ngang của nó → cả trang tràn ngang. Trên mobile cho nó xuống hàng
-         riêng trong header, và mọi ô lưới được phép co (min-width: 0). */
+      /* Header card trên mobile: ĐÚNG 2 HÀNG
+           hàng 1 — tên trái · rank phải
+           hàng 2 — "high-potential / narrative" trải hết bề ngang
+         ⚠️ PHẢI chỉ định cả grid-row cho từng ô. Chỉ đặt `grid-column: 1/-1`
+         cho headline thôi là grid tự xếp rank xuống HÀNG 3 (headline chiếm
+         trọn hàng 2), header thành 3 dòng — đã dính đúng lỗi đó. */
       #airdrop-view .wte-card-head {
         grid-template-columns: 1fr auto; row-gap: 2px; padding: 6px 8px;
       }
       #airdrop-view .wte-card-head > * { min-width: 0; }
-      #airdrop-view .wte-headline {
-        grid-column: 1 / -1; text-align: left; white-space: normal;
+      #airdrop-view .wte-name-wrap { grid-column: 1; grid-row: 1; }
+      #airdrop-view .wte-rank      { grid-column: 2; grid-row: 1; }
+      #airdrop-view .wte-headline  {
+        grid-column: 1 / -1; grid-row: 2;
+        text-align: left; white-space: normal;
       }
       #airdrop-view .wte-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     }
