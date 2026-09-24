@@ -21,7 +21,9 @@
 | **12** | Regular | đen | Nội dung trong chip |
 | **12** | Regular | xám | Cột phụ trong bảng (Narrative · TGE) |
 
-Font: **Inter**. Không dùng cỡ nào ngoài 18 / 15 / 12.
+Font: **Roboto Condensed** cho toàn site (chốt 2026-09-24, thay Inter) — token `--font`, không khai font nào khác. Không dùng cỡ nào ngoài 18 / 15 / 12.
+
+Nhãn nhóm, nav, header bảng, dòng phụ trên nền đen: **VIẾT HOA + giãn chữ** `.04–.08em`.
 
 ---
 
@@ -33,8 +35,13 @@ Font: **Inter**. Không dùng cỡ nào ngoài 18 / 15 / 12.
 | `--amber` | `#FFA111` | Chữ trên nền đen · tab đang chọn · mũi tên `►` · chấm timeline |
 | `--sub2` | `#4B5563` | Chữ phụ |
 | `--line2` | `#ABABAB` | Viền (**0.5px**) · đường kẻ timeline · tab chưa chọn |
-| `--chip` | `#D9D9D9` | Nền chip chỉ-đọc · máng toggle |
-| `--shadow` | `0 4px 8px rgba(0,0,0,.5)` | Thẻ nổi + nút bấm được |
+| `--chip` | `#F5F5F4` | Nền chip chỉ-đọc · máng toggle (bản sang 2026-09-24, thay `#D9D9D9`) |
+| `--shadow` | `0 1px 2px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.08)` | Thẻ nổi + nút bấm được (bóng mềm 2 lớp, thay bóng đen 50%) |
+| `--lift` | `0 2px 4px rgba(0,0,0,.08), 0 16px 32px rgba(0,0,0,.12)` | Thẻ khi hover (kèm nhích lên 2px) |
+| `--w-line` | `#E7E5E4` | Viền card **1px** · đường kẻ mảnh cạnh tiêu đề |
+| `--w-mute` | `#78716C` | Chữ phụ / icon nghỉ trên nền trắng |
+| `--w-dim` | `#A8A29E` | Chữ phụ trên nền đen · tab nav chưa chọn |
+| `--head-bg` | gradient `#1A1A1A → #000` | Nền header mọi card |
 
 > Figma tự mâu thuẫn: máng VI/EN là `#D9D9D9` ở frame Valuation nhưng `#ABABAB` ở AI/Work. **Chốt dùng `--chip`** — bớt một màu, và máng toggle bản chất cũng là vùng chứa chỉ-đọc.
 
@@ -52,6 +59,10 @@ Font: **Inter**. Không dùng cỡ nào ngoài 18 / 15 / 12.
 | **Nút tròn** | radius **24** · nền đen · chữ amber · bóng → *mọi nút hành động* |
 | **Toggle** | máng `--chip` radius 8 cao 32 · viên đang chọn trắng + viền + bóng |
 | **Icon** | ô **32×32**, cách nhau **16** |
+| **Icon SVG** | nét **1.5**, 16px, amber khi đứng cạnh tiêu đề. Bộ dùng chung: `WTE_ICON` + `wteIcon()` trong JS |
+| **Tiêu đề card** | canh **TRÁI**, icon amber đứng trước (2026-09-24, thay canh giữa của Figma) |
+| **Tiêu đề mục (CV)** | icon amber + chữ 18 + đường kẻ mảnh kéo hết bề ngang |
+| **Hàng bấm được** | hover: nền trắng + viền + vạch amber trái + ô ↗ đen |
 
 **Luật phân biệt** (đừng phá): radius **24** = bấm được · radius **8** = chỉ đọc.
 

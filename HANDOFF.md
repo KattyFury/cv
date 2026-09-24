@@ -99,7 +99,7 @@ Ba khối **Figma không vẽ nhưng vẫn giữ** (frame chỉ cao 944 nên c�
 
 > ⚠️ **Hệ màu phân biệt rank bằng MÀU đã bỏ hẳn** (tím S · xanh dương A · xanh lá B). Thiết kế mới chỉ có đen · amber · xám; rank đọc bằng **chữ**.
 
-> 🎨 **Bản sang (2026-09-24)** — khối CSS `WORK — BẢN SANG` ở cuối `<style>`, đè mọi CSS Work phía trên. Font **Roboto Condensed** (chỉ tab Work + thanh lọc rank; navbar và 3 tab kia vẫn Inter). Lưới 8 và thang 18/15/12 giữ nguyên. Icon SVG inline nét 1.5 (`WTE_ICON` + `wteIcon()` trong JS): cờ = Get started · đồng hồ = Daily · lịch = Weekly · ↗ = task có link · biểu đồ lên / gạch ngang = high / low-potential. Header: potential thành badge amber, narrative chữ xám, rank là ô amber 24×24. Chip nền `#F5F5F4` (thay `#D9D9D9`), bóng mềm 2 lớp, đệm trong card 16 (mobile 8).
+> 🎨 **Bản sang (2026-09-24)** — khối CSS `WORK — BẢN SANG` ở cuối `<style>`, đè mọi CSS Work phía trên. Cả site đã theo bản này (xem khối `TOÀN SITE — BẢN SANG` ngay sau). Lưới 8 và thang 18/15/12 giữ nguyên. Icon SVG inline nét 1.5 (`WTE_ICON` + `wteIcon()` trong JS): cờ = Get started · đồng hồ = Daily · lịch = Weekly · ↗ = task có link · biểu đồ lên / gạch ngang = high / low-potential. Header: potential thành badge amber, narrative chữ xám, rank là ô amber 24×24. Chip nền `#F5F5F4` (thay `#D9D9D9`), bóng mềm 2 lớp, đệm trong card 16 (mobile 8).
 
 Card Work to Earn đọc từ KV, thanh lọc rank `$ · S · A · B · C` — chi tiết luật ở mục "WTE Cards" bên dưới. Tiêu đề màn: "Work to Earn".
 
@@ -435,6 +435,8 @@ highlights.txt + highlights/  — ảnh Highlights ở CV (mỗi dòng "tên-ả
 ---
 
 ## Decisions Log
+
+- 2026-09-24: **Áp thiết kế Work cho toàn site.** User duyệt bản Work rồi bảo *"áp dụng cho toàn bộ trang"*. Font gom về 1 token `--font` (Roboto Condensed; bỏ tải Inter + Roboto). `--chip` và `--shadow` đổi giá trị ngay ở `:root` nên mọi chip/thẻ cũ tự ăn theo. Tiêu đề card đổi sang **canh trái + icon** (Figma vẽ canh giữa). Navbar: chữ hoa 15, vạch amber dưới tab đang chọn, logo có ảnh mèo. AI: số bài trên header + trạng thái "Chưa có bài viết" cho hub trống. Chi tiết token ở `DESIGN_SYSTEM.md`.
 
 - 2026-09-24: **Làm lại giao diện tab Work cho sang hơn**, giữ lưới + thang chữ + đen/amber. User chê bản cũ *"lỗi, thô, xấu, thiếu sang"*. Lỗi thật: nhãn DAILY + chip daily dính sát mép card (`.wte-section--daily { padding-left: 0 }` của bản cũ) và `:first-of-type` không bao giờ trúng section đầu vì header card cũng là `div` → đổi sang `.wte-card-head + .wte-section`.
 
