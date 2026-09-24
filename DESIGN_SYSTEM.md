@@ -1,6 +1,6 @@
 # Luật thiết kế — 0xhieu.xyz
 
-> Trạng thái chốt 2026-09-24. Mọi tab tuân đúng file này; code nằm ở khối `<style>` duy nhất trong `index.html`, viết theo thành phần, cùng thứ tự các mục dưới đây.
+> Trạng thái chốt 2026-09-25. Mọi tab tuân đúng file này; code nằm ở khối `<style>` duy nhất trong `index.html`, viết theo thành phần, cùng thứ tự các mục dưới đây.
 > Gốc là Figma `qPitw8s3XP5ennmBmhzYQF` (frame 1424 × 944), nhưng từ 2026-09-24 **file này thắng Figma**: bản sang + bản sáng đã đi khác Figma ở màu header/nút, tiêu đề card và khoảng cách dưới navbar.
 
 ---
@@ -26,41 +26,48 @@ Nhãn nhóm, tab nav, header bảng, dòng phụ header card: **VIẾT HOA + gi�
 
 ## 2. Màu
 
+**Đen là màu chủ đạo nhưng dùng tiết chế** — chữ, icon, nút chính, vạch tab đang chọn. **Trắng** làm nền. **Xám trung tính** (không ngả vàng) cho chữ phụ và nhấn nhá. **Màu sắc duy nhất trên trang là màu rank** ở tab Work (chốt 2026-09-25 — user: "trắng xám và cam vốn không cùng nhau").
+
 | Token | Mã | Dùng cho |
 |---|---|---|
-| `--ink` | `#000000` | Chữ chính |
+| `--ink` | `#111111` | Đen chủ đạo: chữ chính · icon · nút chính · vạch tab · chấm timeline |
 | `--text` | `#171717` | Chữ mặc định của body |
-| `--sub2` | `#4B5563` | Chữ phụ (nơi ở, niềm tin, bullet, nhãn form) |
-| `--w-mute` | `#78716C` | Chữ phụ / icon nghỉ · tab nav chưa chọn |
-| `--w-dim` | `#A8A29E` | Chữ nhạt nhất (trạng thái trống) |
-| `--w-line` | `#E7E5E4` | Viền card **1px** · kẻ mảnh cạnh tiêu đề · kẻ dưới header |
-| `--chip` | `#F5F5F4` | Nền chip chỉ-đọc · máng toggle · hover dòng bảng |
-| `--head-bg` | `#FAFAF9` | Nền header card + header bảng |
-| `--amber` | `#FFA111` | Thương hiệu (mèo đen mắt amber): vạch tab đang chọn · chấm timeline · ô rank · nền nút chính |
-| `--amber-ink` | `#B86B00` | Chữ/icon amber **trên nền sáng** (amber gốc quá nhạt trên trắng) |
-| `--shadow` | `0 1px 2px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.08)` | Thẻ nổi + nút |
-| `--lift` | `0 2px 4px rgba(0,0,0,.08), 0 16px 32px rgba(0,0,0,.12)` | Thẻ khi hover (kèm nhích lên 2px) |
+| `--sub2` | `#525252` | Chữ phụ (nơi ở, niềm tin, bullet, nhãn form) |
+| `--w-mute` | `#737373` | Chữ phụ / icon nghỉ · tab nav chưa chọn · hover |
+| `--w-dim` | `#A3A3A3` | Chữ nhạt nhất (trạng thái trống, dấu bullet) |
+| `--w-line` | `#E5E5E5` | Viền card 1px · kẻ mảnh · viền avatar |
+| `--chip` | `#F5F5F5` | Nền chip chỉ-đọc · máng toggle · hover dòng bảng |
+| `--head-bg` | `#FAFAFA` | Nền header card + header bảng + dải Daily |
+| `--shadow` / `--lift` | bóng mềm 2 lớp | Thẻ nổi / thẻ khi hover |
 
-**Không dùng nền đen** cho navbar, header, nút. Đen chỉ còn ở chữ và nút mèo (Agent).
+**Màu rank** (chỉ ở ô rank trên card Work + nút đang chọn của thanh lọc):
+
+| Rank | Token | Mã | Chữ trên nền |
+|---|---|---|---|
+| `$` | `--amber` | `#FFA111` cam | đen |
+| `S` | `--rank-s` | `#6155F5` tím | trắng |
+| `A` | `--rank-a` | `#0088FF` xanh dương | trắng |
+| `B` | `--rank-b` | `#34C759` xanh lá | trắng |
+| `C` | `--rank-c` | `#A3A3A3` xám | trắng |
 
 ## 3. Thành phần — lặp y hệt ở mọi tab
 
 | Thành phần | Spec |
 |---|---|
-| **Navbar** | trắng mờ (blur) · kẻ dưới `--w-line` · cao 48 · logo = ảnh mèo 24 + chữ 18 · tab chữ hoa 15 rộng theo chữ, cách nhau 16, đang chọn có vạch amber 24×2 ở đáy |
-| **Card** | trắng · radius 8 · viền 1px `--w-line` · `--shadow` · hover `--lift` + nhích 2px |
-| **Header card** | cao 40 · nền `--head-bg` · kẻ dưới · **icon amber + tiêu đề canh TRÁI** · Bold 15 đen. *Ngoại lệ Work* (`.wte-card-head`): nền cam nhạt `rgba(255,161,17,.08)` thay `--head-bg`, làm điểm nhấn cho card dự án |
-| **Chip** (chỉ đọc) | nền `--chip` · radius 8 · cao 32 · chữ 12 |
-| **Hàng bấm được** (task Work, bài AI) | như chip; hover: nền trắng + viền + vạch amber bên trái + ô mũi tên ↗ nền amber |
-| **Nhãn nhóm** (Work) | cao 32 · icon amber + chữ hoa 12 xám + kẻ mảnh kéo hết ngang |
-| **Tiêu đề mục** (CV) | icon amber + chữ 18 + kẻ mảnh kéo hết ngang |
-| **Nút chính** | tròn radius 24 · nền amber · chữ đen · bóng |
-| **Nút phụ** | tròn radius 24 · trắng · viền `--w-line` · bóng (Twitter/Telegram/Email, Huỷ, Xoá) |
+| **Navbar** | trắng mờ (blur) · kẻ dưới · cao 48 · logo = ảnh mèo 24 + chữ 18 · tab chữ hoa 15, cách nhau 16, đang chọn chữ đen + vạch đen 24×2 ở đáy |
+| **Card / box** | trắng · **radius 16** · viền 1px `--w-line` · `--shadow` · hover `--lift` + nhích 2px. Áp cho: card Work · box Valuation · hub AI · bảng altcoin · ảnh Highlights · popup |
+| **Header card** | cao 40 · nền `--head-bg` · kẻ dưới · icon đen + tiêu đề canh TRÁI · Bold 15 đen |
+| **Chip** (chỉ đọc) | nền `--chip` · **radius 8** (lồng trong box 16) · cao 32 · chữ 12 |
+| **Hàng bấm được** (task Work, bài AI) | như chip; hover: nền trắng + viền + vạch đen bên trái + ô mũi tên ↗ nền đen |
+| **Nhãn nhóm** (Work) | cao 32 · icon đen + chữ hoa 12 xám + kẻ mảnh kéo hết ngang. **Daily** = dải nền `--head-bg` tràn 2 mép card, lề trong vẫn 16 như các nhóm khác |
+| **Tiêu đề mục** (CV) | icon đen + chữ 18 + kẻ mảnh kéo hết ngang |
+| **Nút chính** | tròn radius 24 · nền đen · chữ trắng · bóng |
+| **Nút phụ** | tròn radius 24 · trắng · viền `--w-line`, hover viền đen (Twitter/Telegram/Email, Huỷ, Xoá) |
 | **Nút Admin** | vuông radius 8 · trắng · viền · bóng |
 | **Toggle VI/EN** | máng `--chip` radius 8 cao 32 · viên đang chọn trắng + bóng nhẹ |
 | **Icon** | SVG inline nét **1.5**, 16px, tô `currentColor` — bộ chung `WTE_ICON` + `wteIcon()` trong JS. Riêng camera/plus là CSS mask (32×32) |
 
-**Luật phân biệt** (đừng phá): radius **24** = bấm được · radius **8** = chỉ đọc (trừ nút Admin/toggle).
+**Luật phân biệt** (đừng phá): radius **24** = bấm được · radius **16** = box · radius **8** = chip chỉ-đọc (trừ nút Admin/toggle).
 
 ## 4. Lưới
 
@@ -77,6 +84,6 @@ Mọi khoảng cách là **bội số của 8**.
 | AI | 2 × 2 card 656 × 368, khe 16 |
 | Work | card cùng rank 2 cột × 656, khe 16; khác rank cách 48 (mobile 32) |
 | CV — Highlights | 3 cột × 432, ảnh 3:2 |
-| CV — timeline | 3 cột `128 / 64 / 944`, chấm amber 8px ở tâm rãnh, item cách 48 |
+| CV — timeline | 3 cột `128 / 64 / 944`, chấm đen 8px ở tâm rãnh, item cách 48 |
 
 Màn ≤ 1024: 3 cột → 2, AI → 1 cột. Màn ≤ 640: mọi lưới → 1 cột.
