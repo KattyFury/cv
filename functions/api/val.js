@@ -1,4 +1,4 @@
-// Kho dữ liệu tab Valuation — thay hẳn Google Sheet (chốt trong REBUILD_SPEC_V3_VALUATION.md).
+// Kho dữ liệu tab Valuation — thay hẳn Google Sheet (từ 2026-09-22).
 //
 //   GET  /api/val   → công khai, KHÔNG cần mật khẩu (data để hiển thị cho khách)
 //   POST /api/val   → thêm / sửa / xoá dự án, BẮT BUỘC mật khẩu, kiểm tra Ở SERVER
@@ -35,7 +35,7 @@ function safeEqual(a, b) {
 
 const clean = (v, max) => String(v ?? '').replace(/[<>]/g, '').trim().slice(0, max);
 
-// 15 narrative đã chốt (spec v3 §3). Giá trị lạ → rơi về chuỗi rỗng để admin thấy mà sửa,
+// 15 narrative đã chốt. Giá trị lạ → rơi về chuỗi rỗng để admin thấy mà sửa,
 // KHÔNG tự nhét vào một nhóm bừa (nhét bừa là làm lệch median của box Narrative).
 const NARRATIVES = [
   'stablechain', 'layer-1', 'infra', 'ai', 'layer-2',
@@ -54,7 +54,7 @@ const num = v => {
 
 const cleanDate = v => /^\d{4}-\d{2}-\d{2}$/.test(String(v ?? '')) ? String(v) : '';
 
-// 7 trường BẮT BUỘC (spec v3 §5): thiếu một trong số này thì cả 4 cột bội số của dòng
+// 7 trường BẮT BUỘC: thiếu một trong số này thì cả 4 cột bội số của dòng
 // đó ra gạch — dự án nằm trong bảng mà không nói gì, nên chặn ngay từ lúc lưu.
 // cgId và binanceSymbol CHO PHÉP trống: để nhập trước được dự án chưa lên sàn.
 function sanitize(p) {

@@ -32,24 +32,19 @@ I'm a **Vietnamese vibecoder** — I have ideas, not a programming background. I
 
 ## This Project — `cv` (0xhieu.xyz)
 
-**Bản chất:** một **website tĩnh 1 file** để hiển thị data. **KHÔNG smart contract.** Phần công khai không có backend, không API key.
+**Bản chất:** website cá nhân **1 file** (`index.html` — HTML + CSS + JS inline) + một ít backend Cloudflare để lưu data. **KHÔNG smart contract.** Host trên **Cloudflare Pages** (project **`0xhieu-xyz`**, auto-deploy từ `main`).
 
-> **Ngoại lệ (2026-07-31):** `functions/api/private.js` — Cloudflare Pages Function cho **task cá nhân** ở Airdrop → Work (lưu KV binding `WORK`, mở bằng mật khẩu `ADMIN_PASS` đặt trong Cloudflare Dashboard, project Pages tên **`0xhieu-xyz`**). Đây là phần **riêng tư của mình tôi**, khách không thấy. Mật khẩu **không nằm trong repo**.
->
-> **Ngoại lệ (2026-08-17):** `functions/api/wte.js` + `functions/api/ai.js` — đọc/ghi data của Airdrop và tab AI, cùng KV binding `WORK` và cùng `ADMIN_PASS`. Ngoài 3 file này thì **không có backend nào khác**.
+- **Backend DUY NHẤT** = 4 Pages Function ở `functions/api/` (`val.js` · `wte.js` · `private.js` · `ai.js`), chung KV binding `WORK` và chung 1 mật khẩu `ADMIN_PASS` (đặt ở Cloudflare Dashboard, **không nằm trong repo**). Đọc công khai không cần mật khẩu; ghi thì cần.
+- **`bot/`** — job Node chạy Docker trên PC nhà, lấy giá hằng ngày (CoinGecko + Binance) ghi vào KV cho tab Valuation. Agent (nút mèo) sau này cũng đặt ở repo này.
+- **Data nằm trong Cloudflare KV**, sửa qua popup Admin trên site. **Không còn đọc Google Sheet** (từ 2026-09-22).
+- Nguồn ngoài gọi từ client, không key: **Google Translate** (gtx, dịch VI→EN) · **unavatar.io** (logo card Work).
+- **Logic tính toán** (bội số, Market Condition, Predict FDV…) nằm trong JS của `index.html`. KV chỉ giữ data gốc, **không lưu số tính sẵn**.
+- **Local:** `D:\Files\Claude_0xhieu` · **GitHub:** `KattyFury/cv`
+- Trạng thái chi tiết: **`HANDOFF.md`**. Luật thiết kế: **`DESIGN_SYSTEM.md`**.
 
-- **Toàn bộ site nằm trong `index.html`** (HTML + CSS + JS inline). Host trên **Cloudflare Pages** (auto-deploy từ nhánh `main`).
-- **Data đọc từ nguồn PUBLIC (không key):**
-  - **Google Sheet** (gviz CSV) — 3 mục: **Valuation** (tab DATA), **Airdrop → Work** (tab Work), **Airdrop → Watchlist** (tab Watchlist).
-  - **CoinGecko** (free API) — giá / ATH cho Valuation.
-  - **Google Translate** (gtx) — dịch VI→EN cho tab Airdrop.
-- **Logic tính toán** (multiples, Market Condition, Predict FDV, sao tiềm năng...) nằm trong JS của `index.html`. **Data số liệu** nằm trong Google Sheet. Muốn đổi công thức → sửa `index.html`; muốn đổi số liệu dự án → sửa Sheet.
-- **Assets:** `icon.png` (favicon + iPhone icon), `pfp.png` (avatar), `arrow.svg`, `highlights/`.
-- **Local:** `D:\Files\Claude\0xhieu` · **GitHub:** `KattyFury/cv`
+> ⚠️ Cần thêm API key / backend mới cho phần **công khai** → gần như chắc chắn là hiểu sai. Mọi thứ khách xem đều đọc qua 4 Function có sẵn.
 
-> ⚠️ Nếu thấy mình cần một API key / backend / Cloudflare Function cho phần **công khai** của `cv` (About me / Valuation / Airdrop đọc từ Sheet) → **gần như chắc chắn là hiểu sai**. Phần công khai chỉ đọc data public. Backend duy nhất được phép tồn tại là `functions/api/private.js` cho task cá nhân.
-
-> ⚠️ **Luôn kiểm tra cột thật trong Google Sheet trước khi viết code parse** (kéo CSV về xem). Đừng đoán thứ tự/định dạng cột — nhiều lỗi đến từ đoán sai (vd sao tiềm năng dùng dấu `*`, không phải số).
+> ⚠️ **Xem data thật trước khi viết code đọc nó** (`curl https://0xhieu.xyz/api/val` …). Đừng đoán tên/định dạng trường.
 
 ---
 
@@ -108,8 +103,8 @@ When I'm in **planning phase**, don't rush to code. When I have a spec, don't re
 - ❌ Delete dead code unless asked
 - ❌ Push to prod, drop databases, run irreversible commands without explicit confirmation
 - ❌ Lôi asset / code / secret của dự án khác (ezwallet, bot...) vào cv
-- ❌ Giả định cv có backend / smart contract / API key
-- ❌ Viết code parse Google Sheet mà chưa xem data cột thật
+- ❌ Thêm backend / smart contract / API key ngoài 4 Function có sẵn
+- ❌ Viết code đọc data mà chưa xem data thật
 - ❌ Dump theory when I need to build
 - ❌ Assume I know technical terms
 - ❌ Stop at "it should work" — verify

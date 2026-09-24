@@ -1,133 +1,82 @@
-# Quy luật thiết kế — 0xhieu.xyz
+# Luật thiết kế — 0xhieu.xyz
 
-> Rút ra bằng cách đọc **cả 4 frame Figma** (`55:2` CV · `60:66` Valuation · `70:33` AI · `71:121` Work), không phải đoán. Mọi tab phải tuân đúng bảng này. Figma chỗ nào tự mâu thuẫn thì file này thắng — đã ghi rõ chỗ nào.
->
-> File: `qPitw8s3XP5ennmBmhzYQF` · mỗi frame **1424 × 944**.
-
----
-
-## 1. Chữ — chỉ 3 cỡ
-
-**Bỏ hẳn 21px** (chốt 2026-09-22). Phân cấp làm bằng **cỡ + đậm/thường + đen/xám**, không thêm cỡ mới.
-
-| Cỡ | Kiểu | Màu | Dùng cho |
-|---|---|---|---|
-| **18** | Bold | đen | Tiêu đề màn hình · tên người. **Chỉ một lần mỗi màn** |
-| **15** | Bold | amber | Tiêu đề card (nằm trên thanh header đen) |
-| **15** | Bold | đen | Nút · nhãn năm ở timeline |
-| **15** | Regular | xám | Chữ thân bài · bullet · caption |
-| **12** | Bold | đen | Nhãn nhóm (`GET STARTED` · `DAILY` · `WEEKLY`) · số liệu trong bảng |
-| **12** | Bold | amber | Dòng phụ trong header card (`high-potential / work-to-earn`) |
-| **12** | Regular | đen | Nội dung trong chip |
-| **12** | Regular | xám | Cột phụ trong bảng (Narrative · TGE) |
-
-Font (chốt lại 2026-09-24): **Roboto** trên desktop (`--font`). **Roboto Condensed** (`--font-c`) chỉ dùng cho **bảng altcoin** (`#tge-section`, popup `#tge-modal`) — và cho **toàn site trên mobile** (dưới 640px `--font` trỏ sang `--font-c`). Desktop không dùng cỡ nào ngoài 18 / 15 / 12.
-
-**Mobile: chữ tối thiểu 14px.** Thang mobile: 18 tên người · 16 tiêu đề · 14 mọi thứ còn lại. **Ngoại lệ duy nhất** được nhỏ hơn 14: bảng altcoin.
-
-Nhãn nhóm, nav, header bảng, dòng phụ trên nền đen: **VIẾT HOA + giãn chữ** `.04–.08em`.
+> Trạng thái chốt 2026-09-24. Mọi tab tuân đúng file này; code nằm ở khối `<style>` duy nhất trong `index.html`, viết theo thành phần, cùng thứ tự các mục dưới đây.
+> Gốc là Figma `qPitw8s3XP5ennmBmhzYQF` (frame 1424 × 944), nhưng từ 2026-09-24 **file này thắng Figma**: bản sang + bản sáng đã đi khác Figma ở màu header/nút, tiêu đề card và khoảng cách dưới navbar.
 
 ---
+
+## 1. Chữ
+
+| | Desktop | Mobile (≤ 640px) |
+|---|---|---|
+| Font | **Roboto** (`--font`) | **Roboto Condensed** toàn site (`--font` trỏ sang `--font-c`) |
+| Thang | **18 · 15 · 12** | **18 · 16 · 14** — tối thiểu 14 |
+| Ngoại lệ | Bảng altcoin (Valuation) luôn dùng Condensed | Bảng altcoin được nhỏ hơn 14 (12) |
+
+Phân cấp bằng **cỡ + đậm/thường + đen/xám**, không thêm cỡ mới.
+
+| Cỡ desktop | Kiểu | Dùng cho |
+|---|---|---|
+| **18** Bold đen | Tiêu đề màn · tên người · tiêu đề mục CV · vai trò timeline. Tên người là thứ 18 duy nhất ở hero |
+| **15** Bold | Tiêu đề card · nút · tab nav · năm timeline · tagline |
+| **15** Regular xám | Thân bài · bullet · caption |
+| **12** | Chip · nhãn nhóm · số trong bảng · dòng phụ header card |
+
+Nhãn nhóm, tab nav, header bảng, dòng phụ header card: **VIẾT HOA + giãn chữ** `.04–.08em`.
 
 ## 2. Màu
 
 | Token | Mã | Dùng cho |
 |---|---|---|
-| `--ink` | `#000000` | Chữ chính · nền navbar · nền header card |
-| `--amber` | `#FFA111` | Chữ trên nền đen · tab đang chọn · mũi tên `►` · chấm timeline |
-| `--sub2` | `#4B5563` | Chữ phụ |
-| `--line2` | `#ABABAB` | Viền (**0.5px**) · đường kẻ timeline · tab chưa chọn |
-| `--chip` | `#F5F5F4` | Nền chip chỉ-đọc · máng toggle (bản sang 2026-09-24, thay `#D9D9D9`) |
-| `--shadow` | `0 1px 2px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.08)` | Thẻ nổi + nút bấm được (bóng mềm 2 lớp, thay bóng đen 50%) |
+| `--ink` | `#000000` | Chữ chính |
+| `--text` | `#171717` | Chữ mặc định của body |
+| `--sub2` | `#4B5563` | Chữ phụ (nơi ở, niềm tin, bullet, nhãn form) |
+| `--w-mute` | `#78716C` | Chữ phụ / icon nghỉ · tab nav chưa chọn |
+| `--w-dim` | `#A8A29E` | Chữ nhạt nhất (trạng thái trống) |
+| `--w-line` | `#E7E5E4` | Viền card **1px** · kẻ mảnh cạnh tiêu đề · kẻ dưới header |
+| `--chip` | `#F5F5F4` | Nền chip chỉ-đọc · máng toggle · hover dòng bảng |
+| `--head-bg` | `#FAFAF9` | Nền header card + header bảng |
+| `--amber` | `#FFA111` | Thương hiệu (mèo đen mắt amber): vạch tab đang chọn · chấm timeline · ô rank · nền nút chính |
+| `--amber-ink` | `#B86B00` | Chữ/icon amber **trên nền sáng** (amber gốc quá nhạt trên trắng) |
+| `--shadow` | `0 1px 2px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.08)` | Thẻ nổi + nút |
 | `--lift` | `0 2px 4px rgba(0,0,0,.08), 0 16px 32px rgba(0,0,0,.12)` | Thẻ khi hover (kèm nhích lên 2px) |
-| `--w-line` | `#E7E5E4` | Viền card **1px** · đường kẻ mảnh cạnh tiêu đề |
-| `--w-mute` | `#78716C` | Chữ phụ / icon nghỉ trên nền trắng |
-| `--w-dim` | `#A8A29E` | Chữ phụ trên nền đen · tab nav chưa chọn |
-| `--head-bg` | `#FAFAF9` | Nền header mọi card — **sáng**, kèm kẻ dưới 1px `--w-line`, chữ đen |
-| `--amber-ink` | `#B86B00` | Chữ/icon amber trên nền sáng (amber gốc quá nhạt trên trắng) |
 
-> **Bớt đen (2026-09-24):** navbar trắng mờ, header card sáng, nút phụ trắng viền mảnh, nút chính **amber chữ đen**. Đen chỉ còn ở chữ và nút mèo. Amber là điểm nhấn: vạch tab đang chọn · icon · ô rank · nút chính.
+**Không dùng nền đen** cho navbar, header, nút. Đen chỉ còn ở chữ và nút mèo (Agent).
 
-> **Khoảng cách navbar → nội dung: 24** (mobile 16). Bỏ hàng trống 48 cũ, nên mốc dọc `96 / 144` ở mục 4 không còn đúng.
-
-> Figma tự mâu thuẫn: máng VI/EN là `#D9D9D9` ở frame Valuation nhưng `#ABABAB` ở AI/Work. **Chốt dùng `--chip`** — bớt một màu, và máng toggle bản chất cũng là vùng chứa chỉ-đọc.
-
----
-
-## 3. Hình khối — lặp y hệt ở mọi tab
+## 3. Thành phần — lặp y hệt ở mọi tab
 
 | Thành phần | Spec |
 |---|---|
-| **Card** | trắng · radius **8** · viền `0.5px --line2` · `--shadow` · **header đen cao 40** |
-| **Header card** | nền `--ink` cao **40**, chữ Bold 15 amber |
-| **Chip** (chỉ đọc) | nền `--chip` · radius **8** · cao **32** · chữ 12 · padding trái 8 |
-| **Nhãn nhóm** | cao **32**, chữ Bold 12 đen, canh trái |
-| **Nút vuông** | radius **8** · trắng · viền · bóng → *Admin* |
-| **Nút tròn** | radius **24** · nền đen · chữ amber · bóng → *mọi nút hành động* |
-| **Toggle** | máng `--chip` radius 8 cao 32 · viên đang chọn trắng + viền + bóng |
-| **Icon** | ô **32×32**, cách nhau **16** |
-| **Icon SVG** | nét **1.5**, 16px, amber khi đứng cạnh tiêu đề. Bộ dùng chung: `WTE_ICON` + `wteIcon()` trong JS |
-| **Tiêu đề card** | canh **TRÁI**, icon amber đứng trước (2026-09-24, thay canh giữa của Figma) |
-| **Tiêu đề mục (CV)** | icon amber + chữ 18 + đường kẻ mảnh kéo hết bề ngang |
-| **Hàng bấm được** | hover: nền trắng + viền + vạch amber trái + ô ↗ đen |
+| **Navbar** | trắng mờ (blur) · kẻ dưới `--w-line` · cao 48 · logo = ảnh mèo 24 + chữ 18 · tab chữ hoa 15, đang chọn có vạch amber 24×2 ở đáy |
+| **Card** | trắng · radius 8 · viền 1px `--w-line` · `--shadow` · hover `--lift` + nhích 2px |
+| **Header card** | cao 40 · nền `--head-bg` · kẻ dưới · **icon amber + tiêu đề canh TRÁI** · Bold 15 đen |
+| **Chip** (chỉ đọc) | nền `--chip` · radius 8 · cao 32 · chữ 12 |
+| **Hàng bấm được** (task Work, bài AI) | như chip; hover: nền trắng + viền + vạch amber bên trái + ô mũi tên ↗ nền amber |
+| **Nhãn nhóm** (Work) | cao 32 · icon amber + chữ hoa 12 xám + kẻ mảnh kéo hết ngang |
+| **Tiêu đề mục** (CV) | icon amber + chữ 18 + kẻ mảnh kéo hết ngang |
+| **Nút chính** | tròn radius 24 · nền amber · chữ đen · bóng |
+| **Nút phụ** | tròn radius 24 · trắng · viền `--w-line` · bóng (Twitter/Telegram/Email, Huỷ, Xoá) |
+| **Nút Admin** | vuông radius 8 · trắng · viền · bóng |
+| **Toggle VI/EN** | máng `--chip` radius 8 cao 32 · viên đang chọn trắng + bóng nhẹ |
+| **Icon** | SVG inline nét **1.5**, 16px, tô `currentColor` — bộ chung `WTE_ICON` + `wteIcon()` trong JS. Riêng camera/plus là CSS mask (32×32) |
 
-**Luật phân biệt** (đừng phá): radius **24** = bấm được · radius **8** = chỉ đọc.
-
----
+**Luật phân biệt** (đừng phá): radius **24** = bấm được · radius **8** = chỉ đọc (trừ nút Admin/toggle).
 
 ## 4. Lưới
 
 Mọi khoảng cách là **bội số của 8**.
 
-### Dọc — giống hệt nhau ở cả 4 tab
+- **Dọc:** navbar 48 → khe **24** (mobile 16) → hàng tiêu đề màn cao 32 → khe 16 → nội dung.
+- **Ngang:** lề 48 (mobile 16), content rộng tối đa **1328**.
+- **Trong card:** header 40 → khe 8 → nhãn/chip 32 → khe 8 → … → đệm đáy 16 (mobile 8). Đệm ngang 16 (mobile 8).
 
-```
-0    navbar (cao 48)
-96   tiêu đề màn hình (cao 32)
-144  nội dung bắt đầu
-```
-
-Trong card: header 40 → khe 8 → chip 32 → khe 8 → chip 32 …, đệm đáy 16.
-
-### Ngang
-
-Lề **48**, content **48 → 1376** (rộng **1328**). Cách chia đã dùng:
-
-| Tab | Chia |
+| Chỗ | Chia |
 |---|---|
-| Valuation | 3 cột × **432** + 2 khe 16 |
-| AI | 2 cột × **656** + 1 khe 16 |
-| Work | card **656** (nửa trái) |
-| Bảng Valuation | 7 cột × 176, khe 16 (nhét trong padding ô) |
+| Valuation — 3 box | 3 cột × 432 + khe 16, box cao 176 |
+| Valuation — bảng | 7 cột × 176, khe 16 nhét trong padding ô (184 · 192×5 · 184) |
+| AI | 2 × 2 card 656 × 368, khe 16 |
+| Work | card cùng rank 2 cột × 656, khe 16; khác rank cách 48 (mobile 32) |
+| CV — Highlights | 3 cột × 432, ảnh 3:2 |
+| CV — timeline | 3 cột `128 / 64 / 944`, chấm amber 8px ở tâm rãnh, item cách 48 |
 
----
-
-## 5. Từng tab
-
-### CV (`55:2`)
-Hero (avatar 81 · tên 18 Bold · nơi ở 15 xám · tagline · niềm tin · 3 nút tròn) → Experience dạng timeline `128 / 64 / 944`, chấm amber 8px tại `x=208`, item cách nhau 48 → Highlights 3 cột × 432 → Available for (chip).
-
-### Valuation (`60:66`)
-Bảng 7 cột + 3 card × 432. Xem `REBUILD_SPEC_V3_VALUATION.md`.
-
-### AI (`70:33`)
-4 card **656 × 368**, lưới 2×2, khe 16. Card ở `y=144` và `y=528`. Header đen 40, chữ amber Bold 15 **canh giữa**. Trong thân: chip 32, dòng đầu ở `y=192` (khe 8 sau header). Mỗi chip: tiêu đề bài **trái** (12 Regular đen) · ngày + `►` **phải**.
-
-### Work (`71:121`)
-Card **656 × 256**, header đen 40 **đè lên mép trên thân** (header `y=144`, thân `y=160`). Header 3 vùng: tên dự án **trái** (Bold 15 amber) · `high-potential / narrative` **giữa** (Bold 12 amber) · `rank: $` **phải** (Bold 15 amber).
-
-Thân: nhãn nhóm 32 (Bold 12 đen) → chip 32 → nhãn → chip … Card cách nhau **32**.
-
----
-
-## 6. Cách kiểm
-
-Chrome headless, profile mới mỗi lần:
-
-```
-chrome --headless=new --disable-gpu --no-sandbox --hide-scrollbars \
-  --user-data-dir=<thư mục MỚI> --screenshot=out.png \
-  --window-size=1424,944 --virtual-time-budget=20000 <url>
-```
-
-Hay fail vu vơ → đổi `--window-size` vài px rồi chạy lại. `python -m http.server` không có SPA fallback nên `/valuation` trả 404; chụp thẳng trên production sau khi deploy thì chắc ăn hơn.
+Màn ≤ 1024: 3 cột → 2, AI → 1 cột. Màn ≤ 640: mọi lưới → 1 cột.
