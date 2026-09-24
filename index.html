@@ -128,9 +128,9 @@
       display: block; width: 24px; height: 24px; border-radius: 50%;
       box-shadow: 0 0 0 1px rgba(255,161,17,.45);
     }
-    nav { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    nav { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
     .nav-btn {
-      position: relative; width: 88px; height: var(--navbar); padding: 0;
+      position: relative; height: var(--navbar); padding: 0;
       background: none; border: none; cursor: pointer;
       font-family: var(--font); font-size: 15px; font-weight: 700;
       text-transform: uppercase; letter-spacing: .08em; text-align: center; white-space: nowrap;
@@ -518,7 +518,7 @@
     .wte-card-head {
       height: 40px; padding: 0 8px 0 16px;
       display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); align-items: center; gap: 16px;
-      background: var(--head-bg); border-bottom: 1px solid var(--w-line);
+      background: rgba(255,161,17,.08); border-bottom: 1px solid var(--w-line);
     }
     .wte-name-wrap { min-width: 0; display: flex; align-items: center; gap: 8px; }
     .wte-logo {
@@ -561,6 +561,12 @@
     }
     .wte-section-label .wte-ico { color: var(--amber-ink); }
     .wte-section-label::after { content: ''; flex: 1; height: 1px; background: var(--w-line); }
+    .wte-section--daily {
+      margin: 0 -16px; padding: 8px 16px;
+      background: rgba(255,161,17,.06);
+      border-top: 1px solid rgba(255,161,17,.16); border-bottom: 1px solid rgba(255,161,17,.16);
+    }
+    .wte-section--daily .wte-section-label::after { background: rgba(255,161,17,.24); }
     .wte-tasks { list-style: none; display: flex; flex-direction: column; }
     .wte-task-item { display: block; margin: 0 0 8px; font-size: 13px; line-height: 1.5; color: var(--text); }
     .wte-task-row { flex: 1; display: flex; align-items: center; justify-content: space-between; gap: 16px; text-decoration: none; }
@@ -796,6 +802,7 @@
       .wte-headline, .wte-rank-k, .wte-rank-v, .wte-section-label, .wte-task-row, #rank-filter-float .lang-btn { font-size: 14px; }
       .wte-section { padding: 0 8px; }
       .wte-section:last-of-type { padding-bottom: 8px; }
+      .wte-section--daily { margin: 0 -8px; padding: 8px; }
       .wte-task-row { height: auto; min-height: 32px; padding-top: 4px; padding-bottom: 4px; }
       .wte-task-text { white-space: normal; line-height: 18px; }
 
@@ -2401,7 +2408,7 @@ ${line}
       weekly:     '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
       link:       '<path d="M7 17 17 7M9 7h8v8"/>',
       high:       '<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>',
-      low:        '<path d="M5 12h14"/>',
+      low:        '<path d="M3 7l6 6 4-4 8 8M15 17h6v-6"/>',
     };
     const wteIcon = (k, cls = '') =>
       `<svg class="wte-ico ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${WTE_ICON[k] || ''}</svg>`;

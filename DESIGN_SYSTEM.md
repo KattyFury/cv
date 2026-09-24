@@ -47,9 +47,9 @@ Nhãn nhóm, tab nav, header bảng, dòng phụ header card: **VIẾT HOA + gi�
 
 | Thành phần | Spec |
 |---|---|
-| **Navbar** | trắng mờ (blur) · kẻ dưới `--w-line` · cao 48 · logo = ảnh mèo 24 + chữ 18 · tab chữ hoa 15, đang chọn có vạch amber 24×2 ở đáy |
+| **Navbar** | trắng mờ (blur) · kẻ dưới `--w-line` · cao 48 · logo = ảnh mèo 24 + chữ 18 · tab chữ hoa 15 rộng theo chữ, cách nhau 16, đang chọn có vạch amber 24×2 ở đáy |
 | **Card** | trắng · radius 8 · viền 1px `--w-line` · `--shadow` · hover `--lift` + nhích 2px |
-| **Header card** | cao 40 · nền `--head-bg` · kẻ dưới · **icon amber + tiêu đề canh TRÁI** · Bold 15 đen |
+| **Header card** | cao 40 · nền `--head-bg` · kẻ dưới · **icon amber + tiêu đề canh TRÁI** · Bold 15 đen. *Ngoại lệ Work* (`.wte-card-head`): nền cam nhạt `rgba(255,161,17,.08)` thay `--head-bg`, làm điểm nhấn cho card dự án |
 | **Chip** (chỉ đọc) | nền `--chip` · radius 8 · cao 32 · chữ 12 |
 | **Hàng bấm được** (task Work, bài AI) | như chip; hover: nền trắng + viền + vạch amber bên trái + ô mũi tên ↗ nền amber |
 | **Nhãn nhóm** (Work) | cao 32 · icon amber + chữ hoa 12 xám + kẻ mảnh kéo hết ngang |
