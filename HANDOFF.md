@@ -436,6 +436,8 @@ highlights.txt + highlights/  — ảnh Highlights ở CV (mỗi dòng "tên-ả
 
 ## Decisions Log
 
+- 2026-09-24: **Đổi lại font + bớt đen + bỏ hàng trống dưới navbar.** User: desktop dùng **Roboto thường**, chỉ **bảng altcoin** dùng Condensed. **Mobile thì toàn site Condensed**. Chữ mobile tối thiểu 14px (trừ bảng altcoin), vì CV trên mobile *"nhỏ xíu kì quá"*. Navbar/nút/header đen *"hơi over"* → navbar trắng, header card sáng, nút chính amber. Khoảng navbar → nội dung 48 → 24. Khối CSS `BẢN SÁNG` ở cuối `<style>`.
+
 - 2026-09-24: **Áp thiết kế Work cho toàn site.** User duyệt bản Work rồi bảo *"áp dụng cho toàn bộ trang"*. Font gom về 1 token `--font` (Roboto Condensed; bỏ tải Inter + Roboto). `--chip` và `--shadow` đổi giá trị ngay ở `:root` nên mọi chip/thẻ cũ tự ăn theo. Tiêu đề card đổi sang **canh trái + icon** (Figma vẽ canh giữa). Navbar: chữ hoa 15, vạch amber dưới tab đang chọn, logo có ảnh mèo. AI: số bài trên header + trạng thái "Chưa có bài viết" cho hub trống. Chi tiết token ở `DESIGN_SYSTEM.md`.
 
 - 2026-09-24: **Làm lại giao diện tab Work cho sang hơn**, giữ lưới + thang chữ + đen/amber. User chê bản cũ *"lỗi, thô, xấu, thiếu sang"*. Lỗi thật: nhãn DAILY + chip daily dính sát mép card (`.wte-section--daily { padding-left: 0 }` của bản cũ) và `:first-of-type` không bao giờ trúng section đầu vì header card cũng là `div` → đổi sang `.wte-card-head + .wte-section`.

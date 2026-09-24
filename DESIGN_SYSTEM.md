@@ -21,7 +21,9 @@
 | **12** | Regular | đen | Nội dung trong chip |
 | **12** | Regular | xám | Cột phụ trong bảng (Narrative · TGE) |
 
-Font: **Roboto Condensed** cho toàn site (chốt 2026-09-24, thay Inter) — token `--font`, không khai font nào khác. Không dùng cỡ nào ngoài 18 / 15 / 12.
+Font (chốt lại 2026-09-24): **Roboto** trên desktop (`--font`). **Roboto Condensed** (`--font-c`) chỉ dùng cho **bảng altcoin** (`#tge-section`, popup `#tge-modal`) — và cho **toàn site trên mobile** (dưới 640px `--font` trỏ sang `--font-c`). Desktop không dùng cỡ nào ngoài 18 / 15 / 12.
+
+**Mobile: chữ tối thiểu 14px.** Thang mobile: 18 tên người · 16 tiêu đề · 14 mọi thứ còn lại. **Ngoại lệ duy nhất** được nhỏ hơn 14: bảng altcoin.
 
 Nhãn nhóm, nav, header bảng, dòng phụ trên nền đen: **VIẾT HOA + giãn chữ** `.04–.08em`.
 
@@ -41,7 +43,12 @@ Nhãn nhóm, nav, header bảng, dòng phụ trên nền đen: **VIẾT HOA + gi
 | `--w-line` | `#E7E5E4` | Viền card **1px** · đường kẻ mảnh cạnh tiêu đề |
 | `--w-mute` | `#78716C` | Chữ phụ / icon nghỉ trên nền trắng |
 | `--w-dim` | `#A8A29E` | Chữ phụ trên nền đen · tab nav chưa chọn |
-| `--head-bg` | gradient `#1A1A1A → #000` | Nền header mọi card |
+| `--head-bg` | `#FAFAF9` | Nền header mọi card — **sáng**, kèm kẻ dưới 1px `--w-line`, chữ đen |
+| `--amber-ink` | `#B86B00` | Chữ/icon amber trên nền sáng (amber gốc quá nhạt trên trắng) |
+
+> **Bớt đen (2026-09-24):** navbar trắng mờ, header card sáng, nút phụ trắng viền mảnh, nút chính **amber chữ đen**. Đen chỉ còn ở chữ và nút mèo. Amber là điểm nhấn: vạch tab đang chọn · icon · ô rank · nút chính.
+
+> **Khoảng cách navbar → nội dung: 24** (mobile 16). Bỏ hàng trống 48 cũ, nên mốc dọc `96 / 144` ở mục 4 không còn đúng.
 
 > Figma tự mâu thuẫn: máng VI/EN là `#D9D9D9` ở frame Valuation nhưng `#ABABAB` ở AI/Work. **Chốt dùng `--chip`** — bớt một màu, và máng toggle bản chất cũng là vùng chứa chỉ-đọc.
 

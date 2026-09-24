@@ -45,7 +45,7 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Condensed:wght@400;500;700&display=swap" rel="stylesheet" />
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -81,11 +81,13 @@
                            /* bóng mềm 2 lớp (bản sang) — thay bóng Figma y4·blur8·đen 50%.
                               Dùng cho thẻ nổi + nút bấm được. KHÔNG cho chip và máng toggle. */
       --lift:   0 2px 4px rgba(0,0,0,.08), 0 16px 32px rgba(0,0,0,.12);   /* thẻ khi hover */
-      --font:   'Roboto Condensed', sans-serif;   /* font DUY NHẤT của site (chốt 2026-09-24) */
+      --font:   'Roboto', sans-serif;             /* font chung của site (desktop) */
+      --font-c: 'Roboto Condensed', sans-serif;   /* bảng altcoin (Valuation) + TOÀN BỘ site trên mobile */
       --w-line: #E7E5E4;   /* viền card · đường kẻ mảnh cạnh tiêu đề */
       --w-mute: #78716C;   /* chữ phụ trên nền trắng (nhãn nhóm, icon nghỉ) */
       --w-dim:  #A8A29E;   /* chữ phụ trên nền đen */
-      --head-bg: linear-gradient(180deg, #1A1A1A 0%, #000 100%);   /* header đen của mọi card */
+      --head-bg: #FAFAF9;  /* nền header card — sáng, không còn đen (2026-09-24) */
+      --amber-ink: #B86B00;   /* amber đậm cho CHỮ/ICON trên nền sáng (amber gốc quá nhạt trên trắng) */
       --navbar: 48px;      /* cao navbar */
       --page:   1424px;    /* bề ngang frame Figma */
       --gutter: 48px;      /* lề trái/phải (48 = 1 bước lưới) */
@@ -2226,6 +2228,185 @@
       #ai-view .ai-hub:hover,
       .hl-card:hover { transform: none; }
       #valuation-view .vc-q234, #ai-view .ai-list { padding: 8px; }
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       BẢN SÁNG (2026-09-24, lần 2) — user: "màu đen cho navbar, nút và
+       header hơi over". Đen chỉ còn ở CHỮ và nút mèo. Amber là điểm nhấn:
+       vạch tab đang chọn · icon · ô rank · nút hành động chính.
+       Chữ/icon amber trên nền sáng dùng --amber-ink (amber gốc quá nhạt).
+       ══════════════════════════════════════════════════════════════ */
+
+    /* ── Font: Roboto thường; bảng altcoin dùng Condensed ───── */
+    #tge-section, #tge-section *,
+    #tge-modal, #tge-modal * { font-family: var(--font-c); }
+
+    /* ── Khoảng cách: bỏ hàng trống giữa navbar và nội dung ──── */
+    .hero { padding-top: 24px; }
+    #valuation-view .panel-head,
+    #ai-view .panel-head,
+    #airdrop-view .panel-head,
+    #airdrop-view .ard-subtabs { padding-top: 24px; }
+
+    /* ── Navbar trắng ───────────────────────────────────────── */
+    header {
+      background: rgba(255,255,255,.92); border-bottom: 1px solid var(--w-line);
+      -webkit-backdrop-filter: saturate(1.8) blur(12px); backdrop-filter: saturate(1.8) blur(12px);
+    }
+    .header-home { color: var(--ink); }
+    .header-home:hover { opacity: 1; color: var(--amber-ink); }
+    .nav-btn { color: var(--w-mute); }
+    .nav-btn:hover { color: var(--ink); }
+    .nav-btn.active { color: var(--ink); }
+    .nav-btn:disabled, .nav-btn:disabled:hover { color: var(--w-dim); }
+
+    /* ── Header card sáng: nền ngà + kẻ dưới, chữ đen, icon amber ── */
+    #valuation-view .vc-q1,
+    #ai-view .ai-hub .vc-q1 {
+      color: var(--ink); border-bottom: 1px solid var(--w-line);
+    }
+    #valuation-view .vc-q1 .wte-ico,
+    #ai-view .vc-q1 .wte-ico,
+    #cv-view h2 .wte-ico,
+    .hero-location .wte-ico,
+    #airdrop-view .wte-section-label .wte-ico { color: var(--amber-ink); }
+    #ai-view .ai-count { color: var(--w-mute); }
+    #ai-view .ai-hub-add { color: var(--amber-ink); }
+    #ai-view .ai-hub-add:hover { color: var(--ink); }
+
+    #valuation-view #tge-head-wrap { border-bottom: 1px solid var(--w-line); }
+    #valuation-view #tge-section .val-table thead th { color: var(--ink); }
+
+    #airdrop-view .wte-card-head { border-bottom: 1px solid var(--w-line); }
+    #airdrop-view .wte-name { color: var(--ink); }
+    #airdrop-view .wte-name:hover { color: var(--amber-ink) !important; }
+    #airdrop-view .wte-headline,
+    #airdrop-view .wte-rank-k { color: var(--w-mute); }
+    #airdrop-view .wte-pot--high { color: var(--amber-ink); background: rgba(255,161,17,.16); }
+    #airdrop-view .wte-pot--low  { color: var(--w-mute); background: var(--chip); }
+    #airdrop-view .wte-logo { background: var(--chip); }
+    #airdrop-view .wte-opt { color: var(--w-mute); }
+    #airdrop-view .wte-opt:hover { color: var(--ink); }
+
+    /* Hover hàng bấm được: ô mũi tên amber thay vì đen */
+    #airdrop-view .wte-task-row--link:hover .wte-task-icon,
+    #ai-view .ai-row:hover .wte-task-icon { background: var(--amber); color: var(--ink); }
+
+    /* ── Nút: phụ = trắng viền mảnh · chính = amber chữ đen ──── */
+    .social-btn {
+      background: var(--white); color: var(--ink); border: 1px solid var(--w-line);
+      box-shadow: var(--shadow);
+    }
+    .social-btn svg { color: var(--amber-ink); }
+    .social-btn:hover { background: var(--white); border-color: var(--amber); }
+
+    #valuation-view .predict-link,
+    #valuation-view .retry-btn,
+    .wl-modal .predict-btn-primary,
+    .wl-modal .wl-btn,
+    .wl-modal button.pt-save {
+      background: var(--amber); border: 1px solid var(--amber); color: var(--ink);
+    }
+    .wl-modal .predict-btn-secondary,
+    .wl-modal button.pt-cancel,
+    .val-del-btn {
+      background: var(--white); border: 1px solid var(--w-line); color: var(--ink);
+    }
+    .wl-modal .predict-btn-secondary:hover,
+    .wl-modal button.pt-cancel:hover,
+    .val-del-btn:hover { opacity: 1; border-color: var(--amber); }
+    .val-del-btn.confirm { background: #B42318; border-color: #B42318; color: #fff; }
+
+    /* Thanh lọc rank: khay trắng */
+    #rank-filter-float .lang-toggle {
+      background: rgba(255,255,255,.92); border: 1px solid var(--w-line); box-shadow: var(--lift);
+    }
+    #rank-filter-float .lang-btn { color: var(--w-mute); }
+    #rank-filter-float .lang-btn:hover { color: var(--ink); }
+
+    /* "Điều kiện thị trường:Yếu" — nhãn và giá trị dính nhau vì HTML không có dấu cách */
+    #valuation-view .rt-cond b { margin-left: 4px; }
+
+    /* ══ MOBILE: toàn site Condensed, chữ tối thiểu 14px ══════════
+       Chỉ bảng altcoin (#tge-section) được nhỏ hơn — nó đã khai 12px
+       bằng selector 2 id ở khối mobile phía trên nên không bị đè ở đây.
+       Thang mobile: 18 tên người · 16 tiêu đề · 14 mọi thứ còn lại. */
+    @media (max-width: 640px) {
+      :root { --font: var(--font-c); }
+      .hero { padding-top: 16px; }
+      #valuation-view .panel-head,
+      #ai-view .panel-head,
+      #airdrop-view .panel-head,
+      #airdrop-view .ard-subtabs { padding-top: 16px; }
+
+      .hero-handle { font-size: 18px; }
+
+      #cv-view h2,
+      .header-home,
+      .hero-tagline,
+      .tl-role,
+      #valuation-view .val-intro,
+      #ai-view .val-intro,
+      #airdrop-view .val-intro,
+      #valuation-view .vc-q1,
+      #ai-view .ai-hub .vc-q1,
+      #airdrop-view .wte-name,
+      .wl-modal-title { font-size: 16px; }
+
+      .nav-btn,
+      .hero-location,
+      .hero-belief,
+      .social-btn,
+      .tl-year,
+      .tl-bullets li,
+      .hl-caption,
+      .hl-empty,
+      .avail-list li,
+      footer,
+      #valuation-view .lang-dd-btn, #valuation-view .lang-btn,
+      #ai-view .lang-dd-btn, #ai-view .lang-btn,
+      #airdrop-view .lang-dd-btn, #airdrop-view .lang-btn,
+      #valuation-view .predict-link,
+      #valuation-view .rt-item,
+      #valuation-view .rt-item.rt-cond,
+      #valuation-view .rt-item.rt-split,
+      #valuation-view .rt-item-lbl,
+      #valuation-view .danger-row,
+      #valuation-view .danger-date,
+      #valuation-view .danger-multi,
+      #valuation-view .narrative-row,
+      #valuation-view .narrative-med,
+      #valuation-view .narrative-name .td-size,
+      #ai-view .ai-row, #ai-view .ai-title, #ai-view .ai-date,
+      #ai-view .ai-count, #ai-view .ai-empty,
+      #airdrop-view .wte-headline,
+      #airdrop-view .wte-rank-k,
+      #airdrop-view .wte-rank-v,
+      #airdrop-view .wte-section-label,
+      #airdrop-view .wte-task-row,
+      #rank-filter-float .lang-btn,
+      .wl-modal .info-modal-body,
+      .wl-modal .calc-field label,
+      .wl-modal .calc-field input,
+      .wl-modal .calc-field select,
+      .wl-modal .predict-btn-primary,
+      .wl-modal .predict-btn-secondary,
+      .val-del-btn { font-size: 14px; }
+
+      .hero-belief, .tl-bullets li, .hl-caption, .avail-list li,
+      .wl-modal .info-modal-body { line-height: 22px; }
+      #airdrop-view .wte-task-text { line-height: 18px; }
+
+      /* Nút điều khiển nở theo chữ 14 thay vì ghim bề ngang */
+      #valuation-view .lang-dd-btn,
+      #ai-view .lang-dd-btn,
+      #airdrop-view .lang-dd-btn { width: auto; padding: 0 12px; }
+      #valuation-view .lang-toggle,
+      #ai-view .lang-toggle,
+      #airdrop-view .lang-toggle { width: auto; }
+      #valuation-view .lang-btn,
+      #ai-view .lang-btn,
+      #airdrop-view .lang-btn { min-width: 32px; padding: 0 6px; }
     }
 
   </style>
