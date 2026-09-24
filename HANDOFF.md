@@ -99,6 +99,8 @@ Ba khối **Figma không vẽ nhưng vẫn giữ** (frame chỉ cao 944 nên c�
 
 > ⚠️ **Hệ màu phân biệt rank bằng MÀU đã bỏ hẳn** (tím S · xanh dương A · xanh lá B). Thiết kế mới chỉ có đen · amber · xám; rank đọc bằng **chữ**.
 
+> 🎨 **Bản sang (2026-09-24)** — khối CSS `WORK — BẢN SANG` ở cuối `<style>`, đè mọi CSS Work phía trên. Font **Roboto Condensed** (chỉ tab Work + thanh lọc rank; navbar và 3 tab kia vẫn Inter). Lưới 8 và thang 18/15/12 giữ nguyên. Icon SVG inline nét 1.5 (`WTE_ICON` + `wteIcon()` trong JS): cờ = Get started · đồng hồ = Daily · lịch = Weekly · ↗ = task có link · biểu đồ lên / gạch ngang = high / low-potential. Header: potential thành badge amber, narrative chữ xám, rank là ô amber 24×24. Chip nền `#F5F5F4` (thay `#D9D9D9`), bóng mềm 2 lớp, đệm trong card 16 (mobile 8).
+
 Card Work to Earn đọc từ KV, thanh lọc rank `$ · S · A · B · C` — chi tiết luật ở mục "WTE Cards" bên dưới. Tiêu đề màn: "Work to Earn".
 
 ## Backend + nguồn data
@@ -433,6 +435,8 @@ highlights.txt + highlights/  — ảnh Highlights ở CV (mỗi dòng "tên-ả
 ---
 
 ## Decisions Log
+
+- 2026-09-24: **Làm lại giao diện tab Work cho sang hơn**, giữ lưới + thang chữ + đen/amber. User chê bản cũ *"lỗi, thô, xấu, thiếu sang"*. Lỗi thật: nhãn DAILY + chip daily dính sát mép card (`.wte-section--daily { padding-left: 0 }` của bản cũ) và `:first-of-type` không bao giờ trúng section đầu vì header card cũng là `div` → đổi sang `.wte-card-head + .wte-section`.
 
 - 2026-09-22: **Rút thang chữ còn đúng 3 cỡ: 18 / 15 / 12.** Bỏ hẳn 21. Phân cấp làm bằng **cỡ + đậm/thường + đen/xám**, không thêm cỡ mới. Hệ quả: tên người 21→18, và tagline 18→15 vì **tên phải là thứ 18 duy nhất ở hero** — không để hai thứ cùng cấp cạnh nhau. Toàn bộ quy luật ghi ở `DESIGN_SYSTEM.md`.
 - 2026-09-22: **Rút quy luật thiết kế ra file riêng trước khi build** (`DESIGN_SYSTEM.md`), bằng cách đọc cả 4 frame Figma rồi đối chiếu. Phát hiện Figma **tự mâu thuẫn**: máng VI/EN là `#D9D9D9` ở frame Valuation nhưng `#ABABAB` ở AI/Work → chốt dùng `--chip`, bớt một màu. Làm vậy vì trước đó mỗi tab build một kiểu, sửa chỗ này lệch chỗ kia.

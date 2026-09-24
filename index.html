@@ -45,7 +45,7 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto+Condensed:wght@400;500;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1924,6 +1924,163 @@
       .tl-role { line-height: 24px; }
     }
 
+    /* ══════════════════════════════════════════════════════════════
+       WORK — BẢN SANG (2026-09-24)
+       Giữ nguyên lưới 8 / bước 48 và thang chữ 18 · 15 · 12, đen + amber.
+       Đổi: font Roboto Condensed · icon SVG nét 1.5 · chip xám nhạt thay
+       #D9D9D9 · bóng mềm 2 lớp thay bóng đen 50% · đệm trong card 16.
+       Đặt CUỐI để đè toàn bộ CSS Work phía trên.
+       ══════════════════════════════════════════════════════════════ */
+    #airdrop-view, #rank-filter-float {
+      --w-font:   'Roboto Condensed', 'Inter', sans-serif;
+      --w-line:   #E7E5E4;                 /* viền card · đường kẻ nhãn nhóm */
+      --w-chip:   #F5F5F4;                 /* nền task */
+      --w-mute:   #78716C;                 /* chữ phụ trên nền trắng */
+      --w-dim:    #A8A29E;                 /* chữ phụ trên nền đen */
+      --w-shadow: 0 1px 2px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.08);
+      --w-lift:   0 2px 4px rgba(0,0,0,.08), 0 16px 32px rgba(0,0,0,.12);
+      font-family: var(--w-font);
+    }
+    #airdrop-view button { font-family: var(--w-font); }
+    #airdrop-view .wte-ico { display: block; width: 16px; height: 16px; flex-shrink: 0; }
+
+    /* Tiêu đề màn + nút */
+    #airdrop-view .val-intro { font-size: 18px; letter-spacing: .01em; }
+    #airdrop-view .lang-dd-btn {
+      font-family: var(--w-font); border: 1px solid var(--w-line); box-shadow: var(--w-shadow);
+      transition: border-color .15s, color .15s;
+    }
+    #airdrop-view .lang-toggle { background: var(--w-chip); border: 1px solid var(--w-line); padding: 2px; }
+    #airdrop-view .lang-btn { font-family: var(--w-font); border-radius: 6px; color: var(--w-mute); }
+    #airdrop-view .lang-btn.active { border: none; box-shadow: 0 1px 3px rgba(0,0,0,.15); color: var(--ink); }
+
+    /* ── Card ───────────────────────────────────────────────── */
+    #airdrop-view .wte-card {
+      border: 1px solid var(--w-line); border-radius: 8px; box-shadow: var(--w-shadow);
+      transition: box-shadow .2s, transform .2s;
+    }
+    #airdrop-view .wte-card:hover { box-shadow: var(--w-lift); transform: translateY(-2px); }
+    #airdrop-view .wte-card--flash { box-shadow: 0 0 0 2px var(--amber), var(--w-lift); }
+
+    /* Header đen 40: logo + tên · badge potential + narrative · ô rank */
+    #airdrop-view .wte-card-head {
+      grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); gap: 16px;
+      padding: 0 8px 0 16px;
+      background: linear-gradient(180deg, #1A1A1A 0%, #000 100%);
+    }
+    #airdrop-view .wte-name-wrap { gap: 8px; }
+    #airdrop-view .wte-logo {
+      width: 24px; height: 24px; background: #262626;
+      box-shadow: 0 0 0 1px rgba(255,161,17,.45);
+    }
+    #airdrop-view .wte-name {
+      font-size: 15px; font-weight: 700; color: var(--amber); letter-spacing: .02em;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    #airdrop-view .wte-name:hover { color: var(--white) !important; }
+    #airdrop-view .wte-headline {
+      display: flex; align-items: center; gap: 8px; min-width: 0;
+      font-size: 12px; font-weight: 500; color: var(--w-dim);
+      text-transform: uppercase; letter-spacing: .06em;
+    }
+    #airdrop-view .wte-pot {
+      display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 8px;
+      border-radius: 4px; font-weight: 700; white-space: nowrap;
+    }
+    #airdrop-view .wte-pot .wte-ico { width: 12px; height: 12px; }
+    #airdrop-view .wte-pot--high { color: var(--amber); background: rgba(255,161,17,.14); }
+    #airdrop-view .wte-pot--low  { color: var(--w-dim); background: rgba(255,255,255,.08); }
+    #airdrop-view .wte-narr { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #airdrop-view .wte-rank {
+      display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+    }
+    #airdrop-view .wte-rank-k {
+      font-size: 12px; font-weight: 500; color: var(--w-dim);
+      text-transform: uppercase; letter-spacing: .08em;
+    }
+    #airdrop-view .wte-rank-v {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 24px; height: 24px; border-radius: 4px;
+      background: var(--amber); color: var(--ink); font-size: 15px; font-weight: 700;
+    }
+    #airdrop-view .wte-opt { color: var(--w-dim); font-size: 15px; }
+    #airdrop-view .wte-opt:hover { color: var(--amber); }
+
+    /* ── Thân card: đệm 16, nhãn nhóm có icon + đường kẻ mảnh ── */
+    #airdrop-view .wte-section,
+    #airdrop-view .wte-section--daily { padding: 0 16px; }
+    /* header cũng là div nên :first-of-type bắt nhầm vào header — dùng + */
+    #airdrop-view .wte-card-head + .wte-section { padding-top: 8px; }
+    #airdrop-view .wte-section:last-of-type  { padding-bottom: 16px; }
+    #airdrop-view .wte-section-label {
+      gap: 8px; color: var(--w-mute) !important;
+      font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    }
+    #airdrop-view .wte-section-label .wte-ico { color: var(--amber); }
+    #airdrop-view .wte-section-label::after {
+      content: ''; flex: 1; height: 1px; background: var(--w-line);
+    }
+
+    /* Task: chip xám nhạt, vạch amber bên trái khi hover, mũi tên ↗ */
+    #airdrop-view .wte-task-item { margin: 0 0 8px; }
+    #airdrop-view .wte-task-row {
+      position: relative; height: 32px; padding: 0 4px 0 16px; gap: 16px;
+      background: var(--w-chip); border: 1px solid transparent; border-radius: 8px;
+      font-size: 12px; font-weight: 400; color: var(--ink);
+      transition: background .15s, border-color .15s, color .15s, box-shadow .15s;
+    }
+    #airdrop-view .wte-task-row::before {
+      content: ''; position: absolute; left: 7px; top: 11px;
+      width: 2px; height: 8px; border-radius: 1px; background: transparent;
+      transition: background .15s, height .15s, top .15s;
+    }
+    #airdrop-view .wte-task-text {
+      min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    #airdrop-view .wte-section--daily .wte-task-text { color: inherit; }
+    #airdrop-view .wte-task-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 24px; height: 24px; border-radius: 4px; font-size: 0; color: var(--w-mute);
+      transition: background .15s, color .15s;
+    }
+    #airdrop-view .wte-task-icon::after { content: none; }
+    #airdrop-view .wte-task-row--link:hover {
+      background: var(--white); border-color: var(--w-line); color: var(--ink);
+      box-shadow: 0 1px 3px rgba(0,0,0,.08);
+    }
+    #airdrop-view .wte-task-row--link:hover::before { background: var(--amber); top: 7px; height: 16px; }
+    #airdrop-view .wte-task-row--link:hover .wte-task-icon { background: var(--ink); color: var(--amber); }
+
+    /* ── Thanh lọc rank: khay đen, ô đang chọn amber ─────────── */
+    #rank-filter-float .lang-toggle {
+      height: 40px; padding: 4px; gap: 4px;
+      background: rgba(0,0,0,.92); border: 1px solid #262626; border-radius: 8px;
+      box-shadow: var(--w-lift); backdrop-filter: blur(8px);
+    }
+    #rank-filter-float .lang-btn {
+      min-width: 32px; height: 32px; padding: 0 8px; border-radius: 4px;
+      font-family: var(--w-font); font-size: 15px; font-weight: 700; color: var(--w-dim);
+      transition: color .15s, background .15s;
+    }
+    #rank-filter-float .lang-btn:hover { color: var(--white); }
+    #rank-filter-float .lang-btn.active,
+    #rank-filter-float #rf-income.active {
+      background: var(--amber); border: none; color: var(--ink);
+    }
+
+    @media (max-width: 640px) {
+      #airdrop-view .wte-card:hover { transform: none; }
+      #airdrop-view .wte-card-head {
+        grid-template-columns: minmax(0,1fr) auto; row-gap: 4px; padding: 8px 8px 8px 16px;
+      }
+      #airdrop-view .wte-headline { flex-wrap: wrap; row-gap: 4px; }
+      #airdrop-view .wte-section,
+      #airdrop-view .wte-section--daily { padding: 0 8px; }
+      #airdrop-view .wte-section:last-of-type { padding-bottom: 8px; }
+      #airdrop-view .wte-task-text { white-space: normal; line-height: 16px; }
+      #airdrop-view .wte-task-row { height: auto; min-height: 32px; padding-top: 4px; padding-bottom: 4px; }
+    }
+
   </style>
 </head>
 <body>
@@ -2196,7 +2353,7 @@
   <div id="cat-hint">Agent — coming soon</div>
 
   <div id="rank-filter-float" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:50">
-    <div class="lang-toggle" id="rank-filter" style="box-shadow:0 4px 20px rgba(0,0,0,0.15);backdrop-filter:blur(8px)">
+    <div class="lang-toggle" id="rank-filter">
       <button class="lang-btn active" data-rank="INCOME" id="rf-income" title="Income">$</button>
       <button class="lang-btn" data-rank="S"  id="rf-s">S</button>
       <button class="lang-btn" data-rank="A"  id="rf-a">A</button>
@@ -3604,10 +3761,22 @@ ${line}
       wteLoaded.EN = true;
     }
 
+    // ── Icon SVG của tab Work (nét 1.5, tô bằng currentColor) ──
+    const WTE_ICON = {
+      getStarted: '<path d="M4 21V4M4 4h11l-2 4 2 4H4"/>',
+      daily:      '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>',
+      weekly:     '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
+      link:       '<path d="M7 17 17 7M9 7h8v8"/>',
+      high:       '<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>',
+      low:        '<path d="M5 12h14"/>',
+    };
+    const wteIcon = (k, cls = '') =>
+      `<svg class="wte-ico ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${WTE_ICON[k]}</svg>`;
+
     // ── Render a task section ─────────────────────────
     function renderTasks(items) {
       return items.map(item => {
-        const inner = `<span class="wte-task-text">${item.text}</span>${item.link ? '<span class="wte-task-icon">🔗</span>' : ''}`;
+        const inner = `<span class="wte-task-text">${item.text}</span>${item.link ? `<span class="wte-task-icon">${wteIcon('link')}</span>` : ''}`;
         const content = item.link
           ? `<a class="wte-task-row wte-task-row--link" href="${item.link}" target="_blank" rel="noopener">${inner}</a>`
           : `<span class="wte-task-row">${inner}</span>`;
@@ -3618,8 +3787,8 @@ ${line}
     function section(label, items, key) {
       if (!items.length) return '';
       const cls = key === 'daily' ? ' wte-section--daily' : '';
-      return `<div class="wte-section${cls}">
-        <div class="wte-section-label">${label}</div>
+      return `<div class="wte-section wte-section--${key}${cls}">
+        <div class="wte-section-label">${wteIcon(key)}<span>${label}</span></div>
         <ul class="wte-tasks">${renderTasks(items)}</ul>
       </div>`;
     }
@@ -3652,14 +3821,15 @@ ${line}
           : 'wte-card-' + p.name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
         // Figma: dòng giữa header là "high-potential / narrative". Kho đang lưu
         // potential dạng số 1-3 (chưa migrate sang 2 mức) nên quy đổi: ≥2 = high.
-        const potTxt = p.potential > 0 ? ((p.potential >= 2 ? 'high' : 'low') + '-potential') : '';
-        const headline = [potTxt, p.type].filter(Boolean).join(' / ');
+        const potLv = p.potential > 0 ? (p.potential >= 2 ? 'high' : 'low') : '';
+        const headline = (potLv ? `<span class="wte-pot wte-pot--${potLv}">${wteIcon(potLv)}${potLv}-potential</span>` : '')
+          + (p.type ? `<span class="wte-narr">${p.type}</span>` : '');
         const g = groupOf(p);
         return `<div class="wte-card wte-card--${g}" id="${cardId}">
           <div class="wte-card-head">
             <span class="wte-name-wrap">${logoHtml}${nameHtml}</span>
             <span class="wte-headline">${headline}</span>
-            <span class="wte-rank rank-${g}">rank: ${RANK_LABEL[g] || g}${adminUnlocked ? ` <button class="wte-opt" data-id="${p.id}" title="Sửa task">⋮</button>` : ''}</span>
+            <span class="wte-rank rank-${g}"><span class="wte-rank-k">rank</span><b class="wte-rank-v">${RANK_LABEL[g] || g}</b>${adminUnlocked ? ` <button class="wte-opt" data-id="${p.id}" title="Sửa task">⋮</button>` : ''}</span>
           </div>
           ${section('Get Started', p.getStarted, 'getStarted')}
           ${section('Daily', p.daily, 'daily')}
