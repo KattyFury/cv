@@ -56,7 +56,8 @@
       /* màu */
       /* Đen = màu chủ đạo nhưng dùng TIẾT CHẾ (chữ, icon, nút chính, vạch chọn).
          Trắng = nền. Xám TRUNG TÍNH (không ngả vàng) = chữ phụ + nhấn nhá.
-         Màu sắc duy nhất trên trang là màu RANK ở tab Work. */
+         Chốt 2026-09-26: header card + dải Daily giờ nhuộm màu (cam nhạt mặc
+         định, hoặc màu RANK riêng ở Work) — không còn "chỉ rank mới có màu". */
       --white:     #FFFFFF;
       --ink:       #111111;   /* đen chủ đạo: chữ chính · icon · nút chính · vạch tab */
       --text:      #171717;   /* chữ mặc định của body */
@@ -67,8 +68,9 @@
       --w-mute:    #737373;   /* chữ phụ / icon nghỉ */
       --w-dim:     #A3A3A3;   /* chữ nhạt nhất (trạng thái trống, tab bị khoá) */
       --chip:      #F5F5F5;   /* nền chip CHỈ-ĐỌC + máng toggle */
-      --head-bg:   #EFEFEF;   /* nền header card + dải Daily — đủ đậm để tách khỏi nền trắng */
-      /* màu rank (CHỈ dùng ở tab Work: ô rank + thanh lọc) */
+      --head-bg:   color-mix(in srgb, var(--amber) 14%, white);   /* nền header card mặc định (Valuation/AI/bảng altcoin) — cam nhạt, Work override theo màu rank riêng */
+      /* màu rank — badge rank + tint header/Daily ở Work + thanh lọc.
+         --amber còn được --head-bg mặc định dùng làm tint chung cả trang. */
       --amber:     #FFA111;   /* rank $ — cũng là mắt mèo trong icon.png */
       --rank-s:    #6155F5;   /* tím */
       --rank-a:    #0088FF;   /* xanh dương */
@@ -521,7 +523,7 @@
     /* Header: logo + tên · potential + narrative · rank */
     .wte-card-head {
       height: 40px; padding: 0 8px 0 16px;
-      display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr) auto; align-items: center; gap: 16px;
+      display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr) auto; align-items: center; gap: 8px;
       background: var(--head-bg); border-bottom: 1px solid var(--w-line);
     }
     .wte-name-wrap { min-width: 0; display: flex; align-items: center; gap: 8px; }
@@ -535,30 +537,36 @@
     }
     .wte-name:hover { color: var(--w-mute); }
     .wte-headline {
-      min-width: 0; display: flex; align-items: center; gap: 8px; overflow: hidden;
-      font-size: 12px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase;
+      min-width: 0; display: flex; align-items: center; gap: 6px; overflow: hidden;
+      font-size: 11px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase;
       white-space: nowrap; text-overflow: ellipsis; color: var(--w-mute);
     }
     .wte-pot {
-      height: 24px; padding: 0 8px; border-radius: 4px;
+      height: 20px; padding: 0 6px; border-radius: 4px;
       display: inline-flex; align-items: center; gap: 4px; font-weight: 700; white-space: nowrap;
     }
-    .wte-pot .wte-ico { width: 12px; height: 12px; }
+    .wte-pot .wte-ico { width: 10px; height: 10px; }
     .wte-pot--high { color: var(--ink); background: var(--chip); }
     .wte-pot--low  { color: var(--w-dim); background: transparent; }
     .wte-narr { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .wte-rank { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
-    .wte-rank-k { font-size: 12px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--w-mute); }
     .wte-rank-v {
       width: 24px; height: 24px; border-radius: 4px;
       display: inline-flex; align-items: center; justify-content: center;
       background: var(--rank-c); font-size: 15px; font-weight: 700; color: var(--white);
     }
-    /* Màu rank — chỗ DUY NHẤT trên trang có màu sắc */
+    /* Màu rank — badge rank + tint nền header/Daily của card cùng rank đó */
     .rank-INCOME .wte-rank-v { background: var(--amber); color: var(--ink); }
     .rank-S .wte-rank-v { background: var(--rank-s); }
     .rank-A .wte-rank-v { background: var(--rank-a); }
     .rank-B .wte-rank-v { background: var(--rank-b); }
+
+    /* Header + Daily của card Work nhuộm màu rank (nhạt), thay cho --head-bg xám/cam mặc định */
+    .wte-card--INCOME .wte-card-head, .wte-card--INCOME .wte-section--daily { background: color-mix(in srgb, var(--amber) 16%, white); }
+    .wte-card--S .wte-card-head,      .wte-card--S .wte-section--daily      { background: color-mix(in srgb, var(--rank-s) 12%, white); }
+    .wte-card--A .wte-card-head,      .wte-card--A .wte-section--daily      { background: color-mix(in srgb, var(--rank-a) 12%, white); }
+    .wte-card--B .wte-card-head,      .wte-card--B .wte-section--daily      { background: color-mix(in srgb, var(--rank-b) 12%, white); }
+    .wte-card--C .wte-card-head,      .wte-card--C .wte-section--daily      { background: color-mix(in srgb, var(--rank-c) 16%, white); }
 
     /* Thân: nhãn nhóm (icon + kẻ mảnh) → chip → … */
     .wte-section { min-width: 0; padding: 0 16px; }
@@ -815,7 +823,7 @@
       #wte-cards { gap: 32px; }
       .wte-rank-group { grid-template-columns: 1fr; }
       .wte-logo { width: 20px; height: 20px; }
-      .wte-headline, .wte-rank-k, .wte-rank-v, .wte-section-label, .wte-task-row, #rank-filter-float .lang-btn { font-size: 14px; }
+      .wte-headline, .wte-rank-v, .wte-section-label, .wte-task-row, #rank-filter-float .lang-btn { font-size: 14px; }
       .wte-section { padding: 0 8px; }
       .wte-section:last-of-type { padding-bottom: 8px; }
       .wte-task-row { height: auto; min-height: 32px; padding-top: 4px; padding-bottom: 4px; }
@@ -2484,7 +2492,7 @@ ${line}
           <div class="wte-card-head">
             <span class="wte-name-wrap">${logoHtml}${nameHtml}</span>
             <span class="wte-headline">${headline}</span>
-            <span class="wte-rank rank-${g}"><span class="wte-rank-k">rank</span><b class="wte-rank-v">${RANK_LABEL[g] || g}</b>${adminUnlocked ? ` <button class="wte-opt" data-id="${p.id}" title="Sửa task">⋮</button>` : ''}</span>
+            <span class="wte-rank rank-${g}"><b class="wte-rank-v">${RANK_LABEL[g] || g}</b>${adminUnlocked ? ` <button class="wte-opt" data-id="${p.id}" title="Sửa task">⋮</button>` : ''}</span>
           </div>
           ${section('Get Started', p.getStarted, 'getStarted')}
           ${section('Daily', p.daily, 'daily')}

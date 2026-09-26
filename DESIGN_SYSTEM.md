@@ -23,12 +23,17 @@ Phân cấp bằng **cỡ + đậm/thường + đen/xám**, không thêm cỡ m�
 | **15** Bold | Tiêu đề card · nút · tab nav · năm timeline · tagline |
 | **15** Regular xám | Thân bài · bullet · caption |
 | **12** | Chip · nhãn nhóm · số trong bảng · dòng phụ header card |
+| **11** | Badge potential + narrative trong header card Work (riêng, để hàng header đỡ chật) |
 
 Nhãn nhóm, tab nav, header bảng, dòng phụ header card: **VIẾT HOA + giãn chữ** `.04–.08em`.
 
 ## 2. Màu
 
-**Đen là màu chủ đạo nhưng dùng tiết chế** — chữ, icon, nút chính, vạch tab đang chọn. **Trắng** làm nền. **Xám trung tính** (không ngả vàng) cho chữ phụ và nhấn nhá. **Màu sắc duy nhất trên trang là màu rank** ở tab Work (chốt 2026-09-25 — user: "trắng xám và cam vốn không cùng nhau").
+**Đen là màu chủ đạo nhưng dùng tiết chế** — chữ, icon, nút chính, vạch tab đang chọn. **Trắng** làm nền. **Xám trung tính** (không ngả vàng) cho chữ phụ và nhấn nhá.
+
+**Chốt 2026-09-26 — đảo lại luật cũ:** nền header card + dải Daily giờ có màu (trước đó chỉ xám `--head-bg`, bị chê mờ nhạt và cả trang thiếu sức sống). Quy tắc:
+- **Valuation / AI / bảng altcoin** (không có khái niệm rank): header nhuộm **cam nhạt** — `--head-bg` giờ = `color-mix(in srgb, var(--amber) 14%, white)`.
+- **Work**: mỗi card nhuộm header + Daily theo đúng **màu rank của card đó** (`.wte-card--<RANK> .wte-card-head`/`.wte-section--daily`), amber/tím/xanh dương/xanh lá/xám ở mức nhạt (12–16%) — xem bảng Màu rank bên dưới.
 
 | Token | Mã | Dùng cho |
 |---|---|---|
@@ -39,10 +44,10 @@ Nhãn nhóm, tab nav, header bảng, dòng phụ header card: **VIẾT HOA + gi�
 | `--w-dim` | `#A3A3A3` | Chữ nhạt nhất (trạng thái trống, dấu bullet) |
 | `--w-line` | `#E5E5E5` | Viền card 1px · kẻ mảnh · viền avatar |
 | `--chip` | `#F5F5F5` | Nền chip chỉ-đọc · máng toggle · hover dòng bảng |
-| `--head-bg` | `#EFEFEF` | Nền header card + header bảng + dải Daily (đậm hơn `#FAFAFA` cũ — user thấy mờ, khó phân biệt với nền trắng) |
+| `--head-bg` | cam nhạt 14% | Nền header Valuation/AI/bảng altcoin (Work override theo màu rank riêng, xem dưới) |
 | `--shadow` / `--lift` | bóng mềm 2 lớp | Thẻ nổi / thẻ khi hover |
 
-**Màu rank** (chỉ ở ô rank trên card Work + nút đang chọn của thanh lọc):
+**Màu rank** (ô rank trên card Work · header + Daily của card đó · nút đang chọn của thanh lọc):
 
 | Rank | Token | Mã | Chữ trên nền |
 |---|---|---|---|
@@ -58,10 +63,11 @@ Nhãn nhóm, tab nav, header bảng, dòng phụ header card: **VIẾT HOA + gi�
 |---|---|
 | **Navbar** | trắng mờ (blur) · kẻ dưới · cao 48 · logo = ảnh mèo 24 + chữ 18 · tab chữ hoa 15, cách nhau 16, đang chọn chữ đen + vạch đen 24×2 ở đáy |
 | **Card / box** | trắng · **radius 16** · viền 1px `--w-line` · `--shadow` · hover `--lift` + nhích 2px. Áp cho: card Work · box Valuation · hub AI · bảng altcoin · ảnh Highlights · popup |
-| **Header card** | cao 40 · nền `--head-bg` · kẻ dưới · icon đen + tiêu đề canh TRÁI · Bold 15 đen |
+| **Header card** | cao 40 · nền `--head-bg` (Work: theo màu rank) · kẻ dưới · icon đen + tiêu đề canh TRÁI · Bold 15 đen |
+| **Header card Work** | logo+tên · badge potential + narrative (chữ **11**, thu nhỏ 2026-09-26 để đỡ chật) · rank = **chỉ 1 ô vuông màu + chữ** (đã bỏ nhãn chữ "rank" — quá nhiều yếu tố trên 1 hàng) |
 | **Chip** (chỉ đọc) | nền `--chip` · **radius 8** (lồng trong box 16) · cao 32 · chữ 12 |
 | **Hàng bấm được** (task Work, bài AI) | như chip; hover: nền trắng + viền + vạch đen bên trái + ô mũi tên ↗ nền đen |
-| **Nhãn nhóm** (Work) | cao 32 · icon đen + chữ hoa 12 xám + kẻ mảnh kéo hết ngang. **Daily** = dải nền `--head-bg` tràn 2 mép card, lề trong vẫn 16 như các nhóm khác |
+| **Nhãn nhóm** (Work) | cao 32 · icon đen + chữ hoa 12 xám + kẻ mảnh kéo hết ngang. **Daily** = dải nền theo màu rank tràn 2 mép card, lề trong vẫn 16 như các nhóm khác |
 | **Tiêu đề mục** (CV) | icon đen + chữ 18 + kẻ mảnh kéo hết ngang |
 | **Nút chính** | tròn radius 24 · nền đen · chữ trắng · bóng |
 | **Nút phụ** | tròn radius 24 · trắng · viền `--w-line`, hover viền đen (Twitter/Telegram/Email, Huỷ, Xoá) |
