@@ -23,7 +23,7 @@ _redirects            — SPA fallback: /* → /index.html
 DESIGN_SYSTEM.md      — luật thiết kế (màu, chữ, lưới, thành phần). ĐỌC trước khi đụng giao diện
 highlights.txt + highlights/   — ảnh + caption mục Highlights ở CV
 icon.png              — favicon + nút mèo + logo navbar
-pfp.webp · og.png     — avatar hero · ảnh preview khi share link (1200×630)
+pfp.jpg · og.png      — avatar hero · ảnh preview khi share link (1200×630)
 camera.svg · plus.svg — 2 icon tô bằng CSS mask (nút chụp ảnh, nút thêm dự án)
 html2canvas.min.js    — DOM→PNG cho nút camera. Để trong repo, không CDN, lazy-load khi bấm
 ```

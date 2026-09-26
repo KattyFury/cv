@@ -43,9 +43,6 @@
     "sameAs": ["https://x.com/nguyen0xhieu", "https://t.me/nguyen0xhieu", "https://github.com/KattyFury"]
   }
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Condensed:wght@400;500;700&display=swap" rel="stylesheet" />
 
   <style>
     /* ══════════════════════════════════════════════════════════════
@@ -70,7 +67,7 @@
       --w-mute:    #737373;   /* chữ phụ / icon nghỉ */
       --w-dim:     #A3A3A3;   /* chữ nhạt nhất (trạng thái trống, tab bị khoá) */
       --chip:      #F5F5F5;   /* nền chip CHỈ-ĐỌC + máng toggle */
-      --head-bg:   #FAFAFA;   /* nền header card */
+      --head-bg:   #EFEFEF;   /* nền header card + dải Daily — đủ đậm để tách khỏi nền trắng */
       /* màu rank (CHỈ dùng ở tab Work: ô rank + thanh lọc) */
       --amber:     #FFA111;   /* rank $ — cũng là mắt mèo trong icon.png */
       --rank-s:    #6155F5;   /* tím */
@@ -80,9 +77,10 @@
       /* bóng */
       --shadow: 0 1px 2px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.08);   /* thẻ nổi + nút */
       --lift:   0 2px 4px rgba(0,0,0,.08), 0 16px 32px rgba(0,0,0,.12);  /* thẻ khi hover */
-      /* font — mobile đổi --font sang --font-c (xem cuối file) */
-      --font:   'Roboto', sans-serif;
-      --font-c: 'Roboto Condensed', sans-serif;   /* bảng altcoin + toàn site trên mobile */
+      /* font hệ thống — không tải webfont ngoài. --font-c chỉ còn khác biệt
+         cho những nơi cần chữ hẹp (bảng altcoin); mobile không đổi font nữa. */
+      --font:   -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-c: -apple-system, BlinkMacSystemFont, 'Segoe UI Semibold', 'Segoe UI', 'Arial Narrow', Helvetica, Arial, sans-serif;
       /* kích thước */
       --navbar:  48px;
       --page:    1424px;   /* bề ngang frame Figma */
@@ -382,7 +380,7 @@
     .add-btn:disabled { cursor: not-allowed; }
     .add-btn:disabled::before { opacity: .35; }
 
-    /* ── Bảng altcoin: Roboto Condensed, header cố định tách khỏi vùng cuộn ──
+    /* ── Bảng altcoin: font hẹp (--font-c), header cố định tách khỏi vùng cuộn ──
        7 cột 176 + khe 16 nhét trong padding ô: 184 · 192×5 · 184 = 1328. */
     #tge-section, #tge-section *, #tge-modal, #tge-modal *, .tge-modal-body, .tge-modal-body * { font-family: var(--font-c); }
     #tge-section {
@@ -523,7 +521,7 @@
     /* Header: logo + tên · potential + narrative · rank */
     .wte-card-head {
       height: 40px; padding: 0 8px 0 16px;
-      display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); align-items: center; gap: 16px;
+      display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr) auto; align-items: center; gap: 16px;
       background: var(--head-bg); border-bottom: 1px solid var(--w-line);
     }
     .wte-name-wrap { min-width: 0; display: flex; align-items: center; gap: 8px; }
@@ -739,6 +737,16 @@
     @media (max-width: 1024px) {
       #highlights-grid, .val-boxes { grid-template-columns: 1fr 1fr; }
       .ai-hubs { grid-template-columns: 1fr; }
+
+      /* Header card Work ĐÚNG 2 hàng ngay từ 1024 (không đợi tới mobile):
+         card 2 cột đã hẹp lại ở khoảng này, giữ 3 cột 1 hàng làm chữ đè nhau.
+         Tên trái · rank phải / headline trải ngang. Ghim cả grid-row, không
+         thì rank bị đẩy xuống hàng 3. */
+      .wte-card-head { height: auto; min-height: 40px; padding: 8px 8px 8px 16px; grid-template-columns: minmax(0,1fr) auto; row-gap: 4px; }
+      .wte-card-head > * { min-width: 0; }
+      .wte-name-wrap { grid-column: 1; grid-row: 1; }
+      .wte-rank      { grid-column: 2; grid-row: 1; }
+      .wte-headline  { grid-column: 1 / -1; grid-row: 2; flex-wrap: wrap; row-gap: 4px; white-space: normal; }
     }
 
     /* ══ MOBILE (≤640): toàn site Condensed, chữ tối thiểu 14 ══════
@@ -806,13 +814,6 @@
       /* Work */
       #wte-cards { gap: 32px; }
       .wte-rank-group { grid-template-columns: 1fr; }
-      /* Header card ĐÚNG 2 hàng: tên trái · rank phải / headline trải ngang.
-         ⚠️ Phải ghim cả grid-row, không thì rank bị đẩy xuống hàng 3. */
-      .wte-card-head { height: auto; min-height: 40px; padding: 8px 8px 8px 16px; grid-template-columns: minmax(0,1fr) auto; row-gap: 4px; }
-      .wte-card-head > * { min-width: 0; }
-      .wte-name-wrap { grid-column: 1; grid-row: 1; }
-      .wte-rank      { grid-column: 2; grid-row: 1; }
-      .wte-headline  { grid-column: 1 / -1; grid-row: 2; flex-wrap: wrap; row-gap: 4px; white-space: normal; }
       .wte-logo { width: 20px; height: 20px; }
       .wte-headline, .wte-rank-k, .wte-rank-v, .wte-section-label, .wte-task-row, #rank-filter-float .lang-btn { font-size: 14px; }
       .wte-section { padding: 0 8px; }
@@ -856,7 +857,7 @@
       <section class="hero" id="about">
         <div class="hero-top">
           <div class="pfp">
-            <img src="pfp.webp" width="72" height="72" alt="Hieu Nguyen" onerror="this.parentNode.innerHTML='<div class=pfp-fallback>HN</div>'" />
+            <img src="pfp.jpg" width="72" height="72" alt="Hieu Nguyen" onerror="this.parentNode.innerHTML='<div class=pfp-fallback>HN</div>'" />
           </div>
           <div class="hero-info">
             <div class="hero-handle">Hieu Nguyen</div>

@@ -1,6 +1,6 @@
 # Luật thiết kế — 0xhieu.xyz
 
-> Trạng thái chốt 2026-09-25. Mọi tab tuân đúng file này; code nằm ở khối `<style>` duy nhất trong `index.html`, viết theo thành phần, cùng thứ tự các mục dưới đây.
+> Trạng thái chốt 2026-09-26. Mọi tab tuân đúng file này; code nằm ở khối `<style>` duy nhất trong `index.html`, viết theo thành phần, cùng thứ tự các mục dưới đây.
 > Gốc là Figma `qPitw8s3XP5ennmBmhzYQF` (frame 1424 × 944), nhưng từ 2026-09-24 **file này thắng Figma**: bản sang + bản sáng đã đi khác Figma ở màu header/nút, tiêu đề card và khoảng cách dưới navbar.
 
 ---
@@ -9,9 +9,11 @@
 
 | | Desktop | Mobile (≤ 640px) |
 |---|---|---|
-| Font | **Roboto** (`--font`) | **Roboto Condensed** toàn site (`--font` trỏ sang `--font-c`) |
+| Font | **Font hệ thống** (`--font`, không tải webfont ngoài) | Stack hẹp hơn (`--font-c`) toàn site |
 | Thang | **18 · 15 · 12** | **18 · 16 · 14** — tối thiểu 14 |
-| Ngoại lệ | Bảng altcoin (Valuation) luôn dùng Condensed | Bảng altcoin được nhỏ hơn 14 (12) |
+| Ngoại lệ | Bảng altcoin (Valuation) luôn dùng `--font-c` | Bảng altcoin được nhỏ hơn 14 (12) |
+
+`--font` = `-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif` (chốt 2026-09-26, bỏ Google Fonts Roboto để trang không phụ thuộc webfont ngoài). `--font-c` là stack có thêm `Arial Narrow`/`Segoe UI Semibold` cho chỗ cần chữ hẹp, không còn là 1 font Condensed thật.
 
 Phân cấp bằng **cỡ + đậm/thường + đen/xám**, không thêm cỡ mới.
 
@@ -37,7 +39,7 @@ Nhãn nhóm, tab nav, header bảng, dòng phụ header card: **VIẾT HOA + gi�
 | `--w-dim` | `#A3A3A3` | Chữ nhạt nhất (trạng thái trống, dấu bullet) |
 | `--w-line` | `#E5E5E5` | Viền card 1px · kẻ mảnh · viền avatar |
 | `--chip` | `#F5F5F5` | Nền chip chỉ-đọc · máng toggle · hover dòng bảng |
-| `--head-bg` | `#FAFAFA` | Nền header card + header bảng + dải Daily |
+| `--head-bg` | `#EFEFEF` | Nền header card + header bảng + dải Daily (đậm hơn `#FAFAFA` cũ — user thấy mờ, khó phân biệt với nền trắng) |
 | `--shadow` / `--lift` | bóng mềm 2 lớp | Thẻ nổi / thẻ khi hover |
 
 **Màu rank** (chỉ ở ô rank trên card Work + nút đang chọn của thanh lọc):
@@ -86,4 +88,4 @@ Mọi khoảng cách là **bội số của 8**.
 | CV — Highlights | 3 cột × 432, ảnh 3:2 |
 | CV — timeline | 3 cột `128 / 64 / 944`, chấm đen 8px ở tâm rãnh, item cách 48 |
 
-Màn ≤ 1024: 3 cột → 2, AI → 1 cột. Màn ≤ 640: mọi lưới → 1 cột.
+Màn ≤ 1024: 3 cột → 2, AI → 1 cột, header card Work xuống 2 hàng (tên/rank hàng 1 · headline hàng 2 — tránh đè chữ khi card 2 cột co hẹp lại). Màn ≤ 640: mọi lưới → 1 cột.
