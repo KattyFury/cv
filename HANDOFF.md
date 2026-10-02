@@ -1,7 +1,7 @@
 # HANDOFF — 0xhieu.xyz (repo `cv`)
 
-**Chốt trạng thái:** 2026-09-24
-**Repo:** https://github.com/KattyFury/cv · **Local:** `D:\Files\Claude\4_0xhieu`
+**Chốt trạng thái:** 2026-10-02
+**Repo:** https://github.com/KattyFury/cv · **Local:** `D:\Files\Claude\Big projects\cv`
 **Live:** Cloudflare Pages, project **`0xhieu-xyz`** (khác tên repo) — auto-deploy từ `main`.
 
 > File này chỉ ghi **sự thật hiện tại** + **luật/bẫy còn hiệu lực**. Lịch sử cũ (log quyết định từ 06/2026) nằm trong git history của file này, trước commit dọn repo 2026-09-24.
@@ -129,11 +129,14 @@ Account `f9df99b7751b7dc3c80a22b6911c6f2b`, project Pages `0xhieu-xyz`. API toke
 3. **Rank `SS` còn sót trong KV** — đang hiện ở nhóm S nhờ `groupOf()`; sửa tay qua popup admin rồi bỏ shim.
 4. **Làm tab Valuation dễ hiểu cho số đông** (hướng đã chốt: diễn giải ngay trong box — con số nói gì, ngưỡng nào tốt/xấu). Chưa làm.
 5. Ảnh mới cho Highlights: nén WebP ~750×500, dưới ~150KB, tên khớp `highlights.txt`.
+6. **Mắt mèo trong `icon.png` (favicon + nút mèo) vẫn cam sáng `#FFA111`** — lệch với cam thương hiệu mới `#B35C00`. Là ảnh, muốn đồng bộ phải vẽ lại. User chưa quyết.
 
 ---
 
 ## Nhật ký
 
+- 2026-10-02: **Hover tên website + chữ navbar → cam `--amber`** (trước: logo đen→xám, nav xám→đen). Tab đang chọn vẫn đen + gạch dưới khi không hover.
+- 2026-10-02: **Cam thương hiệu đổi sang cam sẫm `#B35C00`** (bỏ cam sáng `#FFA111`). `--amber` = `#B35C00`, `--amber-ink` giờ = `var(--amber)` → cả site 1 màu cam, dùng được làm nền solid + chữ trắng (tương phản 4.7:1). Rank `$` (badge + nút lọc) đổi chữ đen → trắng. Tint `--head-bg`/`--amber-soft` tự đi theo → nền header thành be ngả nâu.
 - 2026-10-02: **CV timeline bỏ hết chữ đậm** trong bullet (Ambassador/Top Yapper/OG Contributor, tên brand, link) — user thấy bold vô duyên. Link vẫn phân biệt bằng màu cam + gạch chân. Gỡ luôn CSS `.tl-bullets strong`.
 - 2026-10-02: **Tab AI:** tiêu đề bài dài xuống tối đa 2 dòng (quá 2 dòng mới "…"), hàng cao theo. 4 hub giữ 2 cột tới mobile (≤ 640) mới 1 cột — trước đây ≤ 1024 đã 1 cột, thu nhỏ cửa sổ chút đã xấu.
 - 2026-10-02: **Cả site đậm lên + cam điểm xuyết (phương án B).** User: "1 màu, mờ nhạt, data rối mắt; box xám quá nhạt; cam phải tối đi cho dễ đọc". Đậm token xám chung (`--chip` EBEBEB · `--w-line` DCDCDC · `--w-mute` 616161 · `--w-dim` 8C8C8C · `--head-bg` cam 20%), thêm `--amber-ink #B35C00` (chữ cam) · `--amber-soft` · `--zebra`. Bảng altcoin xám phân tầng + cam theo nghĩa (×TGE ≥ 13, ×ATM ≥ 15, chấm FDV ≥ 300M) — `functions/valuation.js` cũng in cùng class. Chi tiết luật ở DESIGN_SYSTEM.md §2. User chọn B từ 4 bản mock (hiện tại / A chỉ xám / B xám+cam nghĩa / C heatmap).

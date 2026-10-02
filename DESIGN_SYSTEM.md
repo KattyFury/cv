@@ -40,13 +40,13 @@ Nhãn nhóm, tab nav, header bảng, dòng phụ header card: **VIẾT HOA + gi�
 | `--ink` | `#111111` | Đen chủ đạo: chữ chính · icon · nút chính · vạch tab · chấm timeline |
 | `--text` | `#171717` | Chữ mặc định của body |
 | `--sub2` | `#525252` | Chữ phụ (nơi ở, niềm tin, bullet, nhãn form) |
-| `--w-mute` | `#616161` | Chữ phụ / icon nghỉ · tab nav chưa chọn · hover |
+| `--w-mute` | `#616161` | Chữ phụ / icon nghỉ · tab nav chưa chọn |
 | `--w-dim` | `#8C8C8C` | Chữ nhạt nhất (trạng thái trống, dấu bullet) |
 | `--w-line` | `#DCDCDC` | Viền card 1px · kẻ mảnh · viền avatar |
 | `--chip` | `#EBEBEB` | Nền chip chỉ-đọc · máng toggle · hover dòng bảng |
 | `--head-bg` | cam nhạt 20% | Nền header Valuation/AI/bảng altcoin (Work override theo màu rank riêng, xem dưới) |
 | `--amber` | `#B35C00` | **Cam thương hiệu (sẫm)** — chốt 2026-10-02 bỏ cam sáng `#FFA111`. Dùng được cả làm nền solid với chữ trắng (tương phản 4.7:1) lẫn làm chữ trên nền trắng |
-| `--amber-ink` | `= --amber` | Chữ cam — giữ tên token cũ, giờ chung 1 màu với `--amber` |
+| `--amber-ink` | `= --amber` | Chữ cam — giữ tên token cũ, giờ chung 1 màu với `--amber` · hover tên website + chữ navbar (chốt 2026-10-02, thay cho đen↔xám) |
 | `--amber-soft` | cam 20% | Nền ô nhấn cam (×ATM vùng nguy hiểm) · vòng quanh chấm timeline |
 | `--zebra` | `#F5F5F5` | Nền dòng chẵn bảng altcoin |
 | `--shadow` / `--lift` | bóng mềm 2 lớp | Thẻ nổi / thẻ khi hover |
