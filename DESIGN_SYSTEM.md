@@ -32,7 +32,7 @@ Nhãn nhóm, tab nav, header bảng, dòng phụ header card: **VIẾT HOA + gi�
 **Đen là màu chủ đạo nhưng dùng tiết chế** — chữ, icon, nút chính, vạch tab đang chọn. **Trắng** làm nền. **Xám trung tính** (không ngả vàng) cho chữ phụ và nhấn nhá.
 
 **Chốt 2026-09-26 — đảo lại luật cũ:** nền header card + dải Daily giờ có màu (trước đó chỉ xám `--head-bg`, bị chê mờ nhạt và cả trang thiếu sức sống). Quy tắc:
-- **Valuation / AI / bảng altcoin** (không có khái niệm rank): header nhuộm **cam nhạt** — `--head-bg` giờ = `color-mix(in srgb, var(--amber) 14%, white)`.
+- **Valuation / AI / bảng altcoin** (không có khái niệm rank): header nhuộm **cam nhạt** — `--head-bg` giờ = `color-mix(in srgb, var(--amber) 20%, white)`.
 - **Work**: mỗi card nhuộm header + Daily theo đúng **màu rank của card đó** (`.wte-card--<RANK> .wte-card-head`/`.wte-section--daily`), amber/tím/xanh dương/xanh lá/xám ở mức nhạt (12–16%) — xem bảng Màu rank bên dưới.
 
 | Token | Mã | Dùng cho |
@@ -40,12 +40,21 @@ Nhãn nhóm, tab nav, header bảng, dòng phụ header card: **VIẾT HOA + gi�
 | `--ink` | `#111111` | Đen chủ đạo: chữ chính · icon · nút chính · vạch tab · chấm timeline |
 | `--text` | `#171717` | Chữ mặc định của body |
 | `--sub2` | `#525252` | Chữ phụ (nơi ở, niềm tin, bullet, nhãn form) |
-| `--w-mute` | `#737373` | Chữ phụ / icon nghỉ · tab nav chưa chọn · hover |
-| `--w-dim` | `#A3A3A3` | Chữ nhạt nhất (trạng thái trống, dấu bullet) |
-| `--w-line` | `#E5E5E5` | Viền card 1px · kẻ mảnh · viền avatar |
-| `--chip` | `#F5F5F5` | Nền chip chỉ-đọc · máng toggle · hover dòng bảng |
-| `--head-bg` | cam nhạt 14% | Nền header Valuation/AI/bảng altcoin (Work override theo màu rank riêng, xem dưới) |
+| `--w-mute` | `#616161` | Chữ phụ / icon nghỉ · tab nav chưa chọn · hover |
+| `--w-dim` | `#8C8C8C` | Chữ nhạt nhất (trạng thái trống, dấu bullet) |
+| `--w-line` | `#DCDCDC` | Viền card 1px · kẻ mảnh · viền avatar |
+| `--chip` | `#EBEBEB` | Nền chip chỉ-đọc · máng toggle · hover dòng bảng |
+| `--head-bg` | cam nhạt 20% | Nền header Valuation/AI/bảng altcoin (Work override theo màu rank riêng, xem dưới) |
+| `--amber-ink` | `#B35C00` | **Chữ** cam (cam sáng `#FFA111` làm chữ trên nền trắng thì khó đọc — không bao giờ dùng `--amber` cho chữ) |
+| `--amber-soft` | cam 20% | Nền ô nhấn cam (×ATM vùng nguy hiểm) · vòng quanh chấm timeline |
+| `--zebra` | `#F5F5F5` | Nền dòng chẵn bảng altcoin |
 | `--shadow` / `--lift` | bóng mềm 2 lớp | Thẻ nổi / thẻ khi hover |
+
+**Chốt 2026-10-02 — cả site đậm lên + cam điểm xuyết.** User chê "1 màu, mờ nhạt, data rối mắt". Các tông xám dùng chung đều đậm thêm 1 nấc (bảng trên). Cam **chỉ** xuất hiện ở chỗ mang nghĩa, không trang trí:
+- **Chữ cam đậm `--amber-ink`:** số chính của box Hệ số TGE (FDV thấp/cao) · ×TGE ≥ 13 trong bảng + Narrative đang hot (ngưỡng Strong của Market condition) · số ×ATM trong Vùng nguy hiểm · link trong timeline CV.
+- **Ô nền `--amber-soft` + chữ cam đậm:** ×ATM ≥ 15 trong bảng (= vùng nguy hiểm).
+- **Chấm cam `--amber`:** cạnh ticker có FDV vốn VC ≥ 300M (vẫn in đậm như cũ) · chấm timeline CV.
+- **Bảng altcoin xám phân tầng:** ticker 500 (FDV cao 700) · narrative `--w-mute` · ngày TGE + đáy-trước-đỉnh `--w-dim` · mũi tên `--line2` · ×ATL `--w-mute` · ×ATM < 1 (dưới giá vốn VC) mờ `--w-dim` · dòng chẵn `--zebra`.
 
 **Màu rank** (ô rank trên card Work · header + Daily của card đó · nút đang chọn của thanh lọc):
 

@@ -62,16 +62,19 @@
       --ink:       #111111;   /* đen chủ đạo: chữ chính · icon · nút chính · vạch tab */
       --text:      #171717;   /* chữ mặc định của body */
       --sub2:      #525252;   /* chữ phụ: nơi ở, câu niềm tin, bullet, nhãn form */
-      --muted:     #8A8A8A;   /* thanh cuộn · chữ phụ trong popup bảng */
-      --line2:     #D4D4D4;   /* viền ô nhập trong popup */
-      --w-line:    #E5E5E5;   /* viền card · kẻ mảnh cạnh tiêu đề */
-      --w-mute:    #737373;   /* chữ phụ / icon nghỉ */
-      --w-dim:     #A3A3A3;   /* chữ nhạt nhất (trạng thái trống, tab bị khoá) */
-      --chip:      #F5F5F5;   /* nền chip CHỈ-ĐỌC + máng toggle */
-      --head-bg:   color-mix(in srgb, var(--amber) 14%, white);   /* nền header card mặc định (Valuation/AI/bảng altcoin) — cam nhạt, Work override theo màu rank riêng */
+      --muted:     #7A7A7A;   /* thanh cuộn · chữ phụ trong popup bảng */
+      --line2:     #C4C4C4;   /* viền ô nhập trong popup */
+      --w-line:    #DCDCDC;   /* viền card · kẻ mảnh cạnh tiêu đề */
+      --w-mute:    #616161;   /* chữ phụ / icon nghỉ */
+      --w-dim:     #8C8C8C;   /* chữ nhạt nhất (trạng thái trống, tab bị khoá) */
+      --chip:      #EBEBEB;   /* nền chip CHỈ-ĐỌC + máng toggle */
+      --head-bg:   color-mix(in srgb, var(--amber) 20%, white);   /* nền header card mặc định (Valuation/AI/bảng altcoin) — cam nhạt, Work override theo màu rank riêng */
       /* màu rank — badge rank + tint header/Daily ở Work + thanh lọc.
          --amber còn được --head-bg mặc định dùng làm tint chung cả trang. */
       --amber:     #FFA111;   /* rank $ — cũng là mắt mèo trong icon.png */
+      --amber-ink: #B35C00;   /* cam ĐẬM cho CHỮ trên nền trắng (cam sáng #FFA111 làm chữ thì khó đọc) */
+      --amber-soft: color-mix(in srgb, var(--amber) 20%, white);   /* nền ô nhấn cam (vd ×ATM vùng nguy hiểm) */
+      --zebra:     #F5F5F5;   /* nền dòng chẵn của bảng */
       --rank-s:    #6155F5;   /* tím */
       --rank-a:    #0088FF;   /* xanh dương */
       --rank-b:    #34C759;   /* xanh lá */
@@ -314,15 +317,16 @@
     .tl-gutter { position: relative; }
     .tl-gutter::before {
       content: ''; position: absolute; left: 28px; top: 13px; width: 8px; height: 8px; border-radius: 50%;
-      background: var(--ink); box-shadow: 0 0 0 4px var(--chip);
+      background: var(--amber); box-shadow: 0 0 0 4px var(--amber-soft);
     }
     .tl-role { font-size: 18px; font-weight: 700; line-height: 32px; color: var(--ink); }
     .tl-bullets { margin-top: 16px; padding-left: 22px; list-style: disc; }
     .tl-bullets li { font-size: 15px; line-height: 24px; color: var(--sub2); }
     .tl-bullets li::marker { color: var(--w-dim); }
-    .tl-bullets a { color: var(--sub2); text-underline-offset: 3px; }
+    .tl-bullets a { color: var(--amber-ink); text-underline-offset: 3px; }
     .tl-bullets a:hover { color: var(--ink); }
-    .tl-bullets strong { font-weight: 700; color: var(--sub2); }
+    .tl-bullets strong { font-weight: 700; color: var(--ink); }
+    .tl-bullets a strong { color: inherit; }   /* chữ đậm trong link theo màu link (cam), không đen */
 
     /* Highlights: 3 cột × 432, ảnh 3:2 */
     #highlights-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
@@ -402,19 +406,32 @@
       text-align: center; white-space: nowrap; color: var(--ink);
     }
     #tge-section tbody td {
-      height: 32px; border: none; box-shadow: inset 0 -1px 0 #F0EFEE;
+      height: 32px; border: none; box-shadow: inset 0 -1px 0 #E8E8E8;
       font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums;
       text-align: center; vertical-align: middle; white-space: nowrap; color: var(--ink);
     }
     #tge-section tbody tr:last-child td { box-shadow: none; }
+    #tge-section tbody tr:nth-child(even) td { background: var(--zebra); }
     #tge-section tbody tr:hover td { background: var(--chip); }
     #tge-section tbody tr.row-editable { cursor: pointer; }
-    /* Ticker ĐẬM = vcFDV ≥ $300M · THƯỜNG = dưới. Narrative + ngày TGE = phụ, xám */
-    #tge-section td.td-ticker { font-weight: 400; }
+    /* Ticker ĐẬM + chấm cam = vcFDV ≥ $300M · THƯỜNG = dưới.
+       Xám phân tầng: narrative xám vừa · ngày TGE + đáy-trước-đỉnh + mũi tên nhạt dần · ×ATL xám.
+       Cam CHỈ ở chỗ mang nghĩa: ×TGE ≥ 13 (chữ cam đậm) · ×ATM ≥ 15 = vùng nguy hiểm (ô nền cam). ×ATM < 1 = dưới giá vốn VC → mờ. */
+    #tge-section td.td-ticker { font-weight: 500; }
     #tge-section td.td-ticker.fdv-hi { font-weight: 700; }
-    #tge-section td.td-narrative, #tge-section td.td-date { font-weight: 400; color: var(--sub2); }
+    #tge-section td.td-ticker.fdv-hi .ck::after {
+      content: ''; display: inline-block; width: 5px; height: 5px; margin-left: 4px;
+      border-radius: 50%; background: var(--amber); vertical-align: middle;
+    }
+    #tge-section td.td-narrative { font-weight: 400; color: var(--w-mute); }
+    #tge-section td.td-date { font-weight: 400; color: var(--w-dim); }
+    #tge-section td.td-atl { font-weight: 500; color: var(--w-mute); }
     .val-table .ck { display: inline-block; text-align: left; }
-    #tge-section .ath-arrow { margin: 0 2px; font-weight: 400; color: var(--w-mute); }
+    #tge-section .ath-pre { font-weight: 500; color: var(--w-dim); }
+    #tge-section .ath-arrow { margin: 0 2px; font-weight: 400; color: var(--line2); }
+    .val-table .m-hot, .narrative-med.m-hot { color: var(--amber-ink); }
+    .val-table .m-low { font-weight: 500; color: var(--w-dim); }
+    .val-table .m-danger { padding: 2px 6px; border-radius: 6px; background: var(--amber-soft); color: var(--amber-ink); }
     .val-empty { padding: 40px 16px; text-align: center; font-size: 15px; color: var(--muted); }
 
     /* ── Popup bảng dài (bấm tiêu đề): clone thead/tbody của bảng trên ──
@@ -426,11 +443,11 @@
     .tge-modal-body th, .tge-modal-body td { width: calc(100% / 6); }
     .tge-modal-body thead th {
       position: sticky; top: 0; z-index: 2; padding: 8px 16px;
-      background: #F5F5F5; border-bottom: 1px solid #E5E5E5;
+      background: var(--chip); border-bottom: 1px solid var(--w-line);
       font-size: 12px; font-weight: 700; text-align: center; white-space: nowrap; color: var(--text);
     }
     .tge-modal-body tbody td {
-      padding: 12px 16px; border-bottom: 1px solid #E5E5E5;
+      padding: 12px 16px; border-bottom: 1px solid var(--w-line);
       text-align: center; vertical-align: middle; white-space: nowrap; color: #525252;
     }
     .tge-modal-body tbody tr:last-child td { border-bottom: none; }
@@ -464,11 +481,12 @@
     .rt-half { text-align: center; }
     .rt-cond { display: flex; align-items: center; justify-content: center; }
     .rt-cond b { margin-left: 4px; font-weight: 700; font-variant-numeric: tabular-nums; }
-    .rt-item-val { font-weight: 700; font-variant-numeric: tabular-nums; }
+    .rt-item-val { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--amber-ink); }
     .rt-btn-row { height: 32px; display: flex; align-items: center; justify-content: center; }
     .danger-row, .narrative-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; }
     .danger-row > :first-child, .narrative-row > :first-child { text-align: left; }
     .danger-multi, .narrative-med { font-weight: 700; font-variant-numeric: tabular-nums; text-align: center; }
+    .danger-multi { color: var(--amber-ink); }   /* mọi dòng ở đây đều ×ATM ≥ 15 — cùng cam với ô nguy hiểm trong bảng */
     .danger-date, .narrative-count { font-variant-numeric: tabular-nums; text-align: right; }
     .danger-date { width: 60px; }
     .danger-badge-new {
@@ -1935,16 +1953,20 @@ ${line}
         // Ô ×ATH mang 2 con số: đáy-trước-đỉnh → đỉnh. Đọc thành "chiều xuống bao nhiêu
         // rồi mới bật lên bấy nhiêu" (OP: 1,62 → 19,80). Không có số trước thì hiện mình đỉnh.
         const athCell = xATH > 0
-          ? (xPre > 0 ? `${fmtMult(xPre)} <span class="ath-arrow">→</span> ${fmtMult(xATH)}` : fmtMult(xATH))
+          ? (xPre > 0 ? `<span class="ath-pre">${fmtMult(xPre)}</span> <span class="ath-arrow">→</span> ${fmtMult(xATH)}` : fmtMult(xATH))
           : '—';
+        // Cam chỉ ở chỗ mang nghĩa (ngưỡng trùng Market condition ≥13 và Danger Zone ≥15)
+        const tgeCls = xTGE >= 13 ? 'm-hot' : '';
+        const atmCls = xATM >= 15 ? 'm-danger' : (xATM > 0 && xATM < 1 ? 'm-low' : '');
+        const wrap = (cls, txt) => cls ? `<span class="${cls}">${txt}</span>` : txt;
         return `<tr data-ticker="${e.ticker}" class="${adminUnlocked ? 'row-editable' : ''}">
           <td class="td-ticker${hi}"><span class="ck">${e.ticker}</span></td>
           <td class="td-narrative"><span class="ck">${e.type || '—'}</span></td>
           <td class="td-date"><span class="ck">${fmtDate(e.tgeDate)}</span></td>
-          <td class="td-multi"><span class="ck">${fmtMult(xTGE)}</span></td>
+          <td class="td-multi"><span class="ck">${wrap(tgeCls, fmtMult(xTGE))}</span></td>
           <td class="td-multi td-ath"><span class="ck">${athCell}</span></td>
-          <td class="td-multi"><span class="ck">${fmtMult(xATL)}</span></td>
-          <td class="td-multi"><span class="ck">${fmtMult(xATM, 3)}</span></td>
+          <td class="td-multi td-atl"><span class="ck">${fmtMult(xATL)}</span></td>
+          <td class="td-multi"><span class="ck">${wrap(atmCls, fmtMult(xATM, 3))}</span></td>
         </tr>`;
       }).join('');
 
@@ -2111,7 +2133,7 @@ ${line}
       listEl.innerHTML = pad3(ranked.map(g => `
         <div class="narrative-row">
           <span class="narrative-name">${g.name}</span>
-          <span class="narrative-med">×${g.medTGE.toFixed(1)}</span>
+          <span class="narrative-med${g.medTGE >= 13 ? ' m-hot' : ''}">×${g.medTGE.toFixed(1)}</span>
           <span class="narrative-count">SL:${String(g.count).padStart(2, '0')}</span>
         </div>
       `).join(''), ranked.length);

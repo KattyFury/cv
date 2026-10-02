@@ -62,16 +62,20 @@ function compute(projects, prices) {
       (new Date(e.athDate) - new Date(e.tgeDate)) <= 7 * 86400000;
     const xATH = athTooEarly ? 0 : xMult(e.ath, e);
     const xPre = e.preAth ? xMult(e.preAth, e) : null;
-    const athCell = xATH > 0 ? (xPre > 0 ? `${fmtMult(xPre)} → ${fmtMult(xATH)}` : fmtMult(xATH)) : '—';
+    const athCell = xATH > 0 ? (xPre > 0 ? `<span class="ath-pre">${fmtMult(xPre)}</span> <span class="ath-arrow">→</span> ${fmtMult(xATH)}` : fmtMult(xATH)) : '—';
+    const xTGE = multiple(e), xATM = xMult(e.currentPrice, e);
+    const tgeCls = xTGE >= 13 ? 'm-hot' : '';
+    const atmCls = xATM >= 15 ? 'm-danger' : (xATM > 0 && xATM < 1 ? 'm-low' : '');
+    const wrap = (cls, txt) => cls ? `<span class="${cls}">${txt}</span>` : txt;
     const hi = vcFDVof(e) >= SPLIT ? ' fdv-hi' : '';
     return `<tr data-ticker="${esc(e.ticker)}">
       <td class="td-ticker${hi}"><span class="ck">${esc(e.ticker)}</span></td>
       <td class="td-narrative"><span class="ck">${esc(e.narrative || '—')}</span></td>
       <td class="td-date"><span class="ck">${fmtDate(e.tgeDate)}</span></td>
-      <td class="td-multi"><span class="ck">${fmtMult(multiple(e))}</span></td>
+      <td class="td-multi"><span class="ck">${wrap(tgeCls, fmtMult(xTGE))}</span></td>
       <td class="td-multi td-ath"><span class="ck">${athCell}</span></td>
-      <td class="td-multi"><span class="ck">${fmtMult(e.atl ? xMult(e.atl, e) : null)}</span></td>
-      <td class="td-multi"><span class="ck">${fmtMult(xMult(e.currentPrice, e), 3)}</span></td>
+      <td class="td-multi td-atl"><span class="ck">${fmtMult(e.atl ? xMult(e.atl, e) : null)}</span></td>
+      <td class="td-multi"><span class="ck">${wrap(atmCls, fmtMult(xATM, 3))}</span></td>
     </tr>`;
   }).join('');
 
