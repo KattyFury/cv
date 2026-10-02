@@ -515,12 +515,16 @@
     }
     .ai-hub-add:hover { color: var(--w-mute); }
     .ai-list { grid-row: 2; min-height: 0; padding: 8px 16px; overflow-x: hidden; overflow-y: auto; }
+    /* Tiêu đề dài → xuống tối đa 2 dòng (hàng cao lên theo), quá 2 dòng mới cắt "…" */
     .ai-row {
       display: grid; grid-template-columns: minmax(0,1fr) auto auto auto; align-items: center; gap: 16px;
-      margin: 0 0 8px;
+      height: auto; min-height: 32px; padding-top: 6px; padding-bottom: 6px; margin: 0 0 8px;
     }
     .ai-row > * { min-width: 0; }
-    .ai-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); text-decoration: none; }
+    .ai-title {
+      display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2;
+      overflow: hidden; line-height: 18px; color: var(--ink); text-decoration: none;
+    }
     a.ai-title::after { content: ''; position: absolute; inset: 0; }   /* link phủ cả hàng */
     .ai-opt { z-index: 1; }                                              /* ⋮ nổi lên trên link */
     .ai-date { width: 60px; text-align: right; font-variant-numeric: tabular-nums; color: var(--w-mute); }
@@ -762,7 +766,6 @@
     /* ══ MÀN VỪA ══════════════════════════════════════════════════ */
     @media (max-width: 1024px) {
       #highlights-grid, .val-boxes { grid-template-columns: 1fr 1fr; }
-      .ai-hubs { grid-template-columns: 1fr; }
 
       /* Header card Work ĐÚNG 2 hàng ngay từ 1024 (không đợi tới mobile):
          card 2 cột đã hẹp lại ở khoảng này, giữ 3 cột 1 hàng làm chữ đè nhau.
@@ -832,7 +835,8 @@
       .tge-modal-body .val-table { font-size: 11px; }
       .tge-modal-body thead th, .tge-modal-body tbody td { padding: 6px 4px; }
 
-      /* AI */
+      /* AI — 1 box/hàng CHỈ từ mobile (trước đây từ 1024, thu nhỏ chút đã 1 cột → xấu) */
+      .ai-hubs { grid-template-columns: 1fr; }
       .ai-hub { height: 300px; }
       .ai-list { padding: 8px; }
       .ai-row, .ai-count, .ai-empty { font-size: 14px; }

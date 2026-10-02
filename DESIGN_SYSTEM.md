@@ -75,7 +75,7 @@ Nhãn nhóm, tab nav, header bảng, dòng phụ header card: **VIẾT HOA + gi�
 | **Header card** | cao 40 · nền `--head-bg` (Work: theo màu rank) · kẻ dưới · icon đen + tiêu đề canh TRÁI · Bold 15 đen |
 | **Header card Work** | logo+tên · badge potential + narrative (chữ **11**, thu nhỏ 2026-09-26 để đỡ chật) · rank = **chỉ 1 ô vuông màu + chữ** (đã bỏ nhãn chữ "rank" — quá nhiều yếu tố trên 1 hàng) |
 | **Chip** (chỉ đọc) | nền `--chip` · **radius 8** (lồng trong box 16) · cao 32 · chữ 12 |
-| **Hàng bấm được** (task Work, bài AI) | như chip; hover: nền trắng + viền + vạch đen bên trái + ô mũi tên ↗ nền đen |
+| **Hàng bấm được** (task Work, bài AI) | như chip (bài AI: tiêu đề dài xuống tối đa 2 dòng, hàng cao theo); hover: nền trắng + viền + vạch đen bên trái + ô mũi tên ↗ nền đen |
 | **Nhãn nhóm** (Work) | cao 32 · icon đen + chữ hoa 12 xám + kẻ mảnh kéo hết ngang. **Daily** = dải nền theo màu rank tràn 2 mép card, lề trong vẫn 16 như các nhóm khác |
 | **Tiêu đề mục** (CV) | icon đen + chữ 18 + kẻ mảnh kéo hết ngang |
 | **Nút chính** | tròn radius 24 · nền đen · chữ trắng · bóng |
@@ -103,4 +103,4 @@ Mọi khoảng cách là **bội số của 8**.
 | CV — Highlights | 3 cột × 432, ảnh 3:2 |
 | CV — timeline | 3 cột `128 / 64 / 944`, chấm đen 8px ở tâm rãnh, item cách 48 |
 
-Màn ≤ 1024: 3 cột → 2, AI → 1 cột, header card Work xuống 2 hàng (tên/rank hàng 1 · headline hàng 2 — tránh đè chữ khi card 2 cột co hẹp lại). Màn ≤ 640: mọi lưới → 1 cột.
+Màn ≤ 1024: 3 cột → 2 (AI giữ 2 cột, chỉ ≤ 640 mới 1 cột), header card Work xuống 2 hàng (tên/rank hàng 1 · headline hàng 2 — tránh đè chữ khi card 2 cột co hẹp lại). Màn ≤ 640: mọi lưới → 1 cột.
