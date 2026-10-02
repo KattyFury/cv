@@ -71,8 +71,8 @@
       --head-bg:   color-mix(in srgb, var(--amber) 20%, white);   /* nền header card mặc định (Valuation/AI/bảng altcoin) — cam nhạt, Work override theo màu rank riêng */
       /* màu rank — badge rank + tint header/Daily ở Work + thanh lọc.
          --amber còn được --head-bg mặc định dùng làm tint chung cả trang. */
-      --amber:     #FFA111;   /* rank $ — cũng là mắt mèo trong icon.png */
-      --amber-ink: #B35C00;   /* cam ĐẬM cho CHỮ trên nền trắng (cam sáng #FFA111 làm chữ thì khó đọc) */
+      --amber:     #B35C00;   /* cam thương hiệu (sẫm) — rank $ nền solid + chữ trắng */
+      --amber-ink: var(--amber);   /* chữ cam trên nền trắng — giờ chung 1 màu với --amber */
       --amber-soft: color-mix(in srgb, var(--amber) 20%, white);   /* nền ô nhấn cam (vd ×ATM vùng nguy hiểm) */
       --zebra:     #F5F5F5;   /* nền dòng chẵn của bảng */
       --rank-s:    #6155F5;   /* tím */
@@ -576,7 +576,7 @@
       background: var(--rank-c); font-size: 15px; font-weight: 700; color: var(--white);
     }
     /* Màu rank — badge rank + tint nền header/Daily của card cùng rank đó */
-    .rank-INCOME .wte-rank-v { background: var(--amber); color: var(--ink); }
+    .rank-INCOME .wte-rank-v { background: var(--amber); color: var(--white); }
     .rank-S .wte-rank-v { background: var(--rank-s); }
     .rank-A .wte-rank-v { background: var(--rank-a); }
     .rank-B .wte-rank-v { background: var(--rank-b); }
@@ -621,7 +621,7 @@
     }
     #rank-filter-float .lang-btn:hover { color: var(--ink); }
     #rank-filter-float .lang-btn.active { background: var(--rank-c); color: var(--white); box-shadow: none; }
-    #rank-filter-float #rf-income.active { background: var(--amber); color: var(--ink); }
+    #rank-filter-float #rf-income.active { background: var(--amber); color: var(--white); }
     #rank-filter-float #rf-s.active { background: var(--rank-s); }
     #rank-filter-float #rf-a.active { background: var(--rank-a); }
     #rank-filter-float #rf-b.active { background: var(--rank-b); }

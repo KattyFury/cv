@@ -45,7 +45,8 @@ Nhãn nhóm, tab nav, header bảng, dòng phụ header card: **VIẾT HOA + gi�
 | `--w-line` | `#DCDCDC` | Viền card 1px · kẻ mảnh · viền avatar |
 | `--chip` | `#EBEBEB` | Nền chip chỉ-đọc · máng toggle · hover dòng bảng |
 | `--head-bg` | cam nhạt 20% | Nền header Valuation/AI/bảng altcoin (Work override theo màu rank riêng, xem dưới) |
-| `--amber-ink` | `#B35C00` | **Chữ** cam (cam sáng `#FFA111` làm chữ trên nền trắng thì khó đọc — không bao giờ dùng `--amber` cho chữ) |
+| `--amber` | `#B35C00` | **Cam thương hiệu (sẫm)** — chốt 2026-10-02 bỏ cam sáng `#FFA111`. Dùng được cả làm nền solid với chữ trắng (tương phản 4.7:1) lẫn làm chữ trên nền trắng |
+| `--amber-ink` | `= --amber` | Chữ cam — giữ tên token cũ, giờ chung 1 màu với `--amber` |
 | `--amber-soft` | cam 20% | Nền ô nhấn cam (×ATM vùng nguy hiểm) · vòng quanh chấm timeline |
 | `--zebra` | `#F5F5F5` | Nền dòng chẵn bảng altcoin |
 | `--shadow` / `--lift` | bóng mềm 2 lớp | Thẻ nổi / thẻ khi hover |
@@ -60,7 +61,7 @@ Nhãn nhóm, tab nav, header bảng, dòng phụ header card: **VIẾT HOA + gi�
 
 | Rank | Token | Mã | Chữ trên nền |
 |---|---|---|---|
-| `$` | `--amber` | `#FFA111` cam | đen |
+| `$` | `--amber` | `#B35C00` cam sẫm | trắng |
 | `S` | `--rank-s` | `#6155F5` tím | trắng |
 | `A` | `--rank-a` | `#0088FF` xanh dương | trắng |
 | `B` | `--rank-b` | `#34C759` xanh lá | trắng |
