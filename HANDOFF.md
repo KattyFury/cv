@@ -18,6 +18,8 @@ functions/api/        — Cloudflare Pages Functions, backend DUY NHẤT
   wte.js              — GET công khai: card Work to Earn đang public
   private.js          — POST cần ADMIN_PASS: CRUD card Work (cá nhân + public)
   ai.js               — GET công khai / POST cần ADMIN_PASS: bài viết tab AI
+functions/valuation.js — route /valuation: điền sẵn Low/High ×N, Market condition + bảng altcoin vào HTML
+                       (chỉ đọc KV) để AI/bot tải trang là đọc được. Công thức CHÉP từ index.html — sửa bên này phải sửa bên kia
 bot/                  — job lấy giá hằng ngày, chạy Docker trên PC nhà (xem bot/README.md)
 _redirects            — SPA fallback: /* → /index.html
 DESIGN_SYSTEM.md      — luật thiết kế (màu, chữ, lưới, thành phần). ĐỌC trước khi đụng giao diện
@@ -132,6 +134,7 @@ Account `f9df99b7751b7dc3c80a22b6911c6f2b`, project Pages `0xhieu-xyz`. API toke
 
 ## Nhật ký
 
+- 2026-10-02: **AI đọc được tab Valuation.** Thêm `functions/valuation.js`: khi tải `/valuation`, server đọc KV, tính đúng như JS trang rồi điền vào `#baseline-low` · `#baseline-high` · `#market-condition-lvl` · `#tge-tbody` (HTMLRewriter). Trước đó AI chỉ thấy "—" vì số do JS vẽ. Giao diện không đổi, JS vẫn vẽ đè cùng số. Số in kiểu EN (dấu chấm). Function route nên `_redirects` không áp cho `/valuation` (docs Cloudflare). Data thô vẫn ở `/api/val`.
 - 2026-09-25: **Đổi màu chủ đạo sang đen (tiết chế) + trắng + xám trung tính; cam chỉ còn là màu rank `$`**, gọi lại tím S · xanh dương A · xanh lá B (C xám) — chỉ ở ô rank + thanh lọc. User: "trắng xám và cam vốn không cùng nhau". Xám đổi từ tông ngả vàng (stone) sang trung tính. Box bo góc 8 → **16** (chip giữ 8). **Sửa lỗi DAILY không cách lề 16**: commit `b7b598d` cho `.wte-section--daily` `margin: 0 -16px`, nhưng card không có đệm ngang (đệm nằm ở từng section) nên margin âm kéo chữ + chip dính sát mép — bỏ margin âm, dải nền vẫn tràn 2 mép vì section vốn rộng bằng card.
 - 2026-09-24: **Dọn repo, chốt trạng thái.** CSS 4 lớp đè nhau (bản gốc → Valuation mới → bản sang → bản sáng) viết lại thành 1 stylesheet theo thành phần (2363 → ~760 dòng; index.html 252KB → 166KB); verify bằng so computed style của mọi phần tử ở 72 trạng thái (4 tab × desktop/mobile × admin, hover, 12 popup). Gỡ JS chết: bộ đọc CSV Google Sheet, `capLabel()`/`CAP_*` (nhãn S/M đã bỏ), `onclone` mũi tên Watchlist. Xoá `arrow.svg` · `info.svg` · `right2.svg` (không còn dùng), `REBUILD_SPEC.md` + `REBUILD_SPEC_V3_VALUATION.md` (đã build xong, luật còn hiệu lực chuyển vào đây). HANDOFF viết lại chỉ còn hiện trạng.
 - 2026-09-24: **Bản sáng.** Desktop Roboto, Condensed chỉ cho bảng altcoin + toàn site trên mobile. Chữ mobile ≥14 (trừ bảng altcoin). Navbar/header/nút bỏ nền đen → trắng/ngà, nút chính amber. Navbar → nội dung 24 (bỏ hàng trống 48).
